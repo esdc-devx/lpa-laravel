@@ -13,3 +13,4 @@ yarn-error.log
 .vs
 *.sublime-project
 *.sublime-workspace
+/.phpintel

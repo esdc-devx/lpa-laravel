@@ -12,5 +12,9 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
-});
+    dd('Welcome, ' . Auth::user()->name);
+})->middleware('auth');
+
+//Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+
+Auth::routes();
