@@ -45,19 +45,13 @@ function requireAuth(to, from, next) {
     }
   }
 
-  /*
-    Confirms the user has been loaded
-  */
+  // Confirms the user has been loaded
   if (store.getters.getUserLoadStatus != 2) {
-    /*
-      If not, load the user
-    */
+    // If not, load the user
     store.dispatch("loadUser");
 
-    /*
-      Watch for the user to be loaded. When it's finished, then
-      we proceed.
-    */
+    // Watch for the user to be loaded. When it's finished, then
+    // we proceed.
     store.watch(store.getters.getUserLoadStatus, function() {
       if (store.getters.getUserLoadStatus() == 2) {
         proceed();
@@ -78,7 +72,6 @@ const routes = [
     component: Home,
     beforeEnter: requireAuth
   },
-
   {
     path: "/profile",
     name: "profile",

@@ -57966,19 +57966,13 @@ function requireAuth(to, from, next) {
     }
   }
 
-  /*
-    Confirms the user has been loaded
-  */
+  // Confirms the user has been loaded
   if (__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus != 2) {
-    /*
-      If not, load the user
-    */
+    // If not, load the user
     __WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].dispatch("loadUser");
 
-    /*
-      Watch for the user to be loaded. When it's finished, then
-      we proceed.
-    */
+    // Watch for the user to be loaded. When it's finished, then
+    // we proceed.
     __WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].watch(__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus, function () {
       if (__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus() == 2) {
         proceed();
@@ -62962,9 +62956,7 @@ var render = function() {
     [
       _c("p", [_vm._v("Not Found")]),
       _vm._v(" "),
-      _c("router-link", { attrs: { to: "home" } }, [
-        _vm._v("Back to Home page")
-      ])
+      _c("router-link", { attrs: { to: "/" } }, [_vm._v("Back to Home page")])
     ],
     1
   )
@@ -64027,25 +64019,14 @@ var learningProjects = {
 
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  /*
-    GET     /api/learning-projects
-  */
   getLearningProjects: function getLearningProjects() {
     // REMOVE ME
     return Promise.resolve({ data: __WEBPACK_IMPORTED_MODULE_1__fake_data_json___default.a });
     // return axios.get(`${LPA_CONFIG.API_URL}/learning-projects`);
   },
-
-  /*
-    GET     /api/learning-projects/{id}
-  */
   getLearningProject: function getLearningProject(id) {
     return axios.get(__WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* LPA_CONFIG */].API_URL + "/learning-projects/" + id);
   },
-
-  /*
-    POST    /api/learning-projects
-  */
   postLearningProject: function postLearningProject(name) {
     return axios.post(__WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* LPA_CONFIG */].API_URL + "/learning-projects", { name: name });
   }
@@ -64237,7 +64218,7 @@ var users = {
     GET   /api/user
   */
   getUser: function getUser() {
-    return axios.get(__WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* LPA_CONFIG */].API_URL + '/me');
+    return axios.get(__WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* LPA_CONFIG */].API_URL + '/user');
   },
   login: function login(data) {
     return axios.post(__WEBPACK_IMPORTED_MODULE_0__config_js__["a" /* LPA_CONFIG */].API_URL + '/login', data);

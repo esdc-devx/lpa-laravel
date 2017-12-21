@@ -5,10 +5,10 @@
 
 // Units
 $baseline: 1rem;
-$minScreen: 80rem;   // 1280px
-$maxScreen: 120rem;  // 1900px
-$minFont: 0.8rem;
-$maxFont: 1.5rem;
+$min-screen: 80rem;   // 1280px
+$max-screen: 120rem;  // 1900px
+$min-font: 0.8rem;
+$max-font: 1.5rem;
 
 $h1: 2rem;
 $h2: 1.75rem;
@@ -17,7 +17,7 @@ $h4: 1.25rem;
 $h5: 1rem;
 
 // Mixin for fluid type
-// Usage: @include fluid-type(font-size, $minScreen, $maxScreen, $minFont, $maxFont);
+// Usage: @include fluid-type(font-size, $min-screen, $max-screen, $min-font, $max-font);
 @mixin fluid-type($properties, $min-vw, $max-vw, $min-value, $max-value) {
   & {
     @each $property in $properties {
@@ -49,7 +49,7 @@ $h5: 1rem;
 }
 
 html {
-  @include fluid-type(font-size, $minScreen, $maxScreen, $minFont, $maxFont);
+  @include fluid-type(font-size, $min-screen, $max-screen, $min-font, $max-font);
   font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   color: $--color-text-primary;

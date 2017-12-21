@@ -8,7 +8,7 @@ export default {
     GET   /api/user
   */
   getUser() {
-    return axios.get(`${LPA_CONFIG.API_URL}/me`);
+    return axios.get(`${LPA_CONFIG.API_URL}/user`);
   },
 
   login(data) {
