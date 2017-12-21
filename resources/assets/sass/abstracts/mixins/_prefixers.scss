@@ -1,0 +1,321 @@
+/**
+ * Generates prefixes for perspective
+ * @param  {List} $perspective...
+ */
+@mixin perspective($perspective...) {
+  -webkit-perspective: $perspective;
+  -ms-perspective: $perspective;
+  perspective: $perspective;
+}
+
+/**
+ * Generates prefixes for transition
+ * @param  {List} $transition...
+ */
+@mixin transition($transition...) {
+  -webkit-transition: $transition;
+  transition: $transition;
+}
+
+/**
+ * Generates prefixes for transform-property
+ * @param  {List} $property...
+ */
+@mixin transition-property($property...) {
+  -webkit-transition-property: $property;
+  transition-property: $property;
+}
+
+/**
+ * Generates prefixes for transform-duration
+ * @param  {List} $duration...
+ */
+@mixin transition-duration($duration...) {
+  -webkit-transition-duration: $duration;
+  transition-duration: $duration;
+}
+
+/**
+ * Generates prefixes for transform-timing-function
+ * @param  {List} $timing...
+ */
+@mixin transition-timing-function($timing...) {
+  -webkit-transition-timing-function: $timing;
+  transition-timing-function: $timing;
+}
+
+/**
+ * Generates prefixes for transform-delay
+ * @param  {List} $delay...
+ */
+@mixin transition-delay($delay...) {
+  -webkit-transition-delay: $delay;
+  transition-delay: $delay;
+}
+
+/**
+ * Generates prefixes for transform
+ * @param  {List} $transforms...
+ */
+@mixin transform($transforms...) {
+  -webkit-transform: $transforms;
+  -ms-transform: $transforms;
+  transform: $transforms;
+}
+
+/**
+ * Generates prefixes for transform-origin
+ * @param  {Property} $origin
+ * @param  {Boolean}  $important: null
+ */
+@mixin transform-origin($origin, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-transform-origin: $origin $important;
+  -ms-transform-origin: $origin $important;
+  transform-origin: $origin $important;
+}
+
+/**
+ * Generates prefixes for transform-style
+ * @param  {Property} $style
+ */
+@mixin transform-style($style, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-transform-style: $style $important;
+  transform-style: $style $important;
+}
+
+/**
+ * Shorthand that generates prefixes for transform: rotate(val)
+ * @param  {Number} $val
+ */
+@mixin rotate($val) {
+  @include transform(rotate(#{$val}));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: rotateX(val)
+ * @param  {Number} $val
+ */
+@mixin rotateX($val) {
+  @include transform(rotateX(#{$val}));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: rotateY(val)
+ * @param  {Number} $val
+ */
+@mixin rotateY($val) {
+  @include transform(rotateY(#{$val}));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: scale(val)
+ * @param  {Number} $val
+ */
+@mixin scale($val) {
+  @include transform(scale($val));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: translate(values...)
+ * @param  {List} $val...
+ */
+@mixin translate($val...) {
+  @include transform(translate($val));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: translateX(x%)
+ * @param  {Percentage} $x
+ */
+@mixin translateX($x) {
+  @include transform(translateX($x));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: translateY(y%)
+ * @param  {Percentage} $y
+ */
+@mixin translateY($y) {
+  @include transform(translateY($y));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: translate3d(values...)
+ * @param  {List} $val...
+ */
+@mixin translate3d($val...) {
+  @include transform(translate3d($val));
+}
+
+/**
+ * Shorthand that generates prefixes for transform: skew(xdeg, ydeg)
+ * @param  {Number} $x
+ * @param  {Number} $y
+ */
+@mixin skew($x, $y) {
+  @include transform(skew(#{$x}deg, #{$y}deg));
+}
+
+/**
+ * Generates prefixes for keyframes
+ * @param  {Text} $animation-name
+ */
+@mixin keyframes($animation-name) {
+  @-webkit-keyframes #{$animation-name} {
+    @content;
+  }
+  @keyframes #{$animation-name} {
+    @content;
+  }
+}
+
+/**
+ * Generates prefixes for animation
+ * @param  {List} $val
+ */
+@mixin animation($val) {
+  -webkit-animation: #{$val};
+  animation: #{$val};
+}
+
+/**
+ * Generates prefixes for display-flex
+ * @param  {Property} $val
+ * @param  {Boolean}  $important: null
+ */
+@mixin display-flex($important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  display: -webkit-box $important;
+  display: -ms-flexbox $important;
+  display: flex $important;
+}
+
+/**
+ * Generates prefixes for align-items
+ * @param  {Property} $val
+ * @param  {Boolean}  $important: null
+ */
+@mixin align-items($val, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-box-align: $val $important;
+  -ms-flex-align: $val $important;
+  align-items: $val $important;
+}
+
+/**
+ * Generates prefixes for justify-content
+ * @param  {Property} $val
+ * @param  {Boolean}  $important: null
+ */
+@mixin justify-content($val, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-box-pack: $val $important;
+  -ms-flex-pack: $val $important;
+  justify-content: $val $important;
+}
+
+/**
+ * Generates prefixes for backface-visibility
+ * @param  {Property} $val
+ * @param  {Boolean}  $important: null
+ */
+@mixin backface-visibility($val, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-backface-visibility: $val $important;
+  backface-visibility: $val $important;
+}
+
+/**
+ * Generates prefixes for appearance
+ * @param  {Property} $val
+ * @param  {Boolean}  $important: null
+ */
+@mixin appearance($val, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-appearance: $val $important;
+  -moz-appearance: $val $important;
+  appearance: $val $important;
+}
+
+/**
+ * Generates prefixes for user-select
+ * @param  {Property} $val
+ * @param  {Boolean}  $important: null
+ */
+@mixin user-select($val, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-touch-callout: $val $important;
+  -webkit-user-select: $val $important;
+  -moz-user-select: $val $important;
+  -ms-user-select: $val $important;
+  user-select: $val $important;
+}
+
+/**
+ * Generates prefixes for columns
+ * @param  {Number}  $val
+ * @param  {Boolean} $important: null
+ */
+@mixin columns($val, $important: null) {
+  @if $important {
+    $important: !important;
+  }
+
+  -webkit-columns: $val $important;
+  columns: $val $important;
+}
+
+/**
+ * Generates prefixes for linear-gradient
+ * NOTE: $top param can be replaced by $important param for shorthand use
+ * @param  {Color}      $top-color
+ * @param  {Color}      $bottom-color
+ * @param  {Percentage} $top:       0%
+ * @param  {Percentage} $bottom:    100%
+ * @param  {Bool}       $important: null
+ */
+@mixin linear-gradient($top-color, $bottom-color, $top: 0%, $bottom: 100%, $important: null) {
+  // keep trace of the default in case it is overriden by the !important shorthand
+  $top-default: 0%;
+
+  // check if we recieved a bool for $top param
+  // if so, we are specifying important instead
+  // linear-gradient(top, bottom, important)  {shorthand}
+  @if type-of($top) == bool {
+    $important: $top;
+    $top: $top-default;
+  }
+  @if $important {
+    $important: !important;
+  }
+
+  background: $top-color $important;
+  background: -webkit-gradient(linear, left top, left bottom, color-stop($top, $top-color), color-stop($bottom, $bottom-color)) $important;
+  background: linear-gradient(to bottom, $top-color $top, $bottom-color $bottom) $important;
+}

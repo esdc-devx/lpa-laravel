@@ -1,9 +1,23 @@
+// Vendors
+@import 'vendors/element-variables';
+// ElementUI Variables overrides
+@import '../../../node_modules/element-ui/packages/theme-chalk/src/index';
 
-// Fonts
-@import url("https://fonts.googleapis.com/css?family=Raleway:300,400,600");
+// Configuration and helpers
+@import 'abstracts/vars';
+@import 'abstracts/functions';
+@import 'abstracts/mixins/prefixers';
+@import 'abstracts/mixins/helpers';
+@import 'abstracts/mixins/breakpoints';
+@import 'abstracts/transitions';
+@import 'abstracts/mixins/shapes';
 
-// Variables
-@import "variables";
+// Base stuff
+@import 'base/icons';
+@import 'base/general';
+// @import 'base/fonts';
+@import 'base/typography';
+@import 'base/helpers';
 
-// Bootstrap
-@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+// Layout-related sections
+// if any...

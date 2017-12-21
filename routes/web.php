@@ -11,10 +11,17 @@
 |
 */
 
+
 Route::get('/', function () {
-    dd('Welcome, ' . Auth::user()->name);
+    return view('app');
 })->middleware('auth');
 
-//Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Auth::routes();
+
+// Vue
+Route::any('{all}', function () {
+    return view('app');
+})
+->where(['all' => '.*']);

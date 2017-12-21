@@ -1,0 +1,90 @@
+// Pop
+.pop-enter-active, .pop-leave-active {
+  transition: transform 0.3s ease;
+  transform: scale(1);
+}
+.pop-enter, .pop-leave-to {
+  transition: transform 0.3s ease;
+  transform: scale(0);
+}
+
+// Slide
+.slide-enter-active, .slide-leave-active {
+  animation-name: slideDown;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+}
+.slide-enter, .slide-leave-to {
+  animation-name: slideDown;
+  animation-direction: reverse;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+}
+
+.slide-right-leave-active {
+  animation-name: slideRight;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+}
+
+// Swipe
+.swipe-enter-active {
+  animation-name: swipeEnter;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+}
+.swipe-leave-active {
+  animation-name: swipeLeave;
+  animation-duration: 0.5s;
+  animation-timing-function: ease;
+}
+
+// Fade
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .2s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+}
+
+@keyframes slideDown {
+  0% {
+    transform: translateY(-100%);
+    position: relative;
+    z-index: -1;
+  }
+  100% {
+    transform: translateY(0%);
+    z-index: 0;
+  }
+}
+
+// Swipe
+@keyframes swipeLeave {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@keyframes swipeEnter {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+// Slide Right
+@keyframes slideRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+}
