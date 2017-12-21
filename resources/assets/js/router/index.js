@@ -8,6 +8,8 @@ import ProjectEdit from "../views/project-edit.vue";
 import UserList from "../views/user-list.vue";
 import UserCreate from "../views/user-create.vue";
 
+import NotFound from "../views/errors/not-found.vue";
+
 import store from "../store.js";
 
 Vue.use(Router);
@@ -106,6 +108,11 @@ const routes = [
     name: "user-create",
     component: UserCreate,
     beforeEnter: requireAuth
+  },
+  // serves as a 404 handler
+  {
+    path: '*',
+    component: NotFound,
   }
 ];
 

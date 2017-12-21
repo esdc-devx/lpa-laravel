@@ -1,11 +1,14 @@
 <template>
-  <div><p>Not Found</p></div>
+  <div>
+    <p>Not Found</p>
+    <router-link to="/">Back to Home page</router-link>
+  </div>
 </template>
 
 <script>
 export default {
 
-  name: '404',
+  name: 'not-found',
 
   data () {
     return {

@@ -16190,9 +16190,9 @@ module.exports = Component.exports
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(226);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_learning_projects_js__ = __webpack_require__(227);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_users_js__ = __webpack_require__(230);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_vuex__ = __webpack_require__(231);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__modules_learning_projects_js__ = __webpack_require__(232);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__modules_users_js__ = __webpack_require__(235);
 /*
 |-------------------------------------------------------------------------------
 | VUEX store.js
@@ -16256,7 +16256,7 @@ var LPA_CONFIG = {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(82);
-module.exports = __webpack_require__(234);
+module.exports = __webpack_require__(239);
 
 
 /***/ }),
@@ -16277,7 +16277,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_element_ui_lib_locale_lang_en___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_element_ui_lib_locale_lang_en__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__router__ = __webpack_require__(190);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__store_js__ = __webpack_require__(79);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(232);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash__ = __webpack_require__(237);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_lodash___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_lodash__);
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -57916,7 +57916,11 @@ exports.default = {
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__views_user_list_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__views_user_list_vue__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_user_create_vue__ = __webpack_require__(221);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__views_user_create_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7__views_user_create_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__store_js__ = __webpack_require__(79);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_errors_not_found_vue__ = __webpack_require__(226);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__views_errors_not_found_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_8__views_errors_not_found_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__store_js__ = __webpack_require__(79);
+
+
 
 
 
@@ -57943,13 +57947,13 @@ function requireAuth(to, from, next) {
       If the user has been loaded determine where we should
       send the user.
     */
-    if (__WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].getters.getUserLoadStatus() == 2) {
+    if (__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus() == 2) {
       /*
         If the user is not empty, that means there's a user
         authenticated we allow them to continue. Otherwise, we
         send the user back to the login page.
       */
-      if (__WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].getters.getUser != "") {
+      if (__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUser != "") {
         console.log('LOGGED IN');
         next();
       } else {
@@ -57965,18 +57969,18 @@ function requireAuth(to, from, next) {
   /*
     Confirms the user has been loaded
   */
-  if (__WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].getters.getUserLoadStatus != 2) {
+  if (__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus != 2) {
     /*
       If not, load the user
     */
-    __WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].dispatch("loadUser");
+    __WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].dispatch("loadUser");
 
     /*
       Watch for the user to be loaded. When it's finished, then
       we proceed.
     */
-    __WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].watch(__WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].getters.getUserLoadStatus, function () {
-      if (__WEBPACK_IMPORTED_MODULE_8__store_js__["a" /* default */].getters.getUserLoadStatus() == 2) {
+    __WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].watch(__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus, function () {
+      if (__WEBPACK_IMPORTED_MODULE_9__store_js__["a" /* default */].getters.getUserLoadStatus() == 2) {
         proceed();
       }
     });
@@ -58018,6 +58022,11 @@ var routes = [{
   name: "user-create",
   component: __WEBPACK_IMPORTED_MODULE_7__views_user_create_vue___default.a,
   beforeEnter: requireAuth
+},
+// serves as a 404 handler
+{
+  path: '*',
+  component: __WEBPACK_IMPORTED_MODULE_8__views_errors_not_found_vue___default.a
 }];
 
 /* harmony default export */ __webpack_exports__["a"] = (new __WEBPACK_IMPORTED_MODULE_1_vue_router__["a" /* default */]({
@@ -62828,6 +62837,150 @@ if (false) {
 
 /***/ }),
 /* 226 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(227)
+}
+var normalizeComponent = __webpack_require__(6)
+/* script */
+var __vue_script__ = __webpack_require__(229)
+/* template */
+var __vue_template__ = __webpack_require__(230)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-1b5ab944"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources\\assets\\js\\views\\errors\\not-found.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-1b5ab944", Component.options)
+  } else {
+    hotAPI.reload("data-v-1b5ab944", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 227 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(228);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(5)("25583190", content, false);
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1b5ab944\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./not-found.vue", function() {
+     var newContent = require("!!../../../../../node_modules/css-loader/index.js!../../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-1b5ab944\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../../node_modules/sass-loader/lib/loader.js!../../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0&bustCache!./not-found.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 228 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(4)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, "", ""]);
+
+// exports
+
+
+/***/ }),
+/* 229 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+
+  name: 'not-found',
+
+  data: function data() {
+    return {};
+  }
+});
+
+/***/ }),
+/* 230 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c("p", [_vm._v("Not Found")]),
+      _vm._v(" "),
+      _c("router-link", { attrs: { to: "home" } }, [
+        _vm._v("Back to Home page")
+      ])
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-1b5ab944", module.exports)
+  }
+}
+
+/***/ }),
+/* 231 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -63772,12 +63925,12 @@ var index_esm = {
 
 
 /***/ }),
-/* 227 */
+/* 232 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return learningProjects; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_learning_projects_js__ = __webpack_require__(228);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_learning_projects_js__ = __webpack_require__(233);
 /*
 |-------------------------------------------------------------------------------
 | VUEX modules/learning-projects.js
@@ -63861,12 +64014,12 @@ var learningProjects = {
 };
 
 /***/ }),
-/* 228 */
+/* 233 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__config_js__ = __webpack_require__(80);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__fake_data_json__ = __webpack_require__(229);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__fake_data_json__ = __webpack_require__(234);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__fake_data_json___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__fake_data_json__);
 
 
@@ -63899,18 +64052,18 @@ var learningProjects = {
 });
 
 /***/ }),
-/* 229 */
+/* 234 */
 /***/ (function(module, exports) {
 
 module.exports = [{"id":1,"name":"Some Project 1","group":"Some group 1"},{"id":2,"name":"Some Project 2","group":"Some group 2"},{"id":3,"name":"Some Project 3","group":"Some group 3"},{"id":4,"name":"Some Project 4","group":"Some group 4"},{"id":5,"name":"Some Project 5","group":"Some group 5"},{"id":6,"name":"Some Project 6","group":"Some group 6"},{"id":7,"name":"Some Project 7","group":"Some group 7"},{"id":8,"name":"Some Project 8","group":"Some group 8"},{"id":9,"name":"Some Project 9","group":"Some group 9"},{"id":10,"name":"Some Project 10","group":"Some group 10"}]
 
 /***/ }),
-/* 230 */
+/* 235 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return users; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_js__ = __webpack_require__(231);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__api_user_js__ = __webpack_require__(236);
 /*
 |-------------------------------------------------------------------------------
 | VUEX modules/users.js
@@ -64069,7 +64222,7 @@ var users = {
 };
 
 /***/ }),
-/* 231 */
+/* 236 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -64096,7 +64249,7 @@ var users = {
 });
 
 /***/ }),
-/* 232 */
+/* 237 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -81185,10 +81338,10 @@ var users = {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(29), __webpack_require__(233)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(29), __webpack_require__(238)(module)))
 
 /***/ }),
-/* 233 */
+/* 238 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -81216,7 +81369,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 234 */
+/* 239 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
