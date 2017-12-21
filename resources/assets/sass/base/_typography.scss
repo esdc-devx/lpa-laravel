@@ -1,0 +1,82 @@
+/**
+ * Fluid Typography
+ * @author: https://codepen.io/depone/pen/pEbOVm
+ */
+
+// Units
+$baseline: 1rem;
+$minScreen: 80rem;   // 1280px
+$maxScreen: 120rem;  // 1900px
+$minFont: 0.8rem;
+$maxFont: 1.5rem;
+
+$h1: 2rem;
+$h2: 1.75rem;
+$h3: 1.5rem;
+$h4: 1.25rem;
+$h5: 1rem;
+
+// Mixin for fluid type
+// Usage: @include fluid-type(font-size, $minScreen, $maxScreen, $minFont, $maxFont);
+@mixin fluid-type($properties, $min-vw, $max-vw, $min-value, $max-value) {
+  & {
+    @each $property in $properties {
+      #{$property}: $min-value;
+    }
+    // changed media-query to use em
+    @media screen and (min-width: (($min-vw / 1rem) * 1em)) {
+      @each $property in $properties {
+        #{$property}: calc(#{$min-value} + #{strip-unit($max-value - $min-value)} * ((100vw - #{$min-vw}) / #{strip-unit($max-vw - $min-vw)}));
+      }
+    }
+    // changed media-query to use em
+    @media screen and (min-width: (($max-vw / 1rem) * 1em)) {
+      @each $property in $properties {
+        #{$property}: $max-value;
+      }
+    }
+  }
+}
+
+@function strip-unit($value) {
+  @return $value / ($value * 0 + 1);
+}
+
+// add mixin to keep code DRY
+// Usage: @include margin-top($line-height);
+@mixin margin-top($value) {
+  margin-top: calc((#{$baseline} - #{$value}) + #{$baseline});
+}
+
+html {
+  @include fluid-type(font-size, $minScreen, $maxScreen, $minFont, $maxFont);
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  color: $--color-text-primary;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 700;
+  margin-bottom: $baseline;
+}
+
+h1 {
+  @include margin-top($h1);
+  font-size: $h1;
+  line-height: $h1;
+}
+
+h2 {
+  @include margin-top($h2);
+  font-size: $h2;
+  line-height: $h2;
+}
+
+p {
+  line-height: $baseline;
+  margin-bottom: $baseline;
+}

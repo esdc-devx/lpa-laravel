@@ -1,0 +1,86 @@
+//Taken from: https://github.com/digitaledgeit/sass-breakpoints
+
+$breakpoints: (
+  'xxsmall':  479px,
+  'xsmall':   480px,
+  'small':    768px,
+  'medium':   992px,
+  'large':    1200px,
+  'xlarge':   1600px,
+  'xxlarge':  1920px
+);
+
+/**
+ * breakpoint lower-than
+ * @param  {Map property} $to - Maximum width size minus 1
+ */
+@mixin breakpoint-lt($to) {
+  @media (max-width: map-get($breakpoints, $to) - 1) {
+    @content;
+  }
+}
+
+/**
+ * breakpoint lower-than-equal
+ * @param  {Map property} $to - Maximum width size
+ */
+@mixin breakpoint-lte($to) {
+  @media (max-width: map-get($breakpoints, $to)) {
+    @content;
+  }
+}
+
+/**
+ * breakpoint greater-than
+ * @param  {Map property} $to - Minimum width size plus 1
+ */
+@mixin breakpoint-gt($from) {
+  @media (min-width: map-get($breakpoints, $from) + 1) {
+    @content;
+  }
+}
+
+/**
+ * breakpoint greater-than-equal
+ * @param  {Map property} $to - Minimum width size
+ */
+@mixin breakpoint-gte($from) {
+  @media (min-width: map-get($breakpoints, $from)) {
+    @content;
+  }
+}
+
+/**
+ * breakpoint from size to size
+ * @param  {Map property} $from - Minimum width size
+ * @param  {Map property} $to   - Maximum width size
+ */
+@mixin breakpoint-between($from, $to) {
+  @media (min-width: map-get($breakpoints, $from)) and (max-width: map-get($breakpoints, $to)) {
+    @content;
+  }
+}
+
+/**
+ * breakpoint from size to size (shorthand)
+ * @param  {Map property} $from      - Minimum width size
+ * @param  {Map property} $to:  null - Maximum width size
+ */
+@mixin breakpoint($from, $to: null) {
+  // if both params are provided, use between mixin
+  @if ($from and $to) {
+    @include breakpoint-between($from, $to) {
+      @content;
+    }
+  }
+  // if only $from param is provided, use greater-than-equal
+  @else if ($from) {
+    @include breakpoint-gte($from) {
+      @content;
+    }
+  }
+  // if no params are provided, well whatdoyoudo...just output the content
+  @else {
+    @content;
+  }
+}

@@ -1,0 +1,62 @@
+// Temporary stuff to be classified or re-organized.
+// Used in order to separate 'quick'n'easy' fixes when time is missing.
+// This file should be emptied asap. Use it wisely.
+
+
+// REMOVE ME: To change by client for more-info-links
+// Program Icons
+div.csps-program p.program {
+  &-course,
+  &-video,
+  &-jobaid {
+    position: relative;
+    padding-left: 24px;
+    &:before {
+      @include size($icon-size);
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 0px;
+    }
+  }
+  &-course:before {
+    $svg: get-icon(course-info);
+    background: url($svg) no-repeat;
+  }
+  &-video:before {
+    $svg: get-icon(video);
+    background: url($svg) no-repeat;
+  }
+  &-jobaid:before {
+    $svg: get-icon(job-aids);
+    background: url($svg) no-repeat;
+  }
+}
+// REMOVE ME: To change by client
+// Already taken care of by generic icons styling
+div.csps-program ul.topic-pages li:before,
+div.csps-program a.topic-pages:before {
+  content: '';
+  position: absolute;
+  left: 0px;
+
+  $svg: get-icon(topic-page);
+  background: url($svg) no-repeat;
+}
+div.csps-program ul.topic-pages li {
+  position: relative;
+  padding-left: 24px;
+  &:before {
+    @include size($icon-size);
+    top: 4px;
+  }
+}
+div.csps-program a.topic-pages {
+  position: relative;
+  padding-left: 24px;
+  margin-left: 4px;
+  &:before {
+    @include size($icon-size);
+    top: 0px;
+  }
+}

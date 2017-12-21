@@ -1,0 +1,93 @@
+/**
+ * Returns the opposite direction of each direction in a list
+ * @author Hugo Giraudel
+ * @param {List} $directions - List of initial directions
+ * @return {List} - List of opposite directions
+ */
+@function opposite-direction($directions) {
+  $opposite-directions: ();
+  $direction-map: (
+    'top':    'bottom',
+    'right':  'left',
+    'bottom': 'top',
+    'left':   'right',
+    'center': 'center',
+    'ltr':    'rtl',
+    'rtl':    'ltr'
+  );
+
+  @each $direction in $directions {
+    $direction: to-lower-case($direction);
+
+    @if map-has-key($direction-map, $direction) {
+      $opposite-directions: append($opposite-directions, unquote(map-get($direction-map, $direction)));
+    } @else {
+      @warn 'No opposite direction can be found for `#{$direction}`. Direction omitted.';
+    }
+  }
+
+  @return $opposite-directions;
+}
+
+/**
+ * String Replace
+ * https://gist.github.com/jonathantneal/d0460e5c2d5d7f9bc5e6
+ * @param {String} $string - Subject to replace
+ * @param {String} $search - String to search in subject
+ * @param {String} $replace - String to replace in Subject
+ * @return {String} - Replaced string
+ */
+@function str-replace($string, $search, $replace: '') {
+  @if type-of($string) != string {
+    @error '`#{$string}` is not a string for `str-replace`';
+    @return null;
+  }
+  @if type-of($search) != string {
+    @error '`#{$search}` is not a string for `str-replace`';
+    @return null;
+  }
+  @if type-of($replace) != string {
+    @error '`#{$replace}` is not a string for `str-replace`';
+    @return null;
+  }
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+/**
+ * Gets best color saturation from background-color
+ * @param  {Color} $bg-color
+ * @return {Color}
+ */
+@function get-text-color($bg-color) {
+  @if type-of($bg-color) != color {
+    @error '`#{$bg-color}` is not a color for `get-text-color`';
+    @return null;
+  }
+  @if lightness($bg-color) > 50 {
+    // Lighter background, return dark color
+    @return #000000;
+  } @else {
+    // Darker background, return light color
+    @return #ffffff;
+  }
+}
+
+/**
+ * Generates the z-index based on a list of known component that have set z-indexes
+ * @param  {String} $name - Name of the component
+ * @return {Number} - z-index from map $z-indexes
+ */
+@function z-index($name) {
+  @if map-has-key($z-indexes, $name) {
+    @return map-get($z-indexes, $name);
+  } @else {
+    @warn 'There is no item "#{$name}" in this list; choose one of: #{$z-indexes}';
+    @return null;
+  }
+}
