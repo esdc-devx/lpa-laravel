@@ -51,7 +51,7 @@ axios.interceptors.response.use((response) => response, (error) => {
 
   } else if (value.status === 401) {
     console.log('Access denied.', value);
-    // window.location.href = "/login";
+    window.location.href = "/login";
   }
 
   return Promise.reject(error);
@@ -66,7 +66,7 @@ import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en';
 
 import router from "./router";
-import store from './store.js';
+import store from './store/index.js';
 
 import _ from "lodash";
 

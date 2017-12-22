@@ -19,11 +19,11 @@
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submit('modal.form')">Confirm</el-button>
-        <el-button @click="closeCreateLearningProjectModal()">Cancel</el-button>
-      </el-form-item>
     </el-form>
+    <span slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="submit('modal.form')">Confirm</el-button>
+      <el-button @click="closeCreateLearningProjectModal()">Cancel</el-button>
+    </span>
   </el-dialog>
 </template>
 
@@ -121,5 +121,10 @@
   .el-dialog__title {
     text-transform: uppercase;
     font-weight: bold;
+  }
+
+  .el-select {
+    // fixes issue in IE11
+    float: left;
   }
 </style>

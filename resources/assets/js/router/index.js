@@ -10,7 +10,7 @@ import UserCreate from "../views/user-create.vue";
 
 import NotFound from "../views/errors/not-found.vue";
 
-import store from "../store.js";
+import store from "../store/index.js";
 
 Vue.use(Router);
 
@@ -40,7 +40,7 @@ function requireAuth(to, from, next) {
         // we need to redirect to the login page since
         // we need a new csrf_token
         console.log('redirecting...');
-        // window.location.href = "/login";
+        window.location.href = "/login";
       }
     }
   }
@@ -106,6 +106,7 @@ const routes = [
   {
     path: '*',
     component: NotFound,
+    beforeEnter: requireAuth
   }
 ];
 

@@ -24,4 +24,5 @@ Auth::routes();
 Route::any('{all}', function () {
     return view('app');
 })
+->middleware('auth')
 ->where(['all' => '.*']);

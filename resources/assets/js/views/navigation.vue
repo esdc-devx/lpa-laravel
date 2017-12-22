@@ -7,7 +7,7 @@
         <el-menu-item index="/users"><a href="#" @click.prevent>User List</a></el-menu-item>
       </el-submenu>
       <el-submenu index="1">
-        <template slot="title">User Name</template>
+        <template slot="title">{{ $store.state.users.user.name }}</template>
         <el-menu-item index="/profile"><a href="#" @click.prevent>My Profile</a></el-menu-item>
         <el-menu-item index="/logout"><a href="/logout">Logout</a></el-menu-item>
       </el-submenu>
