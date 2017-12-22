@@ -13,6 +13,25 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:api')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    Route::get('/locales', function (Request $request) {
+        $languages = [
+            'en' => [], 'fr' => [],
+        ];
+
+        foreach ($languages as $language => $strings) {
+            $files = glob(resource_path('lang/' . $language . '/*.php'));
+
+            foreach ($files as $file) {
+                $name = basename($file, '.php');
+                $languages[$language][$name] = require $file;
+            }
+        }
+
+        return $languages;
+    });
 });
