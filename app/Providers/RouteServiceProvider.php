@@ -56,7 +56,7 @@ class RouteServiceProvider extends ServiceProvider
         $this->app->setLocale($locale);
 
         Route::prefix($locale)
-             ->middleware('web')
+             ->middleware('web', 'language')
              ->namespace($this->namespace)
              ->group(base_path('routes/web.php'));
     }
