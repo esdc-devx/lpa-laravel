@@ -1,12 +1,13 @@
 import { LPA_CONFIG } from '../config.js';
+import axios from '../interceptor';
 
 // REMOVE ME
-import data from "./fake-data.json";
+import data from "./fake-project-list.json";
 
 export default {
   getLearningProjects() {
     // REMOVE ME
-    return Promise.resolve({data});
+    return Promise.resolve({ data });
     // return axios.get(`${LPA_CONFIG.API_URL}/learning-projects`);
   },
 

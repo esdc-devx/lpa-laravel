@@ -54,7 +54,6 @@
 </template>
 
 <script>
-  import axios from 'axios';
   import { EventBus } from '../components/event-bus.js';
   import LearningProjectCreate from '../views/learning-project-create';
 

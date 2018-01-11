@@ -35,3 +35,22 @@ Route::middleware('auth:api')->group(function () {
         return $languages;
     });
 });
+
+Route::middleware('auth:api')->get('/locales', function (Request $request) {
+    return Cache::rememberForever('strings', function () {
+        $languages = [
+            'en' => [], 'fr' => [],
+        ];
+
+        foreach ($languages as $language => $strings) {
+            $files = glob(resource_path('lang/' . $language . '/*.php'));
+
+            foreach ($files as $file) {
+                $name = basename($file, '.php');
+                $languages[$language][$name] = require $file;
+            }
+        }
+
+        return $languages;
+    });
+});

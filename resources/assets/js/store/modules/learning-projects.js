@@ -1,10 +1,3 @@
-/*
-|-------------------------------------------------------------------------------
-| VUEX modules/learning-projects.js
-|-------------------------------------------------------------------------------
-| The Vuex data store for the learning-projects
-*/
-
 /**
  * status = 1 -> Loading has started
  * status = 2 -> Loading completed successfully
@@ -14,14 +7,31 @@
 import LearningProjectsAPI from '../../api/learning-projects.js';
 
 export const learningProjects = {
-  // Data to track throughout the APP
   state: {
     learningProjects: [],
     learningProjectsLoadStatus: 0,
     learningProject: {},
     learningProjectLoadStatus: 0
   },
-  // Retrieve data from API
+
+  getters: {
+    getLearningProjectsLoadStatus(state) {
+      return state.learningProjectsLoadStatus;
+    },
+
+    getLearningProjects(state) {
+      return state.learningProjects;
+    },
+
+    getLearningProjectLoadStatus(state) {
+      return state.learningProjectLoadStatus;
+    },
+
+    getLearningProject(state) {
+      return state.learningProject;
+    }
+  },
+
   actions: {
     loadLearningProjects({ commit }) {
       commit('setLearningProjectsLoadStatus', 1);
@@ -49,7 +59,6 @@ export const learningProjects = {
         });
     }
   },
-  // Mutations to set the data back and forth
   mutations: {
     setLearningProjectsLoadStatus(state, status) {
       state.learningProjectsLoadStatus = status;
@@ -65,23 +74,6 @@ export const learningProjects = {
 
     setLearningProject(state, learningProject) {
       state.learningProject = learningProject;
-    }
-  },
-  getters: {
-    getLearningProjectsLoadStatus(state) {
-      return state.learningProjectsLoadStatus;
-    },
-
-    getLearningProjects(state) {
-      return state.learningProjects;
-    },
-
-    getLearningProjectLoadStatus(state) {
-      return state.learningProjectLoadStatus;
-    },
-
-    getLearningProject(state) {
-      return state.learningProject;
     }
   }
 };

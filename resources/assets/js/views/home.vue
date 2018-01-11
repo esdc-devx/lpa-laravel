@@ -49,12 +49,16 @@
       </el-col>
     </el-row>
 
+    <el-date-picker
+      v-model="value1"
+      type="date">
+    </el-date-picker>
+
     <learning-project-create :show="showCreateLearningProjectModal" @close="showCreateLearningProjectModal = false"></learning-project-create>
   </div>
 </template>
 
 <script>
-  import { EventBus } from '../components/event-bus.js';
   import LearningProjectCreate from '../views/learning-project-create';
 
   export default {
