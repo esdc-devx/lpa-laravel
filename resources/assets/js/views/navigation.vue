@@ -29,7 +29,7 @@
     </el-menu>
 
     <el-menu :default-active="$route.fullPath" background-color="#e3e3e3" text-color="#222" active-text-color="#222" class="user-menu" mode="horizontal" @select="handleSelect" router>
-      <el-menu-item :index="'/'+$store.getters.getLanguage+'/'"><a href="#" @click.prevent>{{ $trans('menu.home') }}</a></el-menu-item>
+      <el-menu-item :index="'/'+$store.getters.getLanguage+'/'"><a href="#" @click.prevent>{{ trans('menu.home') }}</a></el-menu-item>
       <el-menu-item :index="'/'+$store.getters.getLanguage+'/dashboard'" class="disabled"><a href="#" @click.prevent>Dashboard</a></el-menu-item>
       <el-menu-item :index="'/'+$store.getters.getLanguage+'/projects'"><a href="#" @click.prevent>Projects</a></el-menu-item>
       <el-menu-item :index="'/'+$store.getters.getLanguage+'/learning-products'"><a href="#" @click.prevent>Learning Products</a></el-menu-item>

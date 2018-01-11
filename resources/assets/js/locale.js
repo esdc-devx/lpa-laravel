@@ -11,7 +11,7 @@ Vue.use(VueI18n);
  * @param  {Object} args - Contains the values to map in the string
  * @return {String}        Return the formatted string
  */
-Vue.prototype.$trans = (string, args) => {
+Vue.prototype.trans = (string, args) => {
   let value = _.get(window.i18n.messages[window.i18n.locale], string);
 
   _.eachRight(args, (paramVal, paramKey) => {

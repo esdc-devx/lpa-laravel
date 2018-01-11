@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ $trans('home.welcome', { name: $store.getters.getUser.name }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('home.welcome', { name: $store.getters.getUser.name }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="18"><hr></el-col>
