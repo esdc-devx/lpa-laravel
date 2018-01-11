@@ -1,12 +1,12 @@
 <template>
   <div class="content">
-    <el-row type="flex"  justify="center">
-      <el-col :span="24"><h2>What would you like to do today?</h2></el-col>
+    <el-row type="flex" justify="center">
+      <el-col :span="24"><h2>{{ $trans('home.welcome', { name: $store.getters.getUser.name }) }}</h2></el-col>
     </el-row>
-    <el-row type="flex"  justify="center">
+    <el-row type="flex" justify="center">
       <el-col :span="18"><hr></el-col>
     </el-row>
-    <el-row type="flex"  justify="center">
+    <el-row type="flex" justify="center">
       <el-col :span="24">
         <p>
           Please select one of the tasks below to continue or navigate LPA using the menu above.
@@ -50,7 +50,6 @@
     </el-row>
 
     <el-date-picker
-      v-model="value1"
       type="date">
     </el-date-picker>
 
@@ -70,11 +69,7 @@
       }
     },
 
-    components: { LearningProjectCreate },
-
-    methods: {
-
-    }
+    components: { LearningProjectCreate }
   };
 </script>
 

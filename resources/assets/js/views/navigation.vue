@@ -9,7 +9,11 @@
       <el-submenu index="1">
         <template slot="title">{{ username }}</template>
         <el-menu-item :index="'/'+$store.getters.getLanguage+'/profile'"><a href="#" @click.prevent>My Profile</a></el-menu-item>
-        <el-menu-item :index="'/'+$store.getters.getLanguage+'/logout'"><a href="/logout">Logout</a></el-menu-item>
+        <!--
+          normal list item here as we need to send the user
+          directly to the logout page without using the router
+        -->
+        <li role="menuitem" class="el-menu-item"><a :href="'/'+$store.getters.getLanguage+'/logout'">Logout</a></li>
       </el-submenu>
       <el-submenu index="2" class="disabled">
         <template slot="title">LPA Profile: Some dynamic Organization</template>
@@ -25,7 +29,7 @@
     </el-menu>
 
     <el-menu :default-active="$route.fullPath" background-color="#e3e3e3" text-color="#222" active-text-color="#222" class="user-menu" mode="horizontal" @select="handleSelect" router>
-      <el-menu-item :index="'/'+$store.getters.getLanguage+'/'"><a href="#" @click.prevent>Home</a></el-menu-item>
+      <el-menu-item :index="'/'+$store.getters.getLanguage+'/'"><a href="#" @click.prevent>{{ $trans('menu.home') }}</a></el-menu-item>
       <el-menu-item :index="'/'+$store.getters.getLanguage+'/dashboard'" class="disabled"><a href="#" @click.prevent>Dashboard</a></el-menu-item>
       <el-menu-item :index="'/'+$store.getters.getLanguage+'/projects'"><a href="#" @click.prevent>Projects</a></el-menu-item>
       <el-menu-item :index="'/'+$store.getters.getLanguage+'/learning-products'"><a href="#" @click.prevent>Learning Products</a></el-menu-item>
@@ -45,7 +49,7 @@
     }),
 
     data() {
-      let currentLang = this.$store.getters.getLanguage || localStorage.language || navigator.language || 'en';
+      let currentLang = this.$store.getters.getLanguage;
       let toggledLang = this.getSwitchedLang(currentLang);
       return {
         currentLang,
@@ -74,9 +78,15 @@
         let newLang = this.getSwitchedLang(storeLang);
         const route = Object.assign({}, this.$route);
 
+        // change the locale of the translation plugin
         this.$i18n.locale = newLang;
+        // change the language
+        // that will be used to determine the dislayed lang
         this.currentLang = newLang;
 
+        // apply lang to route
+        // so that we can 'refresh' the current route
+        // with the new language
         route.params.lang = newLang;
         this.$router.push(route);
       }
@@ -91,6 +101,10 @@
     justify-content: flex-end;
     li {
       padding: 0;
+      &.el-submenu li {
+        color: #FFF;
+        background-color: rgb(33, 33, 33);
+      }
       > a {
         padding: 0 20px;
         height: 100%;

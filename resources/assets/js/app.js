@@ -1,8 +1,13 @@
 import './bootstrap';
 
+// Import libs
 import Vue from "vue";
 import VueI18n from 'vue-i18n';
+import _ from 'lodash';
+import { sync } from 'vuex-router-sync';
+
 import App from "./app.vue";
+
 import { LPA_CONFIG } from './config.js';
 
 // Import Element UI
@@ -13,23 +18,15 @@ import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
 import router from "./router";
 import store from './store/';
-import { sync } from 'vuex-router-sync';
 
 import { loadLanguages } from './locale';
-
-Vue.prototype.trans = (string, args) => {
-  let value = _.get(window.i18n, string);
-
-  _.eachRight(args, (paramVal, paramKey) => {
-      value = _.replace(value, `:${paramKey}`, paramVal);
-  });
-  return value;
-};
 
 sync(store, router);
 
 loadLanguages().then(data => {
-  let i18n = new VueI18n({
+  data.en = data.en || {};
+  data.fr = data.fr || {};
+  window.i18n = new VueI18n({
     locale: store.getters.getLanguage,
     messages: {
       en: Object.assign(data.en, elementUILocaleEN),
@@ -37,12 +34,9 @@ loadLanguages().then(data => {
     }
   });
 
-  // let elementUILang = store.getters.getLanguage === 'en' ? elementUILocaleEN : elementUILocaleFR;
-  // Vue.use(ElementUI, { elementUILang });
   Vue.use(ElementUI, {
     i18n: (key, value) => i18n.t(key, value)
   });
-
 
   new Vue({
     el: "app",

@@ -1,7 +1,6 @@
 import Vue from "vue";
 import axios from "axios";
 import * as types from "./mutations_types";
-import i18n from '../locale';
 
 import { LPA_CONFIG } from '../config.js';
 
@@ -49,6 +48,12 @@ export const mutations = {
     // if undefined
     lang = lang || state.language;
 
+    // make sure that when i18n is init,
+    // that we change its locale
+    // so that it affects ElementUI's locale
+    if (window.i18n) {
+      window.i18n.locale = lang;
+    }
     state.language = lang;
     localStorage.setItem("language", lang);
     axios.defaults.headers.common["Accept-Language"] = lang;

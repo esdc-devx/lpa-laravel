@@ -29,7 +29,7 @@ export const user = {
     },
 
     getUser(state) {
-      return state.user;
+      return state.info;
     }
   },
 

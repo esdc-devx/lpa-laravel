@@ -20,7 +20,7 @@ Vue.use(Router);
 function requireAuth(to, from, next) {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // Determines where we should send the user.
-    function proceed() {
+    let proceed = () => {
       // If the user has been loaded determine where we should
       // send the user.
       if (store.getters.getUserLoadStatus() === 2) {
@@ -28,29 +28,29 @@ function requireAuth(to, from, next) {
         // authenticated we allow them to continue. Otherwise, we
         // send the user back to the login page.
         if (store.getters.getUser !== "") {
-          console.log("LOGGED IN");
+          console.log("[router] LOGGED IN");
           next();
         } else {
           // user not authenticated
           // we need to redirect to the login page since
           // we need a new csrf_token
-          console.log("redirecting...");
+          console.log("[router] Redirecting...");
           window.location.href = "/login";
         }
       }
-    }
+    };
 
     // Confirms the user has been loaded
     if (store.getters.getUserLoadStatus() !== 2) {
       // If not, load the user
       store.dispatch("loadUser");
-      console.log('LOADING USER...');
+      console.log('[router] LOADING USER...');
 
       // Watch for the user to be loaded. When it's finished, then
       // we proceed.
       store.watch(store.getters.getUserLoadStatus, function() {
         if (store.getters.getUserLoadStatus() === 2) {
-          console.log("USER LOADED");
+          console.log("[router] USER LOADED");
           proceed();
         }
       });

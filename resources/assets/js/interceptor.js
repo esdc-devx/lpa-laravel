@@ -1,7 +1,7 @@
 import axios from "axios";
 import store from "./store/";
 
-//  Config
+// Config
 axios.defaults.timeout = 5000;
 
 // Authentication Interceptor
@@ -23,49 +23,20 @@ axios.interceptors.response.use((response) => response, (error) => {
 
   // } else if (value.status === 401 && value.config && value.config.renewToken) {
   if (value.status === 401 && value.config && value.config.renewToken) {
-    console.log('Could not reconnect.');
 
     if (error.message) {
       error.message = 'Could not reconnect. ' + error.message + '.';
     } else {
       error.message = 'Could not reconnect.';
     }
+    console.log('[interpretor] ' + error.message);
 
   } else if (value.status === 401) {
-    console.log('Access denied.', value);
+    console.log('[interpretor] Access denied.', value);
     window.location.href = "/login";
   }
 
   return Promise.reject(error);
 });
-
-// axios.interceptors.request.use(
-//   config => {
-//     let credential = store.state.credential;
-//     let isAuthorize = store.state.isAuthorize;
-//     if (credential && isAuthorize) {
-//       // config.headers.common["Authorization"] = "Bearer " + credential;
-//     }
-//     return config;
-//   },
-//   error => {
-//     console.group("[Axios][Interceptor] Request Error");
-//     console.log(error);
-//     console.groupEnd();
-//     return Promise.reject(error);
-//   }
-// );
-
-axios.interceptors.response.use(
-  data => {
-    return data;
-  },
-  error => {
-    console.group("[Axios][Interceptor] Response Error");
-    console.log(error);
-    console.groupEnd();
-    return Promise.reject(error);
-  }
-);
 
 export default axios;
