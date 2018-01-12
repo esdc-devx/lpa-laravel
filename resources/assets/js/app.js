@@ -3,7 +3,6 @@ import './bootstrap';
 // Import libs
 import Vue from "vue";
 import VueI18n from 'vue-i18n';
-import _ from 'lodash';
 import { sync } from 'vuex-router-sync';
 
 import App from "./app.vue";
