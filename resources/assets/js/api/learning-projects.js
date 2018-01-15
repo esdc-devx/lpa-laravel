@@ -1,4 +1,3 @@
-import { LPA_CONFIG } from '../config.js';
 import axios from '../interceptor';
 
 // REMOVE ME
@@ -12,11 +11,11 @@ export default {
   },
 
   getLearningProject(id) {
-    return axios.get(`${LPA_CONFIG.API_URL}/learning-projects/${id}`);
+    return axios.get('/learning-projects/${id}');
   },
 
   postLearningProject(name) {
-    return axios.post(`${LPA_CONFIG.API_URL}/learning-projects`,
+    return axios.post('/learning-projects',
       { name }
     );
   }

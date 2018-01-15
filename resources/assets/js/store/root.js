@@ -1,8 +1,6 @@
-import Vue from "vue";
-import axios from "axios";
-import * as types from "./mutations_types";
-
-import { LPA_CONFIG } from '../config.js';
+import Vue from 'vue';
+import axios from '../interceptor';
+import * as types from './mutations-types';
 
 export const state = {
   // since browser lang is based on locale-Country
@@ -26,7 +24,7 @@ export const actions = {
   },
   loadLanguages({ commit }, context) {
     return new Promise((resolve, reject) => {
-      axios.get(`${LPA_CONFIG.API_URL}/locales`)
+      axios.get('/locales')
         .then(response => {
             state.languages = response.data;
             commit(types.SET_LANGUAGE, context);
@@ -34,7 +32,6 @@ export const actions = {
           }
         )
         .catch(e => {
-          console.log(e);
           reject(e);
         });
     });
@@ -55,8 +52,8 @@ export const mutations = {
       window.i18n.locale = lang;
     }
     state.language = lang;
-    localStorage.setItem("language", lang);
-    axios.defaults.headers.common["Accept-Language"] = lang;
-    document.querySelector("html").setAttribute("lang", lang);
+    localStorage.setItem('language', lang);
+    axios.defaults.headers.common['Accept-Language'] = lang;
+    document.querySelector('html').setAttribute('lang', lang);
   }
 };

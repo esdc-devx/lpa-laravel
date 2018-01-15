@@ -1,13 +1,9 @@
-import './bootstrap';
-
 // Import libs
-import Vue from "vue";
+import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import { sync } from 'vuex-router-sync';
 
-import App from "./app.vue";
-
-import { LPA_CONFIG } from './config.js';
+import App from './app.vue';
 
 // Import Element UI
 import ElementUI from 'element-ui';
@@ -15,7 +11,7 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
-import router from "./router";
+import router from './router';
 import store from './store/';
 
 import { loadLanguages } from './locale';
@@ -38,11 +34,11 @@ loadLanguages().then(data => {
   });
 
   new Vue({
-    el: "app",
+    el: 'app',
     router,
     store,
     i18n,
-    template: "<app/>",
+    template: '<app/>',
     components: { App }
   });
 });

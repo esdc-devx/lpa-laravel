@@ -1,8 +1,8 @@
 // Adds the promise polyfill for IE 11
 import 'es6-promise/auto';
 
-import Vue from "vue";
-import Vuex from "vuex";
+import Vue from 'vue';
+import Vuex from 'vuex';
 
 // Root Scope of Vuex
 import { state, getters, actions, mutations } from './root';

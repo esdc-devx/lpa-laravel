@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import Vue from "vue";
-import VueI18n from "vue-i18n";
+import Vue from 'vue';
+import VueI18n from 'vue-i18n';
 import store from './store/';
 
 Vue.use(VueI18n);
@@ -13,7 +13,7 @@ Vue.use(VueI18n);
  * @return {String}        Return the formatted string
  */
 Vue.prototype.trans = (string, args) => {
-  let value = _.get(window.i18n.messages[window.i18n.locale], string);
+  let value = _.get(window.i18n.messages[window.i18n.locale], string, '');
 
   _.eachRight(args, (paramVal, paramKey) => {
       value = _.replace(value, `:${paramKey}`, paramVal);

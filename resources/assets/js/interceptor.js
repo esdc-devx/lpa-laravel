@@ -1,8 +1,19 @@
-import axios from "axios";
-import store from "./store/";
+import axios from 'axios';
+import store from './store/';
 
 // Config
+axios.defaults.baseURL = '/api';
 axios.defaults.timeout = 5000;
+axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+// Register the CSRF Token as a common header with Axios so that
+// all outgoing HTTP requests automatically have it attached. This is just
+// a simple convenience so we don't have to attach every token manually.
+let token = document.head.querySelector('meta[name="csrf-token"]');
+if (token) {
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
+} else {
+  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+}
 
 // Authentication Interceptor
 axios.interceptors.response.use((response) => response, (error) => {
@@ -10,14 +21,14 @@ axios.interceptors.response.use((response) => response, (error) => {
 
   // if (value.status === 401 && value.data.message === 'Expired JWT Token'
   //   && (!value.config || !value.config.renewToken)) {
-  //   console.log('Token JWT expiré. Reconnexion ...');
+  //   console.log('Expired JWT Token. Reconnecting ...');
 
   //   // renewToken performs authentication using username/password saved in sessionStorage/localStorage
   //   return this.renewToken().then(() => {
   //     error.config.baseURL = undefined; // baseURL is already present in url
   //     return this.axios.request(error.config);
   //   }).then((response) => {
-  //     console.log('Reconnecté !');
+  //     console.log('Reconnected !');
   //     return response;
   //   });
 
@@ -29,11 +40,8 @@ axios.interceptors.response.use((response) => response, (error) => {
     } else {
       error.message = 'Could not reconnect.';
     }
-    console.log('[interpretor] ' + error.message);
-
   } else if (value.status === 401) {
-    console.log('[interpretor] Access denied.', value);
-    window.location.href = "/login";
+    window.location.href = '/' + store.getters.getLanguage + '/login';
   }
 
   return Promise.reject(error);

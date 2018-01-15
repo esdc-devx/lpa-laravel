@@ -1,22 +1,10 @@
-/*
-|-------------------------------------------------------------------------------
-| VUEX modules/user.js
-|-------------------------------------------------------------------------------
-| The Vuex data store for the user
-*/
-
-/**
- * status = 1 -> Loading has started
- * status = 2 -> Loading completed successfully
- * status = 3 -> Loading completed unsuccessfully
- */
-
-import UserAPI from "../../api/user.js";
+import LoadStatus from '../load-status-constants';
+import UserAPI from '../../api/user.js';
 
 export const user = {
   state: {
     info: {},
-    userLoadStatus: 0
+    userLoadStatus: LoadStatus.NOT_LOADED
   },
 
   getters: {
@@ -35,30 +23,28 @@ export const user = {
 
   actions: {
     loadUser({ commit }) {
-      commit("setUserLoadStatus", 1);
+      commit('setUserLoadStatus', LoadStatus.LOADING_STARTED);
 
       UserAPI.getUser()
         .then(function(response) {
-          commit("setUser", response.data);
-          commit("setUserLoadStatus", 2);
+          commit('setUser', response.data);
+          commit('setUserLoadStatus', LoadStatus.LOADING_SUCCESS);
         })
         .catch(function() {
-          commit("setUser", {});
-          commit("setUserLoadStatus", 3);
+          commit('setUser', {});
+          commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
         });
     },
 
     login({ commit }, data) {
-      commit("setUserLoginStatus", 0);
+      commit('setUserLoginStatus', LoadStatus.NOT_LOADED);
 
       UserAPI.login(data)
         .then(response => {
-          commit("setUserLoginStatus", 2);
-          console.log('LOGGED IN', response);
+          commit('setUserLoginStatus', LoadStatus.LOADING_SUCCESS);
         })
         .catch((response) => {
-          commit("setUserLoginStatus", 3);
-          console.error('LOGIN: ERROR', response);
+          commit('setUserLoginStatus', LoadStatus.LOADING_FAILED);
         });
     }
   },

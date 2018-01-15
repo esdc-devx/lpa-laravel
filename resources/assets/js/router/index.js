@@ -1,16 +1,16 @@
-import Vue from "vue";
-import Router from "vue-router";
+import Vue from 'vue';
+import Router from 'vue-router';
 
-import Home from "../views/home.vue";
-import Profile from "../views/profile.vue";
-import ProjectList from "../views/project-list.vue";
-import ProjectEdit from "../views/project-edit.vue";
-import UserList from "../views/admin/user-list.vue";
-import UserCreate from "../views/admin/user-create.vue";
+import Home from '../views/home.vue';
+import Profile from '../views/profile.vue';
+import ProjectList from '../views/project-list.vue';
+import ProjectEdit from '../views/project-edit.vue';
+import UserList from '../views/admin/user-list.vue';
+import UserCreate from '../views/admin/user-create.vue';
 
-import NotFound from "../views/errors/not-found.vue";
+import NotFound from '../views/errors/not-found.vue';
 
-import store from "../store/";
+import store from '../store/';
 
 Vue.use(Router);
 
@@ -27,15 +27,13 @@ function requireAuth(to, from, next) {
         // If the user is not empty, that means there's a user
         // authenticated we allow them to continue. Otherwise, we
         // send the user back to the login page.
-        if (store.getters.getUser !== "") {
-          console.log("[router] LOGGED IN");
+        if (store.getters.getUser !== '') {
           next();
         } else {
           // user not authenticated
           // we need to redirect to the login page since
           // we need a new csrf_token
-          console.log("[router] Redirecting...");
-          window.location.href = "/login";
+          window.location.href = '/login';
         }
       }
     };
@@ -43,14 +41,12 @@ function requireAuth(to, from, next) {
     // Confirms the user has been loaded
     if (store.getters.getUserLoadStatus() !== 2) {
       // If not, load the user
-      store.dispatch("loadUser");
-      console.log('[router] LOADING USER...');
+      store.dispatch('loadUser');
 
       // Watch for the user to be loaded. When it's finished, then
       // we proceed.
       store.watch(store.getters.getUserLoadStatus, function() {
         if (store.getters.getUserLoadStatus() === 2) {
-          console.log("[router] USER LOADED");
           proceed();
         }
       });
@@ -64,47 +60,47 @@ function requireAuth(to, from, next) {
 const routes = [
   {
     path: '/:lang(en|fr)/',
-    name: "home",
+    name: 'home',
     component: Home,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: "/:lang/profile",
-    name: "profile",
+    path: '/:lang/profile',
+    name: 'profile',
     component: Profile,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: "/:lang/projects",
-    name: "projects",
+    path: '/:lang/projects',
+    name: 'projects',
     component: ProjectList,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: "/:lang/projects/edit/:id",
-    name: "project-edit",
+    path: '/:lang/projects/edit/:id',
+    name: 'project-edit',
     component: ProjectEdit,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: "/:lang/users",
-    name: "users",
+    path: '/:lang/users',
+    name: 'users',
     component: UserList,
     meta: {
       requiresAuth: true
     }
   },
   {
-    path: "/:lang/users/create",
-    name: "user-create",
+    path: '/:lang/users/create',
+    name: 'user-create',
     component: UserCreate,
     meta: {
       requiresAuth: true
@@ -112,7 +108,7 @@ const routes = [
   },
   // serves as a 404 handler
   {
-    path: "*",
+    path: '*',
     component: NotFound,
     meta: {
       requiresAuth: true
@@ -121,7 +117,7 @@ const routes = [
 ];
 const router = new Router({
   routes,
-  mode: "history"
+  mode: 'history'
 });
 
 //Router Guards
