@@ -1,72 +1,14 @@
-/*
-|-------------------------------------------------------------------------------
-| VUEX modules/learning-projects.js
-|-------------------------------------------------------------------------------
-| The Vuex data store for the learning-projects
-*/
-
-/**
- * status = 1 -> Loading has started
- * status = 2 -> Loading completed successfully
- * status = 3 -> Loading completed unsuccessfully
- */
-
+import LoadStatus from '../load-status-constants';
 import LearningProjectsAPI from '../../api/learning-projects.js';
 
 export const learningProjects = {
-  // Data to track throughout the APP
   state: {
     learningProjects: [],
-    learningProjectsLoadStatus: 0,
+    learningProjectsLoadStatus: LoadStatus.NOT_LOADED,
     learningProject: {},
-    learningProjectLoadStatus: 0
+    learningProjectLoadStatus: LoadStatus.NOT_LOADED
   },
-  // Retrieve data from API
-  actions: {
-    loadLearningProjects({ commit }) {
-      commit('setLearningProjectsLoadStatus', 1);
-      LearningProjectsAPI.getLearningProjects()
-        .then(function(response) {
-          commit('setLearningProjects', response.data);
-          commit('setLearningProjectsLoadStatus', 2);
-        })
-        .catch(function() {
-          commit('setLearningProjects', []);
-          commit('setLearningProjectsLoadStatus', 3);
-        });
-    },
 
-    loadLearningProject({ commit }, data) {
-      commit('setLearningProjectLoadStatus', 1);
-      LearningProjectsAPI.getLearningProject(data.id)
-        .then(function(response) {
-          commit('setLearningProject', response.data);
-          commit('setLearningProjectLoadStatus', 2);
-        })
-        .catch(function() {
-          commit('setLearningProject', {});
-          commit('setLearningProjectLoadStatus', 3);
-        });
-    }
-  },
-  // Mutations to set the data back and forth
-  mutations: {
-    setLearningProjectsLoadStatus(state, status) {
-      state.learningProjectsLoadStatus = status;
-    },
-
-    setLearningProjects(state, learningProjects) {
-      state.learningProjects = learningProjects;
-    },
-
-    setLearningProjectLoadStatus(state, status) {
-      state.learningProjectLoadStatus = status;
-    },
-
-    setLearningProject(state, learningProject) {
-      state.learningProject = learningProject;
-    }
-  },
   getters: {
     getLearningProjectsLoadStatus(state) {
       return state.learningProjectsLoadStatus;
@@ -82,6 +24,51 @@ export const learningProjects = {
 
     getLearningProject(state) {
       return state.learningProject;
+    }
+  },
+
+  actions: {
+    loadLearningProjects({ commit }) {
+      commit('setLearningProjectsLoadStatus', LoadStatus.LOADING_STARTED);
+      LearningProjectsAPI.getLearningProjects()
+        .then(function(response) {
+          commit('setLearningProjects', response.data);
+          commit('setLearningProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
+        })
+        .catch(function() {
+          commit('setLearningProjects', []);
+          commit('setLearningProjectsLoadStatus', LoadStatus.LOADING_FAILED);
+        });
+    },
+
+    loadLearningProject({ commit }, data) {
+      commit('setLearningProjectLoadStatus', LoadStatus.LOADING_STARTED);
+      LearningProjectsAPI.getLearningProject(data.id)
+        .then(function(response) {
+          commit('setLearningProject', response.data);
+          commit('setLearningProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
+        })
+        .catch(function() {
+          commit('setLearningProject', {});
+          commit('setLearningProjectLoadStatus', LoadStatus.LOADING_FAILED);
+        });
+    }
+  },
+  mutations: {
+    setLearningProjectsLoadStatus(state, status) {
+      state.learningProjectsLoadStatus = status;
+    },
+
+    setLearningProjects(state, learningProjects) {
+      state.learningProjects = learningProjects;
+    },
+
+    setLearningProjectLoadStatus(state, status) {
+      state.learningProjectLoadStatus = status;
+    },
+
+    setLearningProject(state, learningProject) {
+      state.learningProject = learningProject;
     }
   }
 };

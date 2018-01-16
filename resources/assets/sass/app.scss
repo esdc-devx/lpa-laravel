@@ -1,6 +1,7 @@
 // Vendors
-@import 'vendors/element-variables';
 // ElementUI Variables overrides
+@import 'vendors/element-variables';
+// ElementUI Theme
 @import '../../../node_modules/element-ui/packages/theme-chalk/src/index';
 
 // Configuration and helpers
