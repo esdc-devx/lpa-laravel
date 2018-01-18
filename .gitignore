@@ -4,6 +4,7 @@
 /.vscode
 /node_modules
 /package-lock.json
+/public/fonts/vendor
 /public/hot
 /public/storage
 /public/mix-manifest.json
