@@ -21,7 +21,7 @@ class CamundaServiceProvider extends ServiceProvider
             if (is_null($config) || empty(implode('', $config))) {
                 throw new MissingConfigurationException();
             }
-            return new Camunda(new \GuzzleHttp\Client());
+            return new Camunda();
         });
     }
 }
