@@ -2,27 +2,27 @@
   <div>
     <el-row type="flex">
       <el-col :span="8" class="app-title-col">
-        <div><h1><router-link :to="'/' + $store.getters.getLanguage">{{ trans('navigation.app_name') }}</router-link></h1></div>
+        <div><h1><router-link :to="'/' + $store.getters.language">{{ trans('navigation.app_name') }}</router-link></h1></div>
       </el-col>
       <el-col :span="16" class="nav-col">
         <nav>
           <el-menu ref="topMenu" :default-active="$route.fullPath" background-color="#313131" text-color="#fff" active-text-color="#4bd5ff" class="top-menu" mode="horizontal" router>
             <el-submenu index="0">
               <template slot="title">Admin</template>
-              <el-menu-item :index="'/' + $store.getters.getLanguage + '/users/create'"><a href="#" @click.prevent>{{ trans('navigation.user_create') }}</a></el-menu-item>
-              <el-menu-item :index="'/' + $store.getters.getLanguage + '/users'"><a href="#" @click.prevent>{{ trans('navigation.user_list') }}</a></el-menu-item>
+              <el-menu-item :index="'/' + $store.getters.language + '/users/create'"><a href="#" @click.prevent>{{ trans('navigation.user_create') }}</a></el-menu-item>
+              <el-menu-item :index="'/' + $store.getters.language + '/users'"><a href="#" @click.prevent>{{ trans('navigation.user_list') }}</a></el-menu-item>
             </el-submenu>
             <el-submenu index="1">
               <template slot="title">{{ username }}</template>
-              <el-menu-item :index="'/' + $store.getters.getLanguage + '/profile'"><a href="#" @click.prevent>{{ trans('navigation.profile') }}</a></el-menu-item>
-              <el-menu-item :index="'/' + $store.getters.getLanguage + '/logout'"><a href="#" @click.prevent="logout()">{{ trans('navigation.logout') }}</a></el-menu-item>
+              <el-menu-item :index="'/' + $store.getters.language + '/profile'"><a href="#" @click.prevent>{{ trans('navigation.profile') }}</a></el-menu-item>
+              <el-menu-item :index="'/' + $store.getters.language + '/logout'"><a href="#" @click.prevent="logout()">{{ trans('navigation.logout') }}</a></el-menu-item>
             </el-submenu>
             <el-submenu index="2" class="disabled">
               <template slot="title">LPA Profile: Some dynamic Organization</template>
               <el-menu-item index="2-1"><a href="#" @click.prevent>CS01</a></el-menu-item>
               <el-menu-item index="2-2"><a href="#" @click.prevent>EX01</a></el-menu-item>
             </el-submenu>
-            <el-menu-item :index="'/' + $store.getters.getLanguage + '/help'" class="disabled"><a href="#" @click.prevent>Help</a></el-menu-item>
+            <el-menu-item :index="'/' + $store.getters.language + '/help'" class="disabled"><a href="#" @click.prevent>Help</a></el-menu-item>
 
             <li role="menuitem" class="el-menu-item lang">
               <a v-if="toggledLang === 'en'" href="#" @click.prevent="switchI18n">English</a>
@@ -41,12 +41,17 @@
   export default {
     name: 'top-bar',
 
-    computed: mapState({
-      username: state => state.user.info.name
-    }),
+    computed: {
+      lang() {
+        return this.$store.getters.language;
+      },
+      ...mapState({
+        username: state => state.user.info.name
+      })
+    },
 
     data() {
-      let currentLang = this.$store.getters.getLanguage;
+      let currentLang = this.$store.getters.language;
       let toggledLang = this.getSwitchedLang(currentLang);
       return {
         currentLang,
@@ -73,13 +78,13 @@
 
     methods: {
       logout() {
-        window.location = '/' + this.$store.getters.getLanguage + '/logout';
+        window.location = '/' + this.$store.getters.language + '/logout';
       },
       getSwitchedLang(lang) {
         return lang === 'en' ? 'fr' : 'en';
       },
       switchI18n() {
-        let storeLang = this.$store.getters.getLanguage;
+        let storeLang = this.$store.getters.language;
         let newLang = this.getSwitchedLang(storeLang);
         let route = Object.assign({}, this.$route);
 

@@ -10,10 +10,10 @@ export const state = {
 };
 
 export const getters = {
-  getLanguage(state) {
+  language(state) {
     return state.language;
   },
-  getLanguages(state) {
+  languages(state) {
     return state.languages;
   }
 };

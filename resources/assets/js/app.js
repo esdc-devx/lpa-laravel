@@ -22,7 +22,7 @@ loadLanguages().then(data => {
   data.en = data.en || {};
   data.fr = data.fr || {};
   window.i18n = new VueI18n({
-    locale: store.getters.getLanguage,
+    locale: store.getters.language,
     messages: {
       en: Object.assign(data.en, elementUILocaleEN),
       fr: Object.assign(data.fr, elementUILocaleFR)

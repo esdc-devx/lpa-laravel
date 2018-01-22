@@ -16,42 +16,40 @@ Vue.use(Router);
 
 // This will check to see if the user is authenticated or not.
 function requireAuth(to, from, next) {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    // Determines where we should send the user.
-    let proceed = () => {
-      // If the user has been loaded determine where we should
-      // send the user.
-      if (store.getters.getUserLoadStatus() === 2) {
-        // If the user is not empty, that means there's a user
-        // authenticated we allow them to continue. Otherwise, we
-        // send the user back to the login page.
-        if (store.getters.getUser !== '') {
-          next();
-        } else {
-          // user not authenticated
-          // we need to redirect to the login page since
-          // we need a new csrf_token
-          window.location.href = '/login';
-        }
+  // Determines where we should send the user.
+  let proceed = () => {
+    // If the user has been loaded determine where we should
+    // send the user.
+    if (store.getters.getUserLoadStatus() === 2) {
+      // If the user is not empty, that means there's a user
+      // authenticated we allow them to continue. Otherwise, we
+      // send the user back to the login page.
+      if (store.getters.getUser !== '') {
+        next();
+      } else {
+        // user not authenticated
+        // we need to redirect to the login page since
+        // we need a new csrf_token
+        window.location.href = '/login';
       }
-    };
-
-    // Confirms the user has been loaded
-    if (store.getters.getUserLoadStatus() !== 2) {
-      // If not, load the user
-      store.dispatch('loadUser');
-
-      // Watch for the user to be loaded. When it's finished, then
-      // we proceed.
-      store.watch(store.getters.getUserLoadStatus, function() {
-        if (store.getters.getUserLoadStatus() === 2) {
-          proceed();
-        }
-      });
-    } else {
-      // User call completed, so we proceed
-      proceed();
     }
+  };
+
+  // Confirms the user has been loaded
+  if (store.getters.getUserLoadStatus() !== 2) {
+    // If not, load the user
+    store.dispatch('loadUser');
+
+    // Watch for the user to be loaded. When it's finished, then
+    // we proceed.
+    store.watch(store.getters.getUserLoadStatus, function() {
+      if (store.getters.getUserLoadStatus() === 2) {
+        proceed();
+      }
+    });
+  } else {
+    // User call completed, so we proceed
+    proceed();
   }
 }
 const routes = [
@@ -60,7 +58,6 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-      requiresAuth: true,
       title: 'navigation.home'
     }
   },
@@ -69,7 +66,6 @@ const routes = [
     name: 'profile',
     component: Profile,
     meta: {
-      requiresAuth: true,
       title: 'navigation.profile'
     }
   },
@@ -78,7 +74,6 @@ const routes = [
     name: 'projects',
     component: ProjectList,
     meta: {
-      requiresAuth: true,
       title: 'navigation.projects'
     }
   },
@@ -87,7 +82,6 @@ const routes = [
     name: 'project-edit',
     component: ProjectEdit,
     meta: {
-      requiresAuth: true,
       title: 'navigation.projects_edit'
     }
   },
@@ -96,7 +90,6 @@ const routes = [
     name: 'users',
     component: UserList,
     meta: {
-      requiresAuth: true,
       title: 'navigation.users_list'
     }
   },
@@ -105,7 +98,6 @@ const routes = [
     name: 'user-create',
     component: UserCreate,
     meta: {
-      requiresAuth: true,
       title: 'navigation.users_create'
     }
   },
@@ -117,7 +109,6 @@ const routes = [
     path: '*',
     component: NotFound,
     meta: {
-      requiresAuth: true,
       title: 'navigation.not_found'
     }
   }
@@ -134,6 +125,13 @@ router.beforeEach((to, from, next) => {
   // record the language
   let lang = to.params.lang;
   store.dispatch('switchI18n', lang);
+
+  if (to.fullPath.charAt(to.fullPath.length - 1) === '/') {
+    let newPath = Object.assign({}, to);
+    newPath.fullPath = newPath.fullPath.slice(0, -1);
+    newPath.path = newPath.path.slice(0, -1);
+    next(newPath);
+  }
 });
 router.afterEach((to, from, next) => {
   document.title = Vue.prototype.trans('navigation.app_name') + ' - ' + Vue.prototype.trans(to.meta.title);
