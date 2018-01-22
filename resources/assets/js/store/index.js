@@ -23,5 +23,7 @@ export default new Vuex.Store({
     auth,
     learningProjects,
     user
-  }
+  },
+  // https://vuex.vuejs.org/en/strict.html
+  strict: process.env.NODE_ENV !== 'production'
 });

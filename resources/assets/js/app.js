@@ -11,10 +11,10 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
+import { loadLanguages } from './locale';
+
 import router from './router';
 import store from './store/';
-
-import { loadLanguages } from './locale';
 
 sync(store, router);
 

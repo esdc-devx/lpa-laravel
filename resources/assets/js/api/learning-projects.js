@@ -11,7 +11,7 @@ export default {
   },
 
   getLearningProject(id) {
-    return axios.get('/learning-projects/${id}');
+    return axios.get(`/learning-projects/${id}`);
   },
 
   postLearningProject(name) {

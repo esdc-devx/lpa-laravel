@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('home.welcome', { name: $store.getters.getUser.name }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('home.welcome', { name: username }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="18"><hr></el-col>
@@ -49,10 +49,6 @@
       </el-col>
     </el-row>
 
-    <el-date-picker
-      type="date">
-    </el-date-picker>
-
     <learning-project-create :show="showCreateLearningProjectModal" @close="showCreateLearningProjectModal = false"></learning-project-create>
   </div>
 </template>
@@ -63,7 +59,13 @@
   export default {
     name: 'home',
 
-    data () {
+    computed: {
+      username() {
+        return this.$store.getters.getUser.name;
+      }
+    },
+
+    data() {
       return {
         showCreateLearningProjectModal: false
       }

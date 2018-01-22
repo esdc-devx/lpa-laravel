@@ -14,9 +14,7 @@ import store from '../store/';
 
 Vue.use(Router);
 
-/*
-  This will check to see if the user is authenticated or not.
-*/
+// This will check to see if the user is authenticated or not.
 function requireAuth(to, from, next) {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     // Determines where we should send the user.
@@ -56,14 +54,14 @@ function requireAuth(to, from, next) {
     }
   }
 }
-
 const routes = [
   {
-    path: '/:lang(en|fr)/',
+    path: '/:lang(en|fr)',
     name: 'home',
     component: Home,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.home'
     }
   },
   {
@@ -71,7 +69,8 @@ const routes = [
     name: 'profile',
     component: Profile,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.profile'
     }
   },
   {
@@ -79,7 +78,8 @@ const routes = [
     name: 'projects',
     component: ProjectList,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.projects'
     }
   },
   {
@@ -87,7 +87,8 @@ const routes = [
     name: 'project-edit',
     component: ProjectEdit,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.projects_edit'
     }
   },
   {
@@ -95,7 +96,8 @@ const routes = [
     name: 'users',
     component: UserList,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.users_list'
     }
   },
   {
@@ -103,15 +105,20 @@ const routes = [
     name: 'user-create',
     component: UserCreate,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.users_create'
     }
+  },
+  {
+    path: '/:lang/logout'
   },
   // serves as a 404 handler
   {
     path: '*',
     component: NotFound,
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
+      title: 'navigation.not_found'
     }
   }
 ];
@@ -120,13 +127,16 @@ const router = new Router({
   mode: 'history'
 });
 
-//Router Guards
+// Router Guards
 router.beforeEach((to, from, next) => {
   // make sure the user is authenticated before proceeding
   requireAuth(to, from, next);
   // record the language
   let lang = to.params.lang;
   store.dispatch('switchI18n', lang);
+});
+router.afterEach((to, from, next) => {
+  document.title = Vue.prototype.trans('navigation.app_name') + ' - ' + Vue.prototype.trans(to.meta.title);
 });
 
 export default router;
