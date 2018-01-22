@@ -48,6 +48,11 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof \App\Camunda\Exceptions\GeneralException) {
+            // @todo: Add proper exception handling.
+            // see: https://laracasts.com/discuss/channels/code-review/best-way-to-handle-rest-api-errors-throwed-from-controller-or-exception
+            dd($exception->getMessage());
+        }
         return parent::render($request, $exception);
     }
 }
