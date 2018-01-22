@@ -126,6 +126,7 @@ router.beforeEach((to, from, next) => {
   let lang = to.params.lang;
   store.dispatch('switchI18n', lang);
 
+  // remove trailling slashes if any
   if (to.fullPath.charAt(to.fullPath.length - 1) === '/') {
     let newPath = Object.assign({}, to);
     newPath.fullPath = newPath.fullPath.slice(0, -1);
