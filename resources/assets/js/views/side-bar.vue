@@ -36,7 +36,14 @@
         // since we do not know when ElementUI will update itself
         // we just wait until the DOM is updated
         this.$nextTick(() => {
-          this.$refs.sideBar.activeIndex = to.fullPath;
+          // example url: /:lang/projects/:id
+          // by splicing the path, we can determine on what page the user is
+          // based on the sidebar
+          let route = Object.assign({}, to);
+          let pathArray = _.compact(route.fullPath.split('/'));
+          // keep max 2 levels in array since the sidebar only tracks up to /lang/section
+          pathArray.splice(2, pathArray.length);
+          this.$refs.sideBar.activeIndex = pathArray.join('/');
         });
       }
     }

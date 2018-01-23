@@ -8,7 +8,7 @@ export const user = {
   },
 
   getters: {
-    getUserLoadStatus(state) {
+    userLoadStatus(state) {
       // we need to specify a function here
       // as the store.watch() only accepts a function
       return function() {
@@ -16,7 +16,7 @@ export const user = {
       };
     },
 
-    getUser(state) {
+    user(state) {
       return state.info;
     }
   },

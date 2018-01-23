@@ -4,7 +4,7 @@ import Router from 'vue-router';
 import Home from '../views/home.vue';
 import Profile from '../views/profile.vue';
 import ProjectList from '../views/project-list.vue';
-import ProjectEdit from '../views/project-edit.vue';
+import ProjectView from '../views/project-view.vue';
 import UserList from '../views/admin/user-list.vue';
 import UserCreate from '../views/admin/user-create.vue';
 
@@ -20,11 +20,11 @@ function requireAuth(to, from, next) {
   let proceed = () => {
     // If the user has been loaded determine where we should
     // send the user.
-    if (store.getters.getUserLoadStatus() === 2) {
+    if (store.getters.userLoadStatus() === 2) {
       // If the user is not empty, that means there's a user
       // authenticated we allow them to continue. Otherwise, we
       // send the user back to the login page.
-      if (store.getters.getUser !== '') {
+      if (store.getters.user !== '') {
         next();
       } else {
         // user not authenticated
@@ -36,14 +36,14 @@ function requireAuth(to, from, next) {
   };
 
   // Confirms the user has been loaded
-  if (store.getters.getUserLoadStatus() !== 2) {
+  if (store.getters.userLoadStatus() !== 2) {
     // If not, load the user
     store.dispatch('loadUser');
 
     // Watch for the user to be loaded. When it's finished, then
     // we proceed.
-    store.watch(store.getters.getUserLoadStatus, function() {
-      if (store.getters.getUserLoadStatus() === 2) {
+    store.watch(store.getters.userLoadStatus, function() {
+      if (store.getters.userLoadStatus() === 2) {
         proceed();
       }
     });
@@ -78,11 +78,11 @@ const routes = [
     }
   },
   {
-    path: '/:lang/projects/edit/:id',
-    name: 'project-edit',
-    component: ProjectEdit,
+    path: '/:lang/projects/:id',
+    name: 'project-view',
+    component: ProjectView,
     meta: {
-      title: 'navigation.projects_edit'
+      title: 'navigation.projects_view'
     }
   },
   {

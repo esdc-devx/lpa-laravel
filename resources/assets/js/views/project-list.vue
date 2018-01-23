@@ -5,7 +5,7 @@
     <el-table
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
-      :data="learningProjects">
+      :data="projects">
       <el-table-column
         sortable
         prop="id"
@@ -29,7 +29,7 @@
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="editProject(scope.row.id)">Edit</el-button>
+            @click="viewProject(scope.row)">View</el-button>
           <el-button
             size="mini"
             type="danger"
@@ -49,13 +49,13 @@
       </span>
     </el-dialog>
 
-    <learning-project-create :show="showCreateModal" @close="showCreateModal = false"></learning-project-create>
+    <project-create :show="showCreateModal" @close="showCreateModal = false"></project-create>
   </div>
 </template>
 
 <script>
   import { EventBus } from '../components/event-bus.js';
-  import LearningProjectCreate from '../views/learning-project-create';
+  import ProjectCreate from '../views/project-create';
 
   export default {
     name: 'ProjectList',
@@ -65,28 +65,27 @@
         project: {
           name: null
         },
-        projects: [],
         isLoading: false,
         showCreateModal: false,
         showDeleteModal: false
       }
     },
 
-    components: { LearningProjectCreate },
+    components: { ProjectCreate },
 
     computed: {
-      learningProjectsLoadStatus(){
-        return this.$store.getters.getlearningProjectsLoadStatus;
+      projectsLoadStatus(){
+        return this.$store.getters.projectsLoadStatus;
       },
-      learningProjects() {
-        return this.$store.getters.getLearningProjects;
+      projects() {
+        return this.$store.getters.projects;
       },
     },
 
     methods: {
-      editProject(id) {
-        alert('Edit project popup?')
-        //this.$router.push(`/projects/edit/${id}`);
+      viewProject(project) {
+        this.$store.commit('setProject', project);
+        this.$router.push(`projects/${project.id}`);
       },
 
       deleteProjectModal(id) {
@@ -148,7 +147,7 @@
       .$on('ProjectList:save', project => {
         this.saveProject(project);
       });
-      this.$store.dispatch('loadLearningProjects');
+      this.$store.dispatch('loadProjects');
     }
   };
 </script>
