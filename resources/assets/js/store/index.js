@@ -9,7 +9,7 @@ import { state, getters, actions, mutations } from './root';
 
 // Imports all of the modules used in the application to build the data store.
 import auth from '../api/auth';
-import { learningProjects } from './modules/learning-projects.js';
+import { projects } from './modules/projects.js';
 import { user } from './modules/user.js';
 
 Vue.use(Vuex);
@@ -21,7 +21,9 @@ export default new Vuex.Store({
   mutations,
   modules: {
     auth,
-    learningProjects,
+    projects,
     user
-  }
+  },
+  // https://vuex.vuejs.org/en/strict.html
+  strict: process.env.NODE_ENV !== 'production'
 });
