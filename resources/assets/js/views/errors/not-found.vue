@@ -1,15 +1,18 @@
 <template>
   <div>
     <p>Not Found</p>
-    <router-link :to="'/'+$store.getters.language">Back to Home page</router-link>
+    <router-link :to="'/' + lang">Back to Home page</router-link>
   </div>
 </template>
 
 <script>
 export default {
-
   name: 'not-found',
-
+  computed: {
+    lang() {
+      return this.$store.getters.language;
+    }
+  },
   data () {
     return {
 

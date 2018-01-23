@@ -7,9 +7,9 @@ import ProjectList from '../views/project-list.vue';
 import ProjectView from '../views/project-view.vue';
 import UserList from '../views/admin/user-list.vue';
 import UserCreate from '../views/admin/user-create.vue';
-
 import NotFound from '../views/errors/not-found.vue';
 
+import LoadStatus from '../store/load-status-constants';
 import store from '../store/';
 
 Vue.use(Router);
@@ -20,7 +20,7 @@ function requireAuth(to, from, next) {
   let proceed = () => {
     // If the user has been loaded determine where we should
     // send the user.
-    if (store.getters.userLoadStatus() === 2) {
+    if (store.getters.userLoadStatus() === LoadStatus.LOADING_SUCCESS) {
       // If the user is not empty, that means there's a user
       // authenticated we allow them to continue. Otherwise, we
       // send the user back to the login page.
@@ -36,14 +36,14 @@ function requireAuth(to, from, next) {
   };
 
   // Confirms the user has been loaded
-  if (store.getters.userLoadStatus() !== 2) {
+  if (store.getters.userLoadStatus() !== LoadStatus.LOADING_SUCCESS) {
     // If not, load the user
     store.dispatch('loadUser');
 
     // Watch for the user to be loaded. When it's finished, then
     // we proceed.
     store.watch(store.getters.userLoadStatus, function() {
-      if (store.getters.userLoadStatus() === 2) {
+      if (store.getters.userLoadStatus() === LoadStatus.LOADING_SUCCESS) {
         proceed();
       }
     });
