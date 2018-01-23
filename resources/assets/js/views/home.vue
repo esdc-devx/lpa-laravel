@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('home.welcome', { name: $store.getters.getUser.name }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('home.welcome', { name: username }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="18"><hr></el-col>
@@ -18,58 +18,48 @@
     <!-- Actions -->
     <el-row type="flex" class="row-bg actions" justify="center" :gutter="24">
       <el-col :span="3">
-        <el-button @click="showCreateLearningProjectModal = true">
+        <el-button @click="showCreateProjectModal = true">
           <i class="el-icon-edit-outline"></i>
-          <p>Create a New<br>Learning Project</p>
+          <p>Create a New<br>Project</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">
         <el-button>
           <i class="el-icon-tickets"></i>
-          <p>Create a New<br>Stand-Alone Project</p>
-        </el-button>
-      </el-col>
-      <el-col :span="3">
-        <el-button>
-          <i class="el-icon-refresh"></i>
-          <p>Update a Project</p>
+          <p>Create a New<br>Learning Product</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">
         <el-button>
           <i class="el-icon-document"></i>
-          <p>Access My Reports</p>
-        </el-button>
-      </el-col>
-      <el-col :span="3" class="disabled">
-        <el-button>
-          <i class="el-icon-download"></i>
-          Archive a Project
+          <p>Reports</p>
         </el-button>
       </el-col>
     </el-row>
 
-    <el-date-picker
-      type="date">
-    </el-date-picker>
-
-    <learning-project-create :show="showCreateLearningProjectModal" @close="showCreateLearningProjectModal = false"></learning-project-create>
+    <project-create :show="showCreateProjectModal" @close="showCreateProjectModal = false"></project-create>
   </div>
 </template>
 
 <script>
-  import LearningProjectCreate from '../views/learning-project-create';
+  import ProjectCreate from '../views/project-create';
 
   export default {
     name: 'home',
 
-    data () {
-      return {
-        showCreateLearningProjectModal: false
+    computed: {
+      username() {
+        return this.$store.getters.user.name;
       }
     },
 
-    components: { LearningProjectCreate }
+    data() {
+      return {
+        showCreateProjectModal: false
+      }
+    },
+
+    components: { ProjectCreate }
   };
 </script>
 

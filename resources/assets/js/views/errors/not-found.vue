@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>Not Found</p>
-    <router-link :to="'/'+$store.getters.getLanguage">Back to Home page</router-link>
+    <router-link :to="'/'+$store.getters.language">Back to Home page</router-link>
   </div>
 </template>
 

@@ -41,7 +41,7 @@ axios.interceptors.response.use((response) => response, (error) => {
       error.message = 'Could not reconnect.';
     }
   } else if (value.status === 401) {
-    window.location.href = '/' + store.getters.getLanguage + '/login';
+    window.location.href = '/' + store.getters.language + '/login';
   }
 
   return Promise.reject(error);

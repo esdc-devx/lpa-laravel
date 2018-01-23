@@ -3,7 +3,7 @@
     center
     :visible.sync="show"
     @close="close">
-    <span slot="title" class="el-dialog__title">Create a New Learning Project</span>
+    <span slot="title" class="el-dialog__title">Create a New Project</span>
     <hr>
     <el-form :model="modal.form" :rules="modal.rules" ref="modal.form" label-width="20%">
       <el-form-item label="Project name" for="createProjectName" prop="name">
@@ -22,7 +22,7 @@
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button type="primary" @click="submit('modal.form')">Confirm</el-button>
-      <el-button @click="closeCreateLearningProjectModal()">Cancel</el-button>
+      <el-button @click="closeCreateProjectModal()">Cancel</el-button>
     </span>
   </el-dialog>
 </template>
@@ -31,7 +31,7 @@
   import { EventBus } from '../components/event-bus.js';
 
   export default {
-    name: 'LearningProjectCreate',
+    name: 'ProjectCreate',
     props: {
       show: {
         type: Boolean,
@@ -76,16 +76,16 @@
         EventBus.$emit('ProjectList:create', project);
       },
 
-      createLearningProject() {
+      createProject() {
         let project = {
           name: this.modal.form.name,
           group: this.modal.form.group
         }
         EventBus.$emit('ProjectList:create', project);
-        this.closeCreateLearningProjectModal();
+        this.closeCreateProjectModal();
       },
 
-      closeCreateLearningProjectModal() {
+      closeCreateProjectModal() {
         this.$emit('close');
         this.resetForm('modal.form');
       },
@@ -93,8 +93,8 @@
       submit(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.createLearningProject();
-            this.closeCreateLearningProjectModal();
+            this.createProject();
+            this.closeCreateProjectModal();
           } else {
             console.log('error submit!!');
             return false;

@@ -10,10 +10,10 @@ export const state = {
 };
 
 export const getters = {
-  getLanguage(state) {
+  language(state) {
     return state.language;
   },
-  getLanguages(state) {
+  languages(state) {
     return state.languages;
   }
 };
@@ -26,11 +26,10 @@ export const actions = {
     return new Promise((resolve, reject) => {
       axios.get('/locales')
         .then(response => {
-            state.languages = response.data;
-            commit(types.SET_LANGUAGE, context);
-            resolve(response.data);
-          }
-        )
+          commit(types.SET_LANGUAGES, response.data);
+          commit(types.SET_LANGUAGE, context);
+          resolve(response.data);
+        })
         .catch(e => {
           reject(e);
         });
@@ -55,5 +54,8 @@ export const mutations = {
     localStorage.setItem('language', lang);
     axios.defaults.headers.common['Accept-Language'] = lang;
     document.querySelector('html').setAttribute('lang', lang);
+  },
+  [types.SET_LANGUAGES](state, languages) {
+    state.languages = languages;
   }
 };

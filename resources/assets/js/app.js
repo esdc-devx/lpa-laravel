@@ -11,10 +11,10 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
+import { loadLanguages } from './locale';
+
 import router from './router';
 import store from './store/';
-
-import { loadLanguages } from './locale';
 
 sync(store, router);
 
@@ -22,7 +22,7 @@ loadLanguages().then(data => {
   data.en = data.en || {};
   data.fr = data.fr || {};
   window.i18n = new VueI18n({
-    locale: store.getters.getLanguage,
+    locale: store.getters.language,
     messages: {
       en: Object.assign(data.en, elementUILocaleEN),
       fr: Object.assign(data.fr, elementUILocaleFR)
