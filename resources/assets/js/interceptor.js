@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from './store/';
+import Config from './config';
 
 // Config
 axios.defaults.baseURL = '/api';
@@ -46,5 +47,9 @@ axios.interceptors.response.use((response) => response, (error) => {
 
   return Promise.reject(error);
 });
+
+if (Config.debug) {
+  window.axios = axios;
+}
 
 export default axios;
