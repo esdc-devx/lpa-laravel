@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import axios from '../interceptor';
 import * as types from './mutations-types';
+import EventBus from '../components/event-bus';
+import Config from '../config';
 
 export const state = {
-  // since browser lang is based on locale-Country
-  // we only need the locale
-  language: localStorage.language || navigator.language.split('-')[0] || 'en',
+  language: Config.defaultLang,
   languages: []
 };
 
@@ -19,7 +19,7 @@ export const getters = {
 };
 
 export const actions = {
-  switchI18n({ commit }, context) {
+  setLanguage({ commit }, context) {
     commit(types.SET_LANGUAGE, context);
   },
   loadLanguages({ commit }, context) {
@@ -27,7 +27,6 @@ export const actions = {
       axios.get('/locales')
         .then(response => {
           commit(types.SET_LANGUAGES, response.data);
-          commit(types.SET_LANGUAGE, context);
           resolve(response.data);
         })
         .catch(e => {
@@ -39,9 +38,7 @@ export const actions = {
 
 export const mutations = {
   [types.SET_LANGUAGE](state, lang) {
-    // will set the language
-    // based on the localstorage, navigator or default locale
-    // if undefined
+    // if undefined, take the default value
     lang = lang || state.language;
 
     // make sure that when i18n is init,
@@ -52,8 +49,12 @@ export const mutations = {
     }
     state.language = lang;
     localStorage.setItem('language', lang);
-    axios.defaults.headers.common['Accept-Language'] = lang;
-    document.querySelector('html').setAttribute('lang', lang);
+
+    // reflect the language in the lang attribute
+    // for accessibility purposes
+    document.querySelector('html').lang = lang;
+
+    EventBus.$emit('Store:languageUpdate', lang);
   },
   [types.SET_LANGUAGES](state, languages) {
     state.languages = languages;

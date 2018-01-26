@@ -25,8 +25,8 @@
             <el-menu-item :index="'/' + lang + '/help'" class="disabled"><a href="#" @click.prevent>Help</a></el-menu-item>
 
             <li role="menuitem" class="el-menu-item lang">
-              <a v-if="toggledLang === 'en'" href="#" @click.prevent="switchI18n">English</a>
-              <a v-else href="#" @click.prevent="switchI18n">Français</a>
+              <a v-if="toggledLang === 'en'" href="#" @click.prevent="setLanguage">English</a>
+              <a v-else href="#" @click.prevent="setLanguage">Français</a>
             </li>
           </el-menu>
         </nav>
@@ -83,7 +83,7 @@
       getSwitchedLang(lang) {
         return lang === 'en' ? 'fr' : 'en';
       },
-      switchI18n() {
+      setLanguage() {
         let storeLang = this.$store.getters.language;
         let newLang = this.getSwitchedLang(storeLang);
         let route = Object.assign({}, this.$route);

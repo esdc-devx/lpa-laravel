@@ -16,11 +16,20 @@ Vue.prototype.trans = (string, args) => {
   let value = _.get(window.i18n.messages[window.i18n.locale], string, '');
 
   _.eachRight(args, (paramVal, paramKey) => {
-      value = _.replace(value, `:${paramKey}`, paramVal);
+    value = _.replace(value, `:${paramKey}`, paramVal);
   });
   return value;
 };
 
+export function setLanguage() {
+  return new Promise((resolve, reject) => {
+    store.dispatch('setLanguage')
+      .then(resolve)
+      .catch(e => {
+        reject(e);
+      });
+  });
+}
 export function loadLanguages() {
   return new Promise((resolve, reject) => {
     store.dispatch('loadLanguages')

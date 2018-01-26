@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import { EventBus } from '../components/event-bus.js';
+  import EventBus from '../components/event-bus.js';
 
   export default {
     name: 'ProjectView',
