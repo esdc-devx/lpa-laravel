@@ -2,11 +2,10 @@ import Vue from 'vue';
 import axios from '../interceptor';
 import * as types from './mutations-types';
 import EventBus from '../components/event-bus';
+import Config from '../config';
 
 export const state = {
-  // since browser lang is based on locale-Country
-  // we only need the locale
-  language: document.querySelector('html').lang,
+  language: Config.defaultLang,
   languages: []
 };
 
