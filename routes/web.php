@@ -19,6 +19,9 @@ Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
 Auth::routes();
 
+//Route::resource('projects', 'ProjectController', ['only' => 'index']);
+Route::resource('projects', 'ProjectController');
+
 // Vue
 Route::any('{all}', function () {
     return view('app');

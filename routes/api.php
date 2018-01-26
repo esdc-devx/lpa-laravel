@@ -34,4 +34,6 @@ Route::middleware('auth:api')->group(function () {
 
         return $languages;
     });
+
+    Route::resource('projects', 'ProjectController');
 });

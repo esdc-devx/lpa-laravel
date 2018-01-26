@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
 
 class Handler extends ExceptionHandler
 {
@@ -48,11 +50,18 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($exception instanceof \App\Camunda\Exceptions\GeneralException) {
+        if ($exception instanceof CamundaGeneralException) {
             // @todo: Add proper exception handling.
             // see: https://laracasts.com/discuss/channels/code-review/best-way-to-handle-rest-api-errors-throwed-from-controller-or-exception
             dd($exception->getMessage());
         }
+
+        if ($exception instanceof ModelNotFoundException && $request->wantsJson()) {
+            return response()->json([
+                'error' => 'Resource not found.'
+            ], 404);
+        }
+
         return parent::render($request, $exception);
     }
 }

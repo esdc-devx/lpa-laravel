@@ -1,16 +1,12 @@
 <?php
 namespace App\Camunda;
 
+use \Illuminate\Http\Response;
 use GuzzleHttp\Client as HttpClient;
 use App\Camunda\Exceptions\GeneralException;
 
 class CamundaConnector
 {
-    const STATUS_SUCCESS = 200;
-    const STATUS_SUCCESS_NO_CONTENT = 204;
-    const STATUS_NOT_FOUND = 404;
-    const STATUS_ERROR = 500;
-
     protected $url;
     protected $client;
     protected $options;
@@ -66,7 +62,7 @@ class CamundaConnector
      */
     protected function validate($response)
     {
-        if (!in_array($response->getStatusCode(), [self::STATUS_SUCCESS, self::STATUS_SUCCESS_NO_CONTENT])) {
+        if (!in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_NO_CONTENT])) {
             $content = json_decode($response->getBody());
             if ($content === null || $response->getHeaderLine('content-type') !== 'application/json') {
                 throw new GeneralException();
