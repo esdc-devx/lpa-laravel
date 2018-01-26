@@ -18,10 +18,10 @@
         label="Name">
       </el-table-column>
       <el-table-column
-        :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
-        :filter-method="filterGroup"
+        :filters="groups"
+        :filter-method="filterGroups"
         filter-placement="bottom-start"
-        prop="group"
+        prop="organization_unit.name"
         label="Organizational group">
       </el-table-column>
       <el-table-column
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+  import _ from 'lodash';
   import EventBus from '../components/event-bus.js';
   import ProjectCreate from '../views/project-create';
 
@@ -74,12 +75,19 @@
     components: { ProjectCreate },
 
     computed: {
+      groups() {
+        return _.chain(this.projects)
+                .mapValues('organization_unit.name')
+                .toArray().uniq()
+                .map((val, key) => { return { text: val, value: val } })
+                .value();
+      },
       projectsLoadStatus(){
         return this.$store.getters.projectsLoadStatus;
       },
       projects() {
         return this.$store.getters.projects;
-      },
+      }
     },
 
     methods: {
@@ -135,8 +143,8 @@
           }
         }
       },
-      filterGroup(value, row) {
-        return row.group === value;
+      filterGroups(value, row) {
+        return row.organization_unit.name === value;
       }
     },
 

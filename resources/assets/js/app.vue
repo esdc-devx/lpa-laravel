@@ -37,8 +37,13 @@
 </script>
 
 <style lang="scss">
-  .el-main, .el-aside {
-    // fixes a layout bug for IE11
+  .el-aside {
     overflow: visible;
+  }
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .el-main {
+      // fixes a layout bug for IE11
+      overflow: visible;
+    }
   }
 </style>

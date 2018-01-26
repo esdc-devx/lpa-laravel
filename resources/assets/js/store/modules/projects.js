@@ -32,7 +32,7 @@ export const projects = {
       commit('setProjectsLoadStatus', LoadStatus.LOADING_STARTED);
       ProjectsAPI.getProjects()
         .then(function(response) {
-          commit('setProjects', response.data);
+          commit('setProjects', response.data.data.paginator.data);
           commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
         })
         .catch(function() {
