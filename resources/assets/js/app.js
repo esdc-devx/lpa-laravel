@@ -11,14 +11,14 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
-import { loadLanguages } from './locale';
+import { setLanguage, loadLanguages } from './locale';
 
 import router from './router';
 import store from './store/';
 
 sync(store, router);
 
-loadLanguages().then(data => {
+setLanguage().then(loadLanguages().then(data => {
   data.en = data.en || {};
   data.fr = data.fr || {};
   window.i18n = new VueI18n({
@@ -41,4 +41,4 @@ loadLanguages().then(data => {
     template: '<app/>',
     components: { App }
   });
-});
+}));

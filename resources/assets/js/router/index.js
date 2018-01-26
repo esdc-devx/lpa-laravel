@@ -122,9 +122,12 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // make sure the user is authenticated before proceeding
   requireAuth(to, from, next);
-  // record the language
+
+  // record the language if changed
   let lang = to.params.lang;
-  store.dispatch('switchI18n', lang);
+  if (lang !== store.getters.language) {
+    store.dispatch('setLanguage', lang);
+  }
 
   // remove trailling slashes if any
   if (to.fullPath.charAt(to.fullPath.length - 1) === '/') {

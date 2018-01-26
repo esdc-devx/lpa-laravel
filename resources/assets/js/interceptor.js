@@ -1,9 +1,13 @@
 import axios from 'axios';
 import store from './store/';
 import Config from './config';
+import EventBus from './components/event-bus';
 
 // Config
-axios.defaults.baseURL = '/api';
+let defaultLang = document.querySelector('html').lang;
+let apiUrl = '/api';
+axios.defaults.baseURL = '/' + defaultLang + apiUrl;
+axios.defaults.headers.common['Accept-Language'] = defaultLang;
 axios.defaults.timeout = 5000;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 // Register the CSRF Token as a common header with Axios so that
@@ -46,6 +50,11 @@ axios.interceptors.response.use((response) => response, (error) => {
   }
 
   return Promise.reject(error);
+});
+
+EventBus.$on('Store:languageUpdate', lang => {
+  axios.defaults.baseURL = '/' + lang + apiUrl;
+  axios.defaults.headers.common['Accept-Language'] = lang;
 });
 
 if (Config.debug) {

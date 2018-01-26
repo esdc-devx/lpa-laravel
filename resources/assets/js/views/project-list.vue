@@ -54,7 +54,7 @@
 </template>
 
 <script>
-  import { EventBus } from '../components/event-bus.js';
+  import EventBus from '../components/event-bus.js';
   import ProjectCreate from '../views/project-create';
 
   export default {
