@@ -1,4 +1,7 @@
 // Body, Common Classes & Structure
+html, body {
+  height: 100%;
+}
 body {
   font-family: $font-family-sans-serif;
   font-size: $font-size-base;

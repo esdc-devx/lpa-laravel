@@ -1,17 +1,4 @@
 // Utils
-.clear {
-  clear: both;
-}
-
-.clearfix:after {
-  @include hide-text();
-  display: block;
-  visibility: hidden;
-  content: '.';
-  clear: both;
-  height: 0;
-}
-
 .hidden {
   position: absolute;
   left: -10000px;
@@ -21,12 +8,8 @@
   overflow: hidden;
 }
 
-.noselect {
-  @include user-select(none);
-}
-
 .disabled {
-  @include user-select(none);
+  user-select: none;
   opacity: 0.4;
   pointer-events: none;
   cursor: not-allowed !important;

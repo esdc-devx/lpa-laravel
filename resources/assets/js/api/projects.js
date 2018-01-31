@@ -1,19 +1,17 @@
 import axios from '../interceptor';
 
-// REMOVE ME
-import data from "./fake-project-list.json";
-
 export default {
-  getProjects() {
-    return axios.get('/projects');
+  getProjects(page) {
+    let query = !_.isUndefined(page) ? `?page=${page}` : '';
+    return axios.get(`projects${query}`);
   },
 
   getProject(id) {
-    return axios.get(`/projects/${id}`);
+    return axios.get(`projects/${id}`);
   },
 
   postProject(name) {
-    return axios.post('/projects',
+    return axios.post('projects',
       { name }
     );
   }

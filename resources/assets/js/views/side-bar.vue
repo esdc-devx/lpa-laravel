@@ -36,17 +36,25 @@
         // since we do not know when ElementUI will update itself
         // we just wait until the DOM is updated
         this.$nextTick(() => {
-          // this is the max level number the sidebar understands
-          let maxLevelDeep = 3;
-          // example url: /:lang/projects/:id
-          // by splicing the path, we can determine on what page the user is
-          // based on the sidebar
-          let route = Object.assign({}, to);
-          let pathArray = route.fullPath.split('/');
-          pathArray.splice(maxLevelDeep, pathArray.length);
-          this.$refs.sideBar.activeIndex = pathArray.join('/');
+          this.setActiveIndex(to);
         });
       }
+    },
+    methods: {
+      setActiveIndex(to) {
+        // this is the max level number the sidebar understands
+        let maxLevelDeep = 3;
+        // example url: /:lang/projects/:id
+        // by splicing the path, we can determine on what page the user is
+        // based on the sidebar's link's paths
+        let route = Object.assign({}, to);
+        let pathArray = route.fullPath.split('/');
+        pathArray.splice(maxLevelDeep, pathArray.length);
+        this.$refs.sideBar.activeIndex = pathArray.join('/');
+      }
+    },
+    mounted() {
+      this.setActiveIndex(this.$route);
     }
   };
 </script>
@@ -54,6 +62,8 @@
 <style lang="scss" scoped>
   @import '../../sass/vendors/element-variables';
   .sideBar {
+    height: 100%;
+    user-select: none;
     a {
       text-decoration: none;
       height: 100%;

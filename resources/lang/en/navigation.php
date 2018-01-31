@@ -9,7 +9,6 @@ return [
     'projects' => 'Projects',
     'learning_products' => 'Learning Products',
     'non_learning_products' => 'Non-Learning Products',
-    'projects_edit' => 'Projects - Edit',
     'user_list' => 'Users - List',
     'user_create' => 'Users - Create',
     'not_found' => 'Not Found',

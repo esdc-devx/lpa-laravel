@@ -1,12 +1,13 @@
 import LoadStatus from '../load-status-constants';
-import ProjectsAPI from '../../api/projects.js';
+import ProjectsAPI from '../../api/projects';
 
-export const projects = {
+export default {
   state: {
     projects: [],
     projectsLoadStatus: LoadStatus.NOT_LOADED,
     project: {},
-    projectLoadStatus: LoadStatus.NOT_LOADED
+    projectLoadStatus: LoadStatus.NOT_LOADED,
+    pagination: {}
   },
 
   getters: {
@@ -24,31 +25,36 @@ export const projects = {
 
     project(state) {
       return state.project;
+    },
+
+    pagination(state) {
+      return state.pagination;
     }
   },
 
   actions: {
-    loadProjects({ commit }) {
+    loadProjects({ commit, dispatch }, page) {
       commit('setProjectsLoadStatus', LoadStatus.LOADING_STARTED);
-      ProjectsAPI.getProjects()
-        .then(function(response) {
+      return ProjectsAPI.getProjects(page)
+        .then(response => {
           commit('setProjects', response.data.data.paginator.data);
+          commit('setPagination', response.data.data.paginator);
           commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
         })
-        .catch(function() {
+        .catch(() => {
           commit('setProjects', []);
           commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
         });
     },
 
-    loadProject({ commit }, data) {
+    loadProject({ commit }, id) {
       commit('setProjectLoadStatus', LoadStatus.LOADING_STARTED);
-      ProjectsAPI.getProject(data.id)
-        .then(function(response) {
-          commit('setProject', response.data);
+      return ProjectsAPI.getProject(id)
+        .then(response => {
+          commit('setProject', response.data.data.project);
           commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
         })
-        .catch(function() {
+        .catch(() => {
           commit('setProject', {});
           commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
         });
@@ -69,6 +75,10 @@ export const projects = {
 
     setProject(state, project) {
       state.project = project;
+    },
+
+    setPagination(state, pagination) {
+      state.pagination = pagination;
     }
   }
 };

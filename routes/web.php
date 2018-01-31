@@ -24,4 +24,4 @@ Route::any('{all}', function () {
     return view('app');
 })
 ->middleware('auth')
-->where(['all' => '.*']);
+->where(['all' => '^(?!api/).*']);

@@ -4,9 +4,6 @@
       <el-col :span="24"><h2>{{ trans('home.welcome', { name: username }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
-      <el-col :span="18"><hr></el-col>
-    </el-row>
-    <el-row type="flex" justify="center">
       <el-col :span="24">
         <p>
           Please select one of the tasks below to continue or navigate LPA using the menu above.
@@ -67,6 +64,12 @@
   @import '../../sass/vendors/element-variables';
   h2, p {
     text-align: center;
+  }
+
+  h2 {
+    font-size: 3rem;
+    border: none;
+    text-transform: inherit;
   }
 
   i {

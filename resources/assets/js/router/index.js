@@ -15,7 +15,7 @@ import store from '../store/';
 Vue.use(Router);
 
 // This will check to see if the user is authenticated or not.
-function requireAuth(to, from, next) {
+function requireAuth(to, from) {
   // Determines where we should send the user.
   let proceed = () => {
     // If the user has been loaded determine where we should
@@ -25,7 +25,7 @@ function requireAuth(to, from, next) {
       // authenticated we allow them to continue. Otherwise, we
       // send the user back to the login page.
       if (store.getters.user !== '') {
-        next();
+        return true;
       } else {
         // user not authenticated
         // we need to redirect to the login page since
@@ -55,7 +55,6 @@ function requireAuth(to, from, next) {
 const routes = [
   {
     path: '/:lang(en|fr)',
-    name: 'home',
     component: Home,
     meta: {
       title: 'navigation.home'
@@ -63,7 +62,6 @@ const routes = [
   },
   {
     path: '/:lang/profile',
-    name: 'profile',
     component: Profile,
     meta: {
       title: 'navigation.profile'
@@ -71,7 +69,6 @@ const routes = [
   },
   {
     path: '/:lang/projects',
-    name: 'projects',
     component: ProjectList,
     meta: {
       title: 'navigation.projects'
@@ -79,15 +76,10 @@ const routes = [
   },
   {
     path: '/:lang/projects/:id',
-    name: 'project-view',
-    component: ProjectView,
-    meta: {
-      title: 'navigation.projects_view'
-    }
+    component: ProjectView
   },
   {
     path: '/:lang/users',
-    name: 'users',
     component: UserList,
     meta: {
       title: 'navigation.users_list'
@@ -95,7 +87,6 @@ const routes = [
   },
   {
     path: '/:lang/users/create',
-    name: 'user-create',
     component: UserCreate,
     meta: {
       title: 'navigation.users_create'
@@ -115,13 +106,14 @@ const routes = [
 ];
 const router = new Router({
   routes,
-  mode: 'history'
+  mode: 'history',
+  saveScrollPosition: "true"
 });
 
 // Router Guards
 router.beforeEach((to, from, next) => {
   // make sure the user is authenticated before proceeding
-  requireAuth(to, from, next);
+  requireAuth(to, from);
 
   // record the language if changed
   let lang = to.params.lang;
@@ -135,6 +127,8 @@ router.beforeEach((to, from, next) => {
     newPath.fullPath = newPath.fullPath.slice(0, -1);
     newPath.path = newPath.path.slice(0, -1);
     next(newPath);
+  } else {
+    next();
   }
 });
 router.afterEach((to, from, next) => {

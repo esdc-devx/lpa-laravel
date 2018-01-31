@@ -9,7 +9,6 @@ return [
     'projects' => 'Projets',
     'learning_products' => 'Produits d\'apprentissage',
     'non_learning_products' => 'Produits de non-apprentissage',
-    'projects_edit' => 'Projets - Édition',
     'user_list' => 'Usagers - Liste',
     'user_create' => 'Usagers - Création',
     'not_found' => 'Non trouvé',

@@ -7,14 +7,12 @@
 // Configuration and helpers
 @import 'abstracts/vars';
 @import 'abstracts/functions';
-@import 'abstracts/mixins/prefixers';
 @import 'abstracts/mixins/helpers';
 @import 'abstracts/mixins/breakpoints';
 @import 'abstracts/transitions';
 @import 'abstracts/mixins/shapes';
 
 // Base stuff
-@import 'base/icons';
 @import 'base/general';
 // @import 'base/fonts';
 @import 'base/typography';

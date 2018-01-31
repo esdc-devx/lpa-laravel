@@ -1,7 +1,7 @@
 import LoadStatus from '../load-status-constants';
 import UserAPI from '../../api/user.js';
 
-export const user = {
+export default {
   state: {
     info: {},
     userLoadStatus: LoadStatus.NOT_LOADED
