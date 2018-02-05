@@ -11,7 +11,7 @@ class ProjectController extends ApiController
 
     public function __construct(OrganizationUnitRepository $organisationUnits)
     {
-        $this->organizationUnits = $organisationUnits;
+        $this->organizationUnits = $organizationUnits;
     }
 
     /**

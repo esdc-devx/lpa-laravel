@@ -37,7 +37,7 @@ trait UsesJsonResponse
 
     protected function respondInvalidRequest($message = 'Invalid request.')
     {
-        //Response::HTTP_UNPROCESSABLE_ENTITY
+        // @note: Response::HTTP_UNPROCESSABLE_ENTITY
         return $this->setStatusCode(Response::HTTP_BAD_REQUEST)
             ->respondWithError($message);
     }
