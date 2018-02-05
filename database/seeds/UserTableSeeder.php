@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\User;
+use App\Models\User\User;
 
 class UserTableSeeder extends Seeder
 {
@@ -13,7 +13,9 @@ class UserTableSeeder extends Seeder
     public function run()
     {
         User::truncate();
+
         $faker = \Faker\Factory::create();
+
         for ($i = 0; $i < 10; $i++) {
             $user = User::create([
                 'username' => $faker->userName,

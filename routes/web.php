@@ -17,14 +17,13 @@ Route::get('/', function () {
 
 Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
-Auth::routes();
-
-//Route::resource('projects', 'ProjectController', ['only' => 'index']);
 Route::resource('projects', 'ProjectController');
+
+Auth::routes();
 
 // Vue
 Route::any('{all}', function () {
     return view('app');
 })
 ->middleware('auth')
-->where(['all' => '.*']);
+->where(['all' => '^(?!api/).*']);

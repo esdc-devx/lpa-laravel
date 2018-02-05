@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Project;
-use App\Http\Resources\Project as ProjectResource;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use App\Models\Project\Project;
+use App\Models\OrganizationUnit\OrganizationUnitRepository;
 
 class ProjectController extends ApiController
 {
+    protected $organisationUnits;
+
+    public function __construct(OrganizationUnitRepository $organisationUnits)
+    {
+        $this->organizationUnits = $organisationUnits;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -16,11 +21,11 @@ class ProjectController extends ApiController
      */
     public function index()
     {
-        $limit = request()->get('limit') ?: self::ITEM_PER_PAGE;
-        $paginator = Project::with('owner', 'organizationUnit')->paginate($limit);
+        $limit = request()->get('limit') ?: self::ITEMS_PER_PAGE;
+        $paginator = Project::with('owner', 'organizationUnit')
+        ->orderBy('name', 'asc')
+        ->paginate($limit);
 
-        // @todo: Implement $this->respondWithPaginator();
-        // @todo: Add transformer layer logic.
         return $this->respond([
             'paginator' => json_decode($paginator->toJson())
         ]);
@@ -33,7 +38,9 @@ class ProjectController extends ApiController
      */
     public function create()
     {
-        // @todo: Return list of organization units.
+        return $this->respond([
+            'organization_units' => $this->organizationUnits->getOwners()
+        ]);
     }
 
     /**
@@ -91,6 +98,6 @@ class ProjectController extends ApiController
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
     }
 }

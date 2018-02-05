@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Models\User;
 
 use Laravel\Passport\HasApiTokens;
 use Adldap\Laravel\Traits\HasLdapUser;

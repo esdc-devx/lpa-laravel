@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Project;
+use App\Models\User\User;
+use App\Models\Project\Project;
+use App\Models\OrganizationUnit\OrganizationUnit;
 
 class ProjectTableSeeder extends Seeder
 {
@@ -15,8 +17,8 @@ class ProjectTableSeeder extends Seeder
         Project::truncate();
 
         $faker = \Faker\Factory::create();
-        $userIds = App\User::pluck('id');
-        $organizationUnitIds = App\OrganizationUnit::pluck('id');
+        $userIds = User::pluck('id');
+        $organizationUnitIds = OrganizationUnit::where('owner', true)->pluck('id');
 
         for ($i = 0; $i < 50; $i++) {
             Project::create([
