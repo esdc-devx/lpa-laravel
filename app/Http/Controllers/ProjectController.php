@@ -7,9 +7,9 @@ use App\Models\OrganizationUnit\OrganizationUnitRepository;
 
 class ProjectController extends ApiController
 {
-    protected $organisationUnits;
+    protected $organizationUnits;
 
-    public function __construct(OrganizationUnitRepository $organisationUnits)
+    public function __construct(OrganizationUnitRepository $organizationUnits)
     {
         $this->organizationUnits = $organizationUnits;
     }
