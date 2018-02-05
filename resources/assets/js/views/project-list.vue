@@ -124,9 +124,14 @@
     },
 
     created() {
-      this.$store.dispatch('loadProjects').then(() => {
-        this.isLoading = false;
-      });
+      this.$store.dispatch('loadProjects')
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch(e => {
+          console.error('[project-list][loadProjects]: ' + e);
+          alert('[project-list][loadProjects]: ' + e);
+        });
     }
   };
 </script>
