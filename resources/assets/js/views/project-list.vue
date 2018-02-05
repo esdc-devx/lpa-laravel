@@ -41,7 +41,11 @@
       :total="pagination.total">
     </el-pagination>
 
-    <project-create :show="showCreateModal" @close="showCreateModal = false"></project-create>
+    <project-create
+      v-if="showCreateModal"
+      :show.sync="showCreateModal"
+      @close="showCreateModal = false"
+      @create="onProjectCreate"/>
   </div>
 </template>
 
@@ -87,41 +91,11 @@
         this.$router.push(`projects/${project.id}`);
       },
 
-      deleteProjectModal(id) {
-        this.project = this.findProject(id);
-        this.showDeleteModal = true;
-      },
-
-      deleteProject() {
-        let id = this.project.id;
-        let index = this.findProjectIndex(id);
-        this.projects.splice(index, 1);
-        this.showDeleteModal = false;
-        this.$notify({
-          title: 'Success',
-          dangerouslyUseHTMLString: true,
-          message: `<b>${this.project.name}</b> has been deleted.`,
-          type: 'success',
-        });
-      },
-
-      // This method is used by the edit and create
-      saveProject(project) {
-        let i = this.findProjectIndex(project.id);
-        if (!i) {
-          i = this.projects.length + 1;
-          // if no key was found, this is a new project
-          project.id = i;
-          this.projects.push(project);
-        } else {
-          this.projects[i] = project;
-        }
-        this.$notify({
-          title: 'Success',
-          dangerouslyUseHTMLString: true,
-          message: `<b>${project.name}</b> has been created.`,
-          type: 'success'
-        });
+      onProjectCreate() {
+        // @todo: grab the id from the new created project
+        // and redirect to project
+        // let id = 1;
+        // this.$router.push(`${id}`);
       },
 
       // Pagination
@@ -150,13 +124,6 @@
     },
 
     created() {
-      EventBus.$on('ProjectList:create', project => {
-        this.saveProject(project);
-      })
-      .$on('ProjectList:save', project => {
-        this.saveProject(project);
-      });
-
       this.$store.dispatch('loadProjects').then(() => {
         this.isLoading = false;
       });

@@ -14,7 +14,7 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <app v-cloak></app>
+    <app></app>
 
     <!-- Scripts -->
     <script src="{{ mix('js/app.js') }}"></script>

@@ -35,29 +35,54 @@ export default {
   actions: {
     loadProjects({ commit, dispatch }, page) {
       commit('setProjectsLoadStatus', LoadStatus.LOADING_STARTED);
-      return ProjectsAPI.getProjects(page)
-        .then(response => {
-          commit('setProjects', response.data.data.paginator.data);
-          commit('setPagination', response.data.data.paginator);
-          commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
-        })
-        .catch(() => {
-          commit('setProjects', []);
-          commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
-        });
+      return new Promise((resolve, reject) => {
+        ProjectsAPI.getProjects(page)
+          .then(response => {
+            commit('setProjects', response.data.data.paginator.data);
+            commit('setPagination', response.data.data.paginator);
+            commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
+            resolve(response.data.data);
+          })
+          .catch(e => {
+            commit('setProjects', []);
+            commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
+            reject(e);
+          });
+      });
     },
 
     loadProject({ commit }, id) {
       commit('setProjectLoadStatus', LoadStatus.LOADING_STARTED);
-      return ProjectsAPI.getProject(id)
-        .then(response => {
-          commit('setProject', response.data.data.project);
-          commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
-        })
-        .catch(() => {
-          commit('setProject', {});
-          commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
-        });
+      return new Promise((resolve, reject) => {
+        ProjectsAPI.getProject(id)
+          .then(response => {
+            commit('setProject', response.data.data.project);
+            commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
+            resolve(response.data.data);
+          })
+          .catch(e => {
+            commit('setProject', {});
+            commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
+            reject(e);
+          });
+      });
+    },
+
+    createProject({ commit }, project) {
+      // commit('setProjectLoadStatus', LoadStatus.LOADING_STARTED);
+      return new Promise((resolve, reject) => {
+        ProjectsAPI.createProject(project)
+          .then(response => {
+            // commit('setProject', response.data.data.project);
+            // commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
+            // resolve(response.data.data);
+          })
+          .catch(e => {
+            // commit('setProject', {});
+            // commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
+            reject(e);
+          });
+      });
     }
   },
   mutations: {

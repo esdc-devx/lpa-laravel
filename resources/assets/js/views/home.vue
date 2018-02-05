@@ -34,20 +34,28 @@
       </el-col>
     </el-row>
 
-    <project-create :show="showCreateProjectModal" @close="showCreateProjectModal = false"></project-create>
+    <project-create
+      v-if="showCreateProjectModal"
+      :show.sync="showCreateProjectModal"
+      @close="showCreateProjectModal = false"
+      @create="onProjectCreate"/>
   </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+
   import ProjectCreate from '../views/project-create';
 
   export default {
     name: 'home',
 
+    components: { ProjectCreate },
+
     computed: {
-      username() {
-        return this.$store.getters.user.name;
-      }
+      ...mapState({
+        username: state => state.user.info.name
+      })
     },
 
     data() {
@@ -56,7 +64,14 @@
       }
     },
 
-    components: { ProjectCreate }
+    methods: {
+      onProjectCreate() {
+        // @todo: grab the id from the new created project
+        // and redirect to project
+        // let id = 1;
+        // this.$router.push(`${id}`);
+      }
+    }
   };
 </script>
 
@@ -84,12 +99,6 @@
     height: 100%;
     p {
       margin-bottom: 0;
-    }
-  }
-  .dialog-create-project {
-    .el-dialog__title {
-      font-weight: bold;
-      text-transform: uppercase;
     }
   }
 </style>

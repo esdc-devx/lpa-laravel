@@ -10,9 +10,11 @@ export default {
     return axios.get(`projects/${id}`);
   },
 
-  postProject(name) {
-    return axios.post('projects',
-      { name }
-    );
+  createProject(project) {
+    return axios.post('projects', project);
+  },
+
+  updateProject(project) {
+    return axios.put('projects', project);
   }
 };

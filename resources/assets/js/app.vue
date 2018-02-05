@@ -1,6 +1,9 @@
 <template>
-  <div id="app">
-    <el-container>
+  <div id="app"
+    v-loading.fullscreen.lock="isLoading"
+    element-loading-background="#FFF"
+    v-cloak>
+    <el-container v-show="isLoading === false">
       <el-header height="auto">
         <top-bar/>
       </el-header>
@@ -13,11 +16,11 @@
         <el-container>
           <el-main>
             <breadcrumb/>
-            <transition name="fade" mode="out-in">
-              <keep-alive>
+            <keep-alive>
+              <transition name="fade" mode="out-in">
                 <router-view/>
-              </keep-alive>
-            </transition>
+              </transition>
+            </keep-alive>
           </el-main>
         </el-container>
       </el-container>
@@ -29,17 +32,35 @@
 </template>
 
 <script>
+  import EventBus from './components/event-bus';
+
   import TopBar from './views/top-bar.vue';
   import SideBar from './views/side-bar.vue';
   import Breadcrumb from './views/breadcrumb.vue';
 
   export default {
     name: 'app',
-    components: { TopBar, SideBar, Breadcrumb }
+
+    components: { TopBar, SideBar, Breadcrumb },
+
+    data() {
+      return {
+        isLoading: true
+      }
+    },
+
+    beforeCreate() {
+      EventBus.$once('App:ready', () => {
+        this.isLoading = false;
+      });
+    }
   };
 </script>
 
 <style lang="scss">
+  [v-cloak] {
+    display: none;
+  }
   #app, #app > .el-container {
     height: 100%;
   }

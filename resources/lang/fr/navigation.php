@@ -3,6 +3,7 @@
 return [
     'app_name' => 'Application de produit d\'apprentissage',
     'home' => 'Accueil',
+    'help' => 'Aide',
     'profile' => 'Mon profile',
     'logout' => 'Se déconnecter',
     'dashboard' => 'Tableau de bord',
@@ -12,4 +13,5 @@ return [
     'user_list' => 'Usagers - Liste',
     'user_create' => 'Usagers - Création',
     'not_found' => 'Non trouvé',
+    'back_to_home' => 'Retourner à la page d\'accueil'
 ];

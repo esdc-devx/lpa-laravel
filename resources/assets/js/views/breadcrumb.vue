@@ -1,8 +1,8 @@
 <template>
   <transition name="fade" mode="out-in">
-    <div v-if="breadcrumbs.length > 1">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' + lang + crumb.path }" v-for="crumb in breadcrumbs" :key="crumb.id">
+    <div v-show="isHomePage === false">
+      <el-breadcrumb separator-class="el-icon-arrow-right" >
+        <el-breadcrumb-item :to="{ path: '/' + language + crumb.path }" v-for="crumb in getBreadcrumbs()" :key="crumb.id">
           {{ crumb.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -12,49 +12,97 @@
 </template>
 
 <script>
-  import EventBus from '../components/event-bus';
+  import _ from 'lodash';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'breadcrumb',
 
+    data() {
+      return {
+        isLoading: true,
+        breadcrumbs: this.getBreadcrumbs(),
+        isHomePage: this.getBreadcrumbs().length <= 1
+      }
+    },
+
+    watch: {
+      '$route': function(to) {
+        this.breadcrumbs = this.getBreadcrumbs();
+        this.isHomePage = this.breadcrumbs.length <= 1;
+      }
+    },
+
     computed: {
-      lang() {
-        return this.$store.getters.language;
+      ...mapGetters([
+        'language'
+      ])
+    },
+    methods: {
+      validateMeta() {
+        let matched = this.$route.matched;
+        if (!this.$route.matched.length || !matched[0].meta) {
+          return false;
+        }
+
+        if (matched.length > 1) {
+          console.error('[breadcrumb] Route childrens not supported yet');
+          return false;
+        }
+        return true;
       },
-      breadcrumbs() {
-        // debugger;
-        let trans = this.trans;
 
-        let path = '';
-        let title = 'Home';
+      setWindowTitle(crumbs) {
+        let windowCrumbs = Object.assign({}, crumbs);
+        // remove home crumb for window title
+        delete windowCrumbs[0];
+        let windowTitle = _.map(windowCrumbs, 'name').join(' - ');
 
-        let crumbs = [ { name: title, path: '/'} ];
-        if (!this.$route.matched.length) {
-          return [];
+        window.document.title = this.trans('navigation.app_name') + ' - ' + windowTitle;
+      },
+
+      getBreadcrumbs() {
+        let crumbs = [];
+        let matched = this.$route.matched;
+        if (!this.validateMeta()) {
+          return crumbs;
+        }
+
+        // gather meta data and process any locale strings before moving on
+        let meta = matched[0].meta;
+        let matchedCrumbs = meta.breadcrumbs();
+        let matchedCrumbsArr = matchedCrumbs.split('/');
+        for (let i = 0; i < matchedCrumbsArr.length; i++) {
+          if (matchedCrumbsArr[i].match(/\{.*\}/)) {
+            matchedCrumbsArr[i] = this.trans(matchedCrumbsArr[i].replace(/{|}/g, ''));
+          }
         }
 
         // get the paths from the route
         let route = (this.$route.path).split('/');
         // and remove the language item
         // since we do not want to show it
+        // example url: ['', 'fr', 'projects'] => ['', 'projects']
         route.splice(1, 1);
 
-        let currentPageTitle = trans(this.$route.meta.title);
-        let matched = (currentPageTitle || "").split('/');
+        let path = '';
+        let title = '';
+        // build up the breadcrumbs data
+        for (let i = 0; i < route.length; i++) {
+          // since the meta is executed
+          // before any store modules has done loading,
+          // we need to catch edge cases like deep linking
+          // would produce undefined as value
+          title = matchedCrumbsArr[i] === 'undefined' ? '' : matchedCrumbsArr[i];
+          path = '/' + route[i];
 
-        for (let i = 1; i < route.length; i++) {
-          let name = (matched[i] || _.capitalize(route[i]));
-          if (route[i] === '') {
-            continue;
+          // don't add any crumb that do not have a valid title or path
+          if (title && path) {
+            crumbs.push({ name: title, path: path });
           }
-
-          title += ' : ' + name;
-          path  += '/' + route[i];
-
-          crumbs.push({ name: name, path: path });
         }
 
-        window.document.title = trans('navigation.app_name') + ' - ' + title;
+        this.setWindowTitle(crumbs);
 
         return crumbs;
       }

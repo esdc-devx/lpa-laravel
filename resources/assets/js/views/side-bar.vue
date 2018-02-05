@@ -1,22 +1,22 @@
 <template>
   <el-menu ref="sideBar" class="sideBar" :default-active="$route.fullPath" router>
-    <el-menu-item :index="'/' + lang">
+    <el-menu-item :index="'/' + language">
       <i class="el-icon-menu"></i>
       <a href="#" @click.prevent>{{ trans('navigation.home') }}</a>
     </el-menu-item>
-    <el-menu-item :index="'/' + lang + '/dashboard'" class="disabled">
+    <el-menu-item :index="'/' + language + '/dashboard'" class="disabled">
       <i class="el-icon-menu"></i>
       <span>{{ trans('navigation.dashboard') }}</span>
     </el-menu-item>
-    <el-menu-item :index="'/' + lang + '/projects'">
+    <el-menu-item :index="'/' + language + '/projects'">
       <i class="el-icon-menu"></i>
       <a href="#" @click.prevent>{{ trans('navigation.projects') }}</a>
     </el-menu-item>
-    <el-menu-item :index="'/' + lang + '/learning-products'" class="disabled">
+    <el-menu-item :index="'/' + language + '/learning-products'" class="disabled">
       <i class="el-icon-menu"></i>
       <a href="#" @click.prevent>{{ trans('navigation.learning_products') }}</a>
     </el-menu-item>
-    <el-menu-item :index="'/' + lang + '/non-learning-products'" class="disabled">
+    <el-menu-item :index="'/' + language + '/non-learning-products'" class="disabled">
       <i class="el-icon-menu"></i>
       <a href="#" @click.prevent>{{ trans('navigation.non_learning_products') }}</a>
     </el-menu-item>
@@ -24,12 +24,14 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
+
   export default {
     name: 'side-bar',
     computed: {
-      lang() {
-        return this.$store.getters.language;
-      }
+      ...mapGetters([
+        'language'
+      ]),
     },
     watch: {
       '$route': function(to) {

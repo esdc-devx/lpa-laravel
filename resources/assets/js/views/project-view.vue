@@ -6,8 +6,9 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex';
+
   import LoadStatus from '../store/load-status-constants';
-  import EventBus from '../components/event-bus.js';
 
   export default {
     name: 'ProjectView',
@@ -17,33 +18,39 @@
         return this.getProject();
       }
     },
+
     data() {
       return {
-        isLoading: true,
-        activeStep: 0
+        isLoading: true
       }
     },
 
     methods: {
+      ...mapActions([
+        'loadProject'
+      ]),
+
       getProject() {
         // look up the project in the store first
         if (this.$store.getters.projectLoadStatus === LoadStatus.LOADING_SUCCESS) {
           this.isLoading = false;
           return this.$store.getters.project;
         } else {
-          // if not found, we might be coming from a deep link
-          return this.loadProject();
+          // project not found, means we might be coming from a deep link
+          let id = this.$route.params.id;
+          return this.loadProject(id)
+            .then(() => {
+              this.isLoading = false;
+              return this.getProject();
+            })
+            .catch(e => {
+              console.error('[project-view][loadProject]: ' + e);
+              alert('[project-view][loadProject]: ' + e);
+            });
         }
-      },
-
-      loadProject() {
-        let id = this.$route.params.id;
-        return this.$store.dispatch('loadProject', id).then(() => {
-          this.isLoading = false;
-          return this.getProject();
-        });
       }
     },
+
     created() {
       this.getProject();
     }

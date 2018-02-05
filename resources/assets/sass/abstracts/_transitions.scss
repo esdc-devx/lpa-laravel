@@ -11,21 +11,44 @@
 // Slide
 .slide-enter-active, .slide-leave-active {
   animation-name: slideDown;
-  animation-duration: 0.5s;
-  animation-timing-function: ease;
+  animation-duration: 0.2s;
+  animation-timing-function: ease-in-out;
 }
 .slide-enter, .slide-leave-to {
-  animation-name: slideDown;
+  @extend .slide-enter-active;
   animation-direction: reverse;
-  animation-duration: 0.5s;
-  animation-timing-function: ease;
 }
 
-.slide-right-leave-active {
-  animation-name: slideRight;
-  animation-duration: 0.5s;
-  animation-timing-function: ease;
+/* Slide Left */
+.slide-left-enter-active, .slide-left-leave-active {
+  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
 }
+.slide-left-enter {
+  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transform: translateX(100%);
+  opacity: 1;
+}
+.slide-left-leave-to {
+  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+/* Slide Right */
+.slide-right-enter-active, .slide-right-leave-active {
+  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-right-enter {
+  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transform: translateX(-100%);
+  opacity: 1;
+}
+.slide-right-leave-to {
+  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  transform: translateX(100%);
+  opacity: 0;
+}
+
 
 // Swipe
 .swipe-enter-active {
@@ -49,13 +72,12 @@
 
 @keyframes slideDown {
   0% {
-    transform: translateY(-100%);
-    position: relative;
-    z-index: -1;
+    transform: translateY(-30px);
+    opacity: 0;
   }
   100% {
-    transform: translateY(0%);
-    z-index: 0;
+    transform: translateY(0);
+    opacity: 1;
   }
 }
 
@@ -74,17 +96,5 @@
   }
   100% {
     transform: translateX(0%);
-  }
-}
-
-// Slide Right
-@keyframes slideRight {
-  0% {
-    opacity: 1;
-    transform: translateX(0);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(30px);
   }
 }
