@@ -23,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // Ignore migrations used for oauth api access manager.
+        \Laravel\Passport\Passport::ignoreMigrations();
     }
 }

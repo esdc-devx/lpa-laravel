@@ -4,9 +4,14 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
+use App\Traits\UsesJsonResponse;
 
 class Handler extends ExceptionHandler
 {
+    use UsesJsonResponse;
+
     /**
      * A list of the exception types that are not reported.
      *
@@ -48,11 +53,28 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
-        if ($exception instanceof \App\Camunda\Exceptions\GeneralException) {
-            // @todo: Add proper exception handling.
-            // see: https://laracasts.com/discuss/channels/code-review/best-way-to-handle-rest-api-errors-throwed-from-controller-or-exception
-            dd($exception->getMessage());
+        // Render Rest API errors.
+        if ($request->wantsJson()) {
+
+            // Handle Camunda errors.
+            if ($exception instanceof CamundaGeneralException) {
+                return $this->respondWithError($exception->getMessage());
+            }
+
+            // Handle eloquent model not found.
+            if ($exception instanceof ModelNotFoundException) {
+                return $this->respondNotFound('Resource not found.');
+            }
+
+            // Handle invalid rest endpoint.
+            if ($exception instanceof NotFoundHttpException) {
+                return $this->respondNotFound('Endpoint not found.');
+            }
+
+            // Default to internal error response.
+            return $this->respondInternalError($exception->getMessage());
         }
+
         return parent::render($request, $exception);
     }
 }
