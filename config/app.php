@@ -182,6 +182,7 @@ return [
         Adldap\Laravel\AdldapServiceProvider::class,
         Adldap\Laravel\AdldapAuthServiceProvider::class,
         App\Camunda\CamundaServiceProvider::class,
+        Dimsav\Translatable\TranslatableServiceProvider::class,
     ],
 
     /*
