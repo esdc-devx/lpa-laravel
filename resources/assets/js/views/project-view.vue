@@ -1,71 +1,71 @@
 <template>
-  <div id='project-view' class="content">
-    <h2>Project</h2>
-    <form>
-      <div class="field">
-        <label for="name" class="label">Project Name</label>
-        <div class="control">
-          <input v-model="project.name" name="name" type="text" class="input" placeholder="Enter a project name">
-        </div>
-        <!-- <small class="help is-danger" v-if="verrors.has('name')">{{ verrors.first('name') }}</small> -->
-      </div>
+  <div id='project-view' class="content" v-loading="isLoading">
+    <h2>{{ project.name }}</h2>
 
-      <div class="field">
-        <label for="description" class="label">Project Organizational Group</label>
-        <div class="control">
-
-        </div>
-        <!-- <small class="help is-danger" v-if="verrors.has('description')">{{ verrors.first('description') }}</small> -->
-      </div>
-
-      <div class="field">
-        <div class="control">
-          <button class="button is-link" :class="{'is-loading': isLoading}">Save</button>
-          <button class="button" @click.prevent="goBack()">Cancel</button>
-        </div>
-      </div>
-    </form>
   </div>
 </template>
 
 <script>
-  import EventBus from '../components/event-bus.js';
+  import { mapActions } from 'vuex';
+
+  import LoadStatus from '../store/load-status-constants';
 
   export default {
     name: 'ProjectView',
 
     computed: {
       project() {
-        return this.$store.getters.project
+        return this.getProject();
       }
     },
+
     data() {
       return {
-        isLoading: false
+        isLoading: true
       }
     },
 
     methods: {
-      save() {
-        let that = this;
-        this.isLoading = true;
-        setTimeout(() => {
-          that.isLoading = false;
-          EventBus.$emit('ProjectList:save', this.project);
-          that.goBack();
-        }, 500);
-      },
+      ...mapActions([
+        'loadProject'
+      ]),
 
-      goBack() {
-        this.$router.go(-1);
+      getProject() {
+        // look up the project in the store first
+        if (this.$store.getters.projectLoadStatus === LoadStatus.LOADING_SUCCESS) {
+          this.isLoading = false;
+          return this.$store.getters.project;
+        }
+
+        // project not found, means we might be coming from a deep link
+        let id = this.$route.params.id;
+        return this.loadProject(id)
+          .then(() => {
+            this.isLoading = false;
+            return this.getProject();
+          })
+          .catch(({ response }, e) => {
+            if (response.data && response.data.errors) {
+              // @todo: save error message in Store
+            }
+            console.error('[project-view][loadProject]: ' + e);
+            alert('[project-view][loadProject]: ' + e);
+          });
       }
+    },
+
+    created() {
+      this.getProject();
     }
   };
 </script>
 
 <style lang="scss" scoped>
   #project-view {
-    width: 600px;
+    width: 100%;
     margin: 0 auto;
+    h2 {
+      text-align: center;
+    }
   }
 </style>

@@ -4,9 +4,6 @@
       <el-col :span="24"><h2>{{ trans('home.welcome', { name: username }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
-      <el-col :span="18"><hr></el-col>
-    </el-row>
-    <el-row type="flex" justify="center">
       <el-col :span="24">
         <p>
           Please select one of the tasks below to continue or navigate LPA using the menu above.
@@ -37,29 +34,34 @@
       </el-col>
     </el-row>
 
-    <project-create :show="showCreateProjectModal" @close="showCreateProjectModal = false"></project-create>
+    <project-create
+      v-if="showCreateProjectModal"
+      :show.sync="showCreateProjectModal"
+      @close="showCreateProjectModal = false"/>
   </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+
   import ProjectCreate from '../views/project-create';
 
   export default {
     name: 'home',
 
+    components: { ProjectCreate },
+
     computed: {
-      username() {
-        return this.$store.getters.user.name;
-      }
+      ...mapState({
+        username: state => state.user.info.name
+      })
     },
 
     data() {
       return {
         showCreateProjectModal: false
       }
-    },
-
-    components: { ProjectCreate }
+    }
   };
 </script>
 
@@ -67,6 +69,12 @@
   @import '../../sass/vendors/element-variables';
   h2, p {
     text-align: center;
+  }
+
+  h2 {
+    font-size: 3rem;
+    border: none;
+    text-transform: inherit;
   }
 
   i {
@@ -81,12 +89,6 @@
     height: 100%;
     p {
       margin-bottom: 0;
-    }
-  }
-  .dialog-create-project {
-    .el-dialog__title {
-      font-weight: bold;
-      text-transform: uppercase;
     }
   }
 </style>

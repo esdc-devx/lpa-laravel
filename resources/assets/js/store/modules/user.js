@@ -1,7 +1,7 @@
 import LoadStatus from '../load-status-constants';
 import UserAPI from '../../api/user.js';
 
-export const user = {
+export default {
   state: {
     info: {},
     userLoadStatus: LoadStatus.NOT_LOADED
@@ -9,7 +9,7 @@ export const user = {
 
   getters: {
     userLoadStatus(state) {
-      // we need to specify a function here
+      // @note: we need to specify a function here
       // as the store.watch() only accepts a function
       return function() {
         return state.userLoadStatus;
@@ -25,27 +25,19 @@ export const user = {
     loadUser({ commit }) {
       commit('setUserLoadStatus', LoadStatus.LOADING_STARTED);
 
-      UserAPI.getUser()
-        .then(function(response) {
-          commit('setUser', response.data);
-          commit('setUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-        })
-        .catch(function() {
-          commit('setUser', {});
-          commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
-        });
-    },
-
-    login({ commit }, data) {
-      commit('setUserLoginStatus', LoadStatus.NOT_LOADED);
-
-      UserAPI.login(data)
-        .then(response => {
-          commit('setUserLoginStatus', LoadStatus.LOADING_SUCCESS);
-        })
-        .catch((response) => {
-          commit('setUserLoginStatus', LoadStatus.LOADING_FAILED);
-        });
+      return new Promise((resolve, reject) => {
+        UserAPI.getUser()
+          .then(response => {
+            commit('setUser', response.data.data);
+            commit('setUserLoadStatus', LoadStatus.LOADING_SUCCESS);
+            resolve(response.data.data);
+          })
+          .catch(e => {
+            commit('setUser', {});
+            commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
+            reject(e);
+          });
+      });
     }
   },
 

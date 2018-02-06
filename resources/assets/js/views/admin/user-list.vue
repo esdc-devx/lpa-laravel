@@ -103,7 +103,7 @@
     },
 
     mounted() {
-      // TODO: When mounted, it should do a Promise to the server and get the users
+      // @todo: When mounted, it should do a Promise to the server and get the users
     },
 
     created() {

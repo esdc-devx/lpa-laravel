@@ -1,22 +1,21 @@
+import _ from 'lodash';
 import axios from '../interceptor';
 
-// REMOVE ME
-import data from "./fake-project-list.json";
-
 export default {
-  getProjects() {
-    // REMOVE ME
-    return Promise.resolve({ data });
-    // return axios.get(`${LPA_CONFIG.API_URL}/projects`);
+  getProjects(page) {
+    let query = !_.isUndefined(page) ? `?page=${page}` : '';
+    return axios.get(`projects${query}`);
   },
 
   getProject(id) {
-    return axios.get(`/projects/${id}`);
+    return axios.get(`projects/${id}`);
   },
 
-  postProject(name) {
-    return axios.post('/projects',
-      { name }
-    );
+  createProject(project) {
+    return axios.post('projects', project);
+  },
+
+  updateProject(project) {
+    return axios.put('projects', project);
   }
 };

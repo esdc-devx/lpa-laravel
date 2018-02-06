@@ -1,6 +1,9 @@
 <template>
-  <div id="app">
-    <el-container>
+  <div id="app"
+    v-loading.fullscreen.lock="isLoading"
+    element-loading-background="#FFF"
+    v-cloak>
+    <el-container v-show="isLoading === false">
       <el-header height="auto">
         <top-bar/>
       </el-header>
@@ -12,11 +15,12 @@
 
         <el-container>
           <el-main>
-            <transition name="fade" mode="out-in">
-              <keep-alive>
+            <breadcrumb/>
+            <keep-alive>
+              <transition name="fade" mode="out-in">
                 <router-view/>
-              </keep-alive>
-            </transition>
+              </transition>
+            </keep-alive>
           </el-main>
         </el-container>
       </el-container>
@@ -28,17 +32,55 @@
 </template>
 
 <script>
+  import EventBus from './components/event-bus';
+
   import TopBar from './views/top-bar.vue';
   import SideBar from './views/side-bar.vue';
+  import Breadcrumb from './views/breadcrumb.vue';
+
   export default {
     name: 'app',
-    components: { TopBar, SideBar }
+
+    components: { TopBar, SideBar, Breadcrumb },
+
+    data() {
+      return {
+        isLoading: true
+      }
+    },
+
+    beforeCreate() {
+      EventBus.$once('App:ready', () => {
+        this.isLoading = false;
+      });
+    }
   };
 </script>
 
 <style lang="scss">
-  .el-main, .el-aside {
-    // fixes a layout bug for IE11
+  [v-cloak] {
+    display: none;
+  }
+  #app, #app > .el-container {
+    height: 100%;
+  }
+  .el-aside {
     overflow: visible;
+  }
+  .el-main {
+    padding: 30px;
+    padding-top: 10px;
+  }
+  @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    .el-main {
+      // fixes a layout bug for IE11
+      overflow: visible;
+    }
+  }
+
+  hr {
+    border-color: #E6E6E6;
+    border-style: solid;
+    margin-bottom: 20px;
   }
 </style>

@@ -26,8 +26,8 @@ export const actions = {
     return new Promise((resolve, reject) => {
       axios.get('/locales')
         .then(response => {
-          commit(types.SET_LANGUAGES, response.data);
-          resolve(response.data);
+          commit(types.SET_LANGUAGES, response.data.data);
+          resolve(response.data.data);
         })
         .catch(e => {
           reject(e);

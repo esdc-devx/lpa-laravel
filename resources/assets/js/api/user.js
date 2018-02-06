@@ -1,11 +1,11 @@
 import axios from '../interceptor';
 
 export default {
-  getUser() {
-    return axios.get('/user');
+  getUsers() {
+    return axios.get('users');
   },
 
-  login(data) {
-    return axios.post('/login', data);
+  getUser() {
+    return axios.get('users/current');
   }
 };
