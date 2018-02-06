@@ -2,7 +2,7 @@
   <transition name="fade" mode="out-in">
     <div v-show="isHomePage === false">
       <el-breadcrumb separator-class="el-icon-arrow-right" >
-        <el-breadcrumb-item :to="{ path: '/' + language + crumb.path }" v-for="crumb in getBreadcrumbs()" :key="crumb.id">
+        <el-breadcrumb-item :to="{ path: crumb.path }" v-for="crumb in getBreadcrumbs()" :key="crumb.id">
           {{ crumb.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -94,7 +94,7 @@
           // we need to catch edge cases like deep linking
           // would produce undefined as value
           title = matchedCrumbsArr[i] === 'undefined' ? '' : matchedCrumbsArr[i];
-          path = '/' + route[i];
+          path = '/' + this.language + '/' + route[i];
 
           // don't add any crumb that do not have a valid title or path
           if (title && path) {

@@ -23,12 +23,12 @@
         label="Name">
       </el-table-column>
       <el-table-column
-        :filters="groups"
-        :filter-method="filterGroups"
+        :filters="orgUnit"
+        :filter-method="filterOrgUnit"
         filter-placement="bottom-start"
-        class-name="groupFilter"
+        class-name="orgUnitFilter"
         prop="organization_unit.name"
-        label="Organizational group">
+        label="Organizational unit">
       </el-table-column>
     </el-table>
 
@@ -72,7 +72,7 @@
     components: { ProjectCreate },
 
     computed: {
-      groups() {
+      orgUnit() {
         return _.chain(this.projects)
                 .mapValues('organization_unit.name')
                 .toArray().uniq()
@@ -118,7 +118,7 @@
           }
         }
       },
-      filterGroups(value, row) {
+      filterOrgUnit(value, row) {
         return row.organization_unit.name === value;
       }
     },
@@ -150,7 +150,7 @@
     }
   }
 
-  .groupFilter:hover {
+  .orgUnitFilter:hover {
     cursor: pointer;
   }
 </style>
