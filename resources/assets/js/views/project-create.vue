@@ -129,11 +129,11 @@
         this.$refs.form.validate(valid => {
           if (valid) {
             this.createProject();
-          } else {
-            // form has errors
-            // @todo: might want to focus on the error fields
-            return false;
+            return true
           }
+          // form has errors
+          // @todo: might want to focus on the error fields
+          return false;
         });
       },
 

@@ -26,6 +26,10 @@
 <script>
   import { mapGetters } from 'vuex';
 
+  // this is the max level number the sidebar understands
+  // the longuest sidebar's link's path split
+  const maxLevelDeep = 3;
+
   export default {
     name: 'side-bar',
     computed: {
@@ -44,8 +48,6 @@
     },
     methods: {
       setActiveIndex(to) {
-        // this is the max level number the sidebar understands
-        let maxLevelDeep = 3;
         // example url: /:lang/projects/:id
         // by splicing the path, we can determine on what page the user is
         // based on the sidebar's link's paths

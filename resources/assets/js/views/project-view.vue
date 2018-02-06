@@ -35,22 +35,22 @@
         if (this.$store.getters.projectLoadStatus === LoadStatus.LOADING_SUCCESS) {
           this.isLoading = false;
           return this.$store.getters.project;
-        } else {
-          // project not found, means we might be coming from a deep link
-          let id = this.$route.params.id;
-          return this.loadProject(id)
-            .then(() => {
-              this.isLoading = false;
-              return this.getProject();
-            })
-            .catch(({ response }, e) => {
-              if (response.data && response.data.errors) {
-                // @todo: save error message in Store
-              }
-              console.error('[project-view][loadProject]: ' + e);
-              alert('[project-view][loadProject]: ' + e);
-            });
         }
+
+        // project not found, means we might be coming from a deep link
+        let id = this.$route.params.id;
+        return this.loadProject(id)
+          .then(() => {
+            this.isLoading = false;
+            return this.getProject();
+          })
+          .catch(({ response }, e) => {
+            if (response.data && response.data.errors) {
+              // @todo: save error message in Store
+            }
+            console.error('[project-view][loadProject]: ' + e);
+            alert('[project-view][loadProject]: ' + e);
+          });
       }
     },
 

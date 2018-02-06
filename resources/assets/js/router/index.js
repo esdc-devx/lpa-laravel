@@ -79,10 +79,10 @@ function proceed(to, from, next) {
 const routes = [
   {
     path: '/:lang(en|fr)',
-    name: "home",
+    name: 'home',
     component: Home,
     meta: {
-      breadcrumbs: () => '{navigation.home}'
+      breadcrumbs: () => `{navigation.home}`
     }
   },
   {
@@ -141,7 +141,7 @@ const routes = [
 const router = new Router({
   routes,
   mode: 'history',
-  saveScrollPosition: "true"
+  saveScrollPosition: 'true'
 });
 
 // Router Guards

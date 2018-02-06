@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import axios from '../interceptor';
 
 export default {

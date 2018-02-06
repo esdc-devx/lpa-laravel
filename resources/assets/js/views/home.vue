@@ -37,8 +37,7 @@
     <project-create
       v-if="showCreateProjectModal"
       :show.sync="showCreateProjectModal"
-      @close="showCreateProjectModal = false"
-      @create="onProjectCreate"/>
+      @close="showCreateProjectModal = false"/>
   </div>
 </template>
 
@@ -61,15 +60,6 @@
     data() {
       return {
         showCreateProjectModal: false
-      }
-    },
-
-    methods: {
-      onProjectCreate() {
-        // @todo: grab the id from the new created project
-        // and redirect to project
-        // let id = 1;
-        // this.$router.push(`${id}`);
       }
     }
   };

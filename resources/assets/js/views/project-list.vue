@@ -44,8 +44,7 @@
     <project-create
       v-if="showCreateModal"
       :show.sync="showCreateModal"
-      @close="showCreateModal = false"
-      @create="onProjectCreate"/>
+      @close="showCreateModal = false"/>
   </div>
 </template>
 
@@ -89,13 +88,6 @@
       viewProject(project) {
         this.$store.commit('setProject', project);
         this.$router.push(`projects/${project.id}`);
-      },
-
-      onProjectCreate() {
-        // @todo: grab the id from the new created project
-        // and redirect to project
-        // let id = 1;
-        // this.$router.push(`${id}`);
       },
 
       // Pagination
