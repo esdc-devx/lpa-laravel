@@ -9,12 +9,12 @@
       <el-form-item label="Project name" for="name" prop="name">
         <el-input v-model="modal.form.name" id="name" name="name" auto-complete="off" autofocus></el-input>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="orgUnit" prop="orgUnit">
+      <el-form-item label="Organizational Unit" for="organization_unit" prop="organization_unit">
         <el-select
           v-if="modal.form.orgUnitOptions.length > 1"
           v-model="modal.form.organization_unit"
-          id="orgUnit"
-          name="orgUnit">
+          id="organization_unit"
+          name="organization_unit">
           <el-option
             v-for="item in modal.form.orgUnitOptions"
             :key="item.value"
@@ -22,7 +22,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input v-else v-model="modal.form.orgUnitOptions" id="orgUnit" name="orgUnit" disabled></el-input>
+        <el-input v-else v-model="modal.form.orgUnitOptions" id="organization_unit" name="organization_unit" disabled></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -54,7 +54,7 @@
         isLoading: false,
         // @todo: add dynamic attribute values from backend
         nameRequired: this.trans('validation.required', { attribute: 'name' }),
-        orgUnitRequired: this.trans('validation.required', { attribute: 'orgUnit' }),
+        orgUnitRequired: this.trans('validation.required', { attribute: 'organization_unit' }),
         modal: {
           form: {
             name: '',
@@ -83,7 +83,7 @@
           name: [
             { required: true, message: this.nameRequired, trigger: 'blur' },
           ],
-          orgUnit: [
+          organization_unit: [
             { required: true, message: this.orgUnitRequired, trigger: 'blur' }
           ]
         }
@@ -92,7 +92,7 @@
       createProject() {
         let project = {
           name: this.modal.form.name,
-          orgUnit: this.modal.form.orgUnit
+          organization_unit: this.modal.form.organization_unit
         }
         // @todo: might want to show a loading spinner on modal after hitting create
         this.$store.dispatch('createProject', project)
@@ -126,7 +126,7 @@
       },
 
       validateBeforeSubmit() {
-        this.$refs.form.validate((valid) => {
+        this.$refs.form.validate(valid => {
           if (valid) {
             this.createProject();
           } else {
