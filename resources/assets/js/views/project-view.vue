@@ -43,7 +43,10 @@
               this.isLoading = false;
               return this.getProject();
             })
-            .catch(e => {
+            .catch(({ response }, e) => {
+              if (response.data && response.data.errors) {
+                // @todo: save error message in Store
+              }
               console.error('[project-view][loadProject]: ' + e);
               alert('[project-view][loadProject]: ' + e);
             });
