@@ -5,6 +5,8 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
+use Illuminate\Auth\AuthenticationException as AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
 use App\Traits\UsesJsonResponse;
 
@@ -71,8 +73,25 @@ class Handler extends ExceptionHandler
                 return $this->respondNotFound('Endpoint not found.');
             }
 
+            // Handle authentication error.
+            if ($exception instanceof AuthenticationException) {
+                return $this->respondUnauthorize('User is not authenticated.');
+            }
+
             // Default to internal error response.
-            return $this->respondInternalError($exception->getMessage());
+            $error = $exception->getMessage();
+
+            // Add debug information when debug mode is on.
+            if (config('app.debug')) {
+                $exceptionClass = get_class($exception);
+                $file = $exception->getFile();
+                $line = $exception->getLine();
+
+                $error .= PHP_EOL . "Exception: $exceptionClass";
+                $error .= PHP_EOL . "File: $file";
+                $error .= PHP_EOL . "Line: $line";
+            }
+            return $this->respondInternalError($error);
         }
 
         return parent::render($request, $exception);

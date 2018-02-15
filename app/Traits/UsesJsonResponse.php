@@ -35,6 +35,12 @@ trait UsesJsonResponse
             ->respondWithError($message);
     }
 
+    protected function respondUnauthorize($message = 'Unauthorized.')
+    {
+        return $this->setStatusCode(Response::HTTP_UNAUTHORIZED)
+            ->respondWithError($message);
+    }
+
     protected function respondInvalidRequest($message = 'Invalid request.')
     {
         // @note: Response::HTTP_UNPROCESSABLE_ENTITY
