@@ -162,10 +162,9 @@ class OrganizationUnitTableSeeder extends Seeder
     public function run()
     {
         // Truncate previous tables.
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('organization_unit_translations')->delete();
-        DB::table('organization_units')->delete();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        DB::table('organization_unit_translations')->truncate();
+        DB::table('organization_unit_user')->truncate();
+        DB::table('organization_units')->truncate();
 
         // Temporarily use Faker to generate some fake data.
         $faker = \Faker\Factory::create();

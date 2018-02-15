@@ -10,7 +10,7 @@ class OrganizationUnit extends Model
     use Translatable;
 
     protected $guarded = [];
-    protected $hidden = ['translations', 'created_at', 'updated_at'];
+    protected $hidden = ['translations', 'pivot', 'created_at', 'updated_at'];
 
     public $translatedAttributes = ['name', 'acronym'];
 }

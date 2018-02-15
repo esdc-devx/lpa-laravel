@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->group(function () {
     Route::get('users/current', 'UserController@current');
+    Route::get('users/search', 'UserController@search');
     Route::resource('users', 'UserController');
 
     Route::get('locales', 'LocaleController@index');

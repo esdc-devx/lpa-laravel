@@ -3,9 +3,34 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User\User;
+use App\Repositories\UserRepository;
+use App\Repositories\OrganizationUnitRepository;
+use App\Http\Resources\UserLdap;
 
 class UserController extends ApiController
 {
+    protected $users;
+    protected $organizationUnits;
+
+    public function __construct(UserRepository $users, OrganizationUnitRepository $organizationUnits)
+    {
+        $this->users = $users;
+        $this->organizationUnits = $organizationUnits;
+    }
+
+    /**
+     * Search users into LDAP repository.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function search(Request $request)
+    {
+        $results = $this->users->searchLdap($request->query('name'));
+        return $this->respond(UserLdap::collection($results));
+    }
+
     /**
      * Display current user.
      *
@@ -13,7 +38,7 @@ class UserController extends ApiController
      */
     public function current(Request $request)
     {
-        return $this->respond($request->user());
+        return $this->respond($this->users->getCurrent());
     }
 
     /**
@@ -23,7 +48,9 @@ class UserController extends ApiController
      */
     public function index()
     {
-        // Return all users.
+        $limit = request()->get('limit') ? : self::ITEMS_PER_PAGE;
+        $results = $this->users->getAll($limit);
+        return $this->respondWithPagination($results);
     }
 
     /**
@@ -34,6 +61,9 @@ class UserController extends ApiController
     public function create()
     {
         // Return user creation form.
+        return $this->respond([
+            'organization_units' => $this->organizationUnits->getAll()->toArray()
+        ]);
     }
 
     /**
@@ -56,6 +86,7 @@ class UserController extends ApiController
     public function show($id)
     {
         // Return specific user.
+        return $this->respond($this->users->getById($id));
     }
 
     /**

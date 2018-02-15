@@ -3,14 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project\Project;
-use App\Models\OrganizationUnit\OrganizationUnitRepository;
+use App\Repositories\ProjectRepository;
+use App\Repositories\OrganizationUnitRepository;
 
 class ProjectController extends ApiController
 {
+    protected $projects;
     protected $organizationUnits;
 
-    public function __construct(OrganizationUnitRepository $organizationUnits)
+    public function __construct(ProjectRepository $projects, OrganizationUnitRepository $organizationUnits)
     {
+        $this->projects = $projects;
         $this->organizationUnits = $organizationUnits;
     }
 
@@ -22,13 +25,8 @@ class ProjectController extends ApiController
     public function index()
     {
         $limit = request()->get('limit') ?: self::ITEMS_PER_PAGE;
-        $paginator = Project::with('owner', 'organizationUnit')
-        ->orderBy('name', 'asc')
-        ->paginate($limit);
-
-        return $this->respond([
-            'paginator' => json_decode($paginator->toJson())
-        ]);
+        $results = $this->projects->getAll($limit);
+        return $this->respondWithPagination($results);
     }
 
     /**
@@ -39,7 +37,7 @@ class ProjectController extends ApiController
     public function create()
     {
         return $this->respond([
-            'organization_units' => $this->organizationUnits->getOwners()
+            'organization_units' => $this->organizationUnits->getOwners()->toArray()
         ]);
     }
 
@@ -63,6 +61,7 @@ class ProjectController extends ApiController
     public function show($id)
     {
         return $this->respond([
+            // @todo: Move to Project Repository.
             'project' => Project::with('owner', 'organizationUnit')->findOrFail($id)
         ]);
     }

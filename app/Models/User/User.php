@@ -6,6 +6,8 @@ use Laravel\Passport\HasApiTokens;
 use Adldap\Laravel\Traits\HasLdapUser;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\OrganizationUnit\OrganizationUnit;
+use App\Models\Project\Project;
 
 class User extends Authenticatable
 {
@@ -28,4 +30,14 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token', 'created_at', 'updated_at'
     ];
+
+    public function organizationUnits()
+    {
+        return $this->belongsToMany(OrganizationUnit::class);
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'owner_id');
+    }
 }
