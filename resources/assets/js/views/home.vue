@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('home.welcome', { name: username }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('home.welcome', { name: user.name }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="24">
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import ProjectCreate from '../views/project-create';
 
@@ -52,9 +52,9 @@
     components: { ProjectCreate },
 
     computed: {
-      ...mapState({
-        username: state => state.user.info.name
-      })
+      ...mapGetters([
+        'user'
+      ])
     },
 
     data() {
@@ -66,7 +66,6 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '../../sass/vendors/element-variables';
   h2, p {
     text-align: center;
   }

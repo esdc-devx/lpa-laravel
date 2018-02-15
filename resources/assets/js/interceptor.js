@@ -1,7 +1,9 @@
 import axios from 'axios';
+import router from './router';
 import store from './store/';
 import Config from './config';
 import EventBus from './components/event-bus';
+import Notify from './mixins/notify.js';
 
 let onLanguageChange = lang => {
   axios.defaults.baseURL = '/' + lang + apiUrl;
@@ -22,36 +24,22 @@ let token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
+  Notify.notifyError('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 // Authentication Interceptor
-axios.interceptors.response.use((response) => response, (error) => {
-  let value = error.response;
+axios.interceptors.response.use(response => response, error => {
+  let response = error.response;
 
-  // if (value.status === 401 && value.data.message === 'Expired JWT Token'
-  //   && (!value.config || !value.config.renewToken)) {
-  //   console.log('Expired JWT Token. Reconnecting ...');
-
-  //   // renewToken performs authentication using username/password saved in sessionStorage/localStorage
-  //   return this.renewToken().then(() => {
-  //     error.config.baseURL = undefined; // baseURL is already present in url
-  //     return this.axios.request(error.config);
-  //   }).then((response) => {
-  //     console.log('Reconnected !');
-  //     return response;
-  //   });
-
-  // } else if (value.status === 401 && value.config && value.config.renewToken) {
-  if (value.status === 401 && value.config && value.config.renewToken) {
-
-    if (error.message) {
-      error.message = 'Could not reconnect. ' + error.message + '.';
-    } else {
-      error.message = 'Could not reconnect.';
-    }
-  } else if (value.status === 401) {
+  if (response.status === 401) {
+    // not logged in, redirect to login
     window.location.href = '/' + store.getters.language + '/login';
+  } else if (response.status === 500) {
+    // internal error
+    let errorResponse = response.data && response.data.errors ? response.data.errors : '';
+    let errorMsg = error.message || '';
+    Notify.notifyError(errorMsg + '<br>' + errorResponse);
   }
 
   return Promise.reject(error);

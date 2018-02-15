@@ -1,14 +1,12 @@
 <template>
-  <div class="content">
+  <div class="content" v-loading="isLoading">
     <el-button @click="showCreateModal = true">Create a new project</el-button>
     <el-table
       class="projectList"
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :data="projects"
-      @row-click="viewProject"
-      v-loading="isLoading"
-      >
+      @row-click="viewProject">
       <el-table-column
         sortable
         prop="id"
@@ -52,7 +50,6 @@
   import _ from 'lodash';
   import { mapGetters } from 'vuex';
 
-  import EventBus from '../components/event-bus.js';
   import ProjectCreate from '../views/project-create';
   import ProjectsAPI from '../api/projects';
 
@@ -119,10 +116,6 @@
       this.$store.dispatch('loadProjects')
         .then(() => {
           this.isLoading = false;
-        })
-        .catch(e => {
-          console.error('[project-list][loadProjects]: ' + e);
-          alert('[project-list][loadProjects]: ' + e);
         });
     }
   };

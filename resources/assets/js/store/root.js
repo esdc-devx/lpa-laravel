@@ -6,7 +6,8 @@ import Config from '../config';
 
 export const state = {
   language: Config.defaultLang,
-  languages: []
+  languages: [],
+  adminbarShown: false
 };
 
 export const getters = {
@@ -15,6 +16,9 @@ export const getters = {
   },
   languages(state) {
     return state.languages;
+  },
+  adminbarShown(state) {
+    return state.adminbarShown;
   }
 };
 
@@ -33,6 +37,9 @@ export const actions = {
           reject(e);
         });
     });
+  },
+  setAdminBarShown({ commit }, context) {
+    commit(types.SET_ADMINBAR_SHOWN, context);
   }
 };
 
@@ -58,5 +65,9 @@ export const mutations = {
   },
   [types.SET_LANGUAGES](state, languages) {
     state.languages = languages;
+  },
+  [types.SET_ADMINBAR_SHOWN](state, isShown) {
+    isShown = !_.isUndefined(isShown) ? isShown : !state.adminbarShown;
+    state.adminbarShown = isShown;
   }
 };

@@ -5,6 +5,8 @@ import { sync } from 'vuex-router-sync';
 
 import App from './app.vue';
 
+import Notify from './mixins/notify.js';
+
 // Import Element UI
 import ElementUI from 'element-ui';
 // Element UI Localization
@@ -17,6 +19,8 @@ import router from './router';
 import store from './store/';
 
 sync(store, router);
+
+Vue.mixin({ methods: Notify });
 
 setLanguage()
   .then(loadLanguages()
@@ -45,12 +49,10 @@ setLanguage()
       });
     })
     .catch(e => {
-      // @refactor: Make a notification component
+      Notify.notifyError('[app][loadLanguages]: ' + e);
       console.error('[app][loadLanguages]: ' + e);
-      alert('[app][loadLanguages]: ' + e);
     })
   ).catch(e => {
-    // @refactor: Make a notification component
+    Notify.notifyError('[app][setLanguage]: ' + e);
     console.error('[app][setLanguage]: ' + e);
-    alert('[app][setLanguage]: ' + e);
   });

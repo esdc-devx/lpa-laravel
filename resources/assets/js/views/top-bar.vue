@@ -6,25 +6,20 @@
     <el-col :span="16" class="nav-col">
       <nav>
         <el-menu ref="topMenu" :default-active="$route.fullPath" background-color="#313131" text-color="#fff" active-text-color="#4bd5ff" class="top-menu" mode="horizontal" router>
-          <el-submenu index="0">
-            <template slot="title">Admin</template>
-            <el-menu-item :index="'/' + language + '/users/create'"><a href="#" @click.prevent>{{ trans('navigation.user_create') }}</a></el-menu-item>
-            <el-menu-item :index="'/' + language + '/users'"><a href="#" @click.prevent>{{ trans('navigation.user_list') }}</a></el-menu-item>
-          </el-submenu>
           <el-submenu index="1">
-            <template slot="title">{{ username }}</template>
+            <template slot="title">{{ user.name }}</template>
             <el-menu-item :index="'/' + language + '/profile'"><a href="#" @click.prevent>{{ trans('navigation.profile') }}</a></el-menu-item>
             <el-menu-item :index="'/' + language + '/logout'"><a href="#" @click.prevent="logout()">{{ trans('navigation.logout') }}</a></el-menu-item>
-          </el-submenu>
-          <el-submenu index="2" class="disabled">
-            <template slot="title">LPA Profile: Some dynamic Organization</template>
-            <el-menu-item index="2-1"><a href="#" @click.prevent>CS01</a></el-menu-item>
-            <el-menu-item index="2-2"><a href="#" @click.prevent>EX01</a></el-menu-item>
           </el-submenu>
           <el-menu-item :index="'/' + language + '/help'" class="disabled"><a href="#" @click.prevent>{{ trans('navigation.help') }}</a></el-menu-item>
           <li role="menuitem" class="el-menu-item lang">
             <a v-if="toggledLang === 'en'" href="#" @click.prevent="setLanguage">English</a>
             <a v-else href="#" @click.prevent="setLanguage">Français</a>
+          </li>
+          <li role="menuitem" class="el-menu-item">
+            <a href="#" @click.prevent="setAdminBarShown">
+              <i :class="['el-icon-setting', { 'active' : adminbarShown} ]"></i>
+            </a>
           </li>
         </el-menu>
       </nav>
@@ -33,18 +28,17 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'top-bar',
 
     computed: {
       ...mapGetters([
-        'language'
-      ]),
-      ...mapState({
-        username: state => state.user.info.name
-      })
+        'language',
+        'user',
+        'adminbarShown'
+      ])
     },
 
     data() {
@@ -96,13 +90,16 @@
         // with the new language
         route.params.lang = newLang;
         this.$router.push(route);
+      },
+      setAdminBarShown() {
+        this.$store.dispatch('setAdminBarShown');
       }
     }
   };
 </script>
 
 <style lang="scss" scoped>
-    @import '../../sass/vendors/element-variables';
+    @import '../../sass/vendors/elementui/vars';
   .top-bar {
     user-select: none;
   }
@@ -147,11 +144,18 @@
     a {
       text-decoration: none;
     }
-    .lang, .lang:hover {
+    .el-menu-item, .el-menu-item:hover {
       color: #fff;
     }
-    .lang:hover {
+    .el-menu-item:hover {
       background-color: #272727;
+    }
+
+    .el-icon-setting {
+      color: #FFF;
+      &.active {
+        color: red;
+      }
     }
   }
 </style>

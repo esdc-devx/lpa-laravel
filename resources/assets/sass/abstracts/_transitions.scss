@@ -10,7 +10,7 @@
 
 // Slide
 .slide-enter-active, .slide-leave-active {
-  animation-name: slideDown;
+  animation-name: slideToggle;
   animation-duration: 0.2s;
   animation-timing-function: ease-in-out;
 }
@@ -70,14 +70,12 @@
   opacity: 0;
 }
 
-@keyframes slideDown {
+@keyframes slideToggle {
   0% {
-    transform: translateY(-30px);
-    opacity: 0;
+    transform: translateX(-100%);
   }
   100% {
-    transform: translateY(0);
-    opacity: 1;
+    transform: translateX(0);
   }
 }
 

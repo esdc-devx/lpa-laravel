@@ -71,6 +71,10 @@
     padding: 30px;
     padding-top: 10px;
   }
+  .el-header {
+    padding: 0;
+  }
+
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     .el-main {
       // fixes a layout bug for IE11

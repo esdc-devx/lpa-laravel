@@ -2,7 +2,7 @@
   <transition name="fade" mode="out-in">
     <div v-show="isHomePage === false">
       <el-breadcrumb separator-class="el-icon-arrow-right" >
-        <el-breadcrumb-item :to="{ path: crumb.path }" v-for="crumb in getBreadcrumbs()" :key="crumb.id">
+        <el-breadcrumb-item v-for="crumb in getBreadcrumbs()" :to="{ path: crumb.path }" :key="crumb.id">
           {{ crumb.name }}
         </el-breadcrumb-item>
       </el-breadcrumb>
@@ -41,12 +41,12 @@
     methods: {
       validateMeta() {
         let matched = this.$route.matched;
-        if (!this.$route.matched.length || !matched[0].meta) {
+        if (!this.$route.matched.length || !matched[0].meta || !matched[0].meta.breadcrumbs) {
           return false;
         }
 
         if (matched.length > 1) {
-          console.error('[breadcrumb] Route childrens not supported yet');
+          throw new Error('[breadcrumb] Route childrens not supported yet');
           return false;
         }
         return true;
@@ -72,11 +72,6 @@
         let meta = matched[0].meta;
         let matchedCrumbs = meta.breadcrumbs();
         let matchedCrumbsArr = matchedCrumbs.split('/');
-        for (let i = 0; i < matchedCrumbsArr.length; i++) {
-          if (matchedCrumbsArr[i].match(/\{.*\}/)) {
-            matchedCrumbsArr[i] = this.trans(matchedCrumbsArr[i].replace(/{|}/g, ''));
-          }
-        }
 
         // get the paths from the route
         let route = (this.$route.path).split('/');
@@ -87,13 +82,24 @@
 
         let path = '';
         let title = '';
+        let outputTitle = '';
+        let routeName = '';
+        let crumb;
+
         // build up the breadcrumbs data
         for (let i = 0; i < route.length; i++) {
+          routeName = matchedCrumbsArr[i];
+          crumb = _.find(this.$router.options.routes, { name: routeName });
+          if (_.isUndefined(crumb)) {
+            throw new Error(`[breadcrumb] Route '${routeName}' is missing.`);
+          }
           // since the meta is executed
           // before any store modules has done loading,
           // we need to catch edge cases like deep linking
           // would produce undefined as value
-          title = matchedCrumbsArr[i] === 'undefined' ? '' : matchedCrumbsArr[i];
+          outputTitle = crumb.meta.title() || '';
+          // try to translate the title, or just take it as value
+          title = this.trans(outputTitle) || outputTitle || '';
           path = '/' + this.language + '/' + route[i];
 
           // don't add any crumb that do not have a valid title or path
@@ -111,7 +117,7 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '../../sass/vendors/element-variables';
+  @import '../../sass/vendors/elementui/vars';
   .el-breadcrumb {
     font-size: 18px;
     line-height: 2;
