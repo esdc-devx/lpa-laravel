@@ -108,7 +108,7 @@ const routes = [
     component: Profile,
     meta: {
       title: () => 'navigation.profile',
-      breadcrumbs: () => `home/profile`
+      breadcrumbs: () => 'profile'
     }
   },
   {
@@ -117,7 +117,7 @@ const routes = [
     component: ProjectList,
     meta: {
       title: () => 'navigation.projects',
-      breadcrumbs: () => `home/projects`
+      breadcrumbs: () => 'projects'
     }
   },
   {
@@ -126,7 +126,7 @@ const routes = [
     component: ProjectView,
     meta: {
       title: () => `${store.getters.project.name}`,
-      breadcrumbs: () => `home/projects/project-view`
+      breadcrumbs: () => 'projects/project-view'
     }
   },
   {
@@ -135,7 +135,7 @@ const routes = [
     component: AdminDashboard,
     meta: {
       title: () => 'navigation.admin_dashboard',
-      breadcrumbs: () => `home/admin-dashboard`
+      breadcrumbs: () => 'admin-dashboard'
     },
     beforeEnter(to, from, next) {
       store.dispatch('setAdminBarShown', true).then(() => next());
@@ -147,7 +147,7 @@ const routes = [
     component: UserList,
     meta: {
       title: () => 'navigation.admin_user_list',
-      breadcrumbs: () => `home/admin-dashboard/admin-user-list`
+      breadcrumbs: () => 'admin-dashboard/admin-user-list'
     },
     beforeEnter(to, from, next) {
       store.dispatch('setAdminBarShown', true).then(() => next());
@@ -159,7 +159,7 @@ const routes = [
     component: UserCreate,
     meta: {
       title: () => 'navigation.admin_user_create',
-      breadcrumbs: () => `home/admin-dashboard/admin-user-list/admin-user-create`
+      breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-create'
     },
     beforeEnter(to, from, next) {
       store.dispatch('setAdminBarShown', true).then(() => next());
@@ -174,7 +174,8 @@ const routes = [
     name: 'not-found',
     component: NotFound,
     meta: {
-      breadcrumbs: () => `home/{navigation.not_found}`
+      title: () => 'navigation.not_found',
+      breadcrumbs: () => 'not-found'
     }
   }
 ];

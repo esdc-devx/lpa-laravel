@@ -72,8 +72,6 @@
 
   h2 {
     font-size: 3rem;
-    border: none;
-    text-transform: inherit;
   }
 
   i {

@@ -62,7 +62,11 @@
       },
 
       getBreadcrumbs() {
-        let crumbs = [];
+        let homeRoute = _.find(this.$router.options.routes, { name: 'home' });
+        let crumbs = [{
+          name: this.trans(homeRoute.meta.title()),
+          path: '/' + this.language
+        }];
         let matched = this.$route.matched;
         if (!this.validateMeta()) {
           return crumbs;
@@ -71,16 +75,16 @@
         // gather meta data and process any locale strings before moving on
         let meta = matched[0].meta;
         let matchedCrumbs = meta.breadcrumbs();
-        let matchedCrumbsArr = matchedCrumbs.split('/');
+        let matchedCrumbsArr = _.compact(matchedCrumbs.split('/'));
 
         // get the paths from the route
-        let route = (this.$route.path).split('/');
+        let route = _.compact(this.$route.path.split('/'));
         // and remove the language item
         // since we do not want to show it
-        // example url: ['', 'fr', 'projects'] => ['', 'projects']
-        route.splice(1, 1);
+        // example url: ['fr', 'projects'] => ['projects']
+        route.splice(0, 1);
 
-        let path = '';
+        let path = '/' + this.language;
         let title = '';
         let outputTitle = '';
         let routeName = '';
@@ -90,9 +94,6 @@
         for (let i = 0; i < route.length; i++) {
           routeName = matchedCrumbsArr[i];
           crumb = _.find(this.$router.options.routes, { name: routeName });
-          if (_.isUndefined(crumb)) {
-            throw new Error(`[breadcrumb] Route '${routeName}' is missing.`);
-          }
           // since the meta is executed
           // before any store modules has done loading,
           // we need to catch edge cases like deep linking
@@ -100,7 +101,7 @@
           outputTitle = crumb.meta.title() || '';
           // try to translate the title, or just take it as value
           title = this.trans(outputTitle) || outputTitle || '';
-          path = '/' + this.language + '/' + route[i];
+          path += '/' + route[i];
 
           // don't add any crumb that do not have a valid title or path
           if (title && path) {

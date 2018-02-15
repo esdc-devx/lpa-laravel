@@ -1,6 +1,6 @@
 <template>
   <div class="content" v-loading="isLoading">
-    <el-button @click="showCreateModal = true">Create a new project</el-button>
+    <el-button @click="showCreateModal = true">Create a project</el-button>
     <el-table
       class="projectList"
       empty-text="Nothing to show here mate"

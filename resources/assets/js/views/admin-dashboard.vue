@@ -15,8 +15,5 @@
 <style lang="scss" scoped>
   h2 {
     text-align: center;
-    font-size: 3rem;
-    border: none;
-    text-transform: inherit;
   }
 </style>

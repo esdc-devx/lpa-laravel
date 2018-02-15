@@ -23,11 +23,6 @@
 <script>
   import { mapGetters } from 'vuex';
 
-  // this is the max level number the sidebar understands
-  // the longuest sidebar's link's path split
-  // example url: /:lang/users/create
-  const maxLevelDeep = 4;
-
   export default {
     name: 'side-bar',
     computed: {
@@ -83,12 +78,6 @@
             icon: 'el-icon-menu',
             classes: '',
             index: '/admin/users'
-          },
-          {
-            text: this.trans('navigation.admin_user_create'),
-            icon: 'el-icon-menu',
-            classes: '',
-            index: '/admin/users/create'
           }
         ];
       }
@@ -105,14 +94,23 @@
     },
     methods: {
       setActiveIndex(to) {
-        // example url: /:lang/projects/:id
-        // by splicing the path, we can determine on what page the user is
-        // based on the sidebar's link's paths
+        let menu = this.$refs.sideBar || this.$refs.adminBar;
         let route = Object.assign({}, to);
-        let pathArray = route.fullPath.split('/');
-        pathArray.splice(maxLevelDeep, pathArray.length);
-        let sidebar = this.$refs.sideBar || this.$refs.adminBar;
-        sidebar.activeIndex = pathArray.join('/');
+
+        // check if the current page is found in the items paths
+        if (menu.items[route.fullPath]) {
+          menu.activeIndex = menu.items[route.fullPath].index;
+        } else {
+          // if not, just pop last index of path and try again
+          let pathArray = route.fullPath.split('/');
+          pathArray.pop();
+          route.fullPath = pathArray.join('/');
+          // fail safe in case we get a path that the sidebar doesn't recognize
+          if (route.fullPath === '' || route.fullPath === `/${this.language}`) {
+            return;
+          }
+          this.setActiveIndex(route);
+        }
       }
     },
     mounted() {
