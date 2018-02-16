@@ -9,11 +9,7 @@ export default {
 
   getters: {
     userLoadStatus(state) {
-      // @note: we need to specify a function here
-      // as the store.watch() only accepts a function
-      return function() {
-        return state.userLoadStatus;
-      };
+      return state.userLoadStatus;
     },
 
     user(state) {
@@ -24,7 +20,6 @@ export default {
   actions: {
     loadUser({ commit }) {
       commit('setUserLoadStatus', LoadStatus.LOADING_STARTED);
-
       return new Promise((resolve, reject) => {
         UserAPI.getUser()
           .then(response => {

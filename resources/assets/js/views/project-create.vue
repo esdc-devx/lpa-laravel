@@ -89,28 +89,23 @@
         }
       },
 
-      createProject() {
+      create() {
         let project = {
           name: this.modal.form.name,
           organization_unit: this.modal.form.organization_unit
         }
         // @todo: might want to show a loading spinner on modal after hitting create
-        this.$store.dispatch('createProject', project)
+        this.$store.dispatch('create', project)
           .then(response => {
             // @todo: grab the newly created project
             // and pluck its name for the notification
             this.close();
-            this.$notify({
-              title: 'Success',
-              dangerouslyUseHTMLString: true,
-              message: `{something} has been created.`,
-              type: 'success'
-            });
+
+            this.notifySuccess(`{something} has been created.`);
           })
           .catch(e => {
-            // @refactor: Make a notification component
-            console.error('[project-create][createProject]: ' + e);
-            alert('[project-create][createProject]: ' + e);
+            this.notifyError('[project-create][create]: ' + e);
+            console.error('[project-create][create]: ' + e);
           });
       },
 
@@ -128,7 +123,7 @@
       validateBeforeSubmit() {
         this.$refs.form.validate(valid => {
           if (valid) {
-            this.createProject();
+            this.create();
             return true
           }
           // form has errors
