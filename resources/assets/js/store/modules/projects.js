@@ -38,8 +38,8 @@ export default {
       return new Promise((resolve, reject) => {
         ProjectsAPI.getProjects(page)
           .then(response => {
-            commit('setProjects', response.data.data.paginator.data);
-            commit('setPagination', response.data.data.paginator);
+            commit('setProjects', response.data.data);
+            commit('setPagination', response.data.meta);
             commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
             resolve(response.data.data);
           })
