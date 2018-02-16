@@ -7,11 +7,12 @@ return [
     'profile' => 'Mon profile',
     'logout' => 'Se déconnecter',
     'dashboard' => 'Tableau de bord',
+    'admin_dashboard' => 'Tableau de bord d\'administration',
+    'admin_user_list' => 'Usagers',
+    'admin_user_create' => 'Création',
     'projects' => 'Projets',
     'learning_products' => 'Produits d\'apprentissage',
     'non_learning_products' => 'Produits de non-apprentissage',
-    'user_list' => 'Usagers - Liste',
-    'user_create' => 'Usagers - Création',
     'not_found' => 'Non trouvé',
     'back_to_home' => 'Retourner à la page d\'accueil'
 ];

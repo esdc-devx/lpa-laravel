@@ -6,7 +6,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
   import LoadStatus from '../store/load-status-constants';
 
@@ -14,9 +14,9 @@
     name: 'ProjectView',
 
     computed: {
-      project() {
-        return this.getProject();
-      }
+      ...mapGetters([
+        'project'
+      ])
     },
 
     data() {
@@ -43,13 +43,6 @@
           .then(() => {
             this.isLoading = false;
             return this.getProject();
-          })
-          .catch(({ response }, e) => {
-            if (response.data && response.data.errors) {
-              // @todo: save error message in Store
-            }
-            console.error('[project-view][loadProject]: ' + e);
-            alert('[project-view][loadProject]: ' + e);
           });
       }
     },

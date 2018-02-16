@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <h2>User list</h2>
-    <el-button type="primary" @click="showCreateModal = true"><b>+</b></el-button>
+    <el-button @click="showCreateModal = true">Create a user</el-button>
     <el-table
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
@@ -115,6 +115,9 @@
 </script>
 
 <style scoped lang="scss">
+  h2 {
+    text-align: center;
+  }
   table {
     width: 100%;
     tbody {
