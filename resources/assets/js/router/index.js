@@ -87,8 +87,8 @@ function trimTraillingSlashes(newPath) {
 function setupAdmin(newPath) {
   // @removeme: should get the admin rights from the user queried
   store.state.user.info.isAdmin = true;
-  if (newPath.match(/\/admin/) && store.getters.user.isAdmin) {
-    store.dispatch('toggleAdminBar', true);
+  if (store.getters.user.isAdmin) {
+    store.dispatch('toggleAdminBar', !!newPath.match(/\/admin/));
   }
 }
 
