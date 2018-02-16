@@ -7,7 +7,7 @@ import Config from '../config';
 export const state = {
   language: Config.defaultLang,
   languages: [],
-  adminbarShown: false
+  isAdminBarShown: false
 };
 
 export const getters = {
@@ -17,12 +17,13 @@ export const getters = {
   languages(state) {
     return state.languages;
   },
-  adminbarShown(state) {
-    return state.adminbarShown;
+  isAdminBarShown(state) {
+    return state.isAdminBarShown;
   }
 };
 
 export const actions = {
+  // Localization handlers
   setLanguage({ commit }, context) {
     commit(types.SET_LANGUAGE, context);
   },
@@ -38,9 +39,11 @@ export const actions = {
         });
     });
   },
-  setAdminBarShown({ commit }, context) {
-    commit(types.SET_ADMINBAR_SHOWN, context);
-  }
+
+  // Admin handlers
+  toggleAdminBar({ commit }, context) {
+    commit(types.TOGGLE_ADMINBAR, context);
+  },
 };
 
 export const mutations = {
@@ -66,8 +69,8 @@ export const mutations = {
   [types.SET_LANGUAGES](state, languages) {
     state.languages = languages;
   },
-  [types.SET_ADMINBAR_SHOWN](state, isShown) {
-    isShown = !_.isUndefined(isShown) ? isShown : !state.adminbarShown;
-    state.adminbarShown = isShown;
+  [types.TOGGLE_ADMINBAR](state, isShown) {
+    isShown = !_.isUndefined(isShown) ? isShown : !state.isAdminBarShown;
+    state.isAdminBarShown = isShown;
   }
 };

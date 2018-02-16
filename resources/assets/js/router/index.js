@@ -20,72 +20,76 @@ import Notify from '../mixins/notify.js';
 
 Vue.use(Router);
 
+function beforeProceed(to, from, next) {
+  requireAuth(to, from, next)
+    .then(() => {
+      proceed(to, from, next);
+    });
+}
+
 // This will check to see if the user is authenticated or not.
 function requireAuth(to, from, next) {
-  // Determines where we should send the user.
-  let beforeProceed = (to, from, next) => {
-    // If the user has been loaded determine where we should
-    // send the user.
-    if (store.getters.userLoadStatus === LoadStatus.LOADING_SUCCESS) {
-      // If the user is not empty, that means there's a user
-      // authenticated we allow them to continue. Otherwise, we
-      // send the user back to the login page.
-      if (store.getters.user !== '') {
-        proceed(to, from, next);
-      } else {
-        // user not authenticated
-        // we need to redirect to the login page since
-        // we need a new csrf_token
-        window.location.href = '/login';
-      }
-    }
-  };
-
-  // Confirms the user has been loaded
-  if (store.getters.userLoadStatus !== LoadStatus.LOADING_SUCCESS) {
-    // If not, load the user
+  return new Promise((resolve, reject) => {
     store.dispatch('loadUser')
       .then(() => {
         if (store.getters.userLoadStatus === LoadStatus.LOADING_SUCCESS) {
-          beforeProceed(to, from, next);
+          return resolve();
         }
-      })
-      .catch(e => {
-        Notify.notifyError('[router][loadUser]: ' + e);
-        console.error('[router][loadUser]: ' + e);
+        return reject();
       });
-  } else {
-    // User call completed, so we proceed
-    beforeProceed(to, from, next);
-  }
+  });
 }
 
+let isPathDirty = false;
 function proceed(to, from, next) {
-  let isPathDirty = false;
   // record the language if changed
+  setLanguage(to);
+
+  let to_ = Object.assign({}, to);
+  let newPath = to_.fullPath;
+  // prefix the route with the language if needed
+  newPath = prefixRoute(newPath);
+  // remove non-necessary trailling slashes at end of path
+  newPath = trimTraillingSlashes(newPath);
+
+  setupAdmin(newPath);
+
+  if (isPathDirty) {
+    next(newPath);
+    isPathDirty = false;
+  }
+  next();
+}
+
+function setLanguage(to) {
   let lang = to.params.lang;
   if (lang && lang !== store.getters.language) {
     store.dispatch('setLanguage', lang);
   }
+}
 
-  // append language to route
-  // and remove trailling slashes if any
-  let newPath = to.fullPath;
-
+function prefixRoute(newPath) {
   if (!newPath.match(/\/en|fr/)) {
     newPath = '/' + store.getters.language + newPath;
     isPathDirty = true;
   }
+  return newPath;
+}
 
+function trimTraillingSlashes(newPath) {
   if (newPath.charAt(newPath.length - 1) === '/') {
     newPath = newPath.slice(0, -1);
     isPathDirty = true;
   }
+  return newPath;
+}
 
-  if (isPathDirty) {
-    next(newPath);
+function setupAdmin(newPath) {
+  // @removeme: should get the admin rights from the user queried
+  store.state.user.info.isAdmin = true;
+  if (newPath.match(/\/admin/) && store.getters.user.isAdmin) {
+    store.dispatch('toggleAdminBar', true);
   }
-  next();
 }
 
 // @note: Vue-router needs a name property when using history mode
@@ -136,9 +140,6 @@ const routes = [
     meta: {
       title: () => 'navigation.admin_dashboard',
       breadcrumbs: () => 'admin-dashboard'
-    },
-    beforeEnter(to, from, next) {
-      store.dispatch('setAdminBarShown', true).then(() => next());
     }
   },
   {
@@ -148,9 +149,6 @@ const routes = [
     meta: {
       title: () => 'navigation.admin_user_list',
       breadcrumbs: () => 'admin-dashboard/admin-user-list'
-    },
-    beforeEnter(to, from, next) {
-      store.dispatch('setAdminBarShown', true).then(() => next());
     }
   },
   {
@@ -160,9 +158,6 @@ const routes = [
     meta: {
       title: () => 'navigation.admin_user_create',
       breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-create'
-    },
-    beforeEnter(to, from, next) {
-      store.dispatch('setAdminBarShown', true).then(() => next());
     }
   },
   {
@@ -186,7 +181,7 @@ const router = new Router({
 });
 
 // Router Guards
-router.beforeEach(requireAuth);
+router.beforeEach(beforeProceed);
 
 router.onReady(() => {
   EventBus.$emit('App:ready');

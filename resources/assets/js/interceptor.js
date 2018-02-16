@@ -28,12 +28,13 @@ if (token) {
   console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
-// Authentication Interceptor
+// General error handling
 axios.interceptors.response.use(response => response, error => {
   let response = error.response;
 
   if (response.status === 401) {
     // not logged in, redirect to login
+    // @todo: should warn the user with a popup (Ok only) then redirect to login
     window.location.href = '/' + store.getters.language + '/login';
   } else if (response.status === 500) {
     // internal error

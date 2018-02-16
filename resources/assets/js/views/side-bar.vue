@@ -1,6 +1,6 @@
 <template>
   <div class="content">
-    <el-menu v-if="!adminbarShown" ref="sideBar" class="sideBar" :default-active="$route.fullPath" key="sidebar" router>
+    <el-menu v-if="!isAdminBarShown" ref="sideBar" class="sideBar" :default-active="$route.fullPath" key="sidebar" router>
       <el-menu-item v-for="(item, index) in app" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
         <a href="#" @click.prevent>{{ item.text }}</a>
@@ -8,7 +8,7 @@
     </el-menu>
 
     <transition name="slide" mode="in-out">
-      <el-menu v-if="adminbarShown" ref="adminBar" class="adminBar" :default-active="$route.fullPath" key="adminBar" router>
+      <el-menu v-if="isAdminBarShown" ref="adminBar" class="adminBar" :default-active="$route.fullPath" key="adminBar" router>
         <el-menu-item-group title="Administration">
           <el-menu-item v-for="(item, index) in admin" :index="'/' + language + item.index" :class="item.classes" :key="index">
             <i :class="item.icon"></i>
@@ -28,7 +28,7 @@
     computed: {
       ...mapGetters([
         'language',
-        'adminbarShown'
+        'isAdminBarShown'
       ]),
 
       app() {

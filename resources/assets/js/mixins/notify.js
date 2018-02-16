@@ -1,5 +1,5 @@
-import Vue from "vue";
-import _ from "lodash";
+import Vue from 'vue';
+import _ from 'lodash';
 
 export default {
   notify(message = '', type = 'info', autoClose = true) {

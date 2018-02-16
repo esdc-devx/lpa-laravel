@@ -16,9 +16,9 @@
             <a v-if="toggledLang === 'en'" href="#" @click.prevent="setLanguage">English</a>
             <a v-else href="#" @click.prevent="setLanguage">Français</a>
           </li>
-          <li role="menuitem" class="el-menu-item">
-            <a href="#" @click.prevent="setAdminBarShown">
-              <i :class="['el-icon-setting', { 'active' : adminbarShown} ]"></i>
+          <li v-if="user.isAdmin" role="menuitem" class="el-menu-item">
+            <a href="#" @click.prevent="toggleAdminBar">
+              <i :class="['el-icon-setting', { 'active' : isAdminBarShown} ]"></i>
             </a>
           </li>
         </el-menu>
@@ -37,7 +37,7 @@
       ...mapGetters([
         'language',
         'user',
-        'adminbarShown'
+        'isAdminBarShown'
       ])
     },
 
@@ -91,8 +91,8 @@
         route.params.lang = newLang;
         this.$router.push(route);
       },
-      setAdminBarShown() {
-        this.$store.dispatch('setAdminBarShown');
+      toggleAdminBar() {
+        this.$store.dispatch('toggleAdminBar');
       }
     }
   };
