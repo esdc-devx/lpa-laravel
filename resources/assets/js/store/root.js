@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import axios from '../interceptor';
+import axios from '../axios/interceptor';
 import * as types from './mutations-types';
 import EventBus from '../components/event-bus';
 import Config from '../config';

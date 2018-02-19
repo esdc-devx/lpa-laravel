@@ -1,4 +1,4 @@
-import axios from '../interceptor';
+import axios from '../axios/interceptor';
 
 export default {
   getUsers() {

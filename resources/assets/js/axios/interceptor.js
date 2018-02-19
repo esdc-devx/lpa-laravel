@@ -1,9 +1,10 @@
 import axios from 'axios';
-import router from './router';
-import store from './store/';
-import Config from './config';
-import EventBus from './components/event-bus';
-import Notify from './mixins/notify.js';
+import HttpStatusCodes from './http-status-codes';
+import router from '../router';
+import store from '../store/';
+import Config from '../config';
+import EventBus from '../components/event-bus';
+import Notify from '../mixins/notify.js';
 
 let onLanguageChange = lang => {
   axios.defaults.baseURL = '/' + lang + apiUrl;
@@ -29,18 +30,27 @@ if (token) {
 }
 
 // General error handling
+// @todo: for each or so status codes, we should push the user to the corresponding page
+// e.g.: router.push(`/${HttpStatusCodes. code }`);
 axios.interceptors.response.use(response => response, error => {
   let response = error.response;
-
-  if (response.status === 401) {
+  if (response.status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
-    // @todo: should warn the user with a popup (Ok only) then redirect to login
+    // @refactorme: should warn the user with a popup (Ok only) then redirect to login
+    alert('You are not authenticated. You will be redirected to the login page.');
+    // we need to change the location manually since the backend handles the login page
     window.location.href = '/' + store.getters.language + '/login';
-  } else if (response.status === 500) {
+  } else if (response.status === HttpStatusCodes.FORBIDDEN) {
+    alert('You are not authorized to access this page. You will be redirected to the home page.');
+    router.push('/');
+  } else if (response.status === HttpStatusCodes.NOT_FOUND) {
+    router.push(`/${HttpStatusCodes.NOT_FOUND}`);
+  } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
     let errorResponse = response.data && response.data.errors ? response.data.errors : '';
     let errorMsg = error.message || '';
-    Notify.notifyError(errorMsg + '<br>' + errorResponse);
+    Notify.notifyError(errorMsg);
+    console.error(errorMsg, errorResponse);
   }
 
   return Promise.reject(error);
