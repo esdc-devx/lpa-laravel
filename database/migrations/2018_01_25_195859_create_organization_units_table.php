@@ -45,9 +45,11 @@ class CreateOrganizationUnitsTable extends Migration
             $table->foreign('organization_unit_id')
                 ->references('id')
                 ->on('organization_units');
+
             $table->foreign('user_id')
                 ->references('id')
-                ->on('users');
+                ->on('users')
+                ->onDelete('cascade');
 
             $table->primary(['organization_unit_id', 'user_id']);
         });

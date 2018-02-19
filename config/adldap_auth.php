@@ -238,11 +238,10 @@ return [
     */
 
     'sync_attributes' => [
-
         'username' => 'samaccountname',
         'email' => 'mail',
-        'name' => 'cn',
-
+        'first_name' => 'givenname',
+        'last_name' => 'sn'
     ],
 
 ];
