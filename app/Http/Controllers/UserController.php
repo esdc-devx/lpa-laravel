@@ -49,8 +49,9 @@ class UserController extends ApiController
     public function index()
     {
         $limit = request()->get('limit') ? : self::ITEMS_PER_PAGE;
-        $results = $this->users->getAll($limit);
-        return $this->respondWithPagination($results);
+        return $this->respondWithPagination(
+            $this->users->getPaginated($limit)
+        );
     }
 
     /**
@@ -75,6 +76,9 @@ class UserController extends ApiController
     public function store(Request $request)
     {
         // Store new user.
+        $data = $request->all();
+        $result = $this->users->create($data);
+        return $this->respond($result);
     }
 
     /**
@@ -86,7 +90,9 @@ class UserController extends ApiController
     public function show($id)
     {
         // Return specific user.
-        return $this->respond($this->users->getById($id));
+        return $this->respond(
+            $this->users->getById($id)
+        );
     }
 
     /**
@@ -118,8 +124,9 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        // Delete user.
+        $method = $request->input('force') ? 'forceDelete' : 'delete';
+        return $this->respond($this->users->{$method}($id));
     }
 }

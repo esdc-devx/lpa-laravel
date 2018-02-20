@@ -6,15 +6,19 @@ use App\Models\User\User;
 use Adldap\Laravel\Facades\Adldap;
 use Illuminate\Support\Facades\Auth;
 
-class UserRepository
+class UserRepository extends BaseEloquentRepository
 {
+    protected $model = \App\Models\User\User::class;
+    protected $relationships = ['organizationUnits', 'projects'];
+    protected $requiredRelationships = ['organizationUnits'];
+
     public function searchLdap($search)
     {
-        $provider = Adldap::connect();
-        return $provider->search()
+        return Adldap::search()
             ->users()
             ->where('cn', 'contains', $search)
-            ->get();
+            ->limit(5)
+            ->get()->values();
     }
 
     public function getCurrent()
@@ -23,13 +27,9 @@ class UserRepository
         return $user ? $this->getById($user->id) : null;
     }
 
-    public function getAll($limit = 0)
+    public function delete($id)
     {
-        return $limit ? User::paginate($limit) : User::all();
-    }
-
-    public function getById($id)
-    {
-        return User::with(['organizationUnits'])->findOrfail($id);
+        $delete = parent::delete($id);
+        return $delete;
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Repositories\Traits\CachesResults;
 
 abstract class BaseEloquentRepository implements RepositoryContract
 {
