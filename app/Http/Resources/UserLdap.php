@@ -17,8 +17,7 @@ class UserLdap extends Resource
         return [
             'username' => strtoupper($this->getAccountName()),
             'email' => $this->getEmail(),
-            'first_name' => $this->getFirstName(),
-            'last_name' => $this->getLastName()
+            'name' => $this->getCommonName()
         ];
     }
 }

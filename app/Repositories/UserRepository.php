@@ -15,7 +15,7 @@ class UserRepository extends BaseEloquentRepository
     public function searchLdap($search)
     {
         return Adldap::search()
-            ->users()
+            ->setDn('OU=Users,OU=NCR,OU=CSPS,DC=csps-efpc,DC=com')
             ->where('cn', 'contains', $search)
             ->limit(5)
             ->get()->values();
