@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Http\Traits;
 
 use Illuminate\Http\Response;
 
@@ -80,6 +80,18 @@ trait UsesJsonResponse
     protected function respondUnauthorize($message = 'Unauthorized.')
     {
         return $this->setStatusCode(Response::HTTP_UNAUTHORIZED)
+            ->respondWithError($message);
+    }
+
+    /**
+     * Return API response with 403 status code.
+     *
+     * @param array $errors
+     * @return Illuminate\Http\Response
+     */
+    protected function respondForbidden($message = 'Forbidden.')
+    {
+        return $this->setStatusCode(Response::HTTP_FORBIDDEN)
             ->respondWithError($message);
     }
 

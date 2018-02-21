@@ -6,9 +6,11 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
 use Illuminate\Auth\AuthenticationException as AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
-use App\Traits\UsesJsonResponse;
+use Illuminate\Http\Response;
+use App\Http\Traits\UsesJsonResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -71,6 +73,12 @@ class Handler extends ExceptionHandler
             // Handle invalid rest endpoint.
             if ($exception instanceof NotFoundHttpException) {
                 return $this->respondNotFound('Endpoint not found.');
+            }
+
+            // Handle authorization errors.
+            if ($exception instanceof AuthorizationException) {
+                // @todo: Maybe add some sort of logging for forbidden actions.
+                return $this->respondForbidden('Insufficient priviledges.');
             }
 
             // Handle authentication error.
