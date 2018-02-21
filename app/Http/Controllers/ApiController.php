@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Traits\UsesJsonResponse;
+use App\Http\Traits\UsesJsonResponse;
 
 class ApiController extends Controller
 {
