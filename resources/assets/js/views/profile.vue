@@ -5,9 +5,17 @@
 </template>
 
 <script>
-  
+  import EventBus from '../components/event-bus.js';
+
+  export default {
+    name: 'my-profile',
+
+    created() {
+      EventBus.$emit('App:ready');
+    }
+  };
 </script>
 
 <style>
-  
+
 </style>

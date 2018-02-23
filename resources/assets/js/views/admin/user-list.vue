@@ -1,11 +1,12 @@
 <template>
-  <div class="content">
+  <div class="content user-list" v-loading="isLoading">
     <h2>User list</h2>
-    <el-button @click="showCreateModal = true">Create a user</el-button>
+    <el-button @click="$router.push('users/create')">Create a user</el-button>
     <el-table
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
-      :data="users">
+      :data="parsedUsers"
+      @row-click="editUser">
       <el-table-column
         sortable
         prop="id"
@@ -14,29 +15,45 @@
       </el-table-column>
       <el-table-column
         sortable
+        prop="username"
+        label="Username">
+      </el-table-column>
+      <el-table-column
+        sortable
         prop="name"
         label="Name">
+      </el-table-column>
+      <el-table-column
+        sortable
+        prop="email"
+        label="Email">
       </el-table-column>
       <el-table-column
         :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
         :filter-method="filterGroup"
         filter-placement="bottom-start"
-        prop="group"
-        label="Organizational group">
+        prop="organization_units"
+        label="Organizational Unit(s)">
       </el-table-column>
       <el-table-column
         label="Operations">
         <template slot-scope="scope">
           <el-button
             size="mini"
-            @click="editUser(scope.row.id)">Edit</el-button>
-          <el-button
-            size="mini"
             type="danger"
-            @click="deleteUser(scope.row.id)">Delete</el-button>
+            @click="deleteUserModal(scope.row.id)">Delete</el-button>
         </template>
       </el-table-column>
     </el-table>
+
+    <el-pagination
+      background
+      @current-change="handlePageChange"
+      :current-page.sync="currentPage"
+      :page-size="pagination.per_page"
+      layout="total, prev, pager, next"
+      :total="pagination.total">
+    </el-pagination>
 
     <el-dialog
       :visible.sync="showDeleteModal"
@@ -44,7 +61,7 @@
       <span slot="title" class="el-dialog__title">Delete user {{user.name}} ?</span>
       <span>This action cannot be undone.</span>
       <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="deleteProject()">Delete</el-button>
+        <el-button type="danger" @click="confirmDelete()">Delete</el-button>
         <el-button @click="showDeleteModal = false">Cancel</el-button>
       </span>
     </el-dialog>
@@ -52,40 +69,75 @@
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../components/event-bus.js';
 
+  let namespace = 'users';
+
   export default {
-    name: 'UserList',
+    name: 'admin-user-list',
+
+    computed: {
+      ...mapGetters({
+        users: `${namespace}/all`,
+        pagination: `${namespace}/pagination`
+      })
+    },
 
     data() {
       return {
+        isLoading: true,
         user: {
+          id: null,
           name: null
         },
-        users: [],
-        showCreateModal: false,
-        showDeleteModal: false
+        parsedUsers: [],
+        showDeleteModal: false,
+        currentPage: 1
       }
     },
 
     methods: {
-      create(name) {
-        this.users.push({name});
+      ...mapActions({
+        loadUsers: `${namespace}/loadUsers`,
+        // @todo: deleteUser: 'users/deleteUser
+      }),
+
+      parseUsers() {
+        // clone the array without reference
+        this.parsedUsers = JSON.parse(JSON.stringify(this.users));
+        _.map(this.parsedUsers, item => {
+          // concat all organization units into a string seperated by commas
+          item.organization_units = _.map(item.organization_units, 'name').join(', ');
+        });
       },
 
-      editUser(index) {
-        alert('edit user popup?')
+      // Pagination
+      handlePageChange(newCurrentPage) {
+        this.isLoading = true;
+        this.$parent.$el.scrollTop = 0;
+        this.loadUsers(newCurrentPage).then(() => {
+          this.isLoading = false;
+        });
+      },
+
+      // Form handlers
+      editUser(user) {
+        this.$router.push(`${namespace}/edit/${user.id}`);
       },
 
       deleteUserModal(id) {
+        this.user.id = id;
         this.user = this.findUser(id);
         this.showDeleteModal = true;
       },
 
-      deleteUser(index) {
-        this.users.splice(index, 1);
+      confirmDelete() {
+        // @todo: delete da user
+        // this.deleteUser(this.user.)
       },
 
+      // Filters
       findUser(id) {
         return this.users[this.findUserIndex(id)];
       },
@@ -102,34 +154,37 @@
       }
     },
 
-    mounted() {
-      // @todo: When mounted, it should do a Promise to the server and get the users
-    },
-
     created() {
-      EventBus.$on('User:create', name => {
-        this.create(name);
-      });
+      EventBus.$emit('App:ready');
+      this.loadUsers()
+        .then(() => {
+          this.parseUsers();
+          this.isLoading = false;
+        });
     }
   };
 </script>
 
-<style scoped lang="scss">
-  h2 {
-    text-align: center;
-  }
-  table {
-    width: 100%;
-    tbody {
-      tr {
-        background-color: #fafafa;
-        .delete-user {
-          position: relative;
-          &:hover {
-            background-color: #d1143a;
+<style lang="scss">
+  .user-list {
+    h2 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      tbody {
+        tr {
+          .delete-user {
+            position: relative;
+            &:hover {
+              background-color: #d1143a;
+            }
           }
         }
       }
+    }
+    .el-table__row {
+      cursor: pointer;
     }
   }
 </style>

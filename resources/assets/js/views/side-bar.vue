@@ -1,13 +1,13 @@
 <template>
   <div class="content">
-    <el-menu v-if="!isAdminBarShown" ref="sideBar" class="sideBar" :default-active="$route.fullPath" key="sidebar" router>
+    <el-menu ref="sideBar" class="sideBar" :default-active="$route.fullPath" key="sidebar" router>
       <el-menu-item v-for="(item, index) in app" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
         <a href="#" @click.prevent>{{ item.text }}</a>
       </el-menu-item>
     </el-menu>
 
-    <transition name="slide" mode="in-out">
+    <transition name="slide">
       <el-menu v-if="isAdminBarShown" ref="adminBar" class="adminBar" :default-active="$route.fullPath" key="adminBar" router>
         <el-menu-item-group title="Administration">
           <el-menu-item v-for="(item, index) in admin" :index="'/' + language + item.index" :class="item.classes" :key="index">
@@ -94,23 +94,41 @@
     },
     methods: {
       setActiveIndex(to) {
-        let menu = this.$refs.sideBar || this.$refs.adminBar;
+        let menu = this.isAdminBarShown ? this.$refs.adminBar : this.$refs.sideBar;
+        // because of the $refs that cannot be reactive, we need to compare its items omitting the language
+        let items = _.mapKeys(menu.items, (value, key) => {
+          return this.removeLanguageFromString(key);
+        });
+
+        // remove the language from the route's fullPath as well
         let route = Object.assign({}, to);
+        route.fullPath = this.removeLanguageFromString(route.fullPath);
 
         // check if the current page is found in the items paths
-        if (menu.items[route.fullPath]) {
-          menu.activeIndex = menu.items[route.fullPath].index;
+        if (items[route.fullPath]) {
+          menu.activeIndex = items[route.fullPath].index;
         } else {
           // if not, just pop last index of path and try again
           let pathArray = route.fullPath.split('/');
           pathArray.pop();
           route.fullPath = pathArray.join('/');
           // fail safe in case we get a path that the sidebar doesn't recognize
-          if (route.fullPath === '' || route.fullPath === `/${this.language}`) {
+          if (route.fullPath === '' || route.fullPath === '/') {
             return;
           }
           this.setActiveIndex(route);
         }
+      },
+
+      removeLanguageFromString(str) {
+        if (str.match(/\/(en|fr)\//)) {
+          let strParsed = str.split('/');
+          // remove the language
+          strParsed.splice(1, 1);
+          // make sure that no empty strings are returned
+          return strParsed.join('/') || '/';
+        }
+        return str;
       }
     },
     mounted() {
@@ -144,7 +162,7 @@
   }
   .adminBar {
     z-index: 1000;
-    border-right: 1px solid;
+    border-right: 1px solid #313131;
     background-color: #efefef;
     box-sizing: border-box;
   }

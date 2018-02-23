@@ -1,0 +1,8 @@
+.form-footer {
+  margin-top: 40px;
+}
+
+.el-form-item__content {
+  // this fixes the alignment on the vee-validate errors position
+  display: flex;
+}

@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { Validator } from 'vee-validate';
 import axios from '../axios/interceptor';
 import * as types from './mutations-types';
 import EventBus from '../components/event-bus';
@@ -59,6 +60,8 @@ export const mutations = {
     }
     state.language = lang;
     localStorage.setItem('language', lang);
+
+    Validator.localize(lang);
 
     // reflect the language in the lang attribute
     // for accessibility purposes

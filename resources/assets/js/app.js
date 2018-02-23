@@ -1,6 +1,8 @@
 // Import libs
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
+import VeeValidate from 'vee-validate';
+import veeLocaleFR from 'vee-validate/dist/locale/fr';
 import { sync } from 'vuex-router-sync';
 
 import App from './app.vue';
@@ -37,6 +39,17 @@ setLanguage()
 
       Vue.use(ElementUI, {
         i18n: (key, value) => i18n.t(key, value)
+      });
+
+      Vue.use(VeeValidate, {
+        locale: store.getters.language,
+        // modify the defaults for errors and fields
+        // since ElementUI already has these properties injected
+        errorBagName: 'verrors',
+        fieldsBagName: 'vfields',
+        dictionary: {
+          fr: veeLocaleFR
+        }
       });
 
       new Vue({

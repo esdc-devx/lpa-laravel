@@ -1,11 +1,21 @@
 import axios from '../axios/interceptor';
 
 export default {
-  getUsers() {
-    return axios.get('users');
+  getUsers(page) {
+    let query = !_.isUndefined(page) ? `?page=${page}` : '';
+    return axios.get(`users${query}`);
   },
 
-  getUser() {
-    return axios.get('users/current');
+  getUser(id) {
+    let request = !_.isUndefined(id) ? id : 'current';
+    return axios.get(`users/${request}`);
+  },
+
+  getUserCreateInfo() {
+    return axios.get('users/create');
+  },
+
+  searchUser(name) {
+    return axios.get(`users/search?name=${name}`);
   }
 };

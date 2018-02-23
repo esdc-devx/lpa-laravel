@@ -10,6 +10,7 @@ return [
     'admin_dashboard' => 'Admin Dashboard',
     'admin_user_list' => 'Users',
     'admin_user_create' => 'Create',
+    'admin_user_edit' => 'Edit',
     'projects' => 'Projects',
     'learning_products' => 'Learning Products',
     'non_learning_products' => 'Non-Learning Products',

@@ -9,7 +9,7 @@ import { state, getters, actions, mutations } from './root';
 
 // Imports all of the modules used in the application to build the data store.
 import projects from './modules/projects.js';
-import user from './modules/user.js';
+import users from './modules/users.js';
 
 Vue.use(Vuex);
 
@@ -20,7 +20,7 @@ export default new Vuex.Store({
   mutations,
   modules: {
     projects,
-    user
+    users
   },
   // https://vuex.vuejs.org/en/strict.html
   strict: process.env.NODE_ENV !== 'production'

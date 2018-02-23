@@ -7,8 +7,12 @@
 </template>
 
 <script>
+  import EventBus from '../../components/event-bus.js';
   export default {
-    name: 'admin-dashboard'
+    name: 'admin-dashboard',
+    created() {
+      EventBus.$emit('App:ready');
+    }
   };
 </script>
 

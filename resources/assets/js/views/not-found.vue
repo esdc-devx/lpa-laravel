@@ -7,6 +7,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  import EventBus from '../components/event-bus.js';
 
   export default {
     name: 'not-found',
@@ -14,6 +15,9 @@
       ...mapGetters([
         'language'
       ])
+    },
+    created() {
+      EventBus.$emit('App:ready');
     }
   };
 </script>

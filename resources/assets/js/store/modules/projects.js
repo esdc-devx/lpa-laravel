@@ -2,10 +2,12 @@ import LoadStatus from '../load-status-constants';
 import ProjectsAPI from '../../api/projects';
 
 export default {
+  namespaced: true,
   state: {
-    projects: [],
+    // project being viewed
+    viewing: {},
+    all: [],
     projectsLoadStatus: LoadStatus.NOT_LOADED,
-    project: {},
     projectLoadStatus: LoadStatus.NOT_LOADED,
     pagination: {}
   },
@@ -15,16 +17,16 @@ export default {
       return state.projectsLoadStatus;
     },
 
-    projects(state) {
-      return state.projects;
+    all(state) {
+      return state.all;
     },
 
     projectLoadStatus(state) {
       return state.projectLoadStatus;
     },
 
-    project(state) {
-      return state.project;
+    viewing(state) {
+      return state.viewing;
     },
 
     pagination(state) {
@@ -45,6 +47,7 @@ export default {
           })
           .catch(e => {
             commit('setProjects', []);
+            commit('setPagination', {});
             commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
             reject(e);
           });
@@ -91,7 +94,7 @@ export default {
     },
 
     setProjects(state, projects) {
-      state.projects = projects;
+      state.all = projects;
     },
 
     setProjectLoadStatus(state, status) {
@@ -99,7 +102,7 @@ export default {
     },
 
     setProject(state, project) {
-      state.project = project;
+      state.viewing = project;
     },
 
     setPagination(state, pagination) {

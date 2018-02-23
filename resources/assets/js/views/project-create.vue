@@ -5,16 +5,25 @@
     @close="close">
     <span slot="title" class="el-dialog__title">Create a New Project</span>
     <hr>
-    <el-form :model="modal.form" :rules="rules()" ref="form" label-width="20%" @submit.native.prevent>
-      <el-form-item label="Project name" for="name" prop="name">
-        <el-input v-model="modal.form.name" id="name" name="name" auto-complete="off" autofocus></el-input>
+    <el-form :model="modal.form" ref="form" label-width="20%" @submit.native.prevent>
+      <el-form-item label="Project name" for="name" :class="['is-required', {'is-error': verrors.has('name') }]">
+        <el-input
+          v-model="modal.form.name"
+          v-validate="'required'"
+          id="name"
+          name="name"
+          auto-complete="off"
+          autofocus>
+        </el-input>
+        <span v-show="verrors.has('name')" class="el-form-item__error">{{ verrors.first('name') }}</span>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organization_unit" prop="organization_unit">
+      <el-form-item label="Organizational Unit" for="organizationUnits" :class="['is-required', {'is-error': verrors.has('organizationUnits') }]">
         <el-select
-          v-if="modal.form.orgUnitOptions.length > 1"
+          :disabled="modal.form.orgUnitOptions.length <= 1"
+          v-validate="'required'"
           v-model="modal.form.organization_unit"
-          id="organization_unit"
-          name="organization_unit">
+          id="organizationUnits"
+          name="organizationUnits">
           <el-option
             v-for="item in modal.form.orgUnitOptions"
             :key="item.value"
@@ -22,11 +31,11 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <el-input v-else v-model="modal.form.orgUnitOptions" id="organization_unit" name="organization_unit" disabled></el-input>
+        <span v-show="verrors.has('organizationUnits')" class="el-form-item__error">{{ verrors.first('organizationUnits') }}</span>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="validateBeforeSubmit()">Confirm</el-button>
+      <el-button type="primary" @click="submit()">Confirm</el-button>
       <el-button @click="close()">Cancel</el-button>
     </span>
   </el-dialog>
@@ -52,9 +61,6 @@
       return {
         isVisible: this.show,
         isLoading: false,
-        // @todo: add dynamic attribute values from backend
-        nameRequired: this.trans('validation.required', { attribute: 'name' }),
-        orgUnitRequired: this.trans('validation.required', { attribute: 'organization_unit' }),
         modal: {
           form: {
             name: '',
@@ -66,47 +72,31 @@
             }, {
               value: 'GT',
               label: 'General Technical (GT)'
-            }],
-            // @todo: (backend data)
-            orgUnitFields: [
-              'CS',
-              'GT'
-            ]
+            }]
           }
         }
       }
     },
 
     methods: {
-      rules() {
-        return {
-          name: [
-            { required: true, message: this.nameRequired, trigger: 'blur' },
-          ],
-          organization_unit: [
-            { required: true, message: this.orgUnitRequired, trigger: 'blur' }
-          ]
-        }
-      },
-
       create() {
         let project = {
           name: this.modal.form.name,
           organization_unit: this.modal.form.organization_unit
-        }
+        };
         // @todo: might want to show a loading spinner on modal after hitting create
-        this.$store.dispatch('create', project)
-          .then(response => {
-            // @todo: grab the newly created project
-            // and pluck its name for the notification
-            this.close();
+        // this.$store.dispatch('create', project)
+        //   .then(response => {
+        //     // @todo: grab the newly created project
+        //     // and pluck its name for the notification
+        //     this.close();
 
-            this.notifySuccess(`{something} has been created.`);
-          })
-          .catch(e => {
-            this.notifyError('[project-create][create]: ' + e);
-            console.error('[project-create][create]: ' + e);
-          });
+        //     this.notifySuccess(`{something} has been created.`);
+        //   })
+        //   .catch(e => {
+        //     this.notifyError('[project-create][create]: ' + e);
+        //     console.error('[project-create][create]: ' + e);
+        //   });
       },
 
       close() {
@@ -120,21 +110,25 @@
         this.resetForm();
       },
 
-      validateBeforeSubmit() {
-        this.$refs.form.validate(valid => {
-          if (valid) {
-            this.create();
-            return true
+      // Form handlers
+      submit() {
+        this.$validator.validateAll().then(result => {
+          if (result) {
+            this.createProject();
+            this.notifySuccess(`${this.form.name} has been created.`);
+            this.resetForm();
+            return;
           }
-          // form has errors
-          // @todo: might want to focus on the error fields
-          return false;
+          document.querySelectorAll('.is-error input')[0].focus();
         });
       },
 
       resetForm() {
         this.$refs.form.resetFields();
-      }
+        this.$nextTick(() => {
+          this.$validator.reset();
+        });
+      },
     }
   };
 </script>

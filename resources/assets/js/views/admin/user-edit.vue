@@ -1,15 +1,18 @@
 <template>
-  <div class="user-create content">
-    <h2>{{ trans('navigation.admin_user_create') }}</h2>
-    <el-form ref="form" @submit.native.prevent>
+  <div class="user-edit content" v-loading="isLoading">
+    <h2>{{ trans('navigation.admin_user_edit') }}</h2>
+
+    <el-form ref="form" @submit.native.prevent label-width="30%">
       <el-form-item label="Name" for="name" :class="{'is-required': nameRules.required, 'is-error': verrors.has('name') }">
         <el-autocomplete
           id="name"
           name="name"
           ref="name"
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
           popper-class="userAutocomplete"
           v-validate="nameRules"
-          v-model="form.name"
+          v-model="form.user.name"
           :fetch-suggestions="querySearchAsync"
           :trigger-on-focus="false"
           valueKey="name"
@@ -23,18 +26,18 @@
         </el-autocomplete>
         <span v-show="verrors.has('name')" class="el-form-item__error">{{ verrors.first('name') }}</span>
       </el-form-item>
-
       <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-required': organizationUnitRules.required, 'is-error': verrors.has('organizationUnits') }">
         <el-select
-          :disabled="organizationUnits.length <= 1"
-          v-model="form.selectedOrganizationUnits"
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
+          v-model="form.user.organization_units"
           id="organizationUnits"
           name="organizationUnits"
           v-validate="organizationUnitRules"
           valueKey="name"
           multiple>
           <el-option
-            v-for="item in organizationUnits"
+            v-for="item in allOrganizationUnits"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -42,27 +45,43 @@
         </el-select>
         <span v-show="verrors.has('organizationUnits')" class="el-form-item__error">{{ verrors.first('organizationUnits') }}</span>
       </el-form-item>
-
-      <el-form-item class="form-footer">
-        <el-button type="primary" @click="submit()">Create</el-button>
+      <el-form-item label="Email" for="email" :class="{'is-required': emailRules.required, 'is-error': verrors.has('email') }">
+        <el-input
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
+          id="email"
+          name="email"
+          v-model="form.user.email"
+          v-validate="emailRules">
+        </el-input>
+        <span v-show="verrors.has('email')" class="el-form-item__error">{{ verrors.first('email') }}</span>
+      </el-form-item>
+      {{user}}
+      <el-form-item>
+        <el-button type="primary" @click.prevent="submit()">Save</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
+
   </div>
 </template>
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-
   import EventBus from '../../components/event-bus.js';
 
+  import LoadStatus from '../../store/load-status-constants';
+
+  let namespace = 'users';
+
   export default {
-    name: 'admin-user-create',
+    name: 'UserEdit',
 
     computed: {
       ...mapGetters({
         language: 'language',
-        organizationUnits: 'users/organizationUnits'
+        user: `${namespace}/viewing`,
+        allOrganizationUnits: 'users/organizationUnits'
       }),
       nameRules() {
         return {
@@ -73,15 +92,25 @@
       organizationUnitRules() {
         return {
           required: true
-        }
+        };
+      },
+      emailRules() {
+        return {
+          required: true,
+          email: true
+        };
       }
     },
 
     data() {
       return {
+        isLoading: true,
+        isUserInfoLoading: true,
         form: {
+          user: {},
           name: '',
-          selectedOrganizationUnits: []
+          selectedOrganizationUnits: [],
+          email: ''
         },
         inUserList: []
       }
@@ -90,7 +119,9 @@
     methods: {
       ...mapActions({
         searchUser: 'users/searchUser',
+        loadViewingUser: 'users/loadViewingUser',
         loadUserCreateInfo: 'users/loadUserCreateInfo'
+        // @todo: loadUserEditInfo: 'users/loadUserEditInfo'
       }),
 
       search(name) {
@@ -101,8 +132,8 @@
       submit() {
         this.$validator.validateAll().then(result => {
           if (result) {
-            this.createUser();
-            this.notifySuccess(`${this.form.name} has been created.`);
+            this.saveUser();
+            this.notifySuccess(`<b>${this.form.user.name}</b> has been created.`);
             this.resetForm();
             return;
           }
@@ -115,6 +146,10 @@
         this.$nextTick(() => {
           this.$validator.reset();
         });
+      },
+
+      saveUser() {
+        // @todo: call backend with form data
       },
 
       querySearchAsync(queryString, callback) {
@@ -137,9 +172,19 @@
         this.$validator.reset();
       },
 
-      // Navigation
-      createUser() {
+      loadUser() {
+        // look up the current user in the store first
+        if (this.$store.getters[`${namespace}/viewingUserLoadStatus`] === LoadStatus.LOADING_SUCCESS) {
+          this.isLoading = false;
+          return Promise.resolve();
+        }
 
+        // project not found, means we might be coming from a deep link
+        let id = this.$route.params.id;
+        return this.loadViewingUser(id)
+          .then(() => {
+            return this.loadUser();
+          });
       },
 
       goBack() {
@@ -148,32 +193,38 @@
     },
 
     created() {
-      this.loadUserCreateInfo().then(() => {
+      this.loadUser().then(this.loadUserCreateInfo().then(() => {
+        this.form.user = Object.assign({}, this.user);
+        this.form.user.organization_units = _.map(this.user.organization_units, 'id');
+        this.isUserInfoLoading = false;
         EventBus.$emit('App:ready');
-      })
+      }))
     }
   };
 </script>
 
 <style lang="scss">
-  .user-create {
+  .user-edit {
     width: 800px;
     margin: 0 auto;
     h2 {
       text-align: center;
     }
 
-    .el-select {
-      width: 75%;
+    .el-form {
+      width: 100%;
+      .el-select {
+        width: 75%;
+      }
     }
   }
-  .el-autocomplete-suggestion.userAutocomplete {
-    li {
-      line-height: 20px;
-      padding: 7px 10px;
 
-      .autocomplete-popper-inner-wrap {
-        overflow: hidden;
+  .el-autocomplete-suggestion.userAutocomplete {
+    .autocomplete-popper-inner-wrap {
+      li {
+        line-height: 20px;
+        padding: 7px 10px;
+
         .value {
           text-overflow: ellipsis;
           overflow: hidden;

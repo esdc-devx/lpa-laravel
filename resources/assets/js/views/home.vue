@@ -1,7 +1,7 @@
 <template>
-  <div class="content">
+  <div class="home content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('home.welcome', { name: user.name }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('home.welcome', { name: user.first_name }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="24">
@@ -43,6 +43,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  import EventBus from '../components/event-bus.js';
 
   import ProjectCreate from '../views/project-create';
 
@@ -52,40 +53,46 @@
     components: { ProjectCreate },
 
     computed: {
-      ...mapGetters([
-        'user'
-      ])
+      ...mapGetters({
+        user: 'users/current'
+      })
     },
 
     data() {
       return {
         showCreateProjectModal: false
       }
+    },
+
+    created() {
+      EventBus.$emit('App:ready');
     }
   };
 </script>
 
-<style lang="scss" scoped>
-  h2, p {
-    text-align: center;
-  }
+<style lang="scss">
+  .home {
+    h2, p {
+      text-align: center;
+    }
 
-  h2 {
-    font-size: 3rem;
-  }
+    h2 {
+      font-size: 3rem;
+    }
 
-  i {
-    font-size: 3rem;
-    text-align: center;
-    display: block;
-  }
+    i {
+      font-size: 3rem;
+      text-align: center;
+      display: block;
+    }
 
-  .actions button {
-    white-space: initial;
-    width: 100%;
-    height: 100%;
-    p {
-      margin-bottom: 0;
+    .actions button {
+      white-space: initial;
+      width: 100%;
+      height: 100%;
+      p {
+        margin-bottom: 0;
+      }
     }
   }
 </style>

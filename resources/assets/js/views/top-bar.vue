@@ -11,7 +11,7 @@
             <el-menu-item :index="'/' + language + '/profile'"><a href="#" @click.prevent>{{ trans('navigation.profile') }}</a></el-menu-item>
             <el-menu-item :index="'/' + language + '/logout'"><a href="#" @click.prevent="logout()">{{ trans('navigation.logout') }}</a></el-menu-item>
           </el-submenu>
-          <el-menu-item :index="'/' + language + '/help'" class="disabled"><a href="#" @click.prevent>{{ trans('navigation.help') }}</a></el-menu-item>
+          <el-menu-item :index="'/' + language + '/help'" class="disabled"><a tabindex="-1" href="#" @click.prevent>{{ trans('navigation.help') }}</a></el-menu-item>
           <li role="menuitem" class="el-menu-item lang">
             <a v-if="toggledLang === 'en'" href="#" @click.prevent="setLanguage">English</a>
             <a v-else href="#" @click.prevent="setLanguage">Français</a>
@@ -34,11 +34,11 @@
     name: 'top-bar',
 
     computed: {
-      ...mapGetters([
-        'language',
-        'user',
-        'isAdminBarShown'
-      ])
+      ...mapGetters({
+        language: 'language',
+        isAdminBarShown: 'isAdminBarShown',
+        user: 'users/current'
+      })
     },
 
     data() {

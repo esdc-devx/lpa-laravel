@@ -1,8 +1,7 @@
 <template>
-  <div class="content" v-loading="isLoading">
+  <div class="project-list content" v-loading="isLoading">
     <el-button @click="showCreateModal = true">Create a project</el-button>
     <el-table
-      class="projectList"
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :data="projects"
@@ -24,7 +23,7 @@
         :filters="orgUnit"
         :filter-method="filterOrgUnit"
         filter-placement="bottom-start"
-        class-name="orgUnitFilter"
+        class-name="orgunit-filter"
         prop="organization_unit.name"
         label="Organizational unit">
       </el-table-column>
@@ -49,9 +48,12 @@
 <script>
   import _ from 'lodash';
   import { mapGetters } from 'vuex';
+  import EventBus from '../components/event-bus.js';
 
   import ProjectCreate from '../views/project-create';
   import ProjectsAPI from '../api/projects';
+
+  let namespace = 'projects';
 
   export default {
     name: 'ProjectList',
@@ -68,30 +70,30 @@
     components: { ProjectCreate },
 
     computed: {
+      ...mapGetters({
+        'projects': `${namespace}/all`,
+        'pagination': `${namespace}/pagination`
+      }),
       orgUnit() {
         return _.chain(this.projects)
                 .mapValues('organization_unit.name')
                 .toArray().uniq()
                 .map((val, key) => { return { text: val, value: val } })
                 .value();
-      },
-      ...mapGetters([
-        'projects',
-        'pagination'
-      ])
+      }
     },
 
     methods: {
       viewProject(project) {
-        this.$store.commit('setProject', project);
-        this.$router.push(`projects/${project.id}`);
+        this.$store.commit(`${namespace}/setProject`, project);
+        this.$router.push(`${namespace}/${project.id}`);
       },
 
       // Pagination
       handleCurrentChange(newCurrentPage) {
         this.isLoading = true;
         this.$parent.$el.scrollTop = 0;
-        this.$store.dispatch('loadProjects', newCurrentPage).then(data => {
+        this.$store.dispatch(`${namespace}/loadProjects`, newCurrentPage).then(() => {
           this.isLoading = false;
         });
       },
@@ -113,7 +115,8 @@
     },
 
     created() {
-      this.$store.dispatch('loadProjects')
+      EventBus.$emit('App:ready');
+      this.$store.dispatch(`${namespace}/loadProjects`)
         .then(() => {
           this.isLoading = false;
         });
@@ -122,20 +125,14 @@
 </script>
 
 <style lang="scss">
-  .projectList {
+  .project-list {
     margin-bottom: 40px;
     .el-table__row {
       cursor: pointer;
-      .name .cell {
-        display: inline;
-        border-bottom: 1px solid;
-        margin: 0 10px;
-        padding: 0;
-      }
     }
   }
 
-  .orgUnitFilter:hover {
+  .orgunit-filter:hover {
     cursor: pointer;
   }
 </style>

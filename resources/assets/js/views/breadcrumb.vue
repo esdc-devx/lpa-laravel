@@ -1,5 +1,5 @@
 <template>
-  <transition name="fade" mode="out-in">
+  <transition name="fade" mode="in-out">
     <div v-show="isHomePage === false">
       <el-breadcrumb separator-class="el-icon-arrow-right" >
         <el-breadcrumb-item v-for="crumb in getBreadcrumbs()" :to="{ path: crumb.path }" :key="crumb.id">
@@ -91,14 +91,14 @@
         let crumb;
 
         // build up the breadcrumbs data
-        for (let i = 0; i < route.length; i++) {
+        for (let i = 0; i < matchedCrumbsArr.length; i++) {
           routeName = matchedCrumbsArr[i];
           crumb = _.find(this.$router.options.routes, { name: routeName });
           // since the meta is executed
           // before any store modules has done loading,
           // we need to catch edge cases like deep linking
           // would produce undefined as value
-          outputTitle = crumb.meta.title() || '';
+          outputTitle = crumb.meta.title() === 'undefined' ? '' : crumb.meta.title();
           // try to translate the title, or just take it as value
           title = this.trans(outputTitle) || outputTitle || '';
           path += '/' + route[i];
