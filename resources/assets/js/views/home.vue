@@ -80,18 +80,19 @@
       font-size: 3rem;
     }
 
-    i {
-      font-size: 3rem;
-      text-align: center;
-      display: block;
-    }
-
-    .actions button {
-      white-space: initial;
-      width: 100%;
-      height: 100%;
-      p {
-        margin-bottom: 0;
+    .actions {
+      button {
+        white-space: initial;
+        width: 100%;
+        height: 100%;
+        p {
+          margin-bottom: 0;
+        }
+      }
+      i {
+        font-size: 3rem;
+        text-align: center;
+        display: block;
       }
     }
   }
