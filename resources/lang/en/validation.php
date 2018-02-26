@@ -100,8 +100,9 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'username' => [
+            'unique' => 'User already exists.',
+            'not-found' => 'User could not be found in Active Directory.'
         ],
     ],
 

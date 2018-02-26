@@ -5,10 +5,12 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
+use Illuminate\Validation\ValidationException as ValidationException;
 use Illuminate\Auth\AuthenticationException as AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException as MethodNotAllowedHttpException;
 use Illuminate\Http\Response;
 use App\Http\Traits\UsesJsonResponse;
 
@@ -75,6 +77,11 @@ class Handler extends ExceptionHandler
                 return $this->respondNotFound('Endpoint not found.');
             }
 
+            // Handle method not allowed errors.
+            if ($exception instanceof MethodNotAllowedHttpException) {
+                $this->respondMethodNotAllowed();
+            }
+
             // Handle authorization errors.
             if ($exception instanceof AuthorizationException) {
                 // @todo: Maybe add some sort of logging for forbidden actions.
@@ -84,6 +91,11 @@ class Handler extends ExceptionHandler
             // Handle authentication error.
             if ($exception instanceof AuthenticationException) {
                 return $this->respondUnauthorize('User is not authenticated.');
+            }
+
+            // Handle data validation errors.
+            if ($exception instanceof ValidationException) {
+                return $this->respondValidationError($exception->errors());
             }
 
             // Default to internal error response.

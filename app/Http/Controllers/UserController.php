@@ -7,6 +7,7 @@ use App\Models\User\User;
 use App\Repositories\UserRepository;
 use App\Repositories\OrganizationUnitRepository;
 use App\Http\Resources\UserLdap;
+use App\Http\Requests\StoreUser;
 
 class UserController extends ApiController
 {
@@ -27,7 +28,7 @@ class UserController extends ApiController
      */
     public function search(Request $request)
     {
-        $results = $this->users->searchLdap($request->query('name'));
+        $results = $this->users->searchLdap($request->get('name'));
         return $this->respond(UserLdap::collection($results));
     }
 
@@ -61,7 +62,7 @@ class UserController extends ApiController
      */
     public function create()
     {
-        // Return user creation form.
+        // Return user creation form data.
         return $this->respond([
             'organization_units' => $this->organizationUnits->getAll()->toArray()
         ]);
@@ -73,12 +74,11 @@ class UserController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUser $request)
     {
-        // Store new user.
-        $data = $request->all();
-        $result = $this->users->create($data);
-        return $this->respond($result);
+        return $this->respond(
+            $this->users->create($request->all())
+        );
     }
 
     /**
@@ -115,7 +115,13 @@ class UserController extends ApiController
      */
     public function update(Request $request, $id)
     {
-        // Update user information.
+        // @note: Should be moved to UserFormRequest class.
+        $this->authorize('update', $this->users->getById($id));
+
+        $data = $request->all();
+        return $this->respond(
+            $this->users->update($id, $data)
+        );
     }
 
     /**
@@ -126,7 +132,13 @@ class UserController extends ApiController
      */
     public function destroy(Request $request, $id)
     {
-        $method = $request->input('force') ? 'forceDelete' : 'delete';
-        return $this->respond($this->users->{$method}($id));
+        // @note: Should be moved to UserFormRequest class.
+        $this->authorize('delete', auth()->user(), User::class);
+
+        // If request has force parameter, permenantely delete the user.
+        $method = $request->get('force') ? 'forceDelete' : 'delete';
+        return $this->respond(
+            $this->users->{$method}($id)
+        );
     }
 }
