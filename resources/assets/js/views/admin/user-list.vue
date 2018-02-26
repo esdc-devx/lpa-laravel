@@ -6,7 +6,7 @@
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :data="parsedUsers"
-      @row-click="editUser">
+      @cell-click="editUser">
       <el-table-column
         sortable
         prop="id"
@@ -117,12 +117,17 @@
         this.isLoading = true;
         this.$parent.$el.scrollTop = 0;
         this.loadUsers(newCurrentPage).then(() => {
+          this.parseUsers();
           this.isLoading = false;
         });
       },
 
       // Form handlers
-      editUser(user) {
+      editUser(user, column) {
+        // @todo: make this text translatable
+        if (column.label === 'Operations') {
+          return;
+        }
         this.$router.push(`${namespace}/edit/${user.id}`);
       },
 
@@ -134,7 +139,7 @@
 
       confirmDelete() {
         // @todo: delete da user
-        // this.deleteUser(this.user.)
+        // this.deleteUser(this.user.id);
       },
 
       // Filters

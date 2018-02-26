@@ -47,7 +47,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../components/event-bus.js';
 
   import ProjectCreate from '../views/project-create';
@@ -84,6 +84,10 @@
     },
 
     methods: {
+      ...mapActions({
+        loadProjects: `${namespace}/loadProjects`
+      }),
+
       viewProject(project) {
         this.$store.commit(`${namespace}/setProject`, project);
         this.$router.push(`${namespace}/${project.id}`);
@@ -93,7 +97,7 @@
       handleCurrentChange(newCurrentPage) {
         this.isLoading = true;
         this.$parent.$el.scrollTop = 0;
-        this.$store.dispatch(`${namespace}/loadProjects`, newCurrentPage).then(() => {
+        this.loadProjects(newCurrentPage).then(() => {
           this.isLoading = false;
         });
       },

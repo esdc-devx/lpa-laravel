@@ -42,6 +42,7 @@ setLanguage()
       });
 
       Vue.use(VeeValidate, {
+        events: 'blur',
         locale: store.getters.language,
         // modify the defaults for errors and fields
         // since ElementUI already has these properties injected
