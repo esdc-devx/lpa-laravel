@@ -65,6 +65,7 @@ function proceed(to, from, next) {
 function setLanguage(to) {
   let lang = to.params.lang;
   if (lang && lang !== store.getters.language) {
+    EventBus.$emit('Store:beforeLanguageUpdate');
     store.dispatch('setLanguage', lang);
   }
 }

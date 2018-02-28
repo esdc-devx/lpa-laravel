@@ -3,30 +3,19 @@
     <h2>{{ trans('navigation.admin_user_edit') }}</h2>
 
     <el-form ref="form" @submit.native.prevent label-width="30%">
-      <el-form-item label="Name" for="name" :class="{'is-required': nameRules.required, 'is-error': verrors.has('name') }">
-        <el-autocomplete
-          id="name"
-          name="name"
-          ref="name"
-          popper-class="userAutocomplete"
-          v-validate="nameRules"
-          v-model="user.name"
-          :fetch-suggestions="querySearchAsync"
-          :trigger-on-focus="false"
-          valueKey="name"
-          @select="handleSelect">
-          <template slot-scope="props">
-            <div class="autocomplete-popper-inner-wrap" :title="props.item.name">
-              <div class="value">{{ props.item.name }}</div>
-              <span class="link">{{ props.item.email }}</span>
-            </div>
-          </template>
-        </el-autocomplete>
-        <span v-show="verrors.has('name')" class="el-form-item__error">{{ verrors.first('name') }}</span>
+      <el-form-item label="Username" for="username">
+        <el-input v-model="form.user.username" disabled></el-input>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-error': verrors.has('organizationUnits') }">
+      <el-form-item label="Name" for="name">
+        <el-input v-model="form.user.name" disabled></el-input>
+      </el-form-item>
+      <el-form-item label="Email" for="email">
+        <el-input v-model="form.user.email" disabled>
+        </el-input>
+      </el-form-item>
+      <el-form-item label="Organizational Unit" for="organizationUnits">
         <el-select
-          v-model="user.organization_units"
+          v-model="form.user.organization_units"
           id="organizationUnits"
           name="organizationUnits"
           valueKey="name"
@@ -38,32 +27,18 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <span v-show="verrors.has('organizationUnits')" class="el-form-item__error">{{ verrors.first('organizationUnits') }}</span>
       </el-form-item>
-      <el-form-item label="Email" for="email" :class="{'is-required': emailRules.required, 'is-error': verrors.has('email') }">
-        <el-input
-          id="email"
-          name="email"
-          v-model="user.email"
-          v-validate="emailRules">
-        </el-input>
-        <span v-show="verrors.has('email')" class="el-form-item__error">{{ verrors.first('email') }}</span>
-      </el-form-item>
-      {{user}}
       <el-form-item>
-        <el-button type="primary" @click.prevent="submit()">Save</el-button>
+        <el-button :loading="isSaving" type="primary" @click.prevent="submit()">Save</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
-
   </div>
 </template>
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../components/event-bus.js';
-
-  import LoadStatus from '../../store/load-status-constants';
 
   let namespace = 'users';
 
@@ -75,33 +50,23 @@
         language: 'language',
         viewingUser: `${namespace}/viewing`,
         allOrganizationUnits: 'users/organizationUnits'
-      }),
-      nameRules() {
-        return {
-          required: true,
-          in: this.inUserList
-        };
-      },
-      emailRules() {
-        return {
-          required: true,
-          email: true
-        };
-      }
+      })
     },
 
     data() {
       return {
         isLoading: true,
-        user: {},
-        selectedOrganizationUnits: [],
-        inUserList: []
+        isSaving: false,
+        form: {
+          user: {}
+        },
+        selectedOrganizationUnits: []
       }
     },
 
     methods: {
       ...mapActions({
-        searchUser: 'users/searchUser',
+        updateUser: 'users/updateUser',
         loadViewingUser: 'users/loadViewingUser',
         loadUserCreateInfo: 'users/loadUserCreateInfo'
         // @todo: loadUserEditInfo: 'users/loadUserEditInfo'
@@ -111,53 +76,38 @@
         return this.searchUser(name);
       },
 
-      // Form handlers
-      submit() {
-        this.$validator.validateAll().then(result => {
-          if (result) {
-            this.update();
-            this.notifySuccess(`<b>${this.name}</b> has been created.`);
-            this.resetForm();
-            return;
+      focusOnError() {
+        this.$nextTick(() => {
+          if (document.querySelectorAll('.is-error input')[0]) {
+            document.querySelectorAll('.is-error input')[0].focus();
           }
-          document.querySelectorAll('.is-error input')[0].focus();
         });
       },
 
-      resetForm() {
-        this.$refs.form.resetFields();
-        this.$nextTick(() => {
-          this.$validator.reset();
+      // Form handlers
+      submit() {
+        this.isSaving = true;
+        this.$validator.validateAll().then(result => {
+          if (result) {
+            this.update();
+            return;
+          }
+          this.isSaving = false;
+          this.focusOnError();
         });
       },
 
       update() {
-        // @todo: call backend with form data
-        // this.updateUser({username: this.user.username}).then(() => {
-        //   this.notifySuccess(`${this.name} has been created.`);
-        //   this.resetForm();
-        // })
-        // .catch(e => {
-        //   this.errors = e.response.data.errors;
-        //   this.focusOnError();
-        // });
-      },
-
-      querySearchAsync(queryString, callback) {
-        var users = this.search(queryString).then(users => {
-          this.inUserList = _.map(users, 'name');
-          // var results = queryString ? _.filter(users, this.createFilter(queryString)) : users;
-
-          callback(users);
+        this.updateUser({id: this.form.user.id, organization_units: this.form.user.organization_units}).then(() => {
+          this.isSaving = false;
+          this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
+          this.goBack();
+        })
+        .catch(e => {
+          this.errors = e.response.data.errors;
+          this.focusOnError();
         });
       },
-
-      // createFilter(queryString) {
-      //   return item => {
-      //     return (item.fullname.toLowerCase().indexOf(queryString.toLowerCase()) === 0) ||
-      //            (item.username.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-      //   };
-      // },
 
       handleSelect(item) {
         this.$validator.reset();
@@ -174,10 +124,17 @@
     },
 
     created() {
+      EventBus.$on('Store:languageUpdate', () => {
+        this.$validator.reset();
+      });
+
       EventBus.$emit('App:ready');
+
       this.loadUser().then(this.loadUserCreateInfo().then(() => {
-        this.user = Object.assign({}, this.viewingUser);
-        this.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
+        this.form.user = Object.assign({}, this.viewingUser);
+        // replace our internal organization_units with only the ids
+        // since ElementUI only need ids to populate the selected options
+        this.form.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
         this.isLoading = false;
       }));
     }

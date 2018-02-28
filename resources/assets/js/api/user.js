@@ -16,7 +16,7 @@ export default {
   },
 
   updateUser(user) {
-    return axios.put('users', user);
+    return axios.put(`users/${user.id}`, user);
   },
 
   getUserCreateInfo() {

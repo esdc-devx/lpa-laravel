@@ -130,13 +130,8 @@
 
 <style lang="scss">
   .project-list {
-    margin-bottom: 40px;
     .el-table__row {
       cursor: pointer;
     }
-  }
-
-  .orgunit-filter:hover {
-    cursor: pointer;
   }
 </style>

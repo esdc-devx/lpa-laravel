@@ -1,15 +1,15 @@
 <template>
   <div class="user-create content">
     <h2>{{ trans('navigation.admin_user_create') }}</h2>
-    <el-form ref="form" @submit.native.prevent>
-      <el-form-item label="Name" for="name" :class="{'is-required': nameRules.required, 'is-error': verrors.collect('name').length }">
+    <el-form :model="form" ref="form" @submit.native.prevent>
+      <el-form-item label="Name" for="name" prop="name" :class="{'is-required': nameRules.required, 'is-error': verrors.collect('name').length }">
         <el-autocomplete
           id="name"
           name="name"
           ref="name"
           popper-class="userAutocomplete"
           v-validate="nameRules"
-          v-model="name"
+          v-model="form.name"
           :fetch-suggestions="querySearchAsync"
           :trigger-on-focus="false"
           valueKey="name"
@@ -24,12 +24,12 @@
         <span v-for="error in verrors.collect('name')" :key="error.id" class="el-form-item__error">{{ error }}</span>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-error': verrors.has('organizationUnits') }">
+      <el-form-item label="Organizational Unit" for="organizationUnits" prop="organization_units" :class="{'is-error': verrors.has('organizationUnits') }">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           :disabled="organizationUnits.length <= 1"
-          v-model="organization_units"
+          v-model="form.organization_units"
           id="organizationUnits"
           name="organizationUnits"
           valueKey="name"
@@ -45,7 +45,7 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button type="primary" @click="submit()">Create</el-button>
+        <el-button :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -78,9 +78,12 @@
     data() {
       return {
         isUserInfoLoading: true,
-        name: '',
-        username: '',
-        organization_units: [],
+        isSubmitting: false,
+        form: {
+          name: '',
+          username: '',
+          organization_units: []
+        },
         inUserList: []
       }
     },
@@ -98,11 +101,13 @@
 
       // Form handlers
       submit() {
+        this.isSubmitting = true;
         this.$validator.validateAll().then(result => {
           if (result) {
             this.create();
             return;
           }
+          this.isSubmitting = false;
           this.focusOnError();
         });
       },
@@ -119,7 +124,7 @@
           if (document.querySelectorAll('.is-error input')[0]) {
             document.querySelectorAll('.is-error input')[0].focus();
           }
-        })
+        });
       },
 
       manageBackendErrors(errors) {
@@ -143,18 +148,20 @@
       },
 
       handleSelect(item) {
-        this.username = item.username;
+        this.form.username = item.username;
         this.$validator.reset();
       },
 
       // Navigation
       create() {
-        this.createUser({ username: this.username, organization_units: this.organization_units })
+        this.createUser({ username: this.form.username, organization_units: this.form.organization_units })
           .then(() => {
-            this.notifySuccess(`${this.name} has been created.`);
+            this.isSubmitting = false;
+            this.notifySuccess(`${this.form.name} has been created.`);
             this.resetForm();
           })
           .catch(e => {
+            this.isSubmitting = false;
             this.manageBackendErrors(e.response.data.errors);
           });
       },
@@ -165,10 +172,21 @@
     },
 
     created() {
+      EventBus.$on('Store:beforeLanguageUpdate', () => {
+        // since on submit the backend returns already translated error messages,
+        // we need to reset the validator messages so that on next submit
+        // the messages are in the correct language
+        this.$validator.reset();
+        this.isUserInfoLoading = true;
+        this.loadUserCreateInfo().then(() => {
+          this.isUserInfoLoading = false;
+        });
+      });
+
       this.loadUserCreateInfo().then(() => {
         EventBus.$emit('App:ready');
         this.isUserInfoLoading = false;
-      })
+      });
     }
   };
 </script>

@@ -134,6 +134,17 @@ export default {
             reject(e);
           });
       });
+    },
+    updateUser({ commit }, user) {
+      return new Promise((resolve, reject) => {
+        UserAPI.updateUser(user)
+          .then(response => {
+            resolve();
+          })
+          .catch(e => {
+            reject(e);
+          });
+      });
     }
   },
 
