@@ -7,7 +7,7 @@ use App\Models\User\User;
 use App\Repositories\UserRepository;
 use App\Repositories\OrganizationUnitRepository;
 use App\Http\Resources\UserLdap;
-use App\Http\Requests\StoreUser;
+use App\Http\Requests\UserFormRequest;
 
 class UserController extends ApiController
 {
@@ -71,10 +71,10 @@ class UserController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\UserFormRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreUser $request)
+    public function store(UserFormRequest $request)
     {
         return $this->respond(
             $this->users->create($request->all())
@@ -109,16 +109,13 @@ class UserController extends ApiController
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  App\Http\Requests\UserFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UserFormRequest $request, int $id)
     {
-        // @note: Should be moved to UserFormRequest class.
-        $this->authorize('update', $this->users->getById($id));
-
-        $data = $request->all();
+        $data = $request->only('organization_units');
         return $this->respond(
             $this->users->update($id, $data)
         );
@@ -127,14 +124,12 @@ class UserController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
+     * @param  App\Http\Requests\UserFormRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy(UserFormRequest $request, int $id)
     {
-        // @note: Should be moved to UserFormRequest class.
-        $this->authorize('delete', auth()->user(), User::class);
-
         // If request has force parameter, permenantely delete the user.
         $method = $request->get('force') ? 'forceDelete' : 'delete';
         return $this->respond(

@@ -34,7 +34,7 @@ class UserPolicy
      * Determine whether the user can update the model.
      *
      * @param  \App\Models\User\User  $user
-     * @param  \App\User  $model
+     * @param  \App\Models\User\User  $model
      * @return mixed
      */
     public function update(User $user, User $model) {}
@@ -43,8 +43,7 @@ class UserPolicy
      * Determine whether the user can delete the model.
      *
      * @param  \App\Models\User\User  $user
-     * @param  \App\User  $model
      * @return mixed
      */
-    public function delete(User $user, User $model) {}
+    public function delete(User $user) {}
 }

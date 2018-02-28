@@ -13,7 +13,7 @@ class UserLdap extends Resource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request = null)
     {
         return [
             'username' => strtoupper($this->getAccountName()),

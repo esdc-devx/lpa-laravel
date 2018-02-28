@@ -18,7 +18,10 @@ class UserRepository extends BaseEloquentRepository
     {
         return Adldap::search()
             ->setDn('OU=Users,OU=NCR,OU=CSPS,DC=csps-efpc,DC=com')
-            ->whereHas('cn', 'email')
+            ->whereHas('samaccountname')
+            ->whereHas('mail')
+            ->whereHas('givenname')
+            ->whereHas('sn')
             ->where('cn', 'contains', $search)
             ->sortBy('cn', 'asc')
             ->limit(5)
@@ -49,7 +52,7 @@ class UserRepository extends BaseEloquentRepository
 
         // Fetch user information from active directory.
         $ldapUserInfo = (new UserLdap($this->getUserFromLdap($data['username'])->first()))
-            ->toArray(request());
+            ->toArray();
 
         // Generate password from username so we can more
         // easily authenticate them when using Camunda Rest API.
@@ -75,7 +78,18 @@ class UserRepository extends BaseEloquentRepository
         // @todo: Add user to Camunda.
         // @note: event(new UserRegistered($user));
 
-        return $user;
+        return $this->getById($user->id);
+    }
+
+    public function update($id, array $data)
+    {
+        // Update organizational units.
+        if (isset($data['organization_units'])) {
+            $this->getById($id)
+                ->organizationUnits()
+                ->sync($data['organization_units']);
+        }
+        return $this->getById($id);
     }
 
     public function delete($id)

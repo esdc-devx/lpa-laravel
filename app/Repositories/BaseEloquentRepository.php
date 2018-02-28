@@ -49,7 +49,7 @@ abstract class BaseEloquentRepository implements RepositoryContract
      * @param  string $sort sort direction
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getAll($columns = null, $orderBy = 'created_at', $sort = 'desc')
+    public function getAll($columns = null, $orderBy = 'id', $sort = 'asc')
     {
         $query = function () use ($columns, $orderBy, $sort) {
             return $this->model
@@ -86,7 +86,7 @@ abstract class BaseEloquentRepository implements RepositoryContract
      * @param  string $key column to be used as the value in option
      * @param  string $orderBy column to sort by
      * @param  string $sort sort direction
-     * @return array           array with key value pairs
+     * @return array  array with key value pairs
      */
     public function getForSelect($data, $key = 'id', $orderBy = 'created_at', $sort = 'desc')
     {
