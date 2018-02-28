@@ -44,7 +44,7 @@ export const actions = {
   // Admin handlers
   toggleAdminBar({ commit }, context) {
     commit(types.TOGGLE_ADMINBAR, context);
-  },
+  }
 };
 
 export const mutations = {
@@ -52,12 +52,6 @@ export const mutations = {
     // if undefined, take the default value
     lang = lang || state.language;
 
-    // make sure that when i18n is init,
-    // that we change its locale
-    // so that it affects ElementUI's locale
-    if (window.i18n) {
-      window.i18n.locale = lang;
-    }
     state.language = lang;
     localStorage.setItem('language', lang);
 

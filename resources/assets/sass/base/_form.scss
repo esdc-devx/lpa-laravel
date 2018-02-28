@@ -2,7 +2,8 @@
   margin-top: 40px;
 }
 
-.el-form-item__content {
-  // this fixes the alignment on the vee-validate errors position
+// ElementUI override so that we can have multiple errors shown as a list
+.el-form-item__error, .error-list-item {
+  position: relative;
   display: flex;
 }

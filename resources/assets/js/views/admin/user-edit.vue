@@ -8,11 +8,9 @@
           id="name"
           name="name"
           ref="name"
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
           popper-class="userAutocomplete"
           v-validate="nameRules"
-          v-model="form.user.name"
+          v-model="user.name"
           :fetch-suggestions="querySearchAsync"
           :trigger-on-focus="false"
           valueKey="name"
@@ -26,14 +24,11 @@
         </el-autocomplete>
         <span v-show="verrors.has('name')" class="el-form-item__error">{{ verrors.first('name') }}</span>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-required': organizationUnitRules.required, 'is-error': verrors.has('organizationUnits') }">
+      <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-error': verrors.has('organizationUnits') }">
         <el-select
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
-          v-model="form.user.organization_units"
+          v-model="user.organization_units"
           id="organizationUnits"
           name="organizationUnits"
-          v-validate="organizationUnitRules"
           valueKey="name"
           multiple>
           <el-option
@@ -47,11 +42,9 @@
       </el-form-item>
       <el-form-item label="Email" for="email" :class="{'is-required': emailRules.required, 'is-error': verrors.has('email') }">
         <el-input
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
           id="email"
           name="email"
-          v-model="form.user.email"
+          v-model="user.email"
           v-validate="emailRules">
         </el-input>
         <span v-show="verrors.has('email')" class="el-form-item__error">{{ verrors.first('email') }}</span>
@@ -80,18 +73,13 @@
     computed: {
       ...mapGetters({
         language: 'language',
-        user: `${namespace}/viewing`,
+        viewingUser: `${namespace}/viewing`,
         allOrganizationUnits: 'users/organizationUnits'
       }),
       nameRules() {
         return {
           required: true,
           in: this.inUserList
-        };
-      },
-      organizationUnitRules() {
-        return {
-          required: true
         };
       },
       emailRules() {
@@ -105,13 +93,8 @@
     data() {
       return {
         isLoading: true,
-        isUserInfoLoading: true,
-        form: {
-          user: {},
-          name: '',
-          selectedOrganizationUnits: [],
-          email: ''
-        },
+        user: {},
+        selectedOrganizationUnits: [],
         inUserList: []
       }
     },
@@ -132,8 +115,8 @@
       submit() {
         this.$validator.validateAll().then(result => {
           if (result) {
-            this.saveUser();
-            this.notifySuccess(`<b>${this.form.user.name}</b> has been created.`);
+            this.update();
+            this.notifySuccess(`<b>${this.name}</b> has been created.`);
             this.resetForm();
             return;
           }
@@ -148,8 +131,16 @@
         });
       },
 
-      saveUser() {
+      update() {
         // @todo: call backend with form data
+        // this.updateUser({username: this.user.username}).then(() => {
+        //   this.notifySuccess(`${this.name} has been created.`);
+        //   this.resetForm();
+        // })
+        // .catch(e => {
+        //   this.errors = e.response.data.errors;
+        //   this.focusOnError();
+        // });
       },
 
       querySearchAsync(queryString, callback) {
@@ -161,30 +152,20 @@
         });
       },
 
-      createFilter(queryString) {
-        return item => {
-          return (item.fullname.toLowerCase().indexOf(queryString.toLowerCase()) === 0) ||
-                 (item.username.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        };
-      },
+      // createFilter(queryString) {
+      //   return item => {
+      //     return (item.fullname.toLowerCase().indexOf(queryString.toLowerCase()) === 0) ||
+      //            (item.username.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      //   };
+      // },
 
       handleSelect(item) {
         this.$validator.reset();
       },
 
       loadUser() {
-        // look up the current user in the store first
-        if (this.$store.getters[`${namespace}/viewingUserLoadStatus`] === LoadStatus.LOADING_SUCCESS) {
-          this.isLoading = false;
-          return Promise.resolve();
-        }
-
-        // project not found, means we might be coming from a deep link
         let id = this.$route.params.id;
-        return this.loadViewingUser(id)
-          .then(() => {
-            return this.loadUser();
-          });
+        return this.loadViewingUser(id);
       },
 
       goBack() {
@@ -193,12 +174,12 @@
     },
 
     created() {
+      EventBus.$emit('App:ready');
       this.loadUser().then(this.loadUserCreateInfo().then(() => {
-        this.form.user = Object.assign({}, this.user);
-        this.form.user.organization_units = _.map(this.user.organization_units, 'id');
-        this.isUserInfoLoading = false;
-        EventBus.$emit('App:ready');
-      }))
+        this.user = Object.assign({}, this.viewingUser);
+        this.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
+        this.isLoading = false;
+      }));
     }
   };
 </script>

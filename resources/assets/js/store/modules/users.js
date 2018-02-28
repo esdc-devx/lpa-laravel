@@ -122,6 +122,18 @@ export default {
             reject(e);
           });
       });
+    },
+
+    createUser({ commit }, user) {
+      return new Promise((resolve, reject) => {
+        UserAPI.createUser(user)
+          .then(response => {
+            resolve();
+          })
+          .catch(e => {
+            reject(e);
+          });
+      });
     }
   },
 

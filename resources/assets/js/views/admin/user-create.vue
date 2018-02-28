@@ -2,14 +2,14 @@
   <div class="user-create content">
     <h2>{{ trans('navigation.admin_user_create') }}</h2>
     <el-form ref="form" @submit.native.prevent>
-      <el-form-item label="Name" for="name" :class="{'is-required': nameRules.required, 'is-error': verrors.has('name') }">
+      <el-form-item label="Name" for="name" :class="{'is-required': nameRules.required, 'is-error': verrors.collect('name').length }">
         <el-autocomplete
           id="name"
           name="name"
           ref="name"
           popper-class="userAutocomplete"
           v-validate="nameRules"
-          v-model="form.name"
+          v-model="name"
           :fetch-suggestions="querySearchAsync"
           :trigger-on-focus="false"
           valueKey="name"
@@ -21,16 +21,17 @@
             </div>
           </template>
         </el-autocomplete>
-        <span v-show="verrors.has('name')" class="el-form-item__error">{{ verrors.first('name') }}</span>
+        <span v-for="error in verrors.collect('name')" :key="error.id" class="el-form-item__error">{{ error }}</span>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-required': organizationUnitRules.required, 'is-error': verrors.has('organizationUnits') }">
+      <el-form-item label="Organizational Unit" for="organizationUnits" :class="{'is-error': verrors.has('organizationUnits') }">
         <el-select
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
           :disabled="organizationUnits.length <= 1"
-          v-model="form.selectedOrganizationUnits"
+          v-model="organization_units"
           id="organizationUnits"
           name="organizationUnits"
-          v-validate="organizationUnitRules"
           valueKey="name"
           multiple>
           <el-option
@@ -40,7 +41,7 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <span v-show="verrors.has('organizationUnits')" class="el-form-item__error">{{ verrors.first('organizationUnits') }}</span>
+        <span v-for="error in verrors.collect('organizationUnits')" :key="error.id" class="el-form-item__error">{{ error }}</span>
       </el-form-item>
 
       <el-form-item class="form-footer">
@@ -56,41 +57,39 @@
 
   import EventBus from '../../components/event-bus.js';
 
+  let namespace = 'users';
+
   export default {
     name: 'admin-user-create',
 
     computed: {
       ...mapGetters({
         language: 'language',
-        organizationUnits: 'users/organizationUnits'
+        organizationUnits: `${namespace}/organizationUnits`
       }),
       nameRules() {
         return {
           required: true,
           in: this.inUserList
         };
-      },
-      organizationUnitRules() {
-        return {
-          required: true
-        }
       }
     },
 
     data() {
       return {
-        form: {
-          name: '',
-          selectedOrganizationUnits: []
-        },
+        isUserInfoLoading: true,
+        name: '',
+        username: '',
+        organization_units: [],
         inUserList: []
       }
     },
 
     methods: {
       ...mapActions({
-        searchUser: 'users/searchUser',
-        loadUserCreateInfo: 'users/loadUserCreateInfo'
+        searchUser: `${namespace}/searchUser`,
+        createUser: `${namespace}/createUser`,
+        loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
       }),
 
       search(name) {
@@ -101,12 +100,10 @@
       submit() {
         this.$validator.validateAll().then(result => {
           if (result) {
-            this.createUser();
-            this.notifySuccess(`${this.form.name} has been created.`);
-            this.resetForm();
+            this.create();
             return;
           }
-          document.querySelectorAll('.is-error input')[0].focus();
+          this.focusOnError();
         });
       },
 
@@ -117,29 +114,49 @@
         });
       },
 
+      focusOnError() {
+        this.$nextTick(() => {
+          if (document.querySelectorAll('.is-error input')[0]) {
+            document.querySelectorAll('.is-error input')[0].focus();
+          }
+        })
+      },
+
+      manageBackendErrors(errors) {
+        let fieldBag;
+        for (let fieldName in errors) {
+          fieldBag = errors[fieldName];
+          for (let j = 0; j < fieldBag.length; j++) {
+            this.verrors.add({field: fieldName === 'username' ? 'name' : fieldName, msg: fieldBag[j]})
+          }
+        }
+
+        this.focusOnError();
+      },
+
       querySearchAsync(queryString, callback) {
         var users = this.search(queryString).then(users => {
           this.inUserList = _.map(users, 'name');
-          // var results = queryString ? _.filter(users, this.createFilter(queryString)) : users;
 
           callback(users);
         });
       },
 
-      createFilter(queryString) {
-        return item => {
-          return (item.fullname.toLowerCase().indexOf(queryString.toLowerCase()) === 0) ||
-                 (item.username.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
-        };
-      },
-
       handleSelect(item) {
+        this.username = item.username;
         this.$validator.reset();
       },
 
       // Navigation
-      createUser() {
-
+      create() {
+        this.createUser({ username: this.username, organization_units: this.organization_units })
+          .then(() => {
+            this.notifySuccess(`${this.name} has been created.`);
+            this.resetForm();
+          })
+          .catch(e => {
+            this.manageBackendErrors(e.response.data.errors);
+          });
       },
 
       goBack() {
@@ -150,6 +167,7 @@
     created() {
       this.loadUserCreateInfo().then(() => {
         EventBus.$emit('App:ready');
+        this.isUserInfoLoading = false;
       })
     }
   };

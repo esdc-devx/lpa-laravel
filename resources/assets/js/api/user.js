@@ -11,6 +11,14 @@ export default {
     return axios.get(`users/${request}`);
   },
 
+  createUser(user) {
+    return axios.post('users', user);
+  },
+
+  updateUser(user) {
+    return axios.put('users', user);
+  },
+
   getUserCreateInfo() {
     return axios.get('users/create');
   },
