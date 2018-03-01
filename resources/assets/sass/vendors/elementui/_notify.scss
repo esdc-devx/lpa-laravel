@@ -4,4 +4,9 @@
   // this is to make sure that when errors are caught,
   // we are able to see them even when things broke while loading something
   z-index: $--index-notify !important;
+  // Fixes the alignment of the content of the notification. Default is justify...
+  .el-notification__content {
+    text-align: left !important;
+  }
 }
+

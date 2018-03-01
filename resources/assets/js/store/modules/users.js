@@ -145,6 +145,17 @@ export default {
             reject(e);
           });
       });
+    },
+    deleteUser({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        UserAPI.deleteUser(id)
+          .then(response => {
+            resolve();
+          })
+          .catch(e => {
+            reject(e);
+          });
+      });
     }
   },
 

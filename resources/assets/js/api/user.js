@@ -19,6 +19,10 @@ export default {
     return axios.put(`users/${user.id}`, user);
   },
 
+  deleteUser(id) {
+    return axios.delete(`users/${id}`);
+  },
+
   getUserCreateInfo() {
     return axios.get('users/create');
   },

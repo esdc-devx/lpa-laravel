@@ -100,7 +100,7 @@
     methods: {
       ...mapActions({
         loadUsers: `${namespace}/loadUsers`,
-        // @todo: deleteUser: 'users/deleteUser
+        deleteUser: `${namespace}/deleteUser`
       }),
 
       parseUsers() {
@@ -132,14 +132,15 @@
       },
 
       deleteUserModal(id) {
-        this.user.id = id;
         this.user = this.findUser(id);
         this.showDeleteModal = true;
       },
 
       confirmDelete() {
-        // @todo: delete da user
-        // this.deleteUser(this.user.id);
+        this.deleteUser(this.user.id).then(() => {
+          this.showDeleteModal = false;
+          this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
+        });
       },
 
       // Filters
