@@ -44,7 +44,7 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine" :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
+        <el-button :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -75,11 +75,6 @@
           required: true,
           in: this.inUserList
         };
-      },
-
-      // @todo: make FormUtils and put it there
-      isFormPristine() {
-        return Object.keys(this.vfields).some(key => this.vfields[key].pristine);
       }
     },
 

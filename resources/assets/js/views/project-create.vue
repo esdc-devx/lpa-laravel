@@ -36,7 +36,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button :disabled="isFormPristine" type="primary" @click="submit()">Confirm</el-button>
+      <el-button type="primary" @click="submit()">Confirm</el-button>
       <el-button @click="close()">Cancel</el-button>
     </span>
   </el-dialog>
@@ -58,12 +58,6 @@
         // since we have translations in messages,
         // we need to rebuild the rules when the route changes
         this.rules();
-      }
-    },
-
-    computed: {
-      isFormPristine() {
-        return Object.keys(this.vfields).some(key => this.vfields[key].pristine);
       }
     },
 

@@ -43,7 +43,11 @@
             :title="orgUnit">{{orgUnit}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column
+      <!--
+        @todo: Uncomment when backend will handle delete user correctly
+                  (receive deleted users when not forced deleted)
+      -->
+      <!-- <el-table-column
         label="Operations">
         <template slot-scope="scope">
           <el-button
@@ -51,7 +55,7 @@
             type="danger"
             @click="deleteUserModal(scope.row.id)">Delete</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <el-pagination
