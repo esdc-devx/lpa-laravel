@@ -98,24 +98,10 @@
   };
 </script>
 
-<style lang="scss" scoped>
-    @import '../../sass/vendors/elementui/vars';
+<style lang="scss">
+  @import '../../sass/vendors/elementui/vars';
   .top-bar {
     user-select: none;
-  }
-  h1 {
-    font-size: 1.3rem;
-    margin: 0;
-    text-transform: uppercase;
-    display: flex;
-    a {
-      color: #FFF;
-      text-decoration: none;
-      display: inline-block;
-      vertical-align: middle;
-    }
-  }
-  .el-row {
     padding: 0 20px;
     background-color: #313131;
     .el-col {
@@ -125,36 +111,48 @@
         justify-content: flex-end;
       }
     }
-  }
-
-  .top-menu {
-    border: 0;
-    li {
-      padding: 0;
-      &.el-submenu li {
+    h1 {
+      font-size: 1.3rem;
+      margin: 0;
+      text-transform: uppercase;
+      display: flex;
+      a {
         color: #FFF;
-        background-color: #313131;
+        text-decoration: none;
+        display: inline-block;
+        vertical-align: middle;
       }
-      > a {
-        padding: 0 20px;
-        height: 100%;
-        display: block;
-      }
-    }
-    a {
-      text-decoration: none;
-    }
-    .el-menu-item, .el-menu-item:hover {
-      color: #fff;
-    }
-    .el-menu-item:hover {
-      background-color: #272727;
     }
 
-    .el-icon-setting {
-      color: #FFF;
-      &.active {
-        color: red;
+    .top-menu {
+      border: 0;
+      li {
+        padding: 0;
+        &.el-submenu li {
+          color: #FFF;
+          background-color: #313131;
+        }
+        > a {
+          padding: 0 20px;
+          height: 100%;
+          display: block;
+        }
+      }
+      a {
+        text-decoration: none;
+      }
+      .el-menu-item, .el-menu-item:hover {
+        color: #fff;
+      }
+      .el-menu-item:hover {
+        background-color: #272727;
+      }
+
+      .el-icon-setting {
+        color: #FFF;
+        &.active {
+          color: red;
+        }
       }
     }
   }

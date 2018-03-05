@@ -3,7 +3,7 @@ import HttpStatusCodes from './http-status-codes';
 import router from '../router';
 import store from '../store/';
 import Config from '../config';
-import EventBus from '../components/event-bus';
+import EventBus from '../helpers/event-bus';
 import Notify from '../mixins/notify.js';
 
 let onLanguageChange = lang => {
@@ -30,8 +30,12 @@ if (token) {
 }
 
 // General error handling
-// @todo: for each or so status codes, we should push the user to the corresponding page
-// e.g.: router.push(`/${HttpStatusCodes. code }`);
+axios.interceptors.request.use(config => config, error => {
+  console.group('[axios][interceptor] Request Error');
+  console.log(error);
+  console.groupEnd();
+  return Promise.reject(error);
+});
 axios.interceptors.response.use(response => response, error => {
   let response = error.response;
   if (response.status === HttpStatusCodes.UNAUTHORIZED) {
@@ -39,10 +43,10 @@ axios.interceptors.response.use(response => response, error => {
     // @refactorme: should warn the user with a popup (Ok only) then redirect to login
     alert('You are not authenticated. You will be redirected to the login page.');
     // we need to change the location manually since the backend handles the login page
-    window.location.href = '/' + store.getters.language + '/login';
+    window.location.href = `/${store.getters.language}/login`;
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
     alert('You are not authorized to access this page. You will be redirected to the home page.');
-    router.push('/');
+    router.push(`/${HttpStatusCodes.FORBIDDEN}`);
   } else if (response.status === HttpStatusCodes.NOT_FOUND) {
     router.push(`/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
@@ -50,7 +54,9 @@ axios.interceptors.response.use(response => response, error => {
     let errorResponse = response.data && response.data.errors ? response.data.errors : '';
     let errorMsg = error.message || '';
     Notify.notifyError(errorMsg);
+    console.group('[axios][interceptor] Response Error');
     console.error(errorMsg, errorResponse);
+    console.groupEnd();
   }
 
   return Promise.reject(error);

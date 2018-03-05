@@ -26,6 +26,9 @@
         class-name="orgunit-filter"
         prop="organization_unit.name"
         label="Organizational unit">
+        <template slot-scope="scope">
+          <el-tag type="info" size="small" :title="scope.row.name">{{scope.row.name}}</el-tag>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -48,7 +51,7 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../components/event-bus.js';
+  import EventBus from '../helpers/event-bus.js';
 
   import ProjectCreate from '../views/project-create';
   import ProjectsAPI from '../api/projects';
@@ -56,7 +59,7 @@
   let namespace = 'projects';
 
   export default {
-    name: 'ProjectList',
+    name: 'project-list',
 
     data() {
       return {
@@ -132,6 +135,14 @@
   .project-list {
     .el-table__row {
       cursor: pointer;
+    }
+
+    .el-tag {
+      height: auto;
+      white-space: normal;
+      margin-right: 4px;
+      margin-top: 2px;
+      margin-bottom: 2px;
     }
   }
 </style>

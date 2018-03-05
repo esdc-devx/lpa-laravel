@@ -34,6 +34,14 @@
         filter-placement="bottom-start"
         prop="organization_units"
         label="Organizational Unit(s)">
+        <template slot-scope="scope">
+          <el-tag
+            v-for="orgUnit in scope.row.organization_units"
+            :key="orgUnit.id"
+            type="info"
+            size="small"
+            :title="orgUnit">{{orgUnit}}</el-tag>
+        </template>
       </el-table-column>
       <el-table-column
         label="Operations">
@@ -55,9 +63,7 @@
       :total="pagination.total">
     </el-pagination>
 
-    <el-dialog
-      :visible.sync="showDeleteModal"
-      width="30%">
+    <el-dialog :visible.sync="showDeleteModal" width="30%">
       <span slot="title" class="el-dialog__title">Delete user {{user.name}} ?</span>
       <span>This action cannot be undone.</span>
       <span slot="footer" class="dialog-footer">
@@ -70,7 +76,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../components/event-bus.js';
+  import EventBus from '../../helpers/event-bus.js';
 
   let namespace = 'users';
 
@@ -108,18 +114,14 @@
         this.parsedUsers = JSON.parse(JSON.stringify(this.users));
         _.map(this.parsedUsers, item => {
           // concat all organization units into a string seperated by commas
-          item.organization_units = _.map(item.organization_units, 'name').join(', ');
+          item.organization_units = _.map(item.organization_units, 'name');
         });
       },
 
       // Pagination
       handlePageChange(newCurrentPage) {
-        this.isLoading = true;
         this.$parent.$el.scrollTop = 0;
-        this.loadUsers(newCurrentPage).then(() => {
-          this.parseUsers();
-          this.isLoading = false;
-        });
+        this.triggerLoadUsers(newCurrentPage);
       },
 
       // Form handlers
@@ -140,6 +142,7 @@
         this.deleteUser(this.user.id).then(() => {
           this.showDeleteModal = false;
           this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
+          this.triggerLoadUsers();
         });
       },
 
@@ -157,16 +160,22 @@
       },
       filterGroup(value, row) {
         return row.group === value;
+      },
+      triggerLoadUsers(page) {
+        this.$parent.$el.scrollTop = 0;
+        this.isLoading = true;
+        page = _.isUndefined(page) ? this.currentPage : page;
+        this.loadUsers(page)
+          .then(() => {
+            this.parseUsers();
+            this.isLoading = false;
+          });
       }
     },
 
     created() {
       EventBus.$emit('App:ready');
-      this.loadUsers()
-        .then(() => {
-          this.parseUsers();
-          this.isLoading = false;
-        });
+      this.triggerLoadUsers();
     }
   };
 </script>
@@ -191,6 +200,14 @@
     }
     .el-table__row {
       cursor: pointer;
+    }
+
+    .el-tag {
+      height: auto;
+      white-space: normal;
+      margin-right: 4px;
+      margin-top: 2px;
+      margin-bottom: 2px;
     }
   }
 </style>

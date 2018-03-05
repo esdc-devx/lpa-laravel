@@ -1,6 +1,6 @@
 <template>
-  <div class="content">
-    <el-menu ref="sideBar" class="sideBar" :default-active="$route.fullPath" key="sidebar" router>
+  <div class="content sideBar">
+    <el-menu ref="app" class="app" :default-active="$route.fullPath" key="app" router>
       <el-menu-item v-for="(item, index) in app" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
         <a href="#" @click.prevent>{{ item.text }}</a>
@@ -8,7 +8,7 @@
     </el-menu>
 
     <transition name="slide">
-      <el-menu v-if="isAdminBarShown" ref="adminBar" class="adminBar" :default-active="$route.fullPath" key="adminBar" router>
+      <el-menu v-if="isAdminBarShown" ref="admin" class="admin" :default-active="$route.fullPath" key="admin" router>
         <el-menu-item-group title="Administration">
           <el-menu-item v-for="(item, index) in admin" :index="'/' + language + item.index" :class="item.classes" :key="index">
             <i :class="item.icon"></i>
@@ -94,7 +94,7 @@
     },
     methods: {
       setActiveIndex(to) {
-        let menu = this.isAdminBarShown ? this.$refs.adminBar : this.$refs.sideBar;
+        let menu = this.isAdminBarShown ? this.$refs.admin : this.$refs.app;
         // because of the $refs that cannot be reactive, we need to compare its items omitting the language
         let items = _.mapKeys(menu.items, (value, key) => {
           return this.removeLanguageFromString(key);
@@ -137,15 +137,15 @@
   };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import '../../sass/vendors/elementui/vars';
-  .content {
+  .sideBar {
     border-right: solid 1px #e6e6e6;
     height: 100%;
     overflow: hidden;
   }
 
-  .sideBar, .adminBar {
+  .app, .admin {
     position: absolute;
     user-select: none;
     width: 100%;
@@ -160,7 +160,7 @@
       color: $--color-primary;
     }
   }
-  .adminBar {
+  .admin {
     z-index: 1000;
     border-right: 1px solid #313131;
     background-color: #efefef;

@@ -7,14 +7,14 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../components/event-bus.js';
+  import EventBus from '../helpers/event-bus.js';
 
   import LoadStatus from '../store/load-status-constants';
 
   let namespace = 'projects';
 
   export default {
-    name: 'ProjectView',
+    name: 'project-view',
 
     computed: {
       ...mapGetters({

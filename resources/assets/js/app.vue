@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import EventBus from './components/event-bus';
+  import EventBus from './helpers/event-bus';
 
   import TopBar from './views/top-bar.vue';
   import SideBar from './views/side-bar.vue';

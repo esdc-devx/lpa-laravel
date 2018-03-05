@@ -1,6 +1,6 @@
 <template>
   <transition name="fade" mode="in-out">
-    <div v-show="isHomePage === false">
+    <div v-show="isHomePage === false" class="breadcrumb">
       <el-breadcrumb separator-class="el-icon-arrow-right" >
         <el-breadcrumb-item v-for="crumb in getBreadcrumbs()" :to="{ path: crumb.path }" :key="crumb.id">
           {{ crumb.name }}
@@ -117,13 +117,15 @@
   };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
   @import '../../sass/vendors/elementui/vars';
-  .el-breadcrumb {
-    font-size: 18px;
-    line-height: 2;
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  .breadcrumb {
+    .el-breadcrumb {
+      font-size: 18px;
+      line-height: 2;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
   }
 </style>

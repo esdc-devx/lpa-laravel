@@ -11,12 +11,13 @@ import AdminDashboard from '../views/admin/dashboard.vue';
 import UserList from '../views/admin/user-list.vue';
 import UserCreate from '../views/admin/user-create.vue';
 import UserEdit from '../views/admin/user-edit.vue';
-import NotFound from '../views/not-found.vue';
+import NotFound from '../views/errors/404.vue';
+import Forbidden from '../views/errors/403.vue';
 
 import LoadStatus from '../store/load-status-constants';
 import store from '../store/';
 
-import EventBus from '../components/event-bus.js';
+import EventBus from '../helpers/event-bus.js';
 import Notify from '../mixins/notify.js';
 
 Vue.use(Router);
@@ -65,7 +66,6 @@ function proceed(to, from, next) {
 function setLanguage(to) {
   let lang = to.params.lang;
   if (lang && lang !== store.getters.language) {
-    EventBus.$emit('Store:beforeLanguageUpdate');
     store.dispatch('setLanguage', lang);
   }
 }
@@ -175,6 +175,15 @@ const routes = [
   },
   {
     path: '/:lang/logout'
+  },
+  {
+    path: '/:lang/401',
+    name: 'forbidden',
+    component: Forbidden,
+    meta: {
+      title: () => 'navigation.forbidden',
+      breadcrumbs: () => 'forbidden'
+    }
   },
   // serves as a 404 handler
   {

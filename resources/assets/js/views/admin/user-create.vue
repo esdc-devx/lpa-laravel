@@ -1,8 +1,8 @@
 <template>
   <div class="user-create content">
     <h2>{{ trans('navigation.admin_user_create') }}</h2>
-    <el-form :model="form" ref="form" @submit.native.prevent>
-      <el-form-item label="Name" for="name" prop="name" :class="{'is-required': nameRules.required, 'is-error': verrors.collect('name').length }">
+    <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent>
+      <el-form-item label="Name" for="name" prop="name" :class="['is-required', {'is-error': verrors.collect('name').length }]">
         <el-autocomplete
           id="name"
           name="name"
@@ -21,10 +21,10 @@
             </div>
           </template>
         </el-autocomplete>
-        <span v-for="error in verrors.collect('name')" :key="error.id" class="el-form-item__error">{{ error }}</span>
+        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit" for="organizationUnits" prop="organization_units" :class="{'is-error': verrors.has('organizationUnits') }">
+      <el-form-item label="Organizational Unit" for="organizationUnits" prop="organization_units">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -41,7 +41,6 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <span v-for="error in verrors.collect('organizationUnits')" :key="error.id" class="el-form-item__error">{{ error }}</span>
       </el-form-item>
 
       <el-form-item class="form-footer">
@@ -55,12 +54,15 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '../../components/event-bus.js';
+  import EventBus from '../../helpers/event-bus.js';
+  import FormError from '../../components/forms/error.vue';
 
   let namespace = 'users';
 
   export default {
     name: 'admin-user-create',
+
+    components: { FormError },
 
     computed: {
       ...mapGetters({
@@ -114,6 +116,10 @@
 
       resetForm() {
         this.$refs.form.resetFields();
+        this.resetErrors();
+      },
+
+      resetErrors() {
         this.$nextTick(() => {
           this.$validator.reset();
         });
@@ -149,7 +155,7 @@
 
       handleSelect(item) {
         this.form.username = item.username;
-        this.$validator.reset();
+        this.resetErrors();
       },
 
       // Navigation
@@ -172,11 +178,11 @@
     },
 
     created() {
-      EventBus.$on('Store:beforeLanguageUpdate', () => {
+      EventBus.$on('Store:languageUpdate', () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
-        this.$validator.reset();
+        this.resetErrors();
         this.isUserInfoLoading = true;
         this.loadUserCreateInfo().then(() => {
           this.isUserInfoLoading = false;

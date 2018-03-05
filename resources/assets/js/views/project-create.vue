@@ -1,12 +1,13 @@
 <template>
   <el-dialog
+    class="project-create"
     center
     :visible.sync="isVisible"
     @close="close">
     <span slot="title" class="el-dialog__title">Create a New Project</span>
     <hr>
     <el-form :model="modal.form" ref="form" label-width="20%" @submit.native.prevent>
-      <el-form-item label="Project name" for="name" :class="['is-required', {'is-error': verrors.has('name') }]">
+      <el-form-item label="Project name" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]">
         <el-input
           v-model="modal.form.name"
           v-validate="'required'"
@@ -15,9 +16,9 @@
           auto-complete="off"
           autofocus>
         </el-input>
-        <span v-show="verrors.has('name')" class="el-form-item__error">{{ verrors.first('name') }}</span>
+        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationUnits" :class="['is-required', {'is-error': verrors.has('organizationUnits') }]">
+      <el-form-item label="Organizational Unit" for="organizationUnits" :class="['is-required', {'is-error': verrors.collect('organizationUnits').length }]">
         <el-select
           :disabled="modal.form.orgUnitOptions.length <= 1"
           v-validate="'required'"
@@ -31,7 +32,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <span v-show="verrors.has('organizationUnits')" class="el-form-item__error">{{ verrors.first('organizationUnits') }}</span>
+        <form-error v-for="error in verrors.collect('organizationUnits')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -42,10 +43,13 @@
 </template>
 
 <script>
-  import EventBus from '../components/event-bus.js';
+  import EventBus from '../helpers/event-bus.js';
+  import FormError from '../components/forms/error.vue';
 
   export default {
-    name: 'ProjectCreate',
+    name: 'project-create',
+
+    components: { FormError },
 
     props: ['show'],
 
@@ -133,14 +137,16 @@
   };
 </script>
 
-<style scoped lang="scss">
-  .el-dialog__title {
-    text-transform: uppercase;
-    font-weight: bold;
-  }
+<style lang="scss">
+  .project-create {
+    .el-dialog__title {
+      text-transform: uppercase;
+      font-weight: bold;
+    }
 
-  .el-select {
-    // fixes issue in IE11
-    float: left;
+    .el-dialog--center .el-form-item {
+      // fixes issue in IE11 when using 'center' attribute on el-dialog
+      text-align: left;
+    }
   }
 </style>

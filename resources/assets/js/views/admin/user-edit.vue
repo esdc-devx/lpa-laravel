@@ -15,6 +15,8 @@
       </el-form-item>
       <el-form-item label="Organizational Unit" for="organizationUnits">
         <el-select
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
           v-model="form.user.organization_units"
           id="organizationUnits"
           name="organizationUnits"
@@ -38,12 +40,12 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../components/event-bus.js';
+  import EventBus from '../../helpers/event-bus.js';
 
   let namespace = 'users';
 
   export default {
-    name: 'UserEdit',
+    name: 'user-edit',
 
     computed: {
       ...mapGetters({
@@ -56,6 +58,7 @@
     data() {
       return {
         isLoading: true,
+        isUserInfoLoading: false,
         isSaving: false,
         form: {
           user: {}
@@ -125,7 +128,14 @@
 
     created() {
       EventBus.$on('Store:languageUpdate', () => {
+        // since on submit the backend returns already translated error messages,
+        // we need to reset the validator messages so that on next submit
+        // the messages are in the correct language
         this.$validator.reset();
+        this.isUserInfoLoading = true;
+        this.loadUserCreateInfo().then(() => {
+          this.isUserInfoLoading = false;
+        });
       });
 
       EventBus.$emit('App:ready');
@@ -135,6 +145,7 @@
         // replace our internal organization_units with only the ids
         // since ElementUI only need ids to populate the selected options
         this.form.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
+        this.isUserInfoLoading = false;
         this.isLoading = false;
       }));
     }

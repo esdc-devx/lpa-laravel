@@ -1,5 +1,5 @@
 <template>
-  <div class="content">
+  <div class="content dashboard">
     <el-row type="flex" justify="center">
       <el-col :span="24"><h2>{{ trans('navigation.admin_dashboard') }}</h2></el-col>
     </el-row>
@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import EventBus from '../../components/event-bus.js';
+  import EventBus from '../../helpers/event-bus.js';
   export default {
     name: 'admin-dashboard',
     created() {
@@ -16,8 +16,10 @@
   };
 </script>
 
-<style lang="scss" scoped>
-  h2 {
-    text-align: center;
+<style lang="scss">
+  .dashboard {
+    h2 {
+      text-align: center;
+    }
   }
 </style>
