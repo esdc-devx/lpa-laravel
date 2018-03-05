@@ -97,12 +97,11 @@
       },
 
       // Pagination
-      handleCurrentChange(newCurrentPage) {
+      async handleCurrentChange(newCurrentPage) {
         this.isLoading = true;
         this.$parent.$el.scrollTop = 0;
-        this.loadProjects(newCurrentPage).then(() => {
-          this.isLoading = false;
-        });
+        await this.loadProjects(newCurrentPage);
+        this.isLoading = false;
       },
 
       // Filters
@@ -121,12 +120,10 @@
       }
     },
 
-    created() {
+    async created() {
       EventBus.$emit('App:ready');
-      this.$store.dispatch(`${namespace}/loadProjects`)
-        .then(() => {
-          this.isLoading = false;
-        });
+      await this.$store.dispatch(`${namespace}/loadProjects`);
+      this.isLoading = false;
     }
   };
 </script>

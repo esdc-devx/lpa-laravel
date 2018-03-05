@@ -25,7 +25,10 @@ export default {
     this.notify(message, 'warning', autoClose);
   },
 
-  notifyError(message, autoClose = false) {
+  notifyError(message, autoClose = false, log = true) {
     this.notify(message, 'error', autoClose);
+    if (log) {
+      console.error(message);
+    }
   }
 };

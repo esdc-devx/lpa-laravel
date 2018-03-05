@@ -44,7 +44,7 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
+        <el-button :disabled="isFormPristine" :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -69,11 +69,17 @@
         language: 'language',
         organizationUnits: `${namespace}/organizationUnits`
       }),
+
       nameRules() {
         return {
           required: true,
           in: this.inUserList
         };
+      },
+
+      // @todo: make FormUtils and put it there
+      isFormPristine() {
+        return Object.keys(this.vfields).some(key => this.vfields[key].pristine);
       }
     },
 
@@ -145,12 +151,15 @@
         this.focusOnError();
       },
 
-      querySearchAsync(queryString, callback) {
-        var users = this.search(queryString).then(users => {
+      async querySearchAsync(queryString, callback) {
+        let users;
+        try {
+          users = await this.search(queryString);
           this.inUserList = _.map(users, 'name');
-
           callback(users);
-        });
+        } catch(e) {
+          this.$notify(`[user-create][querySearchAsync] ${e}`)
+        }
       },
 
       handleSelect(item) {
@@ -159,17 +168,20 @@
       },
 
       // Navigation
-      create() {
-        this.createUser({ username: this.form.username, organization_units: this.form.organization_units })
-          .then(() => {
-            this.isSubmitting = false;
-            this.notifySuccess(`${this.form.name} has been created.`);
-            this.resetForm();
-          })
-          .catch(e => {
-            this.isSubmitting = false;
-            this.manageBackendErrors(e.response.data.errors);
+      async create() {
+        let repsonse;
+        try {
+          response = await this.createUser({
+            username: this.form.username,
+            organization_units: this.form.organization_units
           });
+          this.isSubmitting = false;
+          this.notifySuccess(`${this.form.name} has been created.`);
+          this.resetForm();
+        } catch(e) {
+          this.isSubmitting = false;
+          this.manageBackendErrors(e.response.data.errors);
+        }
       },
 
       goBack() {
@@ -177,22 +189,21 @@
       }
     },
 
-    created() {
-      EventBus.$on('Store:languageUpdate', () => {
+    async created() {
+      EventBus.$on('Store:languageUpdate', async () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
-        this.isUserInfoLoading = true;
-        this.loadUserCreateInfo().then(() => {
-          this.isUserInfoLoading = false;
-        });
-      });
 
-      this.loadUserCreateInfo().then(() => {
-        EventBus.$emit('App:ready');
+        this.isUserInfoLoading = true;
+        await this.loadUserCreateInfo();
         this.isUserInfoLoading = false;
       });
+
+      await this.loadUserCreateInfo();
+      EventBus.$emit('App:ready');
+      this.isUserInfoLoading = false;
     }
   };
 </script>

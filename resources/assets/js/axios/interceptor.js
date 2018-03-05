@@ -26,7 +26,6 @@ if (token) {
   axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
   Notify.notifyError('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
-  console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
 // General error handling
@@ -53,10 +52,7 @@ axios.interceptors.response.use(response => response, error => {
     // internal error
     let errorResponse = response.data && response.data.errors ? response.data.errors : '';
     let errorMsg = error.message || '';
-    Notify.notifyError(errorMsg);
-    console.group('[axios][interceptor] Response Error');
-    console.error(errorMsg, errorResponse);
-    console.groupEnd();
+    Notify.notifyError(`[axios][interceptor]: ${errorMsg}`);
   }
 
   return Promise.reject(error);

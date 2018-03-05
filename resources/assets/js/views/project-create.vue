@@ -36,7 +36,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="submit()">Confirm</el-button>
+      <el-button :disabled="isFormPristine" type="primary" @click="submit()">Confirm</el-button>
       <el-button @click="close()">Cancel</el-button>
     </span>
   </el-dialog>
@@ -58,6 +58,12 @@
         // since we have translations in messages,
         // we need to rebuild the rules when the route changes
         this.rules();
+      }
+    },
+
+    computed: {
+      isFormPristine() {
+        return Object.keys(this.vfields).some(key => this.vfields[key].pristine);
       }
     },
 
@@ -83,24 +89,23 @@
     },
 
     methods: {
+      // async create() {
       create() {
         let project = {
           name: this.modal.form.name,
           organization_unit: this.modal.form.organization_unit
         };
         // @todo: might want to show a loading spinner on modal after hitting create
-        // this.$store.dispatch('create', project)
-        //   .then(response => {
-        //     // @todo: grab the newly created project
-        //     // and pluck its name for the notification
-        //     this.close();
-
-        //     this.notifySuccess(`{something} has been created.`);
-        //   })
-        //   .catch(e => {
-        //     this.notifyError('[project-create][create]: ' + e);
-        //     console.error('[project-create][create]: ' + e);
-        //   });
+        // let response;
+        // try {
+        //   response = await this.$store.dispatch('create', project);
+        //   // @todo: grab the newly created project
+        //   // and pluck its name for the notification
+        //   this.close();
+        //   this.notifySuccess(`{something} has been created.`);
+        // } catch(e) {
+        //   this.notifyError(`[project-create][create]: ${e}`);
+        // }
       },
 
       close() {

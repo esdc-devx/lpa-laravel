@@ -3,6 +3,7 @@ import UserAPI from '../../api/user.js';
 
 export default {
   namespaced: true,
+
   state: {
     // logged-in user
     current: {},
@@ -46,116 +47,102 @@ export default {
   },
 
   actions: {
-    loadUsers({ commit }, page) {
+    async loadUsers({ commit }, page) {
       // commit('setUserLoadStatus', LoadStatus.LOADING_STARTED);
-      return new Promise((resolve, reject) => {
-        UserAPI.getUsers(page)
-          .then(response => {
-            commit('setUsers', response.data.data);
-            commit('setPagination', response.data.meta);
-            // commit('setUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-            resolve(response.data.data);
-          })
-          .catch(e => {
-            commit('setUsers', {});
-            // commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
-            reject(e);
-          });
-      });
+      let response;
+      try {
+        response = await UserAPI.getUsers(page);
+        commit('setUsers', response.data.data);
+        commit('setPagination', response.data.meta);
+        // commit('setUserLoadStatus', LoadStatus.LOADING_SUCCESS);
+        return response.data.data;
+      } catch(e) {
+        commit('setUsers', {});
+        // commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
+        return e;
+      }
     },
 
-    loadCurrentUser({ commit }) {
+    async loadCurrentUser({ commit }) {
       commit('setCurrentUserLoadStatus', LoadStatus.LOADING_STARTED);
-      return new Promise((resolve, reject) => {
-        UserAPI.getUser()
-          .then(response => {
-            commit('setCurrentUser', response.data.data);
-            commit('setCurrentUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-            resolve(response.data.data);
-          })
-          .catch(e => {
-            commit('setCurrentUser', {});
-            commit('setCurrentUserLoadStatus', LoadStatus.LOADING_FAILED);
-            reject(e);
-          });
-      });
+      let response;
+      try {
+        response = await UserAPI.getUser();
+        commit('setCurrentUser', response.data.data);
+        commit('setCurrentUserLoadStatus', LoadStatus.LOADING_SUCCESS);
+        return response.data.data;
+      } catch(e) {
+        commit('setCurrentUser', {});
+        commit('setCurrentUserLoadStatus', LoadStatus.LOADING_FAILED);
+        return e;
+      }
     },
 
-    loadViewingUser({ commit }, id) {
+    async loadViewingUser({ commit }, id) {
       commit('setViewingUserLoadStatus', LoadStatus.LOADING_STARTED);
-      return new Promise((resolve, reject) => {
-        UserAPI.getUser(id)
-          .then(response => {
-            commit('setViewingUser', response.data.data);
-            commit('setViewingUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-            resolve(response.data.data);
-          })
-          .catch(e => {
-            commit('setViewingUser', {});
-            commit('setViewingUserLoadStatus', LoadStatus.LOADING_FAILED);
-            reject(e);
-          });
-      });
+      let response;
+      try {
+        response = await UserAPI.getUser(id);
+        commit('setViewingUser', response.data.data);
+        commit('setViewingUserLoadStatus', LoadStatus.LOADING_SUCCESS);
+        return response.data.data;
+      } catch(e) {
+        commit('setViewingUser', {});
+        commit('setViewingUserLoadStatus', LoadStatus.LOADING_FAILED);
+        return e;
+      }
     },
 
-    loadUserCreateInfo({ commit }) {
-      return new Promise((resolve, reject) => {
-        UserAPI.getUserCreateInfo()
-          .then(response => {
-            commit('setOrganizationUnits', response.data.data.organization_units);
-            resolve(response.data.data.organization_units);
-          })
-          .catch(e => {
-            commit('setOrganizationUnits', []);
-            reject(e);
-          });
-      });
+    async loadUserCreateInfo({ commit }) {
+      let response;
+      try {
+        response = await UserAPI.getUserCreateInfo();
+        commit('setOrganizationUnits', response.data.data.organization_units);
+        return response.data.data.organization_units;
+      } catch(e) {
+        commit('setOrganizationUnits', []);
+        return e;
+      }
     },
 
-    searchUser({ commit }, name) {
-      return new Promise((resolve, reject) => {
-        UserAPI.searchUser(name)
-          .then(response => {
-            resolve(response.data.data);
-          })
-          .catch(e => {
-            reject(e);
-          });
-      });
+    async searchUser({ commit }, name) {
+      let response;
+      try {
+        response = await UserAPI.searchUser(name);
+        return response.data.data;
+      } catch(e) {
+        return e;
+      }
     },
 
-    createUser({ commit }, user) {
-      return new Promise((resolve, reject) => {
-        UserAPI.createUser(user)
-          .then(response => {
-            resolve();
-          })
-          .catch(e => {
-            reject(e);
-          });
-      });
+    async createUser({ commit }, user) {
+      let response;
+      try {
+        response = await UserAPI.createUser(user);
+        return;
+      } catch(e) {
+        return e;
+      }
     },
-    updateUser({ commit }, user) {
-      return new Promise((resolve, reject) => {
-        UserAPI.updateUser(user)
-          .then(response => {
-            resolve();
-          })
-          .catch(e => {
-            reject(e);
-          });
-      });
+
+    async updateUser({ commit }, user) {
+      let response;
+      try {
+        response = await UserAPI.updateUser(user);
+        return;
+      } catch(e) {
+        return e;
+      }
     },
-    deleteUser({ commit }, id) {
-      return new Promise((resolve, reject) => {
-        UserAPI.deleteUser(id)
-          .then(response => {
-            resolve();
-          })
-          .catch(e => {
-            reject(e);
-          });
-      });
+
+    async deleteUser({ commit }, id) {
+      let response;
+      try {
+        response = await UserAPI.deleteUser(id);
+        return;
+      } catch(e) {
+        return e;
+      }
     }
   },
 

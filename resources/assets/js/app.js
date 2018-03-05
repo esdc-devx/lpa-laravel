@@ -64,10 +64,8 @@ setLanguage()
       });
     })
     .catch(e => {
-      Notify.notifyError('[app][loadLanguages]: ' + e);
-      console.error('[app][loadLanguages]: ' + e);
+      Notify.notifyError(`[app][loadLanguages]: ${e}`);
     })
   ).catch(e => {
-    Notify.notifyError('[app][setLanguage]: ' + e);
-    console.error('[app][setLanguage]: ' + e);
+    Notify.notifyError(`[app][setLanguage]: ${e}`);
   });

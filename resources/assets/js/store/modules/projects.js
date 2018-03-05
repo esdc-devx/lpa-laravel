@@ -3,6 +3,7 @@ import ProjectsAPI from '../../api/projects';
 
 export default {
   namespaced: true,
+
   state: {
     // project being viewed
     viewing: {},
@@ -35,59 +36,54 @@ export default {
   },
 
   actions: {
-    loadProjects({ commit, dispatch }, page) {
+    async loadProjects({ commit, dispatch }, page) {
       commit('setProjectsLoadStatus', LoadStatus.LOADING_STARTED);
-      return new Promise((resolve, reject) => {
-        ProjectsAPI.getProjects(page)
-          .then(response => {
-            commit('setProjects', response.data.data);
-            commit('setPagination', response.data.meta);
-            commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
-            resolve(response.data.data);
-          })
-          .catch(e => {
-            commit('setProjects', []);
-            commit('setPagination', {});
-            commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
-            reject(e);
-          });
-      });
+      let response;
+      try {
+        response = await ProjectsAPI.getProjects(page);
+        commit('setProjects', response.data.data);
+        commit('setPagination', response.data.meta);
+        commit('setProjectsLoadStatus', LoadStatus.LOADING_SUCCESS);
+        return response.data.data;
+      } catch(e) {
+        commit('setProjects', []);
+        commit('setPagination', {});
+        commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
+        return e;
+      }
     },
 
-    loadProject({ commit }, id) {
+    async loadProject({ commit }, id) {
       commit('setProjectLoadStatus', LoadStatus.LOADING_STARTED);
-      return new Promise((resolve, reject) => {
-        ProjectsAPI.getProject(id)
-          .then(response => {
-            commit('setProject', response.data.data.project);
-            commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
-            resolve(response.data.data);
-          })
-          .catch(e => {
-            commit('setProject', {});
-            commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
-            reject(e);
-          });
-      });
+      let response;
+      try {
+        response = await ProjectsAPI.getProject(id);
+        commit('setProject', response.data.data.project);
+        commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
+        return response.data.data;
+      } catch(e) {
+        commit('setProject', {});
+        commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
+        reject(e);
+      }
     },
 
-    createProject({ commit }, project) {
+    async createProject({ commit }, project) {
       // commit('setProjectLoadStatus', LoadStatus.LOADING_STARTED);
-      return new Promise((resolve, reject) => {
-        ProjectsAPI.createProject(project)
-          .then(response => {
-            // commit('setProject', response.data.data.project);
-            // commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
-            // resolve(response.data.data);
-          })
-          .catch(e => {
-            // commit('setProject', {});
-            // commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
-            reject(e);
-          });
-      });
+      let response;
+      try {
+        response = await ProjectsAPI.createProject(project)
+        // commit('setProject', response.data.data.project);
+        // commit('setProjectLoadStatus', LoadStatus.LOADING_SUCCESS);
+        // resolve(response.data.data);
+      } catch(e) {
+        // commit('setProject', {});
+        // commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
+        return e;
+      }
     }
   },
+
   mutations: {
     setProjectsLoadStatus(state, status) {
       state.projectsLoadStatus = status;

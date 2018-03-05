@@ -17,6 +17,7 @@
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
+          v-validate="''"
           v-model="form.user.organization_units"
           id="organizationUnits"
           name="organizationUnits"
@@ -31,7 +32,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button :loading="isSaving" type="primary" @click.prevent="submit()">Save</el-button>
+        <el-button :disabled="!isFormDirty" :loading="isSaving" type="primary" @click.prevent="submit()">Save</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -52,7 +53,12 @@
         language: 'language',
         viewingUser: `${namespace}/viewing`,
         allOrganizationUnits: 'users/organizationUnits'
-      })
+      }),
+
+      // @todo: make FormUtils and put it there
+      isFormDirty() {
+        return Object.keys(this.vfields).some(key => this.vfields[key].dirty);
+      }
     },
 
     data() {
@@ -100,20 +106,17 @@
         });
       },
 
-      update() {
-        this.updateUser({id: this.form.user.id, organization_units: this.form.user.organization_units}).then(() => {
+      async update() {
+        let response;
+        try {
+          response = await this.updateUser({id: this.form.user.id, organization_units: this.form.user.organization_units});
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
-        })
-        .catch(e => {
+        } catch(e) {
           this.errors = e.response.data.errors;
           this.focusOnError();
-        });
-      },
-
-      handleSelect(item) {
-        this.$validator.reset();
+        }
       },
 
       loadUser() {
@@ -126,28 +129,27 @@
       }
     },
 
-    created() {
-      EventBus.$on('Store:languageUpdate', () => {
+    async created() {
+      EventBus.$on('Store:languageUpdate', async () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.$validator.reset();
         this.isUserInfoLoading = true;
-        this.loadUserCreateInfo().then(() => {
-          this.isUserInfoLoading = false;
-        });
+        await this.loadUserCreateInfo();
+        this.isUserInfoLoading = false;
       });
 
       EventBus.$emit('App:ready');
 
-      this.loadUser().then(this.loadUserCreateInfo().then(() => {
-        this.form.user = Object.assign({}, this.viewingUser);
-        // replace our internal organization_units with only the ids
-        // since ElementUI only need ids to populate the selected options
-        this.form.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
-        this.isUserInfoLoading = false;
-        this.isLoading = false;
-      }));
+      await this.loadUser();
+      await this.loadUserCreateInfo();
+      this.form.user = Object.assign({}, this.viewingUser);
+      // replace our internal organization_units with only the ids
+      // since ElementUI only need ids to populate the selected options
+      this.form.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
+      this.isUserInfoLoading = false;
+      this.isLoading = false;
     }
   };
 </script>

@@ -21,23 +21,21 @@ Vue.prototype.trans = (string, args) => {
   return value;
 };
 
-export function setLanguage() {
-  return new Promise((resolve, reject) => {
-    store.dispatch('setLanguage')
-      .then(resolve)
-      .catch(e => {
-        reject(e);
-      });
-  });
-}
-export function loadLanguages() {
-  return new Promise((resolve, reject) => {
-    store.dispatch('loadLanguages')
-      .then(data => {
-        resolve(data);
-      })
-      .catch(e => {
-        reject(e);
-      });
-  });
-}
+export async function setLanguage() {
+  try {
+    await store.dispatch('setLanguage');
+    return;
+  } catch(e) {
+    return e;
+  }
+};
+
+export async function loadLanguages() {
+  let response;
+  try {
+    response = await store.dispatch('loadLanguages');
+    return response;
+  } catch(e) {
+    return e;
+  }
+};

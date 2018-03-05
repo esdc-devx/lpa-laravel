@@ -28,17 +28,16 @@ export const actions = {
   setLanguage({ commit }, context) {
     commit(types.SET_LANGUAGE, context);
   },
-  loadLanguages({ commit }, context) {
-    return new Promise((resolve, reject) => {
-      axios.get('/locales')
-        .then(response => {
-          commit(types.SET_LANGUAGES, response.data.data);
-          resolve(response.data.data);
-        })
-        .catch(e => {
-          reject(e);
-        });
-    });
+
+  async loadLanguages({ commit }, context) {
+    let response;
+    try {
+      response = await axios.get('/locales')
+      commit(types.SET_LANGUAGES, response.data.data);
+      return response.data.data;
+    } catch(e) {
+      return e;
+    }
   },
 
   // Admin handlers
@@ -63,9 +62,11 @@ export const mutations = {
 
     EventBus.$emit('Store:languageUpdate', lang);
   },
+
   [types.SET_LANGUAGES](state, languages) {
     state.languages = languages;
   },
+
   [types.TOGGLE_ADMINBAR](state, isShown) {
     isShown = !_.isUndefined(isShown) ? isShown : !state.isAdminBarShown;
     state.isAdminBarShown = isShown;

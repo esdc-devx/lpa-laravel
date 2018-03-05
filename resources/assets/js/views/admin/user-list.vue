@@ -138,12 +138,11 @@
         this.showDeleteModal = true;
       },
 
-      confirmDelete() {
-        this.deleteUser(this.user.id).then(() => {
-          this.showDeleteModal = false;
-          this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
-          this.triggerLoadUsers();
-        });
+      async confirmDelete() {
+        await this.deleteUser(this.user.id);
+        this.showDeleteModal = false;
+        this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
+        this.triggerLoadUsers();
       },
 
       // Filters
@@ -158,18 +157,18 @@
           }
         }
       },
+
       filterGroup(value, row) {
         return row.group === value;
       },
-      triggerLoadUsers(page) {
+
+      async triggerLoadUsers(page) {
         this.$parent.$el.scrollTop = 0;
         this.isLoading = true;
         page = _.isUndefined(page) ? this.currentPage : page;
-        this.loadUsers(page)
-          .then(() => {
-            this.parseUsers();
-            this.isLoading = false;
-          });
+        await this.loadUsers(page)
+        this.parseUsers();
+        this.isLoading = false;
       }
     },
 

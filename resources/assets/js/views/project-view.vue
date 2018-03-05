@@ -33,21 +33,11 @@
         loadProject: `${namespace}/loadProject`
       }),
 
-      getProject() {
-        // look up the project in the store first
-        if (this.$store.getters[`${namespace}/projectLoadStatus`] === LoadStatus.LOADING_SUCCESS) {
-          this.isLoading = false;
-          return this.$store.getters.project;
-        }
-
-        // project not found, means we might be coming from a deep link
+      async getProject() {
         let id = this.$route.params.id;
-        return this.loadProject(id)
-          .then(() => {
-            EventBus.$emit('App:ready');
-            this.isLoading = false;
-            return this.getProject();
-          });
+        await this.loadProject(id)
+        EventBus.$emit('App:ready');
+        this.isLoading = false;
       }
     },
 

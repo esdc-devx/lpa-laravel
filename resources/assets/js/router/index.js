@@ -22,24 +22,25 @@ import Notify from '../mixins/notify.js';
 
 Vue.use(Router);
 
-function beforeProceed(to, from, next) {
-  requireAuth(to, from, next)
-    .then(() => {
-      proceed(to, from, next);
-    });
+async function beforeProceed(to, from, next) {
+  let isAuthorized = await requireAuth(to, from, next);
+  if (isAuthorized) {
+    proceed(to, from, next);
+  }
 }
 
 // This will check to see if the user is authenticated or not.
-function requireAuth(to, from, next) {
-  return new Promise((resolve, reject) => {
-    store.dispatch('users/loadCurrentUser')
-      .then(() => {
-        if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
-          return resolve();
-        }
-        return reject();
-      });
-  });
+async function requireAuth(to, from, next) {
+  let response;
+  try {
+    response = await store.dispatch('users/loadCurrentUser')
+    if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
+      return true;
+    }
+  } catch(e) {
+    Notify.notifyError(`[router][requireAuth]: ${e}`);
+    return false;
+  }
 }
 
 let isPathDirty = false;
