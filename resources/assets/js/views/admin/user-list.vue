@@ -125,6 +125,8 @@
       // Pagination
       handlePageChange(newCurrentPage) {
         this.$parent.$el.scrollTop = 0;
+        // IE11 scroll to top
+        document.documentElement.scrollTop = 0;
         this.triggerLoadUsers(newCurrentPage);
       },
 

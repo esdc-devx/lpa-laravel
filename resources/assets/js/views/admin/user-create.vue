@@ -164,7 +164,7 @@
 
       // Navigation
       async create() {
-        let repsonse;
+        let response;
         try {
           response = await this.createUser({
             username: this.form.username,
