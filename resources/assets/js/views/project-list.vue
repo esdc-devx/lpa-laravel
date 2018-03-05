@@ -27,7 +27,7 @@
         prop="organization_unit.name"
         label="Organizational unit">
         <template slot-scope="scope">
-          <el-tag type="info" size="small" :title="scope.row.name">{{scope.row.name}}</el-tag>
+          <el-tag type="info" size="small" :title="scope.row.organization_unit.name">{{scope.row.organization_unit.name}}</el-tag>
         </template>
       </el-table-column>
     </el-table>
