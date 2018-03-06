@@ -137,7 +137,7 @@
           this.inUserList = _.map(users, 'name');
           callback(users);
         } catch(e) {
-          this.$notify(`[user-create][querySearchAsync] ${e}`)
+          this.$notify(`[user-create][querySearchAsync] ${e}`);
         }
       },
 
