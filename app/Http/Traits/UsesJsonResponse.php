@@ -130,8 +130,8 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondValidationError($errors)    {
-
+    protected function respondValidationError($errors)
+    {
         return $this->setStatusCode(Response::HTTP_UNPROCESSABLE_ENTITY)
             ->respondWithError($errors);
     }

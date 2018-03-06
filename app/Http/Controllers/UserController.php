@@ -49,6 +49,7 @@ class UserController extends ApiController
      */
     public function index()
     {
+        // @todo: Add option to display deleted users?
         $limit = request()->get('limit') ? : self::ITEMS_PER_PAGE;
         return $this->respondWithPagination(
             $this->users->getPaginated($limit)
@@ -103,7 +104,7 @@ class UserController extends ApiController
      */
     public function edit($id)
     {
-        // Return user edit form.
+        // @todo: Return user edit form.
     }
 
     /**
