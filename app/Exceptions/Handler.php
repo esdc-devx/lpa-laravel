@@ -11,7 +11,6 @@ use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException as MethodNotAllowedHttpException;
-use Illuminate\Http\Response;
 use App\Http\Traits\UsesJsonResponse;
 
 class Handler extends ExceptionHandler

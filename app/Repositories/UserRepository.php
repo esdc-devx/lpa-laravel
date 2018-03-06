@@ -10,11 +10,13 @@ use Illuminate\Support\Facades\Auth;
 
 class UserRepository extends BaseEloquentRepository
 {
+    const LDAP_SEARCH_LIMIT = 5;
+
     protected $model = \App\Models\User\User::class;
     protected $relationships = ['organizationUnits', 'projects'];
     protected $requiredRelationships = ['organizationUnits'];
 
-    public function searchLdap($search)
+    public function searchLdap($search, $limit = self::LDAP_SEARCH_LIMIT)
     {
         return Adldap::search()
             ->setDn('OU=Users,OU=NCR,OU=CSPS,DC=csps-efpc,DC=com')
@@ -24,7 +26,7 @@ class UserRepository extends BaseEloquentRepository
             ->whereHas('sn')
             ->where('cn', 'contains', $search)
             ->sortBy('cn', 'asc')
-            ->limit(5)
+            ->limit($limit)
             ->get()
             ->values();
     }
