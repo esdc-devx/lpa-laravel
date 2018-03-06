@@ -42,23 +42,21 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../helpers/event-bus.js';
+  import FormUtils from '../../mixins/form/utils.js';
 
   let namespace = 'users';
 
   export default {
     name: 'user-edit',
 
+    mixins: [ FormUtils ],
+
     computed: {
       ...mapGetters({
         language: 'language',
         viewingUser: `${namespace}/viewing`,
         allOrganizationUnits: 'users/organizationUnits'
-      }),
-
-      // @todo: make FormUtils and put it there
-      isFormDirty() {
-        return Object.keys(this.vfields).some(key => this.vfields[key].dirty);
-      }
+      })
     },
 
     data() {
@@ -77,20 +75,13 @@
       ...mapActions({
         updateUser: 'users/updateUser',
         loadViewingUser: 'users/loadViewingUser',
+        // @removeme: when backend route for edit info is done
         loadUserCreateInfo: 'users/loadUserCreateInfo'
         // @todo: loadUserEditInfo: 'users/loadUserEditInfo'
       }),
 
       search(name) {
         return this.searchUser(name);
-      },
-
-      focusOnError() {
-        this.$nextTick(() => {
-          if (document.querySelectorAll('.is-error input')[0]) {
-            document.querySelectorAll('.is-error input')[0].focus();
-          }
-        });
       },
 
       // Form handlers
@@ -142,6 +133,7 @@
 
       EventBus.$emit('App:ready');
 
+      // @todo: make only 1 call to loadUserEditInfo
       await this.loadUser();
       await this.loadUserCreateInfo();
       this.form.user = Object.assign({}, this.viewingUser);

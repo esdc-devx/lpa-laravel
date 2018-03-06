@@ -44,7 +44,8 @@ axios.interceptors.response.use(response => response, error => {
     // we need to change the location manually since the backend handles the login page
     window.location.href = `/${store.getters.language}/login`;
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
-    alert('You are not authorized to access this page. You will be redirected to the home page.');
+    // @refactorme: should warn the user with a popup (Ok only) then redirect
+    alert('You are not authorized to access this page.');
     router.push(`/${HttpStatusCodes.FORBIDDEN}`);
   } else if (response.status === HttpStatusCodes.NOT_FOUND) {
     router.push(`/${HttpStatusCodes.NOT_FOUND}`);

@@ -36,7 +36,7 @@
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="submit()">Confirm</el-button>
+      <el-button :disabled="isFormPristine" type="primary" @click="submit()">Confirm</el-button>
       <el-button @click="close()">Cancel</el-button>
     </span>
   </el-dialog>
@@ -45,9 +45,12 @@
 <script>
   import EventBus from '../helpers/event-bus.js';
   import FormError from '../components/forms/error.vue';
+  import FormUtils from '../mixins/form/utils.js';
 
   export default {
     name: 'project-create',
+
+    mixins: [ FormUtils ],
 
     components: { FormError },
 
@@ -124,14 +127,7 @@
           }
           document.querySelectorAll('.is-error input')[0].focus();
         });
-      },
-
-      resetForm() {
-        this.$refs.form.resetFields();
-        this.$nextTick(() => {
-          this.$validator.reset();
-        });
-      },
+      }
     }
   };
 </script>

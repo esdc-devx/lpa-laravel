@@ -110,6 +110,7 @@
       findProject(id) {
         return this.projects[this.findProjectIndex(id)];
       },
+
       findProjectIndex(id) {
         for (var i = 0; i < this.projects.length; i++) {
           if (this.projects[i].id == id) {
@@ -117,6 +118,7 @@
           }
         }
       },
+
       filterOrgUnit(value, row) {
         return row.organization_unit.name === value;
       }

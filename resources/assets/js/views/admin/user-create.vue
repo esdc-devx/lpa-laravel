@@ -7,7 +7,7 @@
           id="name"
           name="name"
           ref="name"
-          popper-class="userAutocomplete"
+          popper-class="name-autocomplete"
           v-validate="nameRules"
           v-model="form.name"
           :fetch-suggestions="querySearchAsync"
@@ -30,6 +30,7 @@
           element-loading-spinner="el-icon-loading"
           :disabled="organizationUnits.length <= 1"
           v-model="form.organization_units"
+          v-validate="''"
           id="organizationUnits"
           name="organizationUnits"
           valueKey="name"
@@ -44,7 +45,7 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
+        <el-button :disabled="isFormPristine" :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
         <el-button @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -56,11 +57,14 @@
 
   import EventBus from '../../helpers/event-bus.js';
   import FormError from '../../components/forms/error.vue';
+  import FormUtils from '../../mixins/form/utils.js';
 
   let namespace = 'users';
 
   export default {
     name: 'admin-user-create',
+
+    mixins: [ FormUtils ],
 
     components: { FormError },
 
@@ -115,25 +119,6 @@
         });
       },
 
-      resetForm() {
-        this.$refs.form.resetFields();
-        this.resetErrors();
-      },
-
-      resetErrors() {
-        this.$nextTick(() => {
-          this.$validator.reset();
-        });
-      },
-
-      focusOnError() {
-        this.$nextTick(() => {
-          if (document.querySelectorAll('.is-error input')[0]) {
-            document.querySelectorAll('.is-error input')[0].focus();
-          }
-        });
-      },
-
       manageBackendErrors(errors) {
         let fieldBag;
         for (let fieldName in errors) {
@@ -142,7 +127,6 @@
             this.verrors.add({field: fieldName === 'username' ? 'name' : fieldName, msg: fieldBag[j]})
           }
         }
-
         this.focusOnError();
       },
 
@@ -159,7 +143,6 @@
 
       handleSelect(item) {
         this.form.username = item.username;
-        this.resetErrors();
       },
 
       // Navigation
@@ -215,7 +198,7 @@
       width: 75%;
     }
   }
-  .el-autocomplete-suggestion.userAutocomplete {
+  .el-autocomplete-suggestion.name-autocomplete {
     li {
       line-height: 20px;
       padding: 7px 10px;

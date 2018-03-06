@@ -1,24 +1,22 @@
-// Import libs
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
+
 import VeeValidate from 'vee-validate';
 import veeLocaleFR from 'vee-validate/dist/locale/fr';
-import { sync } from 'vuex-router-sync';
 
-import App from './app.vue';
-
-import Notify from './mixins/notify.js';
-
-// Import Element UI
 import ElementUI from 'element-ui';
-// Element UI Localization
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
-import { setLanguage, loadLanguages } from './locale';
-
+import { sync } from 'vuex-router-sync';
 import router from './router';
 import store from './store/';
+
+import Notify from './mixins/notify.js';
+
+import { setLanguage, loadLanguages } from './locale';
+
+import App from './app.vue';
 
 sync(store, router);
 

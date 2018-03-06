@@ -1,5 +1,5 @@
 <template>
-  <div class="content sideBar">
+  <div class="content side-bar">
     <el-menu ref="app" class="app" :default-active="$route.fullPath" key="app" router>
       <el-menu-item v-for="(item, index) in app" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
@@ -139,7 +139,7 @@
 
 <style lang="scss">
   @import '../../sass/vendors/elementui/vars';
-  .sideBar {
+  .side-bar {
     border-right: solid 1px #e6e6e6;
     height: 100%;
     overflow: hidden;

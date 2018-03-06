@@ -47,10 +47,7 @@ export const actions = {
 };
 
 export const mutations = {
-  [types.SET_LANGUAGE](state, lang) {
-    // if undefined, take the default value
-    lang = lang || state.language;
-
+  [types.SET_LANGUAGE](state, lang = state.language) {
     state.language = lang;
     localStorage.setItem('language', lang);
 
