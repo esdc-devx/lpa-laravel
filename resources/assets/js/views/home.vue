@@ -72,6 +72,9 @@
 
 <style lang="scss">
   .home {
+    // since there is no breadcrumbs bar on the home page,
+    // make sure the content is at the top
+    top: 0;
     h2, p {
       text-align: center;
     }

@@ -92,6 +92,7 @@
       }),
 
       viewProject(project) {
+        this.scrollToTop();
         this.$store.commit(`${namespace}/setProject`, project);
         this.$router.push(`${namespace}/${project.id}`);
       },
@@ -99,11 +100,15 @@
       // Pagination
       async handleCurrentChange(newCurrentPage) {
         this.isLoading = true;
+        this.scrollToTop();
+        await this.loadProjects(newCurrentPage);
+        this.isLoading = false;
+      },
+
+      scrollToTop() {
         this.$parent.$el.scrollTop = 0;
         // IE11 scroll to top
         document.documentElement.scrollTop = 0;
-        await this.loadProjects(newCurrentPage);
-        this.isLoading = false;
       },
 
       // Filters
@@ -124,7 +129,7 @@
       }
     },
 
-    async created() {
+    async mounted() {
       EventBus.$emit('App:ready');
       await this.$store.dispatch(`${namespace}/loadProjects`);
       this.isLoading = false;

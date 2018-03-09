@@ -141,6 +141,7 @@
   @import '../../sass/vendors/elementui/vars';
   .side-bar {
     border-right: solid 1px #e6e6e6;
+    width: 100%;
     height: 100%;
     overflow: hidden;
   }

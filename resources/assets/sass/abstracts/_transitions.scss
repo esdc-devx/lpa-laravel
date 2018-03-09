@@ -19,37 +19,18 @@
   transform: translateX(-100%);
 }
 
-/* Slide Left */
-.slide-left-enter-active, .slide-left-leave-active {
-  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+// Slide Left-Right
+.slide-left-enter-active, .slide-right-enter-active {
+  transition: all .5s ease;
 }
-.slide-left-enter {
-  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+.slide-left-leave-active, .slide-right-leave-active {
+  transition: all .5s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-left-enter, .slide-right-leave-to {
   transform: translateX(100%);
-  opacity: 1;
-}
-.slide-left-leave-to {
-  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  transform: translateX(-100%);
-  opacity: 0;
 }
 
-/* Slide Right */
-.slide-right-enter-active, .slide-right-leave-active {
-  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-right-enter {
-  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  transform: translateX(-100%);
-  opacity: 1;
-}
-.slide-right-leave-to {
-  transition: transform .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-// Zoomin-top
+// Zoomin Top
 .zoomin-top-enter-active, .zoomin-top-leave-active {
   opacity: 1;
   transform: scaleY(1);
@@ -61,28 +42,34 @@
   transform: scaleY(0);
 }
 
-// Swipe
-.swipe-enter-active {
-  animation-name: swipe-enter;
-  animation-duration: 0.5s;
-  animation-timing-function: ease;
-}
-.swipe-leave-active {
-  animation-name: swipe-leave;
-  animation-duration: 0.5s;
-  animation-timing-function: ease;
-}
-
-// Fade
+// Fade In-Out
 .fade-enter-active, .fade-leave-active {
-  transition: opacity .2s;
+  transition: opacity .6s;
+}
+.fade-enter-to, .fade-leave {
+  opacity: 1;
 }
 .fade-enter, .fade-leave-to {
   opacity: 0;
 }
 
-// Swipe
-@keyframes swipe-leave {
+// Swipe Left-Right
+.swipe-left-leave-active, .swipe-left-enter-active,
+.swipe-right-leave-active, .swipe-right-enter-active {
+  animation-duration: .6s;
+  animation-timing-function: ease;
+}
+.swipe-right-leave-active, .swipe-right-enter-active {
+  animation-direction: reverse;
+}
+.swipe-left-leave-active, .swipe-right-enter-active {
+  animation-name: swipe-enter-active;
+}
+.swipe-left-enter-active, .swipe-right-leave-active {
+  animation-name: swipe-leave-active;
+}
+
+@keyframes swipe-enter-active {
   0% {
     transform: translateX(0%);
   }
@@ -90,9 +77,9 @@
     transform: translateX(-100%);
   }
 }
-@keyframes swipe-enter {
+@keyframes swipe-leave-active {
   0% {
-    transform: translateX(-100%);
+    transform: translateX(100%);
   }
   100% {
     transform: translateX(0%);

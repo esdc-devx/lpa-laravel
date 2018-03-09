@@ -37,6 +37,9 @@ axios.interceptors.request.use(config => config, error => {
 });
 axios.interceptors.response.use(response => response, error => {
   let response = error.response;
+  let errorResponse = response.data && response.data.errors ? response.data.errors : '';
+  let errorMsg = error.message || '';
+
   if (response.status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
     // @refactorme: should warn the user with a popup (Ok only) then redirect to login
@@ -51,9 +54,8 @@ axios.interceptors.response.use(response => response, error => {
     router.push(`/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
-    let errorResponse = response.data && response.data.errors ? response.data.errors : '';
-    let errorMsg = error.message || '';
     Notify.notifyError(`[axios][interceptor]: ${errorMsg}`);
+    console.error(`[axios][interceptor]: ${errorResponse}`);
   }
 
   return Promise.reject(error);
