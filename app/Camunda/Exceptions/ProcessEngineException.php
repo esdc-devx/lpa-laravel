@@ -4,15 +4,15 @@ namespace App\Camunda\Exceptions;
 
 use Exception;
 
-class GeneralException extends Exception
+class ProcessEngineException extends Exception
 {
     /**
-     * Create a Camunda general exception.
+     * Create an internal server error exception.
      *
      * @param  string  $message
      * @return void
      */
-    public function __construct($message = 'An error occured while reaching Camunda Rest API.')
+    public function __construct($message = 'Camunda server error.')
     {
         parent::__construct($message);
     }

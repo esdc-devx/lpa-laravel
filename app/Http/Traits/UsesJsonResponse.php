@@ -78,8 +78,9 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondUnauthorize($message = 'Unauthorized.')
+    protected function respondUnauthorize($message = '')
     {
+        $message = empty($message) ? 'Unauthorized' : $message;
         return $this->setStatusCode(Response::HTTP_UNAUTHORIZED)
             ->respondWithError($message);
     }
@@ -91,8 +92,9 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondForbidden($message = 'Insufficient priviledges.')
+    protected function respondForbidden($message = '')
     {
+        $message = empty($message) ? 'Insufficient priviledges' : $message;
         return $this->setStatusCode(Response::HTTP_FORBIDDEN)
             ->respondWithError($message);
     }
@@ -104,8 +106,9 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondInvalidRequest($message = 'Invalid request.')
+    protected function respondInvalidRequest($message = '')
     {
+        $message = empty($message) ? 'Invalid request' : $message;
         return $this->setStatusCode(Response::HTTP_BAD_REQUEST)
             ->respondWithError($message);
     }
@@ -117,8 +120,9 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondMethodNotAllowed($message = 'Method not allowed.')
+    protected function respondMethodNotAllowed($message = '')
     {
+        $message = empty($message) ? 'Method not allowed' : $message;
         return $this->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED)
             ->respondWithError($message);
     }
@@ -143,8 +147,9 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondInternalError($message = 'An error occured.')
+    protected function respondInternalError($message = '')
     {
+        $message = empty($message) ? 'An internal server error occured' : $message;
         return $this->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR)
             ->respondWithError($message);
     }

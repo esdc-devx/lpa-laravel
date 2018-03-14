@@ -233,7 +233,6 @@ return [
 
         // Custom facades.
         'Adldap' => Adldap\Laravel\Facades\Adldap::class,
-        'Camunda' => App\Camunda\Facades\Camunda::class,
     ],
 
 ];
