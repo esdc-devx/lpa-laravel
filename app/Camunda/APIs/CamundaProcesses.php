@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Camunda;
+namespace App\Camunda\APIs;
 
 use Illuminate\Support\Facades\Storage;
 use App\Camunda\Exceptions\GeneralException;
 use App\Camunda\Exceptions\ProcessEngineException;
 
-class CamundaProcesses extends CamundaBaseApi
+class CamundaProcesses extends CamundaBaseAPI
 {
     /**
      * Get a process definition from its unique key.

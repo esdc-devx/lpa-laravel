@@ -9,7 +9,7 @@ use App\Repositories\OrganizationUnitRepository;
 use App\Http\Resources\UserLdap;
 use App\Http\Requests\UserFormRequest;
 
-class UserController extends ApiController
+class UserController extends APIController
 {
     protected $users;
     protected $organizationUnits;

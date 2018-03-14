@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Camunda;
+namespace App\Camunda\APIs;
 
 use App\Models\User\User;
 use App\Camunda\Exceptions\ProcessEngineException;
 use App\Camunda\Exceptions\GeneralException;
 
-class CamundaUsers extends CamundaBaseApi
+class CamundaUsers extends CamundaBaseAPI
 {
     /**
      * Get user profile.

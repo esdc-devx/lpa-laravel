@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Camunda;
+namespace App\Camunda\APIs;
 
 use App\Camunda\Exceptions\GeneralException;
 use App\Camunda\Exceptions\ProcessEngineException;
 
-class CamundaAuthorizations extends CamundaBaseApi
+class CamundaAuthorizations extends CamundaBaseAPI
 {
     // Define Camunda constants for authorization types.
     const AUTH_TYPE_GLOBAL = 0;

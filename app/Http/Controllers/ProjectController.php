@@ -6,7 +6,7 @@ use App\Models\Project\Project;
 use App\Repositories\ProjectRepository;
 use App\Repositories\OrganizationUnitRepository;
 
-class ProjectController extends ApiController
+class ProjectController extends APIController
 {
     protected $projects;
     protected $organizationUnits;

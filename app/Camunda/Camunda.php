@@ -2,6 +2,11 @@
 
 namespace App\Camunda;
 
+use App\Camunda\APIs\CamundaAuthorizations;
+use App\Camunda\APIs\CamundaGroups;
+use App\Camunda\APIs\CamundaProcesses;
+use App\Camunda\APIs\CamundaTasks;
+use App\Camunda\APIs\CamundaUsers;
 use App\Camunda\Exceptions\InvalidUserProxyException;
 use App\Camunda\Exceptions\MissingConfigurationException;
 

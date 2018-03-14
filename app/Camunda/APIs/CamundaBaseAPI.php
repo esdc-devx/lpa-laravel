@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Camunda;
+namespace App\Camunda\APIs;
 
-class CamundaBaseApi
+class CamundaBaseAPI
 {
     protected $config;
     protected $client;

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Camunda;
+namespace App\Camunda\APIs;
 
 use App\Models\User\User;
 use App\Camunda\Exceptions\GeneralException;
 use App\Camunda\Exceptions\ProcessEngineException;
 
-class CamundaTasks extends CamundaBaseApi
+class CamundaTasks extends CamundaBaseAPI
 {
     /**
      * Get a specific task from its id.
