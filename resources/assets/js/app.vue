@@ -72,6 +72,7 @@
     overflow-x: hidden;
     padding: 30px;
     padding-top: 10px;
+    background-color: #fff;
   }
   .el-header {
     padding: 0;

@@ -1,22 +1,11 @@
 <template>
   <div class="content side-bar">
-    <el-menu ref="app" class="app" :default-active="$route.fullPath" key="app" router>
-      <el-menu-item v-for="(item, index) in app" :index="'/' + language + item.index" :class="item.classes" :key="index">
+    <el-menu ref="menu" class="menu" :default-active="$route.fullPath" router>
+      <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
         <a href="#" @click.prevent>{{ item.text }}</a>
       </el-menu-item>
     </el-menu>
-
-    <transition name="slide">
-      <el-menu v-if="isAdminBarShown" ref="admin" class="admin" :default-active="$route.fullPath" key="admin" router>
-        <el-menu-item-group title="Administration">
-          <el-menu-item v-for="(item, index) in admin" :index="'/' + language + item.index" :class="item.classes" :key="index">
-            <i :class="item.icon"></i>
-            <a href="#" @click.prevent>{{ item.text }}</a>
-          </el-menu-item>
-        </el-menu-item-group>
-      </el-menu>
-    </transition>
   </div>
 </template>
 
@@ -27,11 +16,10 @@
     name: 'side-bar',
     computed: {
       ...mapGetters([
-        'language',
-        'isAdminBarShown'
+        'language'
       ]),
 
-      app() {
+      menu() {
         return [
           {
             text: this.trans('navigation.home'),
@@ -64,22 +52,6 @@
             index: '/non-learning-products'
           }
         ];
-      },
-      admin() {
-        return [
-          {
-            text: this.trans('navigation.admin_dashboard'),
-            icon: 'el-icon-menu',
-            classes: '',
-            index: '/admin'
-          },
-          {
-            text: this.trans('navigation.admin_user_list'),
-            icon: 'el-icon-menu',
-            classes: '',
-            index: '/admin/users'
-          }
-        ];
       }
     },
 
@@ -94,7 +66,7 @@
     },
     methods: {
       setActiveIndex(to) {
-        let menu = this.isAdminBarShown ? this.$refs.admin : this.$refs.app;
+        let menu = this.$refs.menu;
         // because of the $refs that cannot be reactive, we need to compare its items omitting the language
         let items = _.mapKeys(menu.items, (value, key) => {
           return this.removeLanguageFromString(key);
@@ -146,7 +118,7 @@
     overflow: hidden;
   }
 
-  .app, .admin {
+  .menu {
     position: absolute;
     user-select: none;
     width: 100%;
@@ -160,11 +132,5 @@
     li.el-menu-item.is-active a {
       color: $--color-primary;
     }
-  }
-  .admin {
-    z-index: 1000;
-    border-right: 1px solid #313131;
-    background-color: #efefef;
-    box-sizing: border-box;
   }
 </style>
