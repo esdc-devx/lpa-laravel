@@ -16,7 +16,7 @@ return [
     ],
 
     // Application configurations.
-    'groups'      => [
+    'groups' => [
         'admin' => env('CAMUNDA_ADMIN_GROUP', ''),
         'user'  => env('CAMUNDA_USER_GROUP')
     ],

@@ -2,6 +2,8 @@
 
 namespace App\Camunda\APIs;
 
+use App\Camunda\Camunda;
+
 class CamundaBaseAPI
 {
     protected $config;

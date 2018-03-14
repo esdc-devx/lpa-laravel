@@ -67,7 +67,6 @@ class Camunda
      */
     protected function auth(string $username = 'admin')
     {
-        // @todo: Redo logic for authentication, call method on connector instead.
         $auth = $this->config['authentication'];
         $this->config['credentials'] = [
             'username' => $username === 'admin' ? $auth['username'] : $username,
@@ -82,7 +81,7 @@ class Camunda
      * @param  string $username
      * @return string
      */
-    protected function password(string $username)
+    public function password(string $username)
     {
         return crypt($username, $this->config['authentication']['salt']);
     }
@@ -126,7 +125,7 @@ class Camunda
     }
 
     /**
-     * Return new instance of Camunda users api.
+     * Return new instance of Camunda users API.
      *
      * @return CamundaUsers
      */
@@ -136,7 +135,7 @@ class Camunda
     }
 
     /**
-     * Return new instance of Camunda groups api.
+     * Return new instance of Camunda groups API.
      *
      * @return CamundaGroups
      */
@@ -146,7 +145,7 @@ class Camunda
     }
 
     /**
-     * Return new instance of Camunda tasks api.
+     * Return new instance of Camunda tasks API.
      *
      * @return CamundaTasks
      */
@@ -156,7 +155,7 @@ class Camunda
     }
 
     /**
-     * Return new instance of Camunda authorizations api.
+     * Return new instance of Camunda authorizations API.
      *
      * @return CamundaAuthorizations
      */
@@ -166,7 +165,7 @@ class Camunda
     }
 
     /**
-     * Return new instance of Camunda processes api.
+     * Return new instance of Camunda processes API.
      *
      * @return CamundaProcesses
      */

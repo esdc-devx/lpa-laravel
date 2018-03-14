@@ -46,14 +46,14 @@ class CamundaUsers extends CamundaBaseAPI
                     'email'     => $user->email
                 ],
                 'credentials' => [
-                    // @todo: Resolve password from Camunda service instead.
-                    'password' => crypt($user->username, config('camunda.authentication.salt'))
+                    // Resolve password from Camunda service.
+                    'password' => $this->camunda->password($user->username)
                 ]
             ]);
         }
         // Handle Camunda ProcessEngine exceptions.
         catch (ProcessEngineException $e) {
-            throw new GeneralException("User [$user->username] could not be created due to an internal server error.");
+            throw new GeneralException("User [{$user->username}] could not be created due to an internal server error.");
         }
     }
 
