@@ -178,7 +178,7 @@ const routes = [
     path: '/:lang/logout'
   },
   {
-    path: '/:lang/401',
+    path: '/:lang/403',
     name: 'forbidden',
     component: Forbidden,
     meta: {

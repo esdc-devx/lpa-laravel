@@ -120,7 +120,7 @@
       }
     },
 
-    async created() {
+    async mounted() {
       EventBus.$on('Store:languageUpdate', async () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
@@ -148,14 +148,14 @@
 
 <style lang="scss">
   .user-edit {
-    width: 800px;
     margin: 0 auto;
     h2 {
       text-align: center;
     }
 
     .el-form {
-      width: 100%;
+      width: 800px;
+      margin: 0 auto;
       .el-select {
         width: 75%;
       }

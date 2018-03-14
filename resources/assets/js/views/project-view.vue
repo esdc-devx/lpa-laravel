@@ -35,13 +35,13 @@
 
       async getProject() {
         let id = this.$route.params.id;
-        await this.loadProject(id)
+        await this.loadProject(id);
         EventBus.$emit('App:ready');
         this.isLoading = false;
       }
     },
 
-    created() {
+    mounted() {
       this.getProject();
     }
   };

@@ -16,11 +16,7 @@
         <el-container class="content-wrap">
           <el-main>
             <breadcrumb/>
-            <keep-alive>
-              <transition name="fade" mode="out-in">
-                <router-view/>
-              </transition>
-            </keep-alive>
+            <main-content/>
           </el-main>
         </el-container>
       </el-container>
@@ -37,11 +33,12 @@
   import TopBar from './views/top-bar.vue';
   import SideBar from './views/side-bar.vue';
   import Breadcrumb from './views/breadcrumb.vue';
+  import MainContent from './views/main-content.vue';
 
   export default {
     name: 'app',
 
-    components: { TopBar, SideBar, Breadcrumb },
+    components: { TopBar, SideBar, Breadcrumb, MainContent },
 
     data() {
       return {
@@ -66,9 +63,13 @@
     height: 100%;
   }
   .el-aside {
+    position: relative;
     overflow: visible;
+    z-index: $--index-top;
   }
   .el-main {
+    position: relative;
+    overflow-x: hidden;
     padding: 30px;
     padding-top: 10px;
   }
@@ -102,6 +103,8 @@
         height: 100%;
       }
       .content-wrap {
+        overflow-x: hidden;
+        height: 100%;
         margin-left: $sidebar-width;
       }
     }

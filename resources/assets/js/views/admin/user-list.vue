@@ -124,10 +124,14 @@
 
       // Pagination
       handlePageChange(newCurrentPage) {
+        this.scrollToTop();
+        this.triggerLoadUsers(newCurrentPage);
+      },
+
+      scrollToTop() {
         this.$parent.$el.scrollTop = 0;
         // IE11 scroll to top
         document.documentElement.scrollTop = 0;
-        this.triggerLoadUsers(newCurrentPage);
       },
 
       // Form handlers
@@ -136,6 +140,7 @@
         if (column.label === 'Operations') {
           return;
         }
+        this.scrollToTop();
         this.$router.push(`${namespace}/edit/${user.id}`);
       },
 
@@ -178,7 +183,7 @@
       }
     },
 
-    created() {
+    mounted() {
       EventBus.$emit('App:ready');
       this.triggerLoadUsers();
     }

@@ -188,14 +188,17 @@
 
 <style lang="scss">
   .user-create {
-    width: 800px;
     margin: 0 auto;
     h2 {
       text-align: center;
     }
 
-    .el-select {
-      width: 75%;
+    .el-form {
+      width: 800px;
+      margin: 0 auto;
+      .el-select {
+        width: 75%;
+      }
     }
   }
   .el-autocomplete-suggestion.name-autocomplete {
