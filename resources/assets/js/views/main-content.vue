@@ -60,7 +60,7 @@
         // this basically checks for when we are going back and forward
         // for backwards actions: if the FROM last slug is equal to the TO last - 1 slug
         // for forwards actions:  if the TO last slug is equal to the FROM last - 1 slug
-        // then this l;ogic is duplicated
+        // then this logic is duplicated
         // for max 2 level up in case we get url change like so:
         // /en/admin/users => /en/admin/users/edit/3
         if (fromSplit[fromDepth - 1] === toSplit[toDepth - 2] || toSplit[toDepth - 1] === fromSplit[fromDepth - 2] ||
