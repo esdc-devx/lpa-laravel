@@ -9,7 +9,7 @@
       </el-header>
 
       <el-container class="body-wrap">
-        <el-aside>
+        <el-aside width="auto">
           <side-bar/>
         </el-aside>
 
@@ -61,9 +61,12 @@
   }
   #app, #app > .el-container {
     height: 100%;
+    overflow: hidden;
   }
   .el-aside {
     position: relative;
+    // this allows to make the content shift to the left and take the sidebar's space when collapsed
+    width: auto !important;
     overflow: visible;
     z-index: $--index-top;
   }
@@ -80,34 +83,19 @@
 
   // IE10+
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-    $header-height: 60px;
-    // elementUI's el-aside width value
-    $sidebar-width: 300px;
     .el-main {
       // fixes a layout bug for IE11
       overflow: visible;
     }
-    .el-header {
-      position: fixed;
-      width: 100%;
-      // get to the top most index + 1 so that loading overlays in components don't go over the header
-      z-index: $--index-notify + 1;
-    }
     .body-wrap {
-      display: table;
-      width: 100%;
-      height: 100%;
-      padding-top: $header-height;
-      .el-aside {
-        position: fixed;
-        left: 0;
-        height: 100%;
-      }
       .content-wrap {
         overflow-x: hidden;
         height: 100%;
-        margin-left: $sidebar-width;
       }
+    }
+
+    .el-aside, .el-menu.el-menu--collapse {
+      min-width: 64px !important;
     }
   }
 

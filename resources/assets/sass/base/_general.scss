@@ -53,3 +53,7 @@ a {
     background-color: rgba(#000, 0.5);
   }
 }
+
+.el-tooltip__popper a {
+  color: $--color-white;
+}

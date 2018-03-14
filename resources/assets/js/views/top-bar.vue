@@ -30,6 +30,7 @@
       <transition name="slide-down">
         <el-menu
           v-if="isAdminBarShown"
+          ref="adminMenu"
           background-color="#fa5555"
           text-color="#e3e3e3"
           active-text-color="#ffffff"
@@ -94,8 +95,9 @@
         // we do not know when it will update itself
         // so just wait until the DOM is updated
         this.$nextTick(() => {
-          this.$refs.topMenu.activeIndex = to.fullPath;
-        })
+          let menu = this.isAdminBarShown ? this.$refs.adminMenu : this.$refs.topMenu;
+          menu.activeIndex = to.fullPath;
+        });
       },
 
       currentLang: function(lang) {
@@ -204,7 +206,7 @@
     }
   }
 
-  $admin-bar-height: 40px;
+  $admin-bar-height: 45px;
   .admin-bar {
     .el-menu {
       padding: 0 20px;

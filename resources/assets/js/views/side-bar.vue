@@ -1,9 +1,10 @@
 <template>
-  <div class="content side-bar">
-    <el-menu ref="menu" class="menu" :default-active="$route.fullPath" router>
+  <div class="side-bar">
+    <el-button class="side-bar-toggle" size="mini" type="primary" plain round :icon="collapsedIcon" @click="isCollapsed = !isCollapsed"></el-button>
+    <el-menu class="menu" ref="menu" :default-active="$route.fullPath" :collapse="isCollapsed" router>
       <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
-        <a href="#" @click.prevent>{{ item.text }}</a>
+        <span slot="title"><a href="#" @click.prevent>{{ item.text }}</a></span>
       </el-menu-item>
     </el-menu>
   </div>
@@ -14,10 +15,15 @@
 
   export default {
     name: 'side-bar',
+
     computed: {
       ...mapGetters([
         'language'
       ]),
+
+      collapsedIcon() {
+        return this.isCollapsed ? 'el-icon-arrow-right' : 'el-icon-arrow-left';
+      },
 
       menu() {
         return [
@@ -55,6 +61,12 @@
       }
     },
 
+    data() {
+      return {
+        isCollapsed: false
+      };
+    },
+
     watch: {
       '$route': function(to) {
         // since we do not know when ElementUI will update itself
@@ -64,6 +76,7 @@
         });
       }
     },
+
     methods: {
       setActiveIndex(to) {
         let menu = this.$refs.menu;
@@ -103,6 +116,7 @@
         return str;
       }
     },
+
     mounted() {
       this.setActiveIndex(this.$route);
     }
@@ -112,22 +126,34 @@
 <style lang="scss">
   @import '../../sass/vendors/elementui/vars';
   .side-bar {
-    border-right: solid 1px #e6e6e6;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    &-toggle {
+      position: absolute;
+      top: 50%;
+      right: -13px;
+      z-index: 1000;
+      padding: 10px 4px !important;
+      border-radius: 20% !important;
+      i {
+        font-size: 18px;
+        font-weight: bold;
+      }
+    }
   }
 
   .menu {
-    position: absolute;
     user-select: none;
-    width: 100%;
     height: 100%;
+    &:not(.el-menu--collapse) {
+      width: 300px;
+    }
     a {
       text-decoration: none;
       height: 100%;
       width: 100%;
       display: inline-block;
+      color: initial;
     }
     li.el-menu-item.is-active a {
       color: $--color-primary;
