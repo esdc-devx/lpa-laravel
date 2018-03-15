@@ -84,7 +84,7 @@ class Handler extends ExceptionHandler
             // Handle authorization errors.
             if ($exception instanceof AuthorizationException) {
                 // @todo: Maybe add some sort of logging for forbidden actions.
-                return $this->respondForbidden('Insufficient priviledges.');
+                return $this->respondForbidden($exception->getMessage());
             }
 
             // Handle authentication error.

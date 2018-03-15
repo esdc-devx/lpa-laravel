@@ -1,90 +1,176 @@
 <?php
+
 namespace App\Camunda;
+
+use App\Camunda\APIs\CamundaAuthorizations;
+use App\Camunda\APIs\CamundaGroups;
+use App\Camunda\APIs\CamundaProcesses;
+use App\Camunda\APIs\CamundaTasks;
+use App\Camunda\APIs\CamundaUsers;
+use App\Camunda\Exceptions\InvalidUserProxyException;
+use App\Camunda\Exceptions\MissingConfigurationException;
 
 class Camunda
 {
-    protected $api;
+    protected $config;
+    protected $client;
 
     /**
-     * Create an instance of Camunda manager class.
+     * Create an instance of Camunda service.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($config = null)
     {
-        // Fetch Camunda Rest API info from config file.
-        $host = config('camunda.host');
-        $port = config('camunda.port');
-        $url = config('camunda.url');
-
-        $this->api = new CamundaConnector($host, $port, $url);
+        if (is_null($config)) {
+            throw new MissingConfigurationException('Must resolve Camunda from service container.');
+        }
+        $this->config = $config;
+        $this->client = $this->auth('admin')->connector();
     }
 
     /**
-     * Get all users from Camunda.
+     * Create new instance of CamundaConnector.
+     *
+     * @return CamundaConnector
+     */
+    protected function connector()
+    {
+        return new CamundaConnector($this->config);
+    }
+
+    /**
+     * Return http client instance.
+     *
+     * @return CamundaConnector
+     */
+    public function client()
+    {
+        return $this->client;
+    }
+
+    /**
+     * Return configurations.
      *
      * @return array
+     */
+    public function config()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Configure API authentication credentials.
+     *
+     * @param  string $username
+     * @return $this
+     */
+    protected function auth(string $username = 'admin')
+    {
+        $auth = $this->config['authentication'];
+        $this->config['credentials'] = [
+            'username' => $username === 'admin' ? $auth['username'] : $username,
+            'password' => $username === 'admin' ? $auth['password'] : $this->password($username)
+        ];
+        return $this;
+    }
+
+    /**
+     * Generate hashed password from username.
+     *
+     * @param  string $username
+     * @return string
+     */
+    public function password(string $username)
+    {
+        return crypt($username, $this->config['authentication']['salt']);
+    }
+
+    /**
+     * Allows to excute calls to Camunda API as admin or a specific user.
+     *
+     * @param  mixed $proxy
+     * @return $this
+     */
+    public function as($proxy = null)
+    {
+        switch ($type = gettype($proxy)) {
+            case 'string':
+                // Authenticate as admin account.
+                if ($proxy === 'admin') {
+                    $this->client = $this->auth('admin')->connector();
+                    break;
+                }
+                // Authenticate as current user.
+                if ($proxy === 'current') {
+                    $this->client = $this->auth(auth()->user()->username)->connector();
+                    break;
+                }
+                throw new InvalidUserProxyException();
+
+            case 'object':
+                // Ensure that object passed is an instance of the user model class.
+                if (get_class($proxy) !== config('auth.providers.users.model')) {
+                    throw new InvalidUserProxyException();
+                }
+                // Authenticate as proxy user.
+                $this->client = $this->auth($proxy->username)->connector();
+                break;
+
+            default:
+                throw new InvalidUserProxyException();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Return new instance of Camunda users API.
+     *
+     * @return CamundaUsers
      */
     public function users()
     {
-        return $this->api->get('user');
+        return new CamundaUsers($this);
     }
 
     /**
-     * Get user profile from Camunda.
+     * Return new instance of Camunda groups API.
      *
-     * @param  string  $id
-     * @return object
-     */
-    public function user($id = '')
-    {
-        return $this->api->get("user/$id/profile");
-    }
-
-    /**
-     * Create user profile in Camunda.
-     *
-     * @param  array  $userInfo
-     * @return void
-     */
-    public function createUser($userInfo = [])
-    {
-        $this->api->post('user/create', (object) [
-            'profile' => (object) $userInfo
-        ]);
-    }
-
-    /**
-     * Delete user profile in Camunda.
-     *
-     * @param  string $id
-     * @return void
-     */
-    public function deleteUser($id)
-    {
-        $this->api->delete("user/$id");
-    }
-
-    /**
-     * Update user profile in Camunda.
-     *
-     * @param  string $id
-     * @param  array  $data
-     * @return null
-     */
-    public function updateUser($id, $data)
-    {
-        $data['id'] = $id;
-        return $this->api->put("user/$id/profile", (object) $data);
-    }
-
-    /**
-     * Get all groups from Camunda.
-     *
-     * @return array
+     * @return CamundaGroups
      */
     public function groups()
     {
-        return $this->api->get('group');
+        return new CamundaGroups($this);
+    }
+
+    /**
+     * Return new instance of Camunda tasks API.
+     *
+     * @return CamundaTasks
+     */
+    public function tasks()
+    {
+        return new CamundaTasks($this);
+    }
+
+    /**
+     * Return new instance of Camunda authorizations API.
+     *
+     * @return CamundaAuthorizations
+     */
+    public function authorizations()
+    {
+        return new CamundaAuthorizations($this);
+    }
+
+    /**
+     * Return new instance of Camunda processes API.
+     *
+     * @return CamundaProcesses
+     */
+    public function processes()
+    {
+        return new CamundaProcesses($this);
     }
 }

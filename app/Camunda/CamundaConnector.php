@@ -1,9 +1,14 @@
 <?php
+
 namespace App\Camunda;
 
 use \Illuminate\Http\Response;
 use GuzzleHttp\Client as HttpClient;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use App\Camunda\Exceptions\GeneralException;
+use App\Camunda\Exceptions\ProcessEngineException;
+use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 
 class CamundaConnector
 {
@@ -14,22 +19,20 @@ class CamundaConnector
     /**
      * Create a connector which handles requests to Camunda Rest API.
      *
-     * @param  string  $host
-     * @param  string  $port
-     * @param  string  $url
+     * @param  array $config
      * @return void
      */
-    public function __construct($host, $port, $url)
+    public function __construct(array $config)
     {
         // Define Camunda API URL.
-        $this->url = "$host:$port/$url";
+        $connection = $config['connection'];
+        $this->url = "{$connection['host']}:{$connection['port']}/{$connection['url']}";
 
         // Define http client.
         $this->client = new HttpClient();
-
-        // Prevent Guzzle from throwing exceptions when API responses
-        // don't return a success code.
-        $this->options = ['http_errors' => false];
+        $this->options = [
+            'auth' => [$config['credentials']['username'], $config['credentials']['password']],
+        ];
     }
 
     /**
@@ -40,49 +43,63 @@ class CamundaConnector
      * @param  array  $data
      * @return void
      */
-    protected function request($method, $route, $data = [])
+    protected function request(string $method, string $route, array $data = [])
     {
-        $response = $this->client->request(
-            $method,
-            "$this->url/$route",
-            array_merge($this->options, $data)
-        );
+        try {
+            $response = $this->client->request(
+                $method,
+                "$this->url/$route",
+                array_merge($this->options, $data)
+            );
+        }
+        // Handle HTTP Exceptions.
+        catch (ClientException $e) {
+            switch ($e->getResponse()->getStatusCode()) {
+                // Invalid credentials.
+                case Response::HTTP_UNAUTHORIZED:
+                    throw new AuthorizationException("Could not authenticate user [{$this->options['auth'][0]}] to Camunda.");
 
-        // Make sure no errors were returned from the API.
-        $this->validate($response);
+                // Insufficient priviledges.
+                case Response::HTTP_FORBIDDEN:
+                    throw new AuthorizationException("Insufficient priviledges. Could not execute method [$method] on route [$route]");
 
-        return json_decode($response->getBody());
-    }
+                // Method not allowed.
+                case Response::HTTP_BAD_REQUEST:
+                    $error = json_decode($e->getResponse()->getBody())->message;
+                    throw new GeneralException($error);
 
-    /**
-     * Handle response errors.
-     *
-     * @param  Psr\Http\Message\ResponseInterface $response
-     * @return void
-     */
-    protected function validate($response)
-    {
-        if (!in_array($response->getStatusCode(), [Response::HTTP_OK, Response::HTTP_NO_CONTENT])) {
-            $content = json_decode($response->getBody());
-            if ($content === null || $response->getHeaderLine('content-type') !== 'application/json') {
-                throw new GeneralException();
-            } else {
-                throw new GeneralException("[{$content->type}] {$content->message}");
+                    // Resource not found.
+                case Response::HTTP_NOT_FOUND:
+                    throw new GeneralException("Resource not found on route [$route]");
+
+                // Method not allowed.
+                case Response::HTTP_METHOD_NOT_ALLOWED:
+                    throw new GeneralException("Method [$method] not allowed on route [$route]");
+
+                // Default to GeneralException.
+                default:
+                    throw new GeneralException("Response with status code [{$e->getResponse()->getStatusCode()}] on route [$route]");
             }
         }
+        // Handle Server Exceptions.
+        catch (ServerException $e) {
+            $error = json_decode($e->getResponse()->getBody())->message;
+            throw new ProcessEngineException($error);
+        }
+
+        return json_decode($response->getBody());
     }
 
     /**
      * Execute GET request to Camunda Rest API.
      *
      * @param  string $url
-     * @param  array  $data
+     * @param  array  $query
      * @return mixed
      */
-    public function get($url, $data = [])
+    public function get($url, $query = [])
     {
-        // @todo: Add support for querystring parameters.
-        return $this->request('GET', $url);
+        return $this->request('GET', $url, ['query' => $query]);
     }
 
     /**
@@ -92,8 +109,13 @@ class CamundaConnector
      * @param  array  $data
      * @return mixed
      */
-    public function post($url, $data)
+    public function post($url, $data = [])
     {
+        // Handle multipart/form-data post.
+        if (isset($data['multipart'])) {
+            return $this->request('POST', $url, $data);
+        }
+        // Default to json format.
         return $this->request('POST', $url, ['json' => $data]);
     }
 
@@ -104,7 +126,7 @@ class CamundaConnector
      * @param  array  $data
      * @return mixed
      */
-    public function put($url, $data)
+    public function put($url, $data = [])
     {
         return $this->request('PUT', $url, ['json' => $data]);
     }

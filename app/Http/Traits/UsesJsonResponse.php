@@ -55,7 +55,7 @@ trait UsesJsonResponse
     protected function respondWithError($errors = [])
     {
         return response()->json([
-            'errors' => $errors, // @todo: Should return an array of error objects.
+            'errors' => $errors
         ], $this->statusCode);
     }
 
@@ -65,7 +65,7 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondNotFound($message = 'Data not found.')
+    protected function respondNotFound($message = 'Resource not found')
     {
         return $this->setStatusCode(Response::HTTP_NOT_FOUND)
             ->respondWithError($message);
@@ -78,7 +78,7 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondUnauthorize($message = 'Unauthorized.')
+    protected function respondUnauthorize($message = 'Unauthorized')
     {
         return $this->setStatusCode(Response::HTTP_UNAUTHORIZED)
             ->respondWithError($message);
@@ -91,7 +91,7 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondForbidden($message = 'Insufficient priviledges.')
+    protected function respondForbidden($message = 'Insufficient priviledges')
     {
         return $this->setStatusCode(Response::HTTP_FORBIDDEN)
             ->respondWithError($message);
@@ -104,7 +104,7 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondInvalidRequest($message = 'Invalid request.')
+    protected function respondInvalidRequest($message = 'HTTP Bad request')
     {
         return $this->setStatusCode(Response::HTTP_BAD_REQUEST)
             ->respondWithError($message);
@@ -117,7 +117,7 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondMethodNotAllowed($message = 'Method not allowed.')
+    protected function respondMethodNotAllowed($message = 'HTTP Method not allowed')
     {
         return $this->setStatusCode(Response::HTTP_METHOD_NOT_ALLOWED)
             ->respondWithError($message);
@@ -143,7 +143,7 @@ trait UsesJsonResponse
      * @param array $errors
      * @return Illuminate\Http\Response
      */
-    protected function respondInternalError($message = 'An error occured.')
+    protected function respondInternalError($message = 'An internal server error occured')
     {
         return $this->setStatusCode(Response::HTTP_INTERNAL_SERVER_ERROR)
             ->respondWithError($message);

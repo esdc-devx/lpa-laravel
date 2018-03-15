@@ -2,7 +2,6 @@
 
 namespace App\Camunda;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use App\Camunda\Exceptions\MissingConfigurationException;
 
@@ -15,13 +14,32 @@ class CamundaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('Camunda', function (Container $app) {
-            $config = $app->make('config')->get('camunda');
-            // Make sure Camunda config is properly defined.
-            if (is_null($config) || empty(implode('', $config))) {
-                throw new MissingConfigurationException();
-            }
-            return new Camunda();
+        $this->app->bind('App\Camunda\Camunda', function () {
+            $config = $this->validateConfig(config('camunda'));
+            return new Camunda($config);
         });
+    }
+
+    /**
+     * Validate Camunda configuration.
+     *
+     * @param  mixed $config
+     * @return array
+     */
+    protected function validateConfig($config)
+    {
+        // Ensure that config is defined in .env file.
+        if (is_null($config)) {
+            throw new MissingConfigurationException('Camunda configurations are missing from .env file.');
+        }
+
+        // Ensure that required configs are properly defined.
+        foreach (['connection', 'authentication', 'groups'] as $key) {
+            if (!isset($config[$key])) {
+                throw new MissingConfigurationException("Missing configuration for [$key].");
+            }
+        }
+
+        return $config;
     }
 }

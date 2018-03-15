@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-class LocaleController extends ApiController
+class LocaleController extends APIController
 {
     /**
      * Return application strings.
