@@ -71,6 +71,11 @@
       }
     },
 
+    beforeRouteLeave (to, from, next) {
+      this.isFormDisabled = true;
+      next();
+    },
+
     methods: {
       ...mapActions({
         updateUser: 'users/updateUser',
@@ -102,7 +107,6 @@
         try {
           response = await this.updateUser({id: this.form.user.id, organization_units: this.form.user.organization_units});
           this.isSaving = false;
-          this.isFormDisabled = true;
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
         } catch(e) {
@@ -117,7 +121,6 @@
       },
 
       goBack: _.throttle(function() {
-        this.isFormDisabled = true;
         this.$router.push(`/${this.language}/admin/users`);
       })
     },

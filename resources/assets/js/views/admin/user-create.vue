@@ -82,6 +82,11 @@
       }
     },
 
+    beforeRouteLeave (to, from, next) {
+      this.isFormDisabled = true;
+      next();
+    },
+
     data() {
       return {
         isUserInfoLoading: true,
@@ -164,7 +169,6 @@
       },
 
       goBack: _.throttle(function() {
-        this.isFormDisabled = true;
         this.$router.push(`/${this.language}/admin/users`);
       }, 500)
     },

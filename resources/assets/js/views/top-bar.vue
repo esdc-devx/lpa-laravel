@@ -207,9 +207,13 @@
       &-item {
         border: none !important;
         height: $admin-bar-height;
-        line-height: $admin-bar-height;
+        display: flex;
+        align-items: center;
         &.is-active {
           background-color: #c84444 !important;
+        }
+        a {
+          text-decoration: none;
         }
       }
     }
