@@ -1,8 +1,8 @@
 <template>
   <div class="user-create content">
     <h2>{{ trans('navigation.admin_user_create') }}</h2>
-    <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent>
-      <el-form-item label="Name" for="name" prop="name" :class="['is-required', {'is-error': verrors.collect('name').length }]">
+    <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent  :disabled="isFormDisabled">
+      <el-form-item label="Name" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-autocomplete
           id="name"
           name="name"
@@ -45,8 +45,8 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine" :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
-        <el-button @click.prevent="goBack()">Cancel</el-button>
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
+        <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -86,6 +86,7 @@
       return {
         isUserInfoLoading: true,
         isSubmitting: false,
+        isFormDisabled: false,
         form: {
           name: '',
           username: '',
@@ -163,6 +164,7 @@
       },
 
       goBack: _.throttle(function() {
+        this.isFormDisabled = true;
         this.$router.push(`/${this.language}/admin/users`);
       }, 500)
     },

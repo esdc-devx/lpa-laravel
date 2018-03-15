@@ -31,8 +31,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click.prevent="submit()">Save</el-button>
-        <el-button :disabled="isFormDisabled" @click.prevent="goBack()">Cancel</el-button>
+        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="submit()">Save</el-button>
+        <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -117,6 +117,7 @@
       },
 
       goBack: _.throttle(function() {
+        this.isFormDisabled = true;
         this.$router.push(`/${this.language}/admin/users`);
       })
     },
