@@ -35,6 +35,10 @@ a {
   margin: 50px auto;
 }
 
+.el-tooltip__popper a {
+  color: $--color-white;
+}
+
 
 *::-webkit-scrollbar {
   width: .9rem;
@@ -52,8 +56,4 @@ a {
   &::-webkit-scrollbar-thumb {
     background-color: rgba(#000, 0.5);
   }
-}
-
-.el-tooltip__popper a {
-  color: $--color-white;
 }

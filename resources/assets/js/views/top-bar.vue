@@ -9,19 +9,19 @@
           <el-menu ref="topMenu" :default-active="$route.fullPath" background-color="#313131" text-color="#fff" active-text-color="#4bd5ff" class="top-menu" mode="horizontal" router>
             <el-submenu index="1">
               <template slot="title">{{ user.name }}</template>
-              <el-menu-item :index="'/' + language + '/profile'"><a href="#" @click.prevent>{{ trans('navigation.profile') }}</a></el-menu-item>
-              <el-menu-item :index="'/' + language + '/logout'"><a href="#" @click.prevent="logout()">{{ trans('navigation.logout') }}</a></el-menu-item>
+              <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('navigation.profile') }}</span></el-menu-item>
+              <el-menu-item :index="'/' + language + '/logout'" @click="logout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
             </el-submenu>
-            <el-menu-item :index="'/' + language + '/help'" class="disabled"><a tabindex="-1" href="#" @click.prevent>{{ trans('navigation.help') }}</a></el-menu-item>
-            <li role="menuitem" class="el-menu-item">
-              <a v-if="toggledLang === 'en'" href="#" @click.prevent="setLanguage">English</a>
-              <a v-else href="#" @click.prevent="setLanguage">Français</a>
-            </li>
-            <li v-if="user.isAdmin" role="menuitem" class="el-menu-item">
-              <a href="#" @click.prevent="toggleAdminBar">
+            <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('navigation.help') }}</span></el-menu-item>
+            <el-menu-item index="" @click="setLanguage">
+              <span v-if="toggledLang === 'en'">English</span>
+              <span v-else>Français</span>
+            </el-menu-item>
+            <el-menu-item index="" v-if="user.isAdmin" @click="toggleAdminBar">
+              <span>
                 <i :class="['el-icon-setting', { 'active' : isAdminBarShown} ]"></i>
-              </a>
-            </li>
+              </span>
+            </el-menu-item>
           </el-menu>
         </nav>
       </el-col>
@@ -48,9 +48,12 @@
 
 <script>
   import { mapGetters } from 'vuex';
+  import MenuUtils from '../mixins/menu/utils.js';
 
   export default {
     name: 'top-bar',
+
+    mixins: [ MenuUtils ],
 
     computed: {
       ...mapGetters({
@@ -96,7 +99,7 @@
         // so just wait until the DOM is updated
         this.$nextTick(() => {
           let menu = this.isAdminBarShown ? this.$refs.adminMenu : this.$refs.topMenu;
-          menu.activeIndex = to.fullPath;
+          this.setActiveIndex(to, menu);
         });
       },
 
@@ -135,6 +138,11 @@
       toggleAdminBar() {
         this.$store.dispatch('toggleAdminBar');
       }
+    },
+
+    mounted() {
+      let menu = this.isAdminBarShown ? this.$refs.adminMenu : this.$refs.topMenu;
+      this.setActiveIndex(this.$route, menu);
     }
   };
 </script>
@@ -170,31 +178,9 @@
 
     .top-menu {
       border: 0;
-      li {
-        padding: 0;
-
-        &.el-submenu li {
-          color: #FFF;
-          background-color: #313131;
-        }
-
-        > a {
-          padding: 0 20px;
-          height: 100%;
-          display: block;
-        }
-      }
 
       a {
         text-decoration: none;
-      }
-
-      .el-menu-item, .el-menu-item:hover {
-        color: #fff;
-      }
-
-      .el-menu-item:hover {
-        background-color: #272727;
       }
 
       .el-icon-setting {

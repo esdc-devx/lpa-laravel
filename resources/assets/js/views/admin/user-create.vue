@@ -162,9 +162,9 @@
         }
       },
 
-      goBack() {
+      goBack: _.throttle(function() {
         this.$router.push(`/${this.language}/admin/users`);
-      }
+      }, 500)
     },
 
     async created() {

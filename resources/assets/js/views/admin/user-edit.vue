@@ -2,7 +2,7 @@
   <div class="user-edit content" v-loading="isLoading">
     <h2>{{ trans('navigation.admin_user_edit') }}</h2>
 
-    <el-form ref="form" @submit.native.prevent label-width="30%">
+    <el-form label-width="30%" :disabled="isFormDisabled">
       <el-form-item label="Username" for="username">
         <el-input v-model="form.user.username" disabled></el-input>
       </el-form-item>
@@ -10,8 +10,7 @@
         <el-input v-model="form.user.name" disabled></el-input>
       </el-form-item>
       <el-form-item label="Email" for="email">
-        <el-input v-model="form.user.email" disabled>
-        </el-input>
+        <el-input v-model="form.user.email" disabled></el-input>
       </el-form-item>
       <el-form-item label="Organizational Unit" for="organizationUnits">
         <el-select
@@ -32,8 +31,8 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button :disabled="!isFormDirty" :loading="isSaving" type="primary" @click.prevent="submit()">Save</el-button>
-        <el-button @click.prevent="goBack()">Cancel</el-button>
+        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click.prevent="submit()">Save</el-button>
+        <el-button :disabled="isFormDisabled" @click.prevent="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -64,6 +63,7 @@
         isLoading: true,
         isUserInfoLoading: false,
         isSaving: false,
+        isFormDisabled: false,
         form: {
           user: {}
         },
@@ -102,6 +102,7 @@
         try {
           response = await this.updateUser({id: this.form.user.id, organization_units: this.form.user.organization_units});
           this.isSaving = false;
+          this.isFormDisabled = true;
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
         } catch(e) {
@@ -115,9 +116,9 @@
         return this.loadViewingUser(id);
       },
 
-      goBack() {
+      goBack: _.throttle(function() {
         this.$router.push(`/${this.language}/admin/users`);
-      }
+      })
     },
 
     async mounted() {
