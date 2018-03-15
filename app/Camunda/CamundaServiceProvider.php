@@ -2,7 +2,6 @@
 
 namespace App\Camunda;
 
-use Illuminate\Container\Container;
 use Illuminate\Support\ServiceProvider;
 use App\Camunda\Exceptions\MissingConfigurationException;
 

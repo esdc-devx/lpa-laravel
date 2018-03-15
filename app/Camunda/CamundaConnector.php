@@ -26,7 +26,7 @@ class CamundaConnector
     {
         // Define Camunda API URL.
         $connection = $config['connection'];
-        $this->url = $connection['host'] . ':' . $connection['port'] . '/' . $connection['url'];
+        $this->url = "{$connection['host']}:{$connection['port']}/{$connection['url']}";
 
         // Define http client.
         $this->client = new HttpClient();
