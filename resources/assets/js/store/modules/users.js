@@ -167,8 +167,8 @@ export default {
       state.viewing = user;
     },
 
-    setOrganizationUnits(state, organizationUnits) {
-      state.organizationUnits = organizationUnits;
+    setOrganizationalUnits(state, organizationalUnits) {
+      state.organizationalUnits = organizationalUnits;
     },
 
     setPagination(state, pagination) {

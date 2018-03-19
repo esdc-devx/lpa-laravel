@@ -18,7 +18,7 @@
         </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationUnits" :class="['is-required', {'is-error': verrors.collect('organizationUnits').length }]">
+      <el-form-item label="Organizational Unit" for="organizationalUnits" :class="['is-required', {'is-error': verrors.collect('organizationalUnits').length }]">
         <el-select
           :disabled="modal.form.orgUnitOptions.length <= 1"
           v-validate="'required'"
