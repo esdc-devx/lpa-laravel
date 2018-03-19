@@ -45,7 +45,7 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSubmitting" type="primary" @click="submit()">Create</el-button>
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">Create</el-button>
         <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -82,16 +82,9 @@
       }
     },
 
-    beforeRouteLeave (to, from, next) {
-      this.isFormDisabled = true;
-      next();
-    },
-
     data() {
       return {
         isUserInfoLoading: true,
-        isSubmitting: false,
-        isFormDisabled: false,
         form: {
           name: '',
           username: '',
@@ -112,17 +105,41 @@
         return this.searchUser(name);
       },
 
+      async querySearchAsync(queryString, callback) {
+        let users;
+        try {
+          users = await this.search(queryString);
+          this.inUserList = _.map(users, 'name');
+          callback(users);
+        } catch(e) {
+          this.$notifyError('Unable to retrieve users.');
+          this.$log.error(`[user-create][querySearchAsync] ${e}`);
+        }
+      },
+
+      handleSelect(item) {
+        this.form.username = item.username;
+      },
+
       // Form handlers
-      submit() {
-        this.isSubmitting = true;
-        this.$validator.validateAll().then(result => {
-          if (result) {
-            this.create();
-            return;
-          }
-          this.isSubmitting = false;
-          this.focusOnError();
-        });
+      onSubmit() {
+        this.submit(this.create);
+      },
+
+      async create() {
+        let response;
+        try {
+          response = await this.createUser({
+            username: this.form.username,
+            organization_units: this.form.organization_units
+          });
+          this.isSaving = false;
+          this.notifySuccess(`<b>${this.form.name}</b> has been created.`);
+          this.resetForm();
+        } catch(e) {
+          this.isSaving = false;
+          this.manageBackendErrors(e.response.data.errors);
+        }
       },
 
       manageBackendErrors(errors) {
@@ -136,38 +153,7 @@
         this.focusOnError();
       },
 
-      async querySearchAsync(queryString, callback) {
-        let users;
-        try {
-          users = await this.search(queryString);
-          this.inUserList = _.map(users, 'name');
-          callback(users);
-        } catch(e) {
-          this.$notify(`[user-create][querySearchAsync] ${e}`);
-        }
-      },
-
-      handleSelect(item) {
-        this.form.username = item.username;
-      },
-
       // Navigation
-      async create() {
-        let response;
-        try {
-          response = await this.createUser({
-            username: this.form.username,
-            organization_units: this.form.organization_units
-          });
-          this.isSubmitting = false;
-          this.notifySuccess(`${this.form.name} has been created.`);
-          this.resetForm();
-        } catch(e) {
-          this.isSubmitting = false;
-          this.manageBackendErrors(e.response.data.errors);
-        }
-      },
-
       goBack: _.throttle(function() {
         this.$router.push(`/${this.language}/admin/users`);
       }, 500)

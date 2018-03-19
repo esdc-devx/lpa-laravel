@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Vue from 'vue';
 
 export default {
@@ -11,7 +12,33 @@ export default {
     }
   },
 
+  data() {
+    return {
+      isSaving: false,
+      isFormDisabled: false
+    };
+  },
+
+  beforeRouteLeave(to, from, next) {
+    this.isFormDisabled = true;
+    next();
+  },
+
   methods: {
+    submit(callback) {
+      this.isSaving = true;
+      this.$validator.validateAll().then(result => {
+        if (result) {
+          if (_.isFunction(callback)) {
+            callback();
+          }
+          return;
+        }
+        this.isSaving = false;
+        this.focusOnError();
+      });
+    },
+
     focusOnError() {
       this.$nextTick(() => {
         let errorInput = document.querySelectorAll('.is-error input')[0];

@@ -12,13 +12,24 @@ import { sync } from 'vuex-router-sync';
 import router from './router';
 import store from './store/';
 
+import Logger from './logger';
 import Notify from './mixins/notify.js';
 
 import { setLanguage, loadLanguages } from './locale';
 
 import App from './app.vue';
+import Config from './config';
 
 sync(store, router);
+
+Vue.use(Logger, {
+  logLevel          : Config.debug ? 'debug' : 'error',
+  separator         : '',
+  stringifyArguments: false,
+  showLogLevel      : false,
+  showMethodName    : true,
+  showConsoleColors : true
+});
 
 Vue.mixin({ methods: Notify });
 
@@ -62,8 +73,10 @@ setLanguage()
       });
     })
     .catch(e => {
-      Notify.notifyError(`[app][loadLanguages]: ${e}`);
+      Notify.notifyError('Languages could not be loaded. Please contact your administrator.');
+      Vue.$log.error(`[app][loadLanguages]: ${e}`);
     })
   ).catch(e => {
-    Notify.notifyError(`[app][setLanguage]: ${e}`);
+    Notify.notifyError('Language could not be set. Please contact your administrator.');
+    Vue.$log.error(`[app][setLanguage]: ${e}`);
   });

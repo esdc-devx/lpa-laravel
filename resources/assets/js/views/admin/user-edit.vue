@@ -31,7 +31,7 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="submit()">Save</el-button>
+        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">Save</el-button>
         <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
       </el-form-item>
     </el-form>
@@ -62,18 +62,11 @@
       return {
         isLoading: true,
         isUserInfoLoading: false,
-        isSaving: false,
-        isFormDisabled: false,
         form: {
           user: {}
         },
         selectedOrganizationUnits: []
       }
-    },
-
-    beforeRouteLeave (to, from, next) {
-      this.isFormDisabled = true;
-      next();
     },
 
     methods: {
@@ -90,16 +83,8 @@
       },
 
       // Form handlers
-      submit() {
-        this.isSaving = true;
-        this.$validator.validateAll().then(result => {
-          if (result) {
-            this.update();
-            return;
-          }
-          this.isSaving = false;
-          this.focusOnError();
-        });
+      onSubmit() {
+        this.submit(this.update);
       },
 
       async update() {
@@ -110,6 +95,7 @@
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
         } catch(e) {
+          this.isSaving = false;
           this.errors = e.response.data.errors;
           this.focusOnError();
         }

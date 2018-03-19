@@ -59,7 +59,7 @@ export default {
       } catch(e) {
         commit('setUsers', {});
         // commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
-        return e;
+        throw e;
       }
     },
 
@@ -74,7 +74,7 @@ export default {
       } catch(e) {
         commit('setCurrentUser', {});
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_FAILED);
-        return e;
+        throw e;
       }
     },
 
@@ -89,7 +89,7 @@ export default {
       } catch(e) {
         commit('setViewingUser', {});
         commit('setViewingUserLoadStatus', LoadStatus.LOADING_FAILED);
-        return e;
+        throw e;
       }
     },
 
@@ -101,7 +101,7 @@ export default {
         return response.data.data.organization_units;
       } catch(e) {
         commit('setOrganizationUnits', []);
-        return e;
+        throw e;
       }
     },
 
@@ -111,7 +111,7 @@ export default {
         response = await UserAPI.searchUser(name);
         return response.data.data;
       } catch(e) {
-        return e;
+        throw e;
       }
     },
 
@@ -121,7 +121,7 @@ export default {
         response = await UserAPI.createUser(user);
         return;
       } catch(e) {
-        return e;
+        throw e;
       }
     },
 
@@ -131,7 +131,7 @@ export default {
         response = await UserAPI.updateUser(user);
         return;
       } catch(e) {
-        return e;
+        throw e;
       }
     },
 
@@ -141,7 +141,7 @@ export default {
         response = await UserAPI.deleteUser(id);
         return;
       } catch(e) {
-        return e;
+        throw e;
       }
     }
   },

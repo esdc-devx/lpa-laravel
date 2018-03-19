@@ -49,7 +49,7 @@ export default {
         commit('setProjects', []);
         commit('setPagination', {});
         commit('setProjectsLoadStatus', LoadStatus.LOADING_FAILED);
-        return e;
+        throw e;
       }
     },
 
@@ -64,7 +64,7 @@ export default {
       } catch(e) {
         commit('setProject', {});
         commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
-        reject(e);
+        throw e;
       }
     },
 
@@ -79,7 +79,7 @@ export default {
       } catch(e) {
         // commit('setProject', {});
         // commit('setProjectLoadStatus', LoadStatus.LOADING_FAILED);
-        return e;
+        throw e;
       }
     }
   },

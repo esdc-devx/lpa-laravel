@@ -36,7 +36,7 @@ export const actions = {
       commit(types.SET_LANGUAGES, response.data.data);
       return response.data.data;
     } catch(e) {
-      return e;
+      throw e;
     }
   },
 
