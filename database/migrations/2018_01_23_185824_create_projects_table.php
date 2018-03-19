@@ -17,7 +17,7 @@ class CreateProjectsTable extends Migration
             $table->increments('id');
             $table->string('name')->unique();
             $table->integer('owner_id')->unsigned();
-            $table->integer('organization_unit_id')->unsigned();
+            $table->integer('organizational_unit_id')->unsigned();
             //$table->string('process_instance_id')->unique();
             //$table->string('state')->unique();
             $table->softDeletes();
@@ -28,8 +28,8 @@ class CreateProjectsTable extends Migration
             /*
             $table->foreign('owner_id')
                 ->references('id')->on('users');
-            $table->foreign('organization_unit_id')
-                ->references('id')->on('organization_units');
+            $table->foreign('organizational_unit_id')
+                ->references('id')->on('organizational_units');
             */
         });
     }

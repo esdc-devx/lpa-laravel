@@ -7,7 +7,7 @@ use Adldap\Laravel\Traits\HasLdapUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use App\Models\OrganizationUnit\OrganizationUnit;
+use App\Models\OrganizationalUnit\OrganizationalUnit;
 use App\Models\Project\Project;
 
 class User extends Authenticatable
@@ -56,9 +56,9 @@ class User extends Authenticatable
         return $this->deleted_at !== null;
     }
 
-    public function organizationUnits()
+    public function organizationalUnits()
     {
-        return $this->belongsToMany(OrganizationUnit::class);
+        return $this->belongsToMany(OrganizationalUnit::class);
     }
 
     public function projects()

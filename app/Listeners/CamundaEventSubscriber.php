@@ -49,7 +49,7 @@ class CamundaEventSubscriber
     protected function synchronizeGroups(User $user)
     {
         // Store its current group key values in an array for compare operations.
-        $currentGroups = array_pluck($user->organizationUnits, 'unique_key');
+        $currentGroups = array_pluck($user->organizationalUnits, 'unique_key');
 
         // Get groups currently stored in Camunda for the user.
         $camundaGroups = array_diff(

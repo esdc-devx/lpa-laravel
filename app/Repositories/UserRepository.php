@@ -15,8 +15,8 @@ class UserRepository extends BaseEloquentRepository
     const LDAP_SEARCH_LIMIT = 5;
 
     protected $model = \App\Models\User\User::class;
-    protected $relationships = ['organizationUnits', 'projects'];
-    protected $requiredRelationships = ['organizationUnits'];
+    protected $relationships = ['organizationalUnits', 'projects'];
+    protected $requiredRelationships = ['organizationalUnits'];
 
     public function searchLdap($search, $limit = self::LDAP_SEARCH_LIMIT)
     {
@@ -66,8 +66,8 @@ class UserRepository extends BaseEloquentRepository
             $user = $this->model->create(
                 array_merge($ldapUserInfo, ['password' => $password])
             );
-            if (isset($data['organization_units'])) {
-                $user->organizationUnits()->attach($data['organization_units']);
+            if (isset($data['organizational_units'])) {
+                $user->organizationalUnits()->attach($data['organizational_units']);
             }
         }
         // Rollback transaction if any exceptions occurs.
@@ -87,10 +87,10 @@ class UserRepository extends BaseEloquentRepository
     public function update($id, array $data)
     {
         // Update organizational units.
-        if (isset($data['organization_units'])) {
+        if (isset($data['organizational_units'])) {
             $this->getById($id)
-                ->organizationUnits()
-                ->sync($data['organization_units']);
+                ->organizationalUnits()
+                ->sync($data['organizational_units']);
         }
         $user = $this->getById($id);
 

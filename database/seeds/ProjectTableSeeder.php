@@ -3,7 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Models\User\User;
 use App\Models\Project\Project;
-use App\Models\OrganizationUnit\OrganizationUnit;
+use App\Models\OrganizationalUnit\OrganizationalUnit;
 
 class ProjectTableSeeder extends Seeder
 {
@@ -18,13 +18,13 @@ class ProjectTableSeeder extends Seeder
 
         $faker = \Faker\Factory::create();
         $userIds = User::pluck('id');
-        $organizationUnitIds = OrganizationUnit::where('owner', true)->pluck('id');
+        $organizationalUnitIds = OrganizationalUnit::where('owner', true)->pluck('id');
 
         for ($i = 0; $i < 50; $i++) {
             Project::create([
                 'name' => $faker->sentence,
                 'owner_id' => $userIds->random(),
-                'organization_unit_id' => $organizationUnitIds->random(),
+                'organizational_unit_id' => $organizationalUnitIds->random(),
             ]);
         }
     }

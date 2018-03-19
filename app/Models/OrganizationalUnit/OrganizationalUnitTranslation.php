@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\OrganizationUnit;
+namespace App\Models\OrganizationalUnit;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrganizationUnitTranslation extends Model
+class OrganizationalUnitTranslation extends Model
 {
     protected $guarded = [];
     public $timestamps = false;

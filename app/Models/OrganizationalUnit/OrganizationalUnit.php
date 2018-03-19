@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Models\OrganizationUnit;
+namespace App\Models\OrganizationalUnit;
 
 use Dimsav\Translatable\Translatable;
 use Illuminate\Database\Eloquent\Model;
 
-class OrganizationUnit extends Model
+class OrganizationalUnit extends Model
 {
     use Translatable;
 

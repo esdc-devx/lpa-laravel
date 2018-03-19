@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\OrganizationUnit\OrganizationUnit;
+use App\Models\OrganizationalUnit\OrganizationalUnit;
 
-class OrganizationUnitTableSeeder extends Seeder
+class OrganizationalUnitTableSeeder extends Seeder
 {
     protected function data()
     {
@@ -173,28 +173,28 @@ class OrganizationUnitTableSeeder extends Seeder
     public function run()
     {
         // Truncate previous tables.
-        DB::table('organization_unit_translations')->truncate();
-        DB::table('organization_unit_user')->truncate();
-        DB::table('organization_units')->truncate();
+        DB::table('organizational_unit_translations')->truncate();
+        DB::table('organizational_unit_user')->truncate();
+        DB::table('organizational_units')->truncate();
 
         // Temporarily use Faker to generate some fake data.
         $faker = \Faker\Factory::create();
 
         // Generate Organization Units.
-        foreach ($this->data() as $organizationUnit) {
-            OrganizationUnit::create([
-                'owner'               => $organizationUnit['owner'],
-                'unique_key'          => $organizationUnit['unique_key'],
+        foreach ($this->data() as $organizationalUnit) {
+            OrganizationalUnit::create([
+                'owner'               => $organizationalUnit['owner'],
+                'unique_key'          => $organizationalUnit['unique_key'],
                 'email'               => $faker->email,
                 'director_first_name' => $faker->firstName,
                 'director_last_name'  => $faker->lastName,
                 'en'                  => [
-                    'name'    => $organizationUnit['name_en'],
-                    'acronym' => $organizationUnit['acronym_en'],
+                    'name'    => $organizationalUnit['name_en'],
+                    'acronym' => $organizationalUnit['acronym_en'],
                 ],
                 'fr'                  => [
-                    'name'    => $organizationUnit['name_fr'],
-                    'acronym' => $organizationUnit['acronym_fr'],
+                    'name'    => $organizationalUnit['name_fr'],
+                    'acronym' => $organizationalUnit['acronym_fr'],
                 ]
             ]);
         }

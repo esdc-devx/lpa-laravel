@@ -5,19 +5,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User\User;
 use App\Repositories\UserRepository;
-use App\Repositories\OrganizationUnitRepository;
+use App\Repositories\OrganizationalUnitRepository;
 use App\Http\Resources\UserLdap;
 use App\Http\Requests\UserFormRequest;
 
 class UserController extends APIController
 {
     protected $users;
-    protected $organizationUnits;
+    protected $organizationalUnits;
 
-    public function __construct(UserRepository $users, OrganizationUnitRepository $organizationUnits)
+    public function __construct(UserRepository $users, OrganizationalUnitRepository $organizationalUnits)
     {
         $this->users = $users;
-        $this->organizationUnits = $organizationUnits;
+        $this->organizationalUnits = $organizationalUnits;
     }
 
     /**
@@ -65,7 +65,7 @@ class UserController extends APIController
     {
         // Return user creation form data.
         return $this->respond([
-            'organization_units' => $this->organizationUnits->getAll()->toArray()
+            'organizational_units' => $this->organizationalUnits->getAll()->toArray()
         ]);
     }
 
@@ -116,7 +116,7 @@ class UserController extends APIController
      */
     public function update(UserFormRequest $request, int $id)
     {
-        $data = $request->only('organization_units');
+        $data = $request->only('organizational_units');
         return $this->respond(
             $this->users->update($id, $data)
         );

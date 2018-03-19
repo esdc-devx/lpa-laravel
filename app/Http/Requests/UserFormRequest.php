@@ -37,12 +37,12 @@ class UserFormRequest extends FormRequest
             case 'POST':
                 return [
                     'username' => 'required|unique:users',
-                    'organization_units' => 'exists:organization_units,id'
+                    'organizational_units' => 'exists:organizational_units,id'
                 ];
             // Update validation rules.
             case 'PUT':
                 return [
-                    'organization_units' => 'exists:organization_units,id'
+                    'organizational_units' => 'exists:organizational_units,id'
                 ];
             default: return [];
         }

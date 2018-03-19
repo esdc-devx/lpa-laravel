@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateOrganizationUnitsTable extends Migration
+class CreateOrganizationalUnitsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateOrganizationUnitsTable extends Migration
      */
     public function up()
     {
-        Schema::create('organization_units', function (Blueprint $table) {
+        Schema::create('organizational_units', function (Blueprint $table) {
             $table->increments('id');
             $table->string('unique_key')->unique();
             $table->boolean('owner');
@@ -23,35 +23,35 @@ class CreateOrganizationUnitsTable extends Migration
             $table->timestamps();
         });
 
-        Schema::create('organization_unit_translations', function (Blueprint $table) {
+        Schema::create('organizational_unit_translations', function (Blueprint $table) {
             $table->increments('id');
             $table->string('locale')->index();
-            $table->integer('organization_unit_id')->unsigned()->index();
+            $table->integer('organizational_unit_id')->unsigned()->index();
             $table->string('name');
             $table->string('acronym');
 
-            $table->foreign('organization_unit_id')
+            $table->foreign('organizational_unit_id')
                 ->references('id')
-                ->on('organization_units')
+                ->on('organizational_units')
                 ->onDelete('cascade');
 
-            $table->unique(['organization_unit_id', 'locale'], 'organization_unit_index_unique');
+            $table->unique(['organizational_unit_id', 'locale'], 'organizational_unit_index_unique');
         });
 
-        Schema::create('organization_unit_user', function (Blueprint $table) {
-            $table->integer('organization_unit_id')->unsigned()->index();
+        Schema::create('organizational_unit_user', function (Blueprint $table) {
+            $table->integer('organizational_unit_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
 
-            $table->foreign('organization_unit_id')
+            $table->foreign('organizational_unit_id')
                 ->references('id')
-                ->on('organization_units');
+                ->on('organizational_units');
 
             $table->foreign('user_id')
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->primary(['organization_unit_id', 'user_id']);
+            $table->primary(['organizational_unit_id', 'user_id']);
         });
     }
 
@@ -62,8 +62,8 @@ class CreateOrganizationUnitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('organization_unit_translations');
-        Schema::dropIfExists('organization_unit_user');
-        Schema::dropIfExists('organization_units');
+        Schema::dropIfExists('organizational_unit_translations');
+        Schema::dropIfExists('organizational_unit_user');
+        Schema::dropIfExists('organizational_units');
     }
 }

@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Camunda\CamundaAuthorizations;
-use App\Models\OrganizationUnit\OrganizationUnit;
+use App\Models\OrganizationalUnit\OrganizationalUnit;
 
 class ConfigureCamunda extends Command
 {
@@ -75,7 +75,7 @@ class ConfigureCamunda extends Command
     protected function configureGroups()
     {
         // Fetch all organizational units.
-        $organizationalUnits = OrganizationUnit::all();
+        $organizationalUnits = OrganizationalUnit::all();
         if ($organizationalUnits->count() === 0) {
             $this->error('No organizational units were found. You first need to seed the database.');
             return false;

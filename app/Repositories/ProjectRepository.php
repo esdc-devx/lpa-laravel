@@ -9,7 +9,7 @@ class ProjectRepository
     public function getAll($limit = 0)
     {
         // @todo: Add customizable sorting, relationships?
-        $results = Project::with(['owner', 'organizationUnit'])
+        $results = Project::with(['owner', 'organizationalUnit'])
             ->orderBy('name', 'asc');
 
         return $limit ? $results->paginate($limit) : $results->get();

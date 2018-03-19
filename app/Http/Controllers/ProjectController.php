@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Project\Project;
 use App\Repositories\ProjectRepository;
-use App\Repositories\OrganizationUnitRepository;
+use App\Repositories\OrganizationalUnitRepository;
 
 class ProjectController extends APIController
 {
     protected $projects;
-    protected $organizationUnits;
+    protected $organizationalUnits;
 
-    public function __construct(ProjectRepository $projects, OrganizationUnitRepository $organizationUnits)
+    public function __construct(ProjectRepository $projects, OrganizationalUnitRepository $organizationalUnits)
     {
         $this->projects = $projects;
-        $this->organizationUnits = $organizationUnits;
+        $this->organizationalUnits = $organizationalUnits;
     }
 
     /**
@@ -37,7 +37,7 @@ class ProjectController extends APIController
     public function create()
     {
         return $this->respond([
-            'organization_units' => $this->organizationUnits->getOwners()->toArray()
+            'organizational_units' => $this->organizationalUnits->getOwners()->toArray()
         ]);
     }
 
@@ -62,7 +62,7 @@ class ProjectController extends APIController
     {
         return $this->respond([
             // @todo: Move to Project Repository.
-            'project' => Project::with('owner', 'organizationUnit')->findOrFail($id)
+            'project' => Project::with('owner', 'organizationalUnit')->findOrFail($id)
         ]);
     }
 

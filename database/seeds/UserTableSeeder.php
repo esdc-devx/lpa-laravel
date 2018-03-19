@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\User\User;
-use App\Models\OrganizationUnit\OrganizationUnit;
+use App\Models\OrganizationalUnit\OrganizationalUnit;
 
 class UserTableSeeder extends Seeder
 {
@@ -16,7 +16,7 @@ class UserTableSeeder extends Seeder
         User::truncate();
 
         $faker = \Faker\Factory::create();
-        $organizationUnitIds = OrganizationUnit::all()->pluck('id');
+        $organizationalUnitIds = OrganizationalUnit::all()->pluck('id');
 
         for ($i = 0; $i < 50; $i++) {
             $user = User::create([
@@ -26,7 +26,7 @@ class UserTableSeeder extends Seeder
                 'email' => $faker->email,
                 'password' => bcrypt($faker->word)
             ]);
-            $user->organizationUnits()->sync([$organizationUnitIds->random()]);
+            $user->organizationalUnits()->sync([$organizationalUnitIds->random()]);
         }
     }
 }
