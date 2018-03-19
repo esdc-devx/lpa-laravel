@@ -12,18 +12,18 @@
       <el-form-item label="Email" for="email">
         <el-input v-model="form.user.email" disabled></el-input>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationUnits">
+      <el-form-item label="Organizational Unit" for="organizationalUnits">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="''"
-          v-model="form.user.organization_units"
-          id="organizationUnits"
-          name="organizationUnits"
+          v-model="form.user.organizational_units"
+          id="organizationalUnits"
+          name="organizationalUnits"
           valueKey="name"
           multiple>
           <el-option
-            v-for="item in allOrganizationUnits"
+            v-for="item in allOrganizationalUnits"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -54,7 +54,7 @@
       ...mapGetters({
         language: 'language',
         viewingUser: `${namespace}/viewing`,
-        allOrganizationUnits: 'users/organizationUnits'
+        allOrganizationalUnits: 'users/organizationalUnits'
       })
     },
 
@@ -65,7 +65,7 @@
         form: {
           user: {}
         },
-        selectedOrganizationUnits: []
+        selectedOrganizationalUnits: []
       }
     },
 
@@ -90,7 +90,7 @@
       async update() {
         let response;
         try {
-          response = await this.updateUser({id: this.form.user.id, organization_units: this.form.user.organization_units});
+          response = await this.updateUser({id: this.form.user.id, organizational_units: this.form.user.organizational_units});
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
@@ -128,9 +128,9 @@
       await this.loadUser();
       await this.loadUserCreateInfo();
       this.form.user = Object.assign({}, this.viewingUser);
-      // replace our internal organization_units with only the ids
+      // replace our internal organizational_units with only the ids
       // since ElementUI only need ids to populate the selected options
-      this.form.user.organization_units = _.map(this.viewingUser.organization_units, 'id');
+      this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
       this.isUserInfoLoading = false;
       this.isLoading = false;
     }

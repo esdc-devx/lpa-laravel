@@ -22,9 +22,9 @@
         <el-select
           :disabled="modal.form.orgUnitOptions.length <= 1"
           v-validate="'required'"
-          v-model="modal.form.organization_unit"
-          id="organizationUnits"
-          name="organizationUnits">
+          v-model="modal.form.organizational_unit"
+          id="organizationalUnits"
+          name="organizationalUnits">
           <el-option
             v-for="item in modal.form.orgUnitOptions"
             :key="item.value"
@@ -32,7 +32,7 @@
             :value="item.value">
           </el-option>
         </el-select>
-        <form-error v-for="error in verrors.collect('organizationUnits')" :key="error.id">{{ error }}</form-error>
+        <form-error v-for="error in verrors.collect('organizationalUnits')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -71,7 +71,7 @@
         modal: {
           form: {
             name: '',
-            organization_unit: '',
+            organizational_unit: '',
             // @todo: (backend data)
             orgUnitOptions: [{
               value: 'CS',
@@ -90,7 +90,7 @@
       create() {
         let project = {
           name: this.modal.form.name,
-          organization_unit: this.modal.form.organization_unit
+          organizational_unit: this.modal.form.organizational_unit
         };
         // @todo: might want to show a loading spinner on modal after hitting create
         // let response;

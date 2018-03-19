@@ -24,10 +24,10 @@
         :filter-method="filterOrgUnit"
         filter-placement="bottom-start"
         class-name="orgunit-filter"
-        prop="organization_unit.name"
+        prop="organizational_unit.name"
         label="Organizational unit">
         <template slot-scope="scope">
-          <el-tag type="info" size="small" :title="scope.row.organization_unit.name">{{scope.row.organization_unit.name}}</el-tag>
+          <el-tag type="info" size="small" :title="scope.row.organizational_unit.name">{{scope.row.organizational_unit.name}}</el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -79,7 +79,7 @@
       }),
       orgUnit() {
         return _.chain(this.projects)
-                .mapValues('organization_unit.name')
+                .mapValues('organizational_unit.name')
                 .toArray().uniq()
                 .map((val, key) => { return { text: val, value: val } })
                 .value();
@@ -125,7 +125,7 @@
       },
 
       filterOrgUnit(value, row) {
-        return row.organization_unit.name === value;
+        return row.organizational_unit.name === value;
       }
     },
 

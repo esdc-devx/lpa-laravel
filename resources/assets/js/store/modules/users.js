@@ -10,7 +10,7 @@ export default {
     // user being viewed
     viewing: {},
     all: [],
-    organizationUnits: [],
+    organizationalUnits: [],
     pagination: {},
     currentUserLoadStatus: LoadStatus.NOT_LOADED,
     viewingUserLoadStatus: LoadStatus.NOT_LOADED
@@ -37,8 +37,8 @@ export default {
       return state.all;
     },
 
-    organizationUnits(state) {
-      return state.organizationUnits;
+    organizationalUnits(state) {
+      return state.organizationalUnits;
     },
 
     pagination(state) {
@@ -97,10 +97,10 @@ export default {
       let response;
       try {
         response = await UserAPI.getUserCreateInfo();
-        commit('setOrganizationUnits', response.data.data.organization_units);
+        commit('setOrganizationalUnits', response.data.data.organizational_units);
         return response.data.data.organization_units;
       } catch(e) {
-        commit('setOrganizationUnits', []);
+        commit('setOrganizationalUnits', []);
         throw e;
       }
     },

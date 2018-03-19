@@ -24,19 +24,19 @@
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit" for="organizationUnits" prop="organization_units">
+      <el-form-item label="Organizational Unit" for="organizationalUnits" prop="organizational_units">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
-          :disabled="organizationUnits.length <= 1"
-          v-model="form.organization_units"
+          :disabled="organizationalUnits.length <= 1"
+          v-model="form.organizational_units"
           v-validate="''"
-          id="organizationUnits"
-          name="organizationUnits"
+          id="organizationalUnits"
+          name="organizationalUnits"
           valueKey="name"
           multiple>
           <el-option
-            v-for="item in organizationUnits"
+            v-for="item in organizationalUnits"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -71,7 +71,7 @@
     computed: {
       ...mapGetters({
         language: 'language',
-        organizationUnits: `${namespace}/organizationUnits`
+        organizationalUnits: `${namespace}/organizationalUnits`
       }),
 
       nameRules() {
@@ -88,7 +88,7 @@
         form: {
           name: '',
           username: '',
-          organization_units: []
+          organizational_units: []
         },
         inUserList: []
       }
@@ -131,7 +131,7 @@
         try {
           response = await this.createUser({
             username: this.form.username,
-            organization_units: this.form.organization_units
+            organizational_units: this.form.organizational_units
           });
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.name}</b> has been created.`);
