@@ -38,6 +38,12 @@ class User extends Authenticatable
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    /**
+     * The attributes that are added to the model through getters.
+     *
+     * @var array
+     */
     protected $appends = ['deleted', 'name'];
 
     public function getNameAttribute()

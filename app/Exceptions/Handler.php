@@ -63,7 +63,7 @@ class Handler extends ExceptionHandler
 
             // Handle Camunda errors.
             if ($exception instanceof CamundaGeneralException) {
-                return $this->respondWithError($exception->getMessage());
+                return $this->respondInternalError("CamundaGeneralException: {$exception->getMessage()}");
             }
 
             // Handle eloquent model not found.
@@ -78,7 +78,7 @@ class Handler extends ExceptionHandler
 
             // Handle method not allowed errors.
             if ($exception instanceof MethodNotAllowedHttpException) {
-                $this->respondMethodNotAllowed();
+                return $this->respondMethodNotAllowed();
             }
 
             // Handle authorization errors.
@@ -110,6 +110,7 @@ class Handler extends ExceptionHandler
                 $error .= PHP_EOL . "File: $file";
                 $error .= PHP_EOL . "Line: $line";
             }
+
             return $this->respondInternalError($error);
         }
 

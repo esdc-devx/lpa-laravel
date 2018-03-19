@@ -95,7 +95,7 @@ class CamundaGroups extends CamundaBaseAPI
     {
         foreach ($groups = $this->getAll() as $group) {
             // Ensure we don't delete the admin group.
-            if ($group->id !== $this->config['groups']['admin']) {
+            if ($group->id !== $this->camunda->config('app.groups.admin')) {
                 $this->delete($group->id);
             }
         }

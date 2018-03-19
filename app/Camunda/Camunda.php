@@ -50,13 +50,27 @@ class Camunda
     }
 
     /**
-     * Return configurations.
+     * Return configurations using "dot" notation.
      *
+     * @param  string $key
      * @return array
      */
-    public function config()
+    public function config($key = '*')
     {
-        return $this->config;
+        return data_get($this->config, $key);
+    }
+
+    /**
+     * Update configuration settings using "dot" notation.
+     *
+     * @param  string $key
+     * @param  mixed $value
+     * @return $this
+     */
+    protected function setConfig($key, $value)
+    {
+        data_set($this->config, $key, $value);
+        return $this;
     }
 
     /**
@@ -67,12 +81,10 @@ class Camunda
      */
     protected function auth(string $username = 'admin')
     {
-        $auth = $this->config['authentication'];
-        $this->config['credentials'] = [
-            'username' => $username === 'admin' ? $auth['username'] : $username,
-            'password' => $username === 'admin' ? $auth['password'] : $this->password($username)
-        ];
-        return $this;
+        return $this->setConfig('credentials', [
+            'username' => $username === 'admin' ? $this->config('authentication.username') : $username,
+            'password' => $username === 'admin' ? $this->config('authentication.password') : $this->password($username)
+        ]);
     }
 
     /**
@@ -83,7 +95,7 @@ class Camunda
      */
     public function password(string $username)
     {
-        return crypt($username, $this->config['authentication']['salt']);
+        return crypt($username, $this->config('authentication.salt'));
     }
 
     /**
@@ -110,7 +122,7 @@ class Camunda
 
             case 'object':
                 // Ensure that object passed is an instance of the user model class.
-                if (get_class($proxy) !== config('auth.providers.users.model')) {
+                if (get_class($proxy) !== $this->config('app.user_model')) {
                     throw new InvalidUserProxyException();
                 }
                 // Authenticate as proxy user.
