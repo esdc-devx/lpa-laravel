@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import axios from 'axios';
 import HttpStatusCodes from './http-status-codes';
 import router from '../router';
@@ -30,9 +31,7 @@ if (token) {
 
 // General error handling
 axios.interceptors.request.use(config => config, error => {
-  console.group('[axios][interceptor] Request Error');
-  console.log(error);
-  console.groupEnd();
+  Vue.$log.debug(error);
   return Promise.reject(error);
 });
 axios.interceptors.response.use(response => response, error => {
@@ -49,13 +48,13 @@ axios.interceptors.response.use(response => response, error => {
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
     // @refactorme: should warn the user with a popup (Ok only) then redirect
     alert('You are not authorized to access this page.');
-    router.push(`/${HttpStatusCodes.FORBIDDEN}`);
+    router.replace(`/${HttpStatusCodes.FORBIDDEN}`);
   } else if (response.status === HttpStatusCodes.NOT_FOUND) {
-    router.push(`/${HttpStatusCodes.NOT_FOUND}`);
+    router.replace(`/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
-    Notify.notifyError(`[axios][interceptor]: ${errorMsg}`);
-    console.error(`[axios][interceptor]: ${errorResponse}`);
+    Notify.notifyError('General exception. Please contact your administrator.');
+    Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);
   }
 
   return Promise.reject(error);

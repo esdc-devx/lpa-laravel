@@ -124,10 +124,12 @@
     }
     a {
       text-decoration: none;
-      width: 100%;
       height: 100%;
       display: inline-block;
       color: initial;
+    }
+    a, i {
+      vertical-align: baseline;
     }
     li.el-menu-item.is-active a {
       color: $--color-primary;
