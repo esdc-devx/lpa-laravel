@@ -6,9 +6,8 @@ use App\Camunda\Camunda;
 
 class CamundaBaseAPI
 {
-    protected $config;
+    protected $camunda;
     protected $client;
-    protected $username;
 
     /**
      * Extendable class for all Camunda APIs.
@@ -17,8 +16,7 @@ class CamundaBaseAPI
      */
     public function __construct(Camunda $camunda)
     {
-        $this->config = $camunda->config();
+        $this->camunda = $camunda;
         $this->client = $camunda->client();
-        $this->username = $this->config['credentials']['username'];
     }
 }

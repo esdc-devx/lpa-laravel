@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 
+use App\Events\UserSaved;
+use App\Events\UserCreated;
 use App\Models\User\User;
 use App\Http\Resources\UserLdap;
 use Adldap\Laravel\Facades\Adldap;
@@ -56,10 +58,8 @@ class UserRepository extends BaseEloquentRepository
         $ldapUserInfo = (new UserLdap($this->getUserFromLdap($data['username'])->first()))
             ->toArray();
 
-        // Generate password from username so we can more
-        // easily authenticate them when using Camunda Rest API.
-        // @note: Consider using a camunda token field on user model instead?
-        $password = bcrypt($data['username']);
+        // Since we authenticate users using LDAP, we can just store a random password.
+        $password = str_random(16);
 
         try {
             // Create user with its relationships.
@@ -70,15 +70,16 @@ class UserRepository extends BaseEloquentRepository
                 $user->organizationUnits()->attach($data['organization_units']);
             }
         }
+        // Rollback transaction if any exceptions occurs.
         catch (\Exception $e) {
-            throw $e;
             DB::rollBack();
+            throw $e;
         }
 
         DB::commit();
 
-        // @todo: Add user to Camunda.
-        // @note: event(new UserRegistered($user));
+        // Dispatch UserCreated event.
+        event(new UserCreated($user));
 
         return $this->getById($user->id);
     }
@@ -91,7 +92,12 @@ class UserRepository extends BaseEloquentRepository
                 ->organizationUnits()
                 ->sync($data['organization_units']);
         }
-        return $this->getById($id);
+        $user = $this->getById($id);
+
+        // Dispatch UserSaved event.
+        event(new UserSaved($user));
+
+        return $user;
     }
 
     public function delete($id)

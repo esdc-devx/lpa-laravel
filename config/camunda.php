@@ -16,9 +16,13 @@ return [
     ],
 
     // Application configurations.
-    'groups' => [
-        'admin' => env('CAMUNDA_ADMIN_GROUP', ''),
-        'user'  => env('CAMUNDA_USER_GROUP')
+    'app' => [
+        'user_model' => env('CAMUNDA_USER_MODEL_CLASS', ''),
+        'storage'    => env('CAMUNDA_STORAGE', ''),
+        'groups'     => [
+            'admin' => env('CAMUNDA_ADMIN_GROUP', ''),
+            'user'  => env('CAMUNDA_USER_GROUP')
+        ],
     ],
-    'storage' => env('CAMUNDA_STORAGE', ''),
+
 ];

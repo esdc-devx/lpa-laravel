@@ -34,7 +34,7 @@ class CamundaServiceProvider extends ServiceProvider
         }
 
         // Ensure that required configs are properly defined.
-        foreach (['connection', 'authentication', 'groups'] as $key) {
+        foreach (['connection', 'authentication', 'app'] as $key) {
             if (!isset($config[$key])) {
                 throw new MissingConfigurationException("Missing configuration for [$key].");
             }
