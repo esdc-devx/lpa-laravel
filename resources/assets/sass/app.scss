@@ -1,11 +1,17 @@
-// Vendors
+// 1 - Vendors
 // ElementUI overrides
 @import 'vendors/elementui/vars';
 @import 'vendors/elementui/notify';
+@import 'vendors/elementui/form';
+@import 'vendors/elementui/table';
+@import 'vendors/elementui/pagination';
+@import 'vendors/elementui/breadcrumb';
+@import 'vendors/elementui/tooltip';
+@import 'vendors/elementui/menu';
 // ElementUI Theme
 @import '../../../node_modules/element-ui/packages/theme-chalk/src/index';
 
-// Configuration and helpers
+// 2 - Configuration and helpers
 @import 'abstracts/vars';
 @import 'abstracts/functions';
 @import 'abstracts/mixins/helpers';
@@ -13,12 +19,12 @@
 @import 'abstracts/transitions';
 @import 'abstracts/mixins/shapes';
 
-// Base stuff
+// 3 - Base stuff
 @import 'base/general';
 @import 'base/form';
 // @import 'base/fonts';
 @import 'base/typography';
 @import 'base/helpers';
 
-// Layout-related sections
+// 4 - Layout-related sections
 // if any...

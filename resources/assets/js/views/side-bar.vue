@@ -1,7 +1,18 @@
 <template>
   <div class="side-bar">
-    <el-button class="side-bar-toggle" size="mini" type="primary" plain round :icon="collapsedIcon" @click="isCollapsed = !isCollapsed"></el-button>
-    <el-menu class="menu" ref="menu" :default-active="$route.fullPath" :collapse="isCollapsed" router>
+    <div class="side-bar-toggle" @click="isCollapsed = !isCollapsed">
+      <div class="side-bar-toggle-inner">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <el-menu
+      class="menu"
+      ref="menu"
+      :default-active="$route.fullPath"
+      :collapse="isCollapsed"
+      router>
       <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
         <span slot="title"><a href="#" @click.prevent>{{ item.text }}</a></span>
@@ -89,29 +100,57 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/vendors/elementui/vars';
+  @import '../../sass/abstracts/vars';
+
   $side-bar-width: 300px;
-  $side-bar-toggle-border-width: 1px * 2; // left right
-  $side-bar-toggle-border-padding-y: 4px * 2; // up down
-  $side-bar-toggle-font-size: 18px;
-  // -0px gives us a negative value,
-  // then we add the values needed to determine the half width of the button
-  $side-bar-toggle-right: calc(-0px -
-    (#{$side-bar-toggle-font-size} + #{$side-bar-toggle-border-padding-y} + #{$side-bar-toggle-border-width}) / 2
-  );
+  $side-bar-fill: #322f43;
+  $side-bar-active-item-border: #e80a24;
+
   .side-bar {
     width: 100%;
     height: 100%;
     &-toggle {
       position: absolute;
-      top: 50%;
-      right: $side-bar-toggle-right;
-      z-index: $--index-top;
-      padding: 10px #{$side-bar-toggle-border-padding-y / 2} !important;
-      border-radius: 20% !important;
-      i {
-        font-size: $side-bar-toggle-font-size;
-        font-weight: bold;
+      top: -50px;
+      width: 60px;
+      height: 50px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      &:hover {
+        transition: background-color 0.3s;
+        background-color: #322f43;
+      }
+      &-inner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: $--index-top;
+        width: 18px;
+        height: 14px;
+        span {
+          position: absolute;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: $--color-white;
+          border-radius: 4px;
+          &:nth-of-type(1) {
+            top: 0;
+          }
+          &:nth-of-type(2) {
+            top: 50%;
+            transform: translateY(-50%);
+          }
+          &:nth-of-type(3) {
+            bottom: 0;
+          }
+        }
+      }
+      &-inner, &-inner span {
+        display: inline-block;
+        transition: all .4s;
+        box-sizing: border-box;
       }
     }
   }
@@ -119,6 +158,8 @@
   .menu {
     user-select: none;
     height: 100%;
+    border: none;
+    background-color: $side-bar-fill;
     &:not(.el-menu--collapse) {
       width: $side-bar-width;
     }
@@ -126,13 +167,32 @@
       text-decoration: none;
       height: 100%;
       display: inline-block;
-      color: initial;
     }
     a, i {
+      color: mix($--color-white, $side-bar-fill, 75%);
       vertical-align: baseline;
     }
-    li.el-menu-item.is-active a {
-      color: $--color-primary;
+    .el-menu-item {
+      &:hover, &:focus {
+        background-color: mix($--color-black, $side-bar-fill, 25%);
+      }
+      &.is-active {
+        position: relative;
+        background-color: mix($--color-black, $side-bar-fill, 25%) !important;
+        &:after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 4px;
+          height: 100%;
+          background-color: $side-bar-active-item-border !important;
+          transition: all 0.3s;
+        }
+        a, i {
+          color: mix($--color-white, $side-bar-fill, 95%);
+        }
+      }
     }
   }
 </style>

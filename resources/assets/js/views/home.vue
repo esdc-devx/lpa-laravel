@@ -71,10 +71,17 @@
 </script>
 
 <style lang="scss">
+  @import '../../sass/abstracts/vars';
+
   .home {
     // since there is no breadcrumbs bar on the home page,
     // make sure the content is at the top
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: $--color-white;
     h2, p {
       text-align: center;
     }

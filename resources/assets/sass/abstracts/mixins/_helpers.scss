@@ -122,7 +122,7 @@
  * @param  {Unit size}       $border-width:   5px
  * @param  {Unit size}       $border-height:  6px
  */
-@mixin up-down-arrows($color: $brand-primary, $border-width: 5px, $border-height: 6px) {
+@mixin up-down-arrows($color: $--color-primary, $border-width: 5px, $border-height: 6px) {
   // base arrow
   &:before,
   &:after {
@@ -145,53 +145,5 @@
     -ms-transform: translateY(-50%) translateY(#{$border-width});
     bottom: calc(50% - #{$border-height});
     @include triangle($color, down, $border-width, $border-height);
-  }
-}
-
-/**
- * Generate a pager-arrow based on the direction wanted
- * The direction will be outputed in an after,
- * and the arrow will only lines colored.
- * @param  {String} $direction: down - [up|down]
- * @param  {Color}  $bg-color: #aaa
- * @param  {Color}  $arrow-color:    #fff
- * @param  {Color}  $bg-color-hover: $secondary-color
- */
-@mixin pager-arrow($direction: down, $bg-color: #aaa, $arrow-color: #fff, $bg-color-hover: $secondary-color) {
-  @extend %button-box-shadow;
-  @include circle(36px);
-  @include transition(all 0.3s);
-  position: relative;
-  display: block;
-  text-decoration: none;
-  background-color: $bg-color;
-  // controls the size of the arrow
-  font-size: 25px;
-  &:after {
-    @include size(0.45em);
-    @include transition(all 0.3s);
-    content: '';
-    position: absolute;
-    left: 50%;
-    border-left: 0.15em solid $arrow-color;
-    @if $direction == down {
-      @include transform(translate(-50%, -40%) rotate(-45deg));
-      top: 40%;
-      // v arrow
-      border-bottom: 0.15em solid $arrow-color;
-      //reset border in case there is multiple call to the pager-arrow on the same element
-      border-top: 0;
-    } @else if $direction == up {
-      @include transform(translate(-50%, -60%) rotate(45deg));
-      top: 60%;
-      // ^ arrow
-      border-top: 0.15em solid $arrow-color;
-      //reset border in case there is multiple call to the pager-arrow on the same element
-      border-bottom: 0;
-    }
-  }
-  &:hover {
-    @include transition(all 0.3s);
-    background-color: $bg-color-hover;
   }
 }

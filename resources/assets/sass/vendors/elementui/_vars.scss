@@ -1,7 +1,14 @@
-@import './element-variables';
 // ElementUI variable overrides
+
+/* Colors
+-------------------------- */
+$--color-primary: #524f74;
+$--color-text-primary: #111;
 
 /* z-index
 -------------------------- */
 $--font-path: '../../node_modules/element-ui/lib/theme-chalk/fonts';
-$--index-notify: 10000;
+$--index-notify: 3000;
+$--index-loading: 10000;
+
+@import './element-variables';

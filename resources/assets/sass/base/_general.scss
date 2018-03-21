@@ -25,20 +25,40 @@ a {
   width: calc(100% - (#{$el-main-padding} * 2));
 }
 
-// ElementUI Overrides
-// @todo: put in corresponding file
-.el-table .cell {
-  word-break: normal;
+.controls {
+  margin: 20px auto;
 }
 
-.el-pagination {
-  margin: 50px auto;
+.loading-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $--index-loading;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  svg {
+    width: 4rem;
+    height: 4rem;
+    animation: spinner 2s infinite linear;
+    .path {
+      animation: loading-dash 1.5s ease-in-out infinite;
+      stroke-dasharray: 90,150;
+      stroke-dashoffset: 0;
+      stroke-width: 2;
+      stroke: $--color-primary;
+      stroke-linecap: round;
+    }
+  }
 }
-
-.el-tooltip__popper a {
-  color: $--color-white;
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
 }
-
 
 *::-webkit-scrollbar {
   width: .9rem;

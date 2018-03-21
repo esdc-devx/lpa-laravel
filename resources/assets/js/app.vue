@@ -1,8 +1,5 @@
 <template>
-  <div id="app"
-    v-loading.fullscreen.lock="isLoading"
-    element-loading-background="#FFF"
-    v-cloak>
+  <div id="app" v-cloak>
     <el-container v-show="isLoading === false">
       <el-header height="auto">
         <top-bar/>
@@ -14,6 +11,9 @@
         </el-aside>
 
         <el-container class="content-wrap">
+          <el-header height="auto">
+            <admin-bar/>
+          </el-header>
           <el-main>
             <breadcrumb/>
             <main-content/>
@@ -31,6 +31,7 @@
   import EventBus from './helpers/event-bus';
 
   import TopBar from './views/top-bar.vue';
+  import AdminBar from './views/admin-bar.vue';
   import SideBar from './views/side-bar.vue';
   import Breadcrumb from './views/breadcrumb.vue';
   import MainContent from './views/main-content.vue';
@@ -38,7 +39,7 @@
   export default {
     name: 'app',
 
-    components: { TopBar, SideBar, Breadcrumb, MainContent },
+    components: { TopBar, AdminBar, SideBar, Breadcrumb, MainContent },
 
     data() {
       return {
@@ -49,13 +50,23 @@
     beforeCreate() {
       EventBus.$once('App:ready', () => {
         this.isLoading = false;
+        // remove loading spinner
+        let spinner = document.querySelectorAll('.loading-spinner')[0];
+        if (spinner) {
+          spinner.classList.add('fade-out');
+          setTimeout(() => {
+            spinner.parentNode.removeChild(spinner);
+            // css animation is 300ms,
+            // buffer it by 200ms so that the element is removed smoothly
+          }, 500);
+        }
       });
     }
   };
 </script>
 
 <style lang="scss">
-  @import '../sass/vendors/elementui/vars';
+  @import '../sass/abstracts/vars';
   [v-cloak] {
     display: none;
   }
@@ -74,8 +85,8 @@
     position: relative;
     overflow-x: hidden;
     padding: 30px;
-    padding-top: 10px;
-    background-color: #fff;
+    padding-top: 0px;
+    background-color: #eaf0f8;
   }
   .el-header {
     padding: 0;
@@ -100,7 +111,7 @@
   }
 
   hr {
-    border-color: #E6E6E6;
+    border-color: #e6e6e6;
     border-style: solid;
     margin-bottom: 20px;
   }

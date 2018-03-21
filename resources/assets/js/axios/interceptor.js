@@ -41,14 +41,28 @@ axios.interceptors.response.use(response => response, error => {
 
   if (response.status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
-    // @refactorme: should warn the user with a popup (Ok only) then redirect to login
-    alert('You are not authenticated. You will be redirected to the login page.');
-    // we need to change the location manually since the backend handles the login page
-    window.location.href = `/${store.getters.language}/login`;
+    Vue.prototype.$alert(
+      'You are not authenticated. You will be redirected to the login page.',
+      'Error',
+      {
+        showClose: false,
+        confirmButtonText: 'Ok',
+        callback: action => {
+          // we need to change the location manually since the backend handles the login page
+          window.location.href = `/${store.getters.language}/login`;
+        }
+      });
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
-    // @refactorme: should warn the user with a popup (Ok only) then redirect
-    alert('You are not authorized to access this page.');
-    router.replace(`/${HttpStatusCodes.FORBIDDEN}`);
+    Vue.prototype.$alert(
+      'You are not authorized to access this page.',
+      'Error',
+      {
+        showClose: false,
+        confirmButtonText: 'Ok',
+        callback: action => {
+          router.replace(`/${HttpStatusCodes.FORBIDDEN}`);
+        }
+      });
   } else if (response.status === HttpStatusCodes.NOT_FOUND) {
     router.replace(`/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {

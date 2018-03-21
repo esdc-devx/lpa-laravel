@@ -77,17 +77,3 @@
     @return #ffffff;
   }
 }
-
-/**
- * Generates the z-index based on a list of known component that have set z-indexes
- * @param  {String} $name - Name of the component
- * @return {Number} - z-index from map $z-indexes
- */
-@function z-index($name) {
-  @if map-has-key($z-indexes, $name) {
-    @return map-get($z-indexes, $name);
-  } @else {
-    @warn 'There is no item "#{$name}" in this list; choose one of: #{$z-indexes}';
-    @return null;
-  }
-}

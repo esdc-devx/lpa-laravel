@@ -33,7 +33,7 @@ async function beforeProceed(to, from, next) {
 async function requireAuth(to, from, next) {
   let response;
   try {
-    response = await store.dispatch('users/loadCurrentUser')
+    response = await store.dispatch('users/loadCurrentUser');
     if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
       return true;
     }

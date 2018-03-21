@@ -1,9 +1,3 @@
 .form-footer {
   margin-top: 40px;
 }
-
-// ElementUI override so that we can have multiple errors shown as a list
-.el-form-item__error, .error-list-item {
-  position: relative;
-  display: flex;
-}

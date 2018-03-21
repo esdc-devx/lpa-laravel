@@ -1,3 +1,5 @@
+// vue-router transitions
+
 // Pop
 .pop-enter-active, .pop-leave-active {
   transition: transform 0.3s ease;
@@ -84,4 +86,14 @@
   100% {
     transform: translateX(0%);
   }
+}
+
+// General transitions
+.fade-in {
+  transition: 0.3s opacity ease-in;
+  opacity: 1;
+}
+.fade-out {
+  transition: 0.3s opacity ease-out;
+  opacity: 0;
 }

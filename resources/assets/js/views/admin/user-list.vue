@@ -1,7 +1,8 @@
 <template>
   <div class="content user-list" v-loading="isLoading">
-    <h2>User list</h2>
-    <el-button @click="$router.push('users/create')">Create a user</el-button>
+    <div class="controls">
+      <el-button @click="$router.push('users/create')">Create a user</el-button>
+    </div>
     <el-table
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
@@ -129,7 +130,7 @@
       },
 
       scrollToTop() {
-        this.$parent.$el.scrollTop = 0;
+        document.querySelectorAll('.el-main')[0].scrollTop = 0;
         // IE11 scroll to top
         document.documentElement.scrollTop = 0;
       },

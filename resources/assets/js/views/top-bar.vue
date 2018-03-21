@@ -1,49 +1,38 @@
 <template>
-  <div>
-    <el-row class="top-bar" type="flex">
-      <el-col :span="8" class="app-title-col">
-        <div><h1><router-link :to="'/' + language">{{ trans('navigation.app_name') }}</router-link></h1></div>
-      </el-col>
-      <el-col :span="16" class="nav-col">
-        <nav>
-          <el-menu ref="topMenu" :default-active="$route.fullPath" background-color="#313131" text-color="#fff" active-text-color="#4bd5ff" class="top-menu" mode="horizontal" router>
-            <el-submenu index="1">
-              <template slot="title">{{ user.name }}</template>
-              <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('navigation.profile') }}</span></el-menu-item>
-              <el-menu-item :index="'/' + language + '/logout'" @click="logout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
-            </el-submenu>
-            <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('navigation.help') }}</span></el-menu-item>
-            <el-menu-item index="" @click="setLanguage">
-              <span v-if="toggledLang === 'en'">English</span>
-              <span v-else>Français</span>
-            </el-menu-item>
-            <el-menu-item index="" v-if="user.isAdmin" @click="toggleAdminBar">
-              <span>
-                <i :class="['el-icon-setting', { 'active' : isAdminBarShown} ]"></i>
-              </span>
-            </el-menu-item>
-          </el-menu>
-        </nav>
-      </el-col>
-    </el-row>
-    <el-row class="admin-bar">
-      <transition name="slide-down">
+  <el-row class="top-bar" type="flex">
+    <el-col :span="8" class="app-title-col">
+      <div><h1><router-link :to="'/' + language">{{ trans('navigation.app_name') }}</router-link></h1></div>
+    </el-col>
+    <el-col :span="16" class="nav-col">
+      <nav>
         <el-menu
-          v-if="isAdminBarShown"
-          ref="adminMenu"
-          background-color="#fa5555"
-          text-color="#e3e3e3"
-          active-text-color="#ffffff"
+          ref="topMenu"
           :default-active="$route.fullPath"
-          mode="horizontal" router>
-          <el-menu-item v-for="(item, index) in admin" :index="'/' + language + item.index" :class="item.classes" :key="index">
-            <i :class="item.icon"></i>
-            <a href="#" @click.prevent>{{ item.text }}</a>
+          background-color="#201e2c"
+          text-color="#fff"
+          active-text-color="#fff"
+          class="top-menu"
+          mode="horizontal"
+          router>
+          <el-submenu index="1" popper-class="sub-menu">
+            <template slot="title">{{ user.name }}</template>
+            <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('navigation.profile') }}</span></el-menu-item>
+            <el-menu-item :index="'/' + language + '/logout'" @click="logout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
+          </el-submenu>
+          <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('navigation.help') }}</span></el-menu-item>
+          <el-menu-item index="" @click="setLanguage">
+            <span v-if="toggledLang === 'en'">English</span>
+            <span v-else>Français</span>
+          </el-menu-item>
+          <el-menu-item index="" v-if="user.isAdmin" @click="toggleAdminBar">
+            <span>
+              <i :class="['el-icon-setting', { 'active' : isAdminBarShown} ]"></i>
+            </span>
           </el-menu-item>
         </el-menu>
-      </transition>
-    </el-row>
-  </div>
+      </nav>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -62,22 +51,7 @@
         user: 'users/current'
       }),
 
-      admin() {
-        return [
-          {
-            text: this.trans('navigation.admin_dashboard'),
-            icon: 'el-icon-menu',
-            classes: '',
-            index: '/admin'
-          },
-          {
-            text: this.trans('navigation.admin_user_list'),
-            icon: 'el-icon-menu',
-            classes: '',
-            index: '/admin/users'
-          }
-        ];
-      }
+
     },
 
     data() {
@@ -98,7 +72,7 @@
         // we do not know when it will update itself
         // so just wait until the DOM is updated
         this.$nextTick(() => {
-          let menu = this.isAdminBarShown ? this.$refs.adminMenu : this.$refs.topMenu;
+          let menu = this.$refs.topMenu;
           this.setActiveIndex(to, menu);
         });
       },
@@ -141,20 +115,31 @@
     },
 
     mounted() {
-      let menu = this.isAdminBarShown ? this.$refs.adminMenu : this.$refs.topMenu;
+      let menu = this.$refs.topMenu;
       this.setActiveIndex(this.$route, menu);
     }
   };
 </script>
 
 <style lang="scss">
-  @import '../../sass/vendors/elementui/vars';
+  @import '../../sass/abstracts/vars';
+
+  $top-bar-height: 50px;
+  $top-bar-fill: #201e2c;
+
   .top-bar {
     user-select: none;
     padding: 0 20px;
-    background-color: #313131;
+    background-color: $top-bar-fill;
     position: relative;
     z-index: $--index-top;
+    // make space for the side-bar-toggle button
+    padding-left: 70px;
+    .el-menu-item,
+    .el-submenu .el-submenu__title {
+      height: $top-bar-height;
+      line-height: $top-bar-height;
+    }
     .el-col {
       display: flex;
       align-items: center;
@@ -169,7 +154,7 @@
       text-transform: uppercase;
       display: flex;
       a {
-        color: #FFF;
+        color: $--color-white;
         text-decoration: none;
         display: inline-block;
         vertical-align: middle;
@@ -178,13 +163,12 @@
 
     .top-menu {
       border: 0;
-
       a {
         text-decoration: none;
       }
 
       .el-icon-setting {
-        color: #FFF;
+        color: $--color-white;
         &.active {
           color: $--color-danger;
         }
@@ -192,43 +176,21 @@
     }
   }
 
-  $admin-bar-height: 45px;
-  .admin-bar {
-    .el-menu {
-      padding: 0 20px;
-      display: flex;
-      justify-content: flex-end;
-      &-item:not(.is-active) {
-        i, a {
-          color: #f3f3f3;
-        }
-      }
-
-      &-item {
-        border: none !important;
-        height: $admin-bar-height;
-        display: flex;
-        align-items: center;
-        &.is-active {
-          background-color: #c84444 !important;
-        }
-        a {
-          text-decoration: none;
-        }
+  .sub-menu .el-menu,
+  .sub-menu .el-menu-item,
+  .sub-menu .el-submenu .el-submenu__title {
+    color: $--color-black !important;
+    background-color: $--color-white !important;
+    @at-root .sub-menu .el-menu {
+      border-radius: 0;
+      border: 1px solid #cdcdcd;
+      padding: 0;
+      margin-top: 2px;
+      &-item:hover,
+      &-item.is-active {
+        color: $--color-white !important;
+        background-color: #3e3180 !important;
       }
     }
-  }
-
-  // Slide Down-Up
-  .slide-down-enter-active, .slide-down-leave-active {
-    transition: all 0.3s ease;
-  }
-  .slide-down-enter-to, .slide-down-leave {
-    height: $admin-bar-height;
-    overflow: hidden;
-  }
-  .slide-down-enter, .slide-down-leave-to {
-    height: 0;
-    opacity: 0;
   }
 </style>

@@ -1,0 +1,4 @@
+.el-menu-item.is-active, .el-menu-item.is-active * {
+  transition: all 0.3s;
+  cursor: default;
+}

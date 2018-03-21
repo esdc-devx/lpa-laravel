@@ -1,0 +1,9 @@
+.el-table {
+  border: 1px solid #e6e5e9;
+  .cell {
+    word-break: normal;
+  }
+  th, td {
+    padding: 12px 20px;
+  }
+}

@@ -1,6 +1,8 @@
 <template>
   <div class="project-list content" v-loading="isLoading">
-    <el-button @click="showCreateModal = true">Create a project</el-button>
+    <div class="controls">
+      <el-button @click="showCreateModal = true">Create a project</el-button>
+    </div>
     <el-table
       empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
@@ -9,21 +11,18 @@
       <el-table-column
         sortable
         prop="id"
-        label="Id"
-        class-name="numFilter"
+        label="LPA #"
         width="180">
       </el-table-column>
       <el-table-column
         sortable
-        class-name="nameFilter"
         prop="name"
-        label="Name">
+        label="Project Name">
       </el-table-column>
       <el-table-column
         :filters="orgUnit"
         :filter-method="filterOrgUnit"
         filter-placement="bottom-start"
-        class-name="orgunit-filter"
         prop="organizational_unit.name"
         label="Organizational unit">
         <template slot-scope="scope">
@@ -106,7 +105,7 @@
       },
 
       scrollToTop() {
-        this.$parent.$el.scrollTop = 0;
+        document.querySelectorAll('.el-main')[0].scrollTop = 0;
         // IE11 scroll to top
         document.documentElement.scrollTop = 0;
       },
@@ -149,6 +148,10 @@
       margin-right: 4px;
       margin-top: 2px;
       margin-bottom: 2px;
+    }
+
+    .controls {
+      margin: 20px auto;
     }
   }
 </style>

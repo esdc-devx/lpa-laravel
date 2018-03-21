@@ -2,11 +2,8 @@
   <transition name="fade" mode="in-out">
     <div v-show="isHomePage === false" class="breadcrumb">
       <el-breadcrumb separator-class="el-icon-arrow-right" >
-        <el-breadcrumb-item v-for="crumb in getBreadcrumbs()" :to="{ path: crumb.path }" :key="crumb.id">
-          {{ crumb.name }}
-        </el-breadcrumb-item>
+        <el-breadcrumb-item v-for="crumb in getBreadcrumbs()" :to="{ path: crumb.path }" :key="crumb.id">{{ crumb.name }}</el-breadcrumb-item>
       </el-breadcrumb>
-      <hr>
     </div>
   </transition>
 </template>
@@ -118,13 +115,15 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/vendors/elementui/vars';
+  @import '../../sass/abstracts/vars';
   .breadcrumb {
+    // make sure that the breadcrumb doesn't have any space on the left-right
+    margin: auto -30px;
+    background-color: $--color-white;
     .el-breadcrumb {
+      padding: 10px 30px;
       font-size: 18px;
       line-height: 2;
-      margin-bottom: 10px;
-      text-transform: uppercase;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
   }
