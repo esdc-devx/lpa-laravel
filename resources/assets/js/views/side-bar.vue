@@ -163,22 +163,22 @@
     &:not(.el-menu--collapse) {
       width: $side-bar-width;
     }
-    a {
+    span {
       text-decoration: none;
       height: 100%;
       display: inline-block;
     }
-    a, i {
+    span, i {
       transition: $--all-transition;
       color: mix($--color-white, $side-bar-fill, 75%);
-      vertical-align: baseline;
+      vertical-align: middle !important;
     }
     .el-menu-item {
       transition: $--all-transition;
       &:hover, &:focus {
         transition: $--all-transition;
         background-color: mix($--color-black, $side-bar-fill, 25%);
-        a, i {
+        span, i {
           transition: $--all-transition;
           color: mix($--color-white, $side-bar-fill, 95%);
         }
@@ -195,7 +195,7 @@
           background-color: $side-bar-active-item-border !important;
           transition: $--all-transition;
         }
-        a, i {
+        span, i {
           color: mix($--color-white, $side-bar-fill, 95%);
         }
       }
