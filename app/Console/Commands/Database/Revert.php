@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands\Database;
 
-//use Illuminate\Console\Command;
 use App\Console\BaseCommand;
 use Illuminate\Support\Facades\Schema;
-
-use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 class Revert extends BaseCommand
 {
