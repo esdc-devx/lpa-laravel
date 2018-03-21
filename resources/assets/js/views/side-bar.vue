@@ -115,9 +115,9 @@
       width: 60px;
       height: 50px;
       cursor: pointer;
-      transition: background-color 0.3s;
+      transition: $--bg-color-transition-base;
       &:hover {
-        transition: background-color 0.3s;
+        transition: $--bg-color-transition-base;
         background-color: #322f43;
       }
       &-inner {
@@ -169,15 +169,21 @@
       display: inline-block;
     }
     a, i {
+      transition: $--all-transition;
       color: mix($--color-white, $side-bar-fill, 75%);
       vertical-align: baseline;
     }
     .el-menu-item {
+      transition: $--all-transition;
       &:hover, &:focus {
+        transition: $--all-transition;
         background-color: mix($--color-black, $side-bar-fill, 25%);
+        a, i {
+          transition: $--all-transition;
+          color: mix($--color-white, $side-bar-fill, 95%);
+        }
       }
       &.is-active {
-        position: relative;
         background-color: mix($--color-black, $side-bar-fill, 25%) !important;
         &:after {
           content: '';
@@ -187,7 +193,7 @@
           width: 4px;
           height: 100%;
           background-color: $side-bar-active-item-border !important;
-          transition: all 0.3s;
+          transition: $--all-transition;
         }
         a, i {
           color: mix($--color-white, $side-bar-fill, 95%);

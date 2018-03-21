@@ -3,7 +3,11 @@
 /* Colors
 -------------------------- */
 $--color-primary: #524f74;
-$--color-text-primary: #111;
+$--color-text-primary: #524f74;
+
+/* Transition
+-------------------------- */
+$--bg-color-transition-base: background-color .2s cubic-bezier(.645,.045,.355,1) !default;
 
 /* z-index
 -------------------------- */

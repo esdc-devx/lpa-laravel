@@ -1,6 +1,10 @@
 // 1 - Vendors
-// ElementUI overrides
+// ElementUI Theme
 @import 'vendors/elementui/vars';
+// this needs to be imported after the vars override
+// since it also contains the default vars
+@import '../../../node_modules/element-ui/packages/theme-chalk/src/index';
+// ElementUI overrides
 @import 'vendors/elementui/notify';
 @import 'vendors/elementui/form';
 @import 'vendors/elementui/table';
@@ -8,8 +12,6 @@
 @import 'vendors/elementui/breadcrumb';
 @import 'vendors/elementui/tooltip';
 @import 'vendors/elementui/menu';
-// ElementUI Theme
-@import '../../../node_modules/element-ui/packages/theme-chalk/src/index';
 
 // 2 - Configuration and helpers
 @import 'abstracts/vars';

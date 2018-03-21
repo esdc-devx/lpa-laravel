@@ -1,5 +1,5 @@
 <template>
-  <div class="user-edit content" v-loading="isLoading">
+  <div class="user-edit content">
     <h2>{{ trans('navigation.admin_user_edit') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
@@ -60,7 +60,6 @@
 
     data() {
       return {
-        isLoading: true,
         isUserInfoLoading: false,
         form: {
           user: {}
@@ -71,6 +70,8 @@
 
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         updateUser: 'users/updateUser',
         loadViewingUser: 'users/loadViewingUser',
         // @removeme: when backend route for edit info is done
@@ -108,31 +109,36 @@
 
       goBack: _.throttle(function() {
         this.$router.push(`/${this.language}/admin/users`);
-      })
+      }),
+
+      async triggerLoadUserInfo() {
+        this.showMainLoading();
+        // @todo: make only 1 call to loadUserEditInfo
+        await this.loadUser();
+        await this.loadUserCreateInfo();
+        this.form.user = Object.assign({}, this.viewingUser);
+        // replace our internal organizational_units with only the ids
+        // since ElementUI only need ids to populate the selected options
+        this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
+        this.isUserInfoLoading = false;
+        this.hideMainLoading();
+      }
     },
 
     async mounted() {
+      EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', async () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.$validator.reset();
         this.isUserInfoLoading = true;
+        // only load the organizational units
         await this.loadUserCreateInfo();
         this.isUserInfoLoading = false;
       });
 
-      EventBus.$emit('App:ready');
-
-      // @todo: make only 1 call to loadUserEditInfo
-      await this.loadUser();
-      await this.loadUserCreateInfo();
-      this.form.user = Object.assign({}, this.viewingUser);
-      // replace our internal organizational_units with only the ids
-      // since ElementUI only need ids to populate the selected options
-      this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
-      this.isUserInfoLoading = false;
-      this.isLoading = false;
+      this.triggerLoadUserInfo();
     }
   };
 </script>

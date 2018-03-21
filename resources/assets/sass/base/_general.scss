@@ -7,14 +7,15 @@ body {
   font-size: $font-size-base;
   line-height: $line-height-base;
   margin: 0;
+  color: $--color-text-primary;
 }
 
 a {
-  color: $--color-text-regular;
+  color: $--link-color;
   font-weight: bold;
-  transition: color 0.3s ease;
+  transition: $--color-transition-base;
   &:hover {
-    color: $--color-text-primary;
+    color: $--link-hover-color;
   }
 }
 

@@ -10,7 +10,9 @@
           <side-bar/>
         </el-aside>
 
-        <el-container class="content-wrap">
+        <el-container class="content-wrap"
+          v-loading.lock="isMainLoading"
+          element-loading-background="rgba(250, 250, 250, 0.6)">
           <el-header height="auto">
             <admin-bar/>
           </el-header>
@@ -28,6 +30,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   import EventBus from './helpers/event-bus';
 
   import TopBar from './views/top-bar.vue';
@@ -45,6 +48,12 @@
       return {
         isLoading: true
       }
+    },
+
+    computed: {
+      ...mapGetters([
+        'isMainLoading'
+      ])
     },
 
     beforeCreate() {

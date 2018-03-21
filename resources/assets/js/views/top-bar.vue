@@ -151,13 +151,13 @@
     h1 {
       font-size: 1.3rem;
       margin: 0;
-      text-transform: uppercase;
       display: flex;
       a {
         color: $--color-white;
         text-decoration: none;
         display: inline-block;
         vertical-align: middle;
+        font-weight: 600;
       }
     }
 
@@ -165,6 +165,10 @@
       border: 0;
       a {
         text-decoration: none;
+      }
+
+      li:hover, li:hover .el-submenu__title {
+        background-color: #322f43 !important;
       }
 
       .el-icon-setting {
@@ -189,7 +193,7 @@
       &-item:hover,
       &-item.is-active {
         color: $--color-white !important;
-        background-color: #3e3180 !important;
+        background-color: #322f43 !important;
       }
     }
   }

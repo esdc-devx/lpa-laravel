@@ -84,7 +84,7 @@
 
     data() {
       return {
-        isUserInfoLoading: true,
+        isUserInfoLoading: false,
         form: {
           name: '',
           username: '',
@@ -96,6 +96,8 @@
 
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         searchUser: `${namespace}/searchUser`,
         createUser: `${namespace}/createUser`,
         loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
@@ -156,24 +158,27 @@
       // Navigation
       goBack: _.throttle(function() {
         this.$router.push(`/${this.language}/admin/users`);
-      }, 500)
+      }, 500),
+
+      async triggerLoadUserCreateInfo() {
+        this.isUserInfoLoading = true;
+        await this.loadUserCreateInfo();
+        this.isUserInfoLoading = false;
+      }
     },
 
-    async created() {
+    async mounted() {
+      EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', async () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        this.isUserInfoLoading = true;
-        await this.loadUserCreateInfo();
-        this.isUserInfoLoading = false;
+        await this.triggerLoadUserCreateInfo();
       });
 
-      await this.loadUserCreateInfo();
-      EventBus.$emit('App:ready');
-      this.isUserInfoLoading = false;
+      await this.triggerLoadUserCreateInfo();
     }
   };
 </script>

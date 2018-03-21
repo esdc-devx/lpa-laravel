@@ -1,4 +1,8 @@
-.el-menu-item.is-active, .el-menu-item.is-active * {
-  transition: all 0.3s;
-  cursor: default;
+.el-menu-item {
+  height: 50px;
+  line-height: 50px;
+  &.is-active, &.is-active * {
+    transition: $--all-transition;
+    cursor: default;
+  }
 }

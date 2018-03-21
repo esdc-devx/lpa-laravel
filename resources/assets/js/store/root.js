@@ -8,18 +8,25 @@ import Config from '../config';
 export const state = {
   language: Config.defaultLang,
   languages: [],
-  isAdminBarShown: false
+  isAdminBarShown: false,
+  isMainLoading: false
 };
 
 export const getters = {
   language(state) {
     return state.language;
   },
+
   languages(state) {
     return state.languages;
   },
+
   isAdminBarShown(state) {
     return state.isAdminBarShown;
+  },
+
+  isMainLoading(state) {
+    return state.isMainLoading;
   }
 };
 
@@ -43,6 +50,15 @@ export const actions = {
   // Admin handlers
   toggleAdminBar({ commit }, context) {
     commit(types.TOGGLE_ADMINBAR, context);
+  },
+
+  // Loading handlers
+  showMainLoading({ commit }, context) {
+    commit(types.TOGGLE_MAIN_LOADING, true);
+  },
+
+  hideMainLoading({ commit }, context) {
+    commit(types.TOGGLE_MAIN_LOADING, false);
   }
 };
 
@@ -67,5 +83,9 @@ export const mutations = {
   [types.TOGGLE_ADMINBAR](state, isShown) {
     isShown = !_.isUndefined(isShown) ? isShown : !state.isAdminBarShown;
     state.isAdminBarShown = isShown;
+  },
+
+  [types.TOGGLE_MAIN_LOADING](state, isShown) {
+    state.isMainLoading = isShown;
   }
 };

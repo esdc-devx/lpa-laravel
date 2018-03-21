@@ -1,5 +1,5 @@
 <template>
-  <div class="project-view content" v-loading="isLoading">
+  <div class="project-view content">
     <h2>{{ project.name }}</h2>
 
   </div>
@@ -22,27 +22,24 @@
       })
     },
 
-    data() {
-      return {
-        isLoading: true
-      }
-    },
-
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         loadProject: `${namespace}/loadProject`
       }),
 
-      async getProject() {
+      async triggerLoadProject() {
+        this.showMainLoading();
         let id = this.$route.params.id;
         await this.loadProject(id);
-        EventBus.$emit('App:ready');
-        this.isLoading = false;
+        this.hideMainLoading();
       }
     },
 
     mounted() {
-      this.getProject();
+      EventBus.$emit('App:ready');
+      this.triggerLoadProject();
     }
   };
 </script>

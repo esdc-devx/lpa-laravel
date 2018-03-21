@@ -1,5 +1,5 @@
 <template>
-  <div class="content user-list" v-loading="isLoading">
+  <div class="content user-list">
     <div class="controls">
       <el-button @click="$router.push('users/create')">Create a user</el-button>
     </div>
@@ -97,7 +97,6 @@
 
     data() {
       return {
-        isLoading: true,
         user: {
           id: null,
           name: null
@@ -110,6 +109,8 @@
 
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         loadUsers: `${namespace}/loadUsers`,
         deleteUser: `${namespace}/deleteUser`
       }),
@@ -176,11 +177,11 @@
 
       async triggerLoadUsers(page) {
         this.$parent.$el.scrollTop = 0;
-        this.isLoading = true;
+        this.showMainLoading();
         page = _.isUndefined(page) ? this.currentPage : page;
         await this.loadUsers(page)
         this.parseUsers();
-        this.isLoading = false;
+        this.hideMainLoading();
       }
     },
 

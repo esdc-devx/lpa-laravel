@@ -2,17 +2,17 @@
 
 // Pop
 .pop-enter-active, .pop-leave-active {
-  transition: transform 0.3s ease;
+  transition: transform .3s ease;
   transform: scale(1);
 }
 .pop-enter, .pop-leave-to {
-  transition: transform 0.3s ease;
+  transition: transform .3s ease;
   transform: scale(0);
 }
 
 // Slide
 .slide-enter-active {
-  transition: all .3s ease;
+  transition: $--all-transition;
 }
 .slide-leave-active {
   transition: all .2s ease;
@@ -89,11 +89,13 @@
 }
 
 // General transitions
+
+.fade-in, .fade-out {
+  transition: $--fade-linear-transition;
+}
 .fade-in {
-  transition: 0.3s opacity ease-in;
   opacity: 1;
 }
 .fade-out {
-  transition: 0.3s opacity ease-out;
   opacity: 0;
 }

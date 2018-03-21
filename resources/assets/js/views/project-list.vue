@@ -1,5 +1,5 @@
 <template>
-  <div class="project-list content" v-loading="isLoading">
+  <div class="project-list content">
     <div class="controls">
       <el-button @click="showCreateModal = true">Create a project</el-button>
     </div>
@@ -62,7 +62,6 @@
 
     data() {
       return {
-        isLoading: true,
         showCreateModal: false,
         showDeleteModal: false,
         currentPage: 1
@@ -87,6 +86,8 @@
 
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         loadProjects: `${namespace}/loadProjects`
       }),
 
@@ -98,10 +99,10 @@
 
       // Pagination
       async handleCurrentChange(newCurrentPage) {
-        this.isLoading = true;
+        this.showMainLoading();
         this.scrollToTop();
         await this.loadProjects(newCurrentPage);
-        this.isLoading = false;
+        this.hideMainLoading();
       },
 
       scrollToTop() {
@@ -125,13 +126,18 @@
 
       filterOrgUnit(value, row) {
         return row.organizational_unit.name === value;
+      },
+
+      async triggerLoadProjects() {
+        this.showMainLoading();
+        await this.$store.dispatch(`${namespace}/loadProjects`);
+        this.hideMainLoading();
       }
     },
 
     async mounted() {
       EventBus.$emit('App:ready');
-      await this.$store.dispatch(`${namespace}/loadProjects`);
-      this.isLoading = false;
+      this.triggerLoadProjects();
     }
   };
 </script>

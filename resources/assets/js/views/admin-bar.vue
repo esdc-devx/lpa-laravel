@@ -114,7 +114,7 @@
 
   // Slide Down-Up
   .slide-down-enter-active, .slide-down-leave-active {
-    transition: all 0.3s ease;
+    transition: $--all-transition;
   }
   .slide-down-enter-to, .slide-down-leave {
     height: $admin-bar-height;
