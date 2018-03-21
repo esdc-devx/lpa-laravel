@@ -38,7 +38,6 @@ async function requireAuth(to, from, next) {
       return true;
     }
   } catch(e) {
-    Notify.notifyError('Unable to get current user.');
     Vue.$log.error(`[router][requireAuth] ${e}`);
     return false;
   }

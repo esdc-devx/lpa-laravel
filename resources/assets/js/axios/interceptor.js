@@ -68,9 +68,9 @@ axios.interceptors.response.use(response => response, error => {
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
     Notify.notifyError('General exception. Please contact your administrator.');
-    Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);
   }
 
+  Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);
   return Promise.reject(error);
 });
 

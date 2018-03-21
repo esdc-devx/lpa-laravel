@@ -15,7 +15,7 @@
       router>
       <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
         <i :class="item.icon"></i>
-        <span slot="title"><a href="#" @click.prevent>{{ item.text }}</a></span>
+        <span slot="title">{{ item.text }}</span>
       </el-menu-item>
     </el-menu>
   </div>

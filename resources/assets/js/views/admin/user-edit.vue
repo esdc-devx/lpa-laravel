@@ -113,6 +113,7 @@
 
       async triggerLoadUserInfo() {
         this.showMainLoading();
+        this.isUserInfoLoading = true;
         // @todo: make only 1 call to loadUserEditInfo
         await this.loadUser();
         await this.loadUserCreateInfo();

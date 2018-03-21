@@ -178,7 +178,9 @@
         await this.triggerLoadUserCreateInfo();
       });
 
+      this.showMainLoading();
       await this.triggerLoadUserCreateInfo();
+      this.hideMainLoading();
     }
   };
 </script>
