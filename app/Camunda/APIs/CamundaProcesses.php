@@ -50,7 +50,7 @@ class CamundaProcesses extends CamundaBaseAPI
     public function deploy(array $data = [])
     {
         // Ensure that deployment file exists.
-        $filePath = $this->camunda->config('app.storage') . $data['file'];
+        $filePath = "{$this->camunda->config('app.storage')}/deployments/{$data['file']}";
         if (!Storage::disk('local')->exists($filePath)) {
             throw new GeneralException("Could not deploy process [{$data['file']}]. Make sure that file exists on the system.");
         }
