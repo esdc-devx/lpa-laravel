@@ -13,12 +13,15 @@ import router from './router';
 import store from './store/';
 
 import Logger from './logger';
+import Helpers from './helpers';
 import Notify from './mixins/notify.js';
 
 import { setLanguage, loadLanguages } from './locale';
 
 import App from './app.vue';
 import Config from './config';
+
+Vue.use(Helpers);
 
 sync(store, router);
 

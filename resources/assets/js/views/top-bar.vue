@@ -93,27 +93,31 @@
         return lang === 'en' ? 'fr' : 'en';
       },
 
-      setLanguage: _.throttle(function() {
-        let storeLang = this.$store.getters.language;
-        let newLang = this.getSwitchedLang(storeLang);
-        let route = Object.assign({}, this.$route);
+      setLanguage() {
+        this.$helpers.throttleAction(() => {
+          let storeLang = this.$store.getters.language;
+          let newLang = this.getSwitchedLang(storeLang);
+          let route = Object.assign({}, this.$route);
 
-        // change the locale of the translation plugin
-        this.$i18n.locale = newLang;
-        // change the language
-        // that will be used to determine the dislayed lang
-        this.currentLang = newLang;
+          // change the locale of the translation plugin
+          this.$i18n.locale = newLang;
+          // change the language
+          // that will be used to determine the dislayed lang
+          this.currentLang = newLang;
 
-        // apply lang to route
-        // so that we can 'refresh' the current route
-        // with the new language
-        route.params.lang = newLang;
-        this.$router.push(route);
-      }, Config.THROTTLE_WAIT_TIME),
+          // apply lang to route
+          // so that we can 'refresh' the current route
+          // with the new language
+          route.params.lang = newLang;
+          this.$router.push(route);
+        });
+      },
 
-      toggleAdminBar: _.throttle(function() {
-        this.$store.dispatch('toggleAdminBar');
-      }, Config.THROTTLE_WAIT_TIME)
+      toggleAdminBar() {
+        this.$helpers.throttleAction(() => {
+          this.$store.dispatch('toggleAdminBar');
+        });
+      }
     },
 
     mounted() {

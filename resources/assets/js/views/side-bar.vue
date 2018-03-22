@@ -95,9 +95,11 @@
     },
 
     methods: {
-      toggleSideBar: _.throttle(function() {
-        this.isCollapsed = !this.isCollapsed;
-      }, Config.THROTTLE_WAIT_TIME)
+      toggleSideBar() {
+        this.$helpers.throttleAction(() => {
+          this.isCollapsed = !this.isCollapsed;
+        });
+      }
     },
 
     mounted() {

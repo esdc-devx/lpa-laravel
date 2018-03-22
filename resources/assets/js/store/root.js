@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { Validator } from 'vee-validate';
 import axios from '../axios/interceptor';
 import * as types from './mutations-types';
-import EventBus from '../helpers/event-bus';
+import EventBus from '../event-bus';
 import Config from '../config';
 
 export const state = {

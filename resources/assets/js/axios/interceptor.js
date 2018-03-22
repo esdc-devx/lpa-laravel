@@ -4,7 +4,7 @@ import HttpStatusCodes from './http-status-codes';
 import router from '../router';
 import store from '../store/';
 import Config from '../config';
-import EventBus from '../helpers/event-bus';
+import EventBus from '../event-bus';
 import Notify from '../mixins/notify.js';
 
 let onLanguageChange = lang => {

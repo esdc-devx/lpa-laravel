@@ -50,7 +50,7 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../helpers/event-bus.js';
+  import EventBus from '../event-bus.js';
 
   import ProjectCreate from '../views/project-create';
   import ProjectsAPI from '../api/projects';

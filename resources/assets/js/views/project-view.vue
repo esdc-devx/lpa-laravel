@@ -7,7 +7,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../helpers/event-bus.js';
+  import EventBus from '../event-bus.js';
 
   import LoadStatus from '../store/load-status-constants';
 

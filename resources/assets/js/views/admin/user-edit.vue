@@ -40,7 +40,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../helpers/event-bus.js';
+  import EventBus from '../../event-bus.js';
   import FormUtils from '../../mixins/form/utils.js';
 
   let namespace = 'users';

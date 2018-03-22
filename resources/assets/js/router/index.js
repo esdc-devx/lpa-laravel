@@ -17,7 +17,6 @@ import Forbidden from '../views/errors/403.vue';
 import LoadStatus from '../store/load-status-constants';
 import store from '../store/';
 
-import EventBus from '../helpers/event-bus.js';
 import Notify from '../mixins/notify.js';
 
 Vue.use(Router);

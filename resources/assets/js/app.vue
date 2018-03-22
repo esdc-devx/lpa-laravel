@@ -31,7 +31,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
-  import EventBus from './helpers/event-bus';
+  import EventBus from './event-bus';
 
   import TopBar from './views/top-bar.vue';
   import AdminBar from './views/admin/admin-bar.vue';

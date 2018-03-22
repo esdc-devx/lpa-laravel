@@ -7,7 +7,7 @@
 </template>
 
 <script>
-  import EventBus from '../../helpers/event-bus.js';
+  import EventBus from '../../event-bus.js';
   export default {
     name: 'admin-dashboard',
     created() {
