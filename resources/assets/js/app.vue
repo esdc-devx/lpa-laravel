@@ -34,7 +34,7 @@
   import EventBus from './helpers/event-bus';
 
   import TopBar from './views/top-bar.vue';
-  import AdminBar from './views/admin-bar.vue';
+  import AdminBar from './views/admin/admin-bar.vue';
   import SideBar from './views/side-bar.vue';
   import Breadcrumb from './views/breadcrumb.vue';
   import MainContent from './views/main-content.vue';

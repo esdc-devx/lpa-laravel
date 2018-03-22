@@ -167,12 +167,23 @@
         text-decoration: none;
       }
 
-      li:hover, li:hover .el-submenu__title {
+      li:hover,
+      li:hover .el-submenu__title,
+      li.is-active .el-submenu__title {
         background-color: #322f43 !important;
+      }
+      .el-submenu__title {
+        border: none !important;
+      }
+
+      // ElementUI override
+      .el-menu-item span {
+        vertical-align: baseline;
       }
 
       .el-icon-setting {
         color: $--color-white;
+        vertical-align: sub;
         &.active {
           color: $--color-danger;
         }
