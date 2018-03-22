@@ -103,6 +103,7 @@
   @import '../../sass/abstracts/vars';
 
   $side-bar-width: 300px;
+  $side-bar-collapsed-width: 64px;
   $side-bar-fill: #322f43;
   $side-bar-active-item-border: #e80a24;
 
@@ -112,7 +113,7 @@
     &-toggle {
       position: absolute;
       top: -50px;
-      width: 60px;
+      width: $side-bar-collapsed-width;
       height: 50px;
       cursor: pointer;
       transition: $--bg-color-transition-base;

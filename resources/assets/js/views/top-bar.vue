@@ -134,7 +134,7 @@
     position: relative;
     z-index: $--index-top;
     // make space for the side-bar-toggle button
-    padding-left: 70px;
+    padding-left: 64px + 15px;
     .el-menu-item,
     .el-submenu .el-submenu__title {
       height: $top-bar-height;
