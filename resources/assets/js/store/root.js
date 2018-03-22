@@ -6,7 +6,7 @@ import EventBus from '../helpers/event-bus';
 import Config from '../config';
 
 export const state = {
-  language: Config.defaultLang,
+  language: Config.DEFAULT_LANG,
   languages: [],
   isAdminBarShown: false,
   isMainLoading: false

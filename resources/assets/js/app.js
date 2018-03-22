@@ -23,7 +23,7 @@ import Config from './config';
 sync(store, router);
 
 Vue.use(Logger, {
-  logLevel          : Config.debug ? 'debug' : 'error',
+  logLevel          : Config.DEBUG ? 'debug' : 'error',
   separator         : '',
   stringifyArguments: false,
   showLogLevel      : false,

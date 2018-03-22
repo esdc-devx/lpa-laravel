@@ -1,6 +1,6 @@
 <template>
   <div class="side-bar">
-    <div class="side-bar-toggle" @click="isCollapsed = !isCollapsed">
+    <div class="side-bar-toggle" @click="toggleSideBar">
       <div class="side-bar-toggle-inner">
         <span></span>
         <span></span>
@@ -23,6 +23,8 @@
 
 <script>
   import { mapGetters } from 'vuex';
+
+  import Config from '../config.js';
   import MenuUtils from '../mixins/menu/utils.js';
 
   export default {
@@ -92,6 +94,12 @@
       }
     },
 
+    methods: {
+      toggleSideBar: _.throttle(function() {
+        this.isCollapsed = !this.isCollapsed;
+      }, Config.THROTTLE_WAIT_TIME)
+    },
+
     mounted() {
       let menu = this.$refs.menu;
       this.setActiveIndex(this.$route, menu);
@@ -103,6 +111,7 @@
   @import '../../sass/abstracts/vars';
 
   $side-bar-width: 300px;
+  $side-bar-collapsed-width: 64px;
   $side-bar-fill: #322f43;
   $side-bar-active-item-border: #e80a24;
 
@@ -112,7 +121,7 @@
     &-toggle {
       position: absolute;
       top: -50px;
-      width: 60px;
+      width: $side-bar-collapsed-width;
       height: 50px;
       cursor: pointer;
       transition: $--bg-color-transition-base;

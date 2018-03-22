@@ -13,7 +13,7 @@ let onLanguageChange = lang => {
 };
 
 // Config
-let defaultLang = Config.defaultLang;
+let defaultLang = Config.DEFAULT_LANG;
 let apiUrl = '/api';
 // affect the language on init
 onLanguageChange(defaultLang);
@@ -76,7 +76,7 @@ axios.interceptors.response.use(response => response, error => {
 
 EventBus.$on('Store:languageUpdate', onLanguageChange);
 
-if (Config.debug) {
+if (Config.DEBUG) {
   window.axios = axios;
 }
 

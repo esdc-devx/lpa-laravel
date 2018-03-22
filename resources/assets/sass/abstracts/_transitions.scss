@@ -59,7 +59,7 @@
 .swipe-left-leave-active, .swipe-left-enter-active,
 .swipe-right-leave-active, .swipe-right-enter-active {
   animation-duration: .6s;
-  animation-timing-function: ease;
+  animation-timing-function: ease-in-out;
 }
 .swipe-right-leave-active, .swipe-right-enter-active {
   animation-direction: reverse;

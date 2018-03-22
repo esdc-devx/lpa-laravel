@@ -37,6 +37,8 @@
 
 <script>
   import { mapGetters } from 'vuex';
+
+  import Config from '../config.js';
   import MenuUtils from '../mixins/menu/utils.js';
 
   export default {
@@ -91,7 +93,7 @@
         return lang === 'en' ? 'fr' : 'en';
       },
 
-      setLanguage() {
+      setLanguage: _.throttle(function() {
         let storeLang = this.$store.getters.language;
         let newLang = this.getSwitchedLang(storeLang);
         let route = Object.assign({}, this.$route);
@@ -107,11 +109,11 @@
         // with the new language
         route.params.lang = newLang;
         this.$router.push(route);
-      },
+      }, Config.THROTTLE_WAIT_TIME),
 
-      toggleAdminBar() {
+      toggleAdminBar: _.throttle(function() {
         this.$store.dispatch('toggleAdminBar');
-      }
+      }, Config.THROTTLE_WAIT_TIME)
     },
 
     mounted() {
@@ -134,7 +136,7 @@
     position: relative;
     z-index: $--index-top;
     // make space for the side-bar-toggle button
-    padding-left: 70px;
+    padding-left: 64px + 15px;
     .el-menu-item,
     .el-submenu .el-submenu__title {
       height: $top-bar-height;
