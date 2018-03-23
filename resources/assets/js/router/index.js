@@ -17,7 +17,7 @@ import Forbidden from '../views/errors/403.vue';
 import LoadStatus from '../store/load-status-constants';
 import store from '../store/';
 
-import Notify from '../mixins/notify.js';
+import Notify from '../mixins/notify';
 
 Vue.use(Router);
 

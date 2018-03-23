@@ -38,6 +38,7 @@ class LoginController extends Controller
     public function __construct(Application $app)
     {
         $this->app = $app;
+        $this->redirectTo = "/{$this->app->getLocale()}";
         $this->middleware('guest')->except('logout');
     }
 
@@ -52,6 +53,6 @@ class LoginController extends Controller
 
         $request->session()->invalidate();
 
-        return redirect($this->app->getLocale() . '/');
+        return redirect("{$this->app->getLocale()}/");
     }
 }

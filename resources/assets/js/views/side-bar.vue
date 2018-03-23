@@ -1,12 +1,5 @@
 <template>
   <div class="side-bar">
-    <div class="side-bar-toggle" @click="toggleSideBar">
-      <div class="side-bar-toggle-inner">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
     <el-menu
       class="menu"
       ref="menu"
@@ -18,6 +11,13 @@
         <span slot="title">{{ item.text }}</span>
       </el-menu-item>
     </el-menu>
+    <div class="side-bar-toggle" @click="toggleSideBar">
+      <div class="side-bar-toggle-inner">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -151,6 +151,8 @@
           }
           &:nth-of-type(2) {
             top: 50%;
+            // translate the 2nd bar to the left when the menu is collapsed
+            left: 5px;
             transform: translateY(-50%);
           }
           &:nth-of-type(3) {
@@ -158,6 +160,11 @@
           }
         }
       }
+
+      .el-menu--collapse ~ & span:nth-of-type(2) {
+        left: 0;
+      }
+
       &-inner, &-inner span {
         display: inline-block;
         transition: all .4s;
