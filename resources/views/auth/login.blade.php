@@ -48,7 +48,7 @@
                             <form-error v-for="error in verrors.collect('password')" :key="error.id">@{{ error }}</form-error>
                         </el-form-item>
                         <el-form-item label="{{ __('login.remember') }}" for="remember">
-                            <el-checkbox name="remember" v-model="remember" @keyup.native.enter="onSubmit"></el-checkbox>
+                            <el-switch name="remember" v-model="remember" @keyup.native.enter="onSubmit"></el-switch>
                         </el-form-item>
 
                         <el-form-item class="controls-wrap">
