@@ -14,7 +14,7 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app">
+    <div id="app" v-cloak>
         <el-container>
             <el-header height="50px">
                 <div class="top-bar">
