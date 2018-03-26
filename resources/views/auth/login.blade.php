@@ -48,7 +48,7 @@
                             <form-error v-for="error in verrors.collect('password')" :key="error.id">@{{ error }}</form-error>
                         </el-form-item>
                         <el-form-item label="{{ __('login.remember') }}" for="remember">
-                            <el-switch name="remember" v-model="remember" @keyup.native.enter="onSubmit"></el-switch>
+                            <el-switch name="remember" v-model="remember"></el-switch>
                         </el-form-item>
 
                         <el-form-item class="controls-wrap">
@@ -132,7 +132,7 @@
 
         .controls-wrap .el-form-item__content {
             margin: 0 !important;
-            text-align: center;
+            text-align: right;
         }
 
         .el-icon-view:hover, .el-icon-view.active {

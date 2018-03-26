@@ -11,6 +11,7 @@ use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException as MethodNotAllowedHttpException;
+use Illuminate\Session\TokenMismatchException as VerifyCsrfToken;
 use App\Http\Traits\UsesJsonResponse;
 
 class Handler extends ExceptionHandler
@@ -95,6 +96,11 @@ class Handler extends ExceptionHandler
             // Handle data validation errors.
             if ($exception instanceof ValidationException) {
                 return $this->respondValidationError($exception->errors());
+            }
+
+            // Handle data validation errors.
+            if ($exception instanceof VerifyCsrfToken) {
+                return $this->respondInvalidRequest();
             }
 
             // Default to internal error response.

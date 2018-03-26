@@ -20,6 +20,8 @@ import FormUtils from './mixins/form/utils';
 const elementUILocale = Config.DEFAULT_LANG === 'en' ? elementUILocaleEN : elementUILocaleFR;
 Vue.use(ElementUI, { locale: elementUILocale });
 
+Vue.mixin({ methods: Notify });
+
 Vue.use(Logger, {
   logLevel          : Config.DEBUG ? 'debug' : 'error',
   separator         : '',
@@ -80,9 +82,14 @@ new Vue({
         // all good, submit form manually
         window.location = request.responseURL;
       })
-      .catch(e => {
+      .catch(({ response }) => {
+        // catch in case of token mismatch, invalid session, etc due to cache cleared by user
+        if (response.status === 400) {
+          this.notifyError('Bad request. Please refresh your page.');
+          return;
+        }
         this.isSaving = false;
-        this.manageBackendErrors(e.response.data.errors);
+        this.manageBackendErrors(response.data.errors);
       });
     },
 
