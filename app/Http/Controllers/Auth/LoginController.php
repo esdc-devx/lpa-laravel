@@ -53,6 +53,6 @@ class LoginController extends Controller
 
         $request->session()->invalidate();
 
-        return redirect("{$this->app->getLocale()}/");
+        return redirect("{$this->redirectTo}/login");
     }
 }

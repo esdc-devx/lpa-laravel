@@ -8,9 +8,8 @@ import Config from '../config';
 import EventBus from '../event-bus';
 import Notify from '../mixins/notify';
 
-let apiUrl = '/api';
 let onLanguageChange = lang => {
-  axios.defaults.baseURL = '/' + lang + apiUrl;
+  axios.defaults.baseURL = '/' + lang + '/';
   axios.defaults.headers.common['Accept-Language'] = lang;
 };
 // affect the language on init

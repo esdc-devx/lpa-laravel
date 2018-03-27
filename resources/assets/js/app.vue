@@ -1,6 +1,6 @@
 <template>
   <div id="app" v-cloak>
-    <el-container v-show="isLoading === false">
+    <el-container>
       <el-header height="auto">
         <top-bar/>
       </el-header>
@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
   import EventBus from './event-bus';
 
   import TopBar from './views/top-bar.vue';
@@ -44,31 +44,21 @@
 
     components: { TopBar, AdminBar, SideBar, Breadcrumb, MainContent },
 
-    data() {
-      return {
-        isLoading: true
-      }
-    },
-
     computed: {
       ...mapGetters([
         'isMainLoading'
       ])
     },
 
+    methods: {
+      ...mapActions([
+        'hideAppLoading'
+      ])
+    },
+
     beforeCreate() {
       EventBus.$once('App:ready', () => {
-        this.isLoading = false;
-        // remove loading spinner
-        let spinner = document.querySelectorAll('.loading-spinner')[0];
-        if (spinner) {
-          spinner.classList.add('fade-out');
-          setTimeout(() => {
-            spinner.parentNode.removeChild(spinner);
-            // css animation is 300ms,
-            // buffer it by 200ms so that the element is removed smoothly
-          }, 500);
-        }
+        this.hideAppLoading();
       });
     }
   };

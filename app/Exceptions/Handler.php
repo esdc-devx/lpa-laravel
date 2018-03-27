@@ -3,16 +3,16 @@
 namespace App\Exceptions;
 
 use Exception;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App\Http\Traits\UsesJsonResponse;
 use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException as VerifyCsrfToken;
 use Illuminate\Validation\ValidationException as ValidationException;
 use Illuminate\Auth\AuthenticationException as AuthenticationException;
 use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException as MethodNotAllowedHttpException;
-use Illuminate\Session\TokenMismatchException as VerifyCsrfToken;
-use App\Http\Traits\UsesJsonResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -98,7 +98,7 @@ class Handler extends ExceptionHandler
                 return $this->respondValidationError($exception->errors());
             }
 
-            // Handle data validation errors.
+            // Handle CSRF token validation error.
             if ($exception instanceof VerifyCsrfToken) {
                 return $this->respondInvalidRequest();
             }

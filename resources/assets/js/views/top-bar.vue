@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
   import Config from '../config.js';
   import MenuUtils from '../mixins/menu/utils.js';
@@ -51,9 +51,7 @@
         language: 'language',
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current'
-      }),
-
-
+      })
     },
 
     data() {
@@ -85,8 +83,15 @@
     },
 
     methods: {
+      ...mapActions([
+        'showAppLoading'
+      ]),
+
       logout() {
-        window.location = '/' + this.$store.getters.language + '/logout';
+        this.showAppLoading();
+        axios.post('logout').then(({ request }) => {
+          window.location = request.responseURL;
+        })
       },
 
       getSwitchedLang(lang) {

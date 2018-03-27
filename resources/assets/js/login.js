@@ -17,6 +17,8 @@ import Config from './config';
 import FormError from './components/forms/error';
 import FormUtils from './mixins/form/utils';
 
+import HttpStatusCodes from './axios/http-status-codes';
+
 const elementUILocale = Config.DEFAULT_LANG === 'en' ? elementUILocaleEN : elementUILocaleFR;
 Vue.use(ElementUI, { locale: elementUILocale });
 
@@ -45,8 +47,6 @@ Vue.use(VeeValidate, {
 });
 
 Object.assign(axios.defaults, axiosDefaults);
-// override the baseURL since we are not posting to the api url
-axios.defaults.baseURL = '/' + Config.DEFAULT_LANG;
 
 new Vue({
   el: '#app',
@@ -73,7 +73,7 @@ new Vue({
 
     // attempt to login if basic validation succeed
     login() {
-      axios.post('/login', {
+      axios.post('login', {
         username: this.username,
         password: this.password,
         remember: this.remember
@@ -84,8 +84,11 @@ new Vue({
       })
       .catch(({ response }) => {
         // catch in case of token mismatch, invalid session, etc due to cache cleared by user
-        if (response.status === 400) {
+        if (response.status === HttpStatusCodes.BAD_REQUEST) {
           this.notifyError('Bad request. Please refresh your page.');
+          return;
+        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
+          this.notifyError('Please contact your administrator.');
           return;
         }
         this.isSaving = false;
@@ -109,11 +112,6 @@ new Vue({
     let spinner = document.querySelectorAll('.loading-spinner')[0];
     if (spinner) {
       spinner.classList.add('fade-out');
-      setTimeout(() => {
-        spinner.parentNode.removeChild(spinner);
-        // css animation is 300ms,
-        // buffer it by 200ms so that the element is removed smoothly
-      }, 500);
     }
   }
 });
