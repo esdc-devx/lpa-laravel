@@ -44,7 +44,7 @@ export const actions = {
   async loadLanguages({ commit }, context) {
     let response;
     try {
-      response = await axios.get('api/locales')
+      response = await axios.get('locales')
       commit(types.SET_LANGUAGES, response.data.data);
       return response.data.data;
     } catch(e) {

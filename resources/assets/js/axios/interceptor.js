@@ -9,7 +9,7 @@ import EventBus from '../event-bus';
 import Notify from '../mixins/notify';
 
 let onLanguageChange = lang => {
-  axios.defaults.baseURL = '/' + lang + '/';
+  axios.defaults.baseURL = '/' + lang + '/api';
   axios.defaults.headers.common['Accept-Language'] = lang;
 };
 // affect the language on init

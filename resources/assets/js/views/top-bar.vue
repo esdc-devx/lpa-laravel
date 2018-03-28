@@ -17,7 +17,7 @@
           <el-submenu index="1" popper-class="sub-menu">
             <template slot="title">{{ user.name }}</template>
             <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('navigation.profile') }}</span></el-menu-item>
-            <el-menu-item index="" @click="logout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
+            <el-menu-item index="" @click="onLogout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
           </el-submenu>
           <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('navigation.help') }}</span></el-menu-item>
           <el-menu-item index="" @click="setLanguage">
@@ -83,15 +83,15 @@
     },
 
     methods: {
-      ...mapActions([
-        'showAppLoading'
-      ]),
+      ...mapActions({
+        logout: 'users/logout',
+        showAppLoading: 'showAppLoading'
+      }),
 
-      logout() {
+      async onLogout() {
         this.showAppLoading();
-        axios.post('logout').then(({ request }) => {
-          window.location = request.responseURL;
-        })
+        let request = await this.logout();
+        window.location = request.responseURL;
       },
 
       getSwitchedLang(lang) {

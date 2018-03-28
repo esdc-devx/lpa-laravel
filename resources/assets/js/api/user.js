@@ -1,38 +1,46 @@
 import axios from '../axios/interceptor';
+import Config from '../config';
 
 export default {
+  logout() {
+    // create a new instance of axios
+    // so that we are not using the api defaults
+    let request = axios.create({baseURL: '/' + Config.DEFAULT_LANG});
+    return request.post('logout');
+  },
+
   getUsers(page) {
     let query = !_.isUndefined(page) ? `?page=${page}` : '';
-    return axios.get(`api/users${query}`);
+    return axios.get(`users${query}`);
   },
 
   getUser(id) {
     let request = !_.isUndefined(id) ? id : 'current';
-    return axios.get(`api/users/${request}`);
+    return axios.get(`users/${request}`);
   },
 
   createUser(user) {
-    return axios.post('api/users', user);
+    return axios.post('users', user);
   },
 
   updateUser(user) {
-    return axios.put(`api/users/${user.id}`, user);
+    return axios.put(`users/${user.id}`, user);
   },
 
   deleteUser(id) {
-    return axios.delete(`api/users/${id}`);
+    return axios.delete(`users/${id}`);
   },
 
   getUserCreateInfo() {
-    return axios.get('api/users/create');
+    return axios.get('users/create');
   },
 
   // @todo: wait for backend route to be implemented
   getUserEditInfo() {
-    return axios.get('api/users/edit');
+    return axios.get('users/edit');
   },
 
   searchUser(name) {
-    return axios.get(`api/users/search?name=${name}`);
+    return axios.get(`users/search?name=${name}`);
   }
 };

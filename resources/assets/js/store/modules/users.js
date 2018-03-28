@@ -47,6 +47,16 @@ export default {
   },
 
   actions: {
+    async logout({ commit }) {
+      let response;
+      try {
+        response = await UserAPI.logout();
+        return response.request.responseURL;
+      } catch(e) {
+        throw e;
+      }
+    },
+
     async loadUsers({ commit }, page) {
       // commit('setUserLoadStatus', LoadStatus.LOADING_STARTED);
       let response;

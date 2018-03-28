@@ -4,7 +4,7 @@ import Notify from '../mixins/notify';
 let defaultLang = Config.DEFAULT_LANG;
 
 const defaults = {
-  baseURL: '/' + defaultLang + '/',
+  baseURL: '/' + defaultLang + '/api',
   timeout: 5000,
   headers: {
     common: {

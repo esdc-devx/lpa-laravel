@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import axios from 'axios';
-import axiosDefaults from './axios/defaults';
 
 import VeeValidate from 'vee-validate';
 import veeLocaleFR from 'vee-validate/dist/locale/fr';
@@ -46,8 +45,6 @@ Vue.use(VeeValidate, {
   }
 });
 
-Object.assign(axios.defaults, axiosDefaults);
-
 new Vue({
   el: '#app',
 
@@ -73,7 +70,8 @@ new Vue({
 
     // attempt to login if basic validation succeed
     login() {
-      axios.post('login', {
+      let request = axios.create({baseURL: '/' + Config.DEFAULT_LANG});
+      request.post('login', {
         username: this.username,
         password: this.password,
         remember: this.remember
