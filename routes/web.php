@@ -15,11 +15,12 @@ Route::get('/', function () {
     return view('app');
 })->middleware('auth');
 
-Route::get('logout', '\App\Http\Controllers\Auth\LoginController@logout');
+// Authentication routes.
+Route::get('login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('login', 'Auth\LoginController@login');
+Route::post('logout', 'Auth\LoginController@logout')->name('logout');
 
-Auth::routes();
-
-// Vue
+// VueJS
 Route::any('{all}', function () {
     return view('app');
 })

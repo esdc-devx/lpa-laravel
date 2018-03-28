@@ -10,6 +10,7 @@
 /public/mix-manifest.json
 /public/css/app.css
 /public/js/app.js
+/public/js/login.js
 /storage/*.key
 /vendor
 Homestead.json

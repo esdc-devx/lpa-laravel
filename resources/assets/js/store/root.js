@@ -9,6 +9,7 @@ export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
   isAdminBarShown: false,
+  isAppLoading: false,
   isMainLoading: false
 };
 
@@ -25,6 +26,10 @@ export const getters = {
     return state.isAdminBarShown;
   },
 
+  isAppLoading(state) {
+    return state.isAppLoading;
+  },
+
   isMainLoading(state) {
     return state.isMainLoading;
   }
@@ -39,7 +44,7 @@ export const actions = {
   async loadLanguages({ commit }, context) {
     let response;
     try {
-      response = await axios.get('/locales')
+      response = await axios.get('locales')
       commit(types.SET_LANGUAGES, response.data.data);
       return response.data.data;
     } catch(e) {
@@ -53,6 +58,14 @@ export const actions = {
   },
 
   // Loading handlers
+  showAppLoading({ commit }, context) {
+    commit(types.TOGGLE_APP_LOADING, true);
+  },
+
+  hideAppLoading({ commit }, context) {
+    commit(types.TOGGLE_APP_LOADING, false);
+  },
+
   showMainLoading({ commit }, context) {
     commit(types.TOGGLE_MAIN_LOADING, true);
   },
@@ -83,6 +96,20 @@ export const mutations = {
   [types.TOGGLE_ADMINBAR](state, isShown) {
     isShown = !_.isUndefined(isShown) ? isShown : !state.isAdminBarShown;
     state.isAdminBarShown = isShown;
+  },
+
+  [types.TOGGLE_APP_LOADING](state, isShown) {
+    let spinner = document.querySelectorAll('.loading-spinner')[0];
+    if (spinner) {
+      if (!isShown) {
+        spinner.classList.add('fade-out');
+        spinner.classList.remove('fade-in');
+      } else {
+        spinner.classList.add('fade-in');
+        spinner.classList.remove('fade-out');
+      }
+    }
+    state.isAppLoading = isShown;
   },
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {

@@ -17,7 +17,7 @@
           <el-submenu index="1" popper-class="sub-menu">
             <template slot="title">{{ user.name }}</template>
             <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('navigation.profile') }}</span></el-menu-item>
-            <el-menu-item :index="'/' + language + '/logout'" @click="logout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
+            <el-menu-item index="" @click="onLogout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
           </el-submenu>
           <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('navigation.help') }}</span></el-menu-item>
           <el-menu-item index="" @click="setLanguage">
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
   import Config from '../config.js';
   import MenuUtils from '../mixins/menu/utils.js';
@@ -51,9 +51,7 @@
         language: 'language',
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current'
-      }),
-
-
+      })
     },
 
     data() {
@@ -85,8 +83,15 @@
     },
 
     methods: {
-      logout() {
-        window.location = '/' + this.$store.getters.language + '/logout';
+      ...mapActions({
+        logout: 'users/logout',
+        showAppLoading: 'showAppLoading'
+      }),
+
+      async onLogout() {
+        this.showAppLoading();
+        let request = await this.logout();
+        window.location = request.responseURL;
       },
 
       getSwitchedLang(lang) {

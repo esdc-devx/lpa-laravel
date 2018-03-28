@@ -99,7 +99,6 @@ trait UsesJsonResponse
 
     /**
      * Return API response with 400 status code.
-     * @note: Currently not being used, maybe remove at some point?
      *
      * @param array $errors
      * @return Illuminate\Http\Response
