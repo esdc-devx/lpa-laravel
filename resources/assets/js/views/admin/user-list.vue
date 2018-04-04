@@ -133,7 +133,7 @@
       scrollToTop() {
         document.querySelectorAll('.el-main')[0].scrollTop = 0;
         // IE11 scroll to top
-        document.documentElement.scrollTop = 0;
+        document.querySelectorAll('.content-wrap')[0].scrollTop = 0
       },
 
       // Form handlers

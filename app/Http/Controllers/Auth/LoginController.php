@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use App\Http\Controllers\Controller;
 
 class LoginController extends Controller
 {
@@ -40,6 +40,17 @@ class LoginController extends Controller
         $this->app = $app;
         $this->redirectTo = "/{$this->app->getLocale()}";
         $this->middleware('guest')->except('logout');
+    }
+
+    protected function sendLoginResponse(Request $request)
+    {
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        return response([
+            'redirectURL' => session('url.intended', url('/'))
+        ]);
     }
 
     public function username()

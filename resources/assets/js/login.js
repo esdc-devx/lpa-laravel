@@ -1,3 +1,6 @@
+// Adds the promise polyfill for IE 11
+import 'es6-promise/auto';
+
 import Vue from 'vue';
 import axios from 'axios';
 
@@ -76,9 +79,9 @@ new Vue({
         password: this.password,
         remember: this.remember
       })
-      .then(({ request }) => {
+      .then(response => {
         // all good, submit form manually
-        window.location = request.responseURL;
+        window.location = response.data.redirectURL;
       })
       .catch(({ response }) => {
         // catch in case of token mismatch, invalid session, etc due to cache cleared by user

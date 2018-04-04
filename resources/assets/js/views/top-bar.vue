@@ -90,8 +90,8 @@
 
       async onLogout() {
         this.showAppLoading();
-        let request = await this.logout();
-        window.location = request.responseURL;
+        await this.logout();
+        window.location = `/${this.language}/login`;
       },
 
       getSwitchedLang(lang) {
