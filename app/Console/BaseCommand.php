@@ -55,7 +55,7 @@ class BaseCommand extends Command
         $style = new OutputFormatterStyle('black', 'cyan');
         $this->output->getFormatter()->setStyle('prompt', $style);
         $this->line('');
-        parent::confirm("<prompt>[CONFIRM]</prompt> <fg=white>$question</>", $default);
+        return parent::confirm("<prompt>[CONFIRM]</prompt> <fg=white>$question</>", $default);
     }
 
     /**

@@ -36,13 +36,15 @@ class UserFormRequest extends FormRequest
             // Create validation rules.
             case 'POST':
                 return [
-                    'username' => 'required|unique:users',
-                    'organizational_units' => 'exists:organizational_units,id'
+                    'username'             => 'required|unique:users',
+                    'organizational_units' => 'exists:organizational_units,id',
+                    'roles'                => 'exists:roles,id',
                 ];
             // Update validation rules.
             case 'PUT':
                 return [
-                    'organizational_units' => 'exists:organizational_units,id'
+                    'organizational_units' => 'exists:organizational_units,id',
+                    'roles'                => 'exists:roles,id',
                 ];
             default: return [];
         }
@@ -56,8 +58,7 @@ class UserFormRequest extends FormRequest
     protected function userNotFoundInLdap()
     {
         return app()->make(UserRepository::class)
-            ->getUserFromLdap($this->username)
-            ->count() === 0;
+            ->getUserFromLdap($this->username) === null;
     }
 
     /**

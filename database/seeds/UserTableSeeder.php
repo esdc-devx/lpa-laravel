@@ -1,11 +1,21 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\User\User;
+use App\Models\User\Role;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Repositories\UserRepository;
 
 class UserTableSeeder extends Seeder
 {
+    protected $users;
+
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
     /**
      * Run the database seeds.
      *
@@ -15,18 +25,14 @@ class UserTableSeeder extends Seeder
     {
         User::truncate();
 
-        $faker = \Faker\Factory::create();
-        $organizationalUnitIds = OrganizationalUnit::all()->pluck('id');
+        // Enforce eloquent guard attributes to ensure data integrity.
+        Model::reguard();
 
-        for ($i = 0; $i < 50; $i++) {
-            $user = User::create([
-                'username' => $faker->userName,
-                'first_name' => $faker->firstName,
-                'last_name' => $faker->lastName,
-                'email' => $faker->email,
-                'password' => bcrypt($faker->word)
-            ]);
-            $user->organizationalUnits()->sync([$organizationalUnitIds->random()]);
-        }
+        // Create admin account to boot the application.
+        $role = Role::where('unique_key', 'admin')->firstOrFail();
+        $this->users->create([
+            'username' => config('auth.admin.username'),
+            'roles' => [$role->id]
+        ]);
     }
 }

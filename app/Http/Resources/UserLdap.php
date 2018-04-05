@@ -16,11 +16,11 @@ class UserLdap extends Resource
     public function toArray($request = null)
     {
         return [
-            'username' => strtoupper($this->getAccountName()),
-            'email' => $this->getEmail(),
-            'name' => $this->getCommonName(),
+            'username'   => strtoupper($this->getAccountName()),
+            'email'      => $this->getEmail(),
+            'name'       => $this->getCommonName(),
             'first_name' => $this->getFirstName(),
-            'last_name' => $this->getLastName()
+            'last_name'  => $this->getLastName()
         ];
     }
 }

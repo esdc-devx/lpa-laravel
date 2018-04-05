@@ -15,17 +15,5 @@ class ProjectTableSeeder extends Seeder
     public function run()
     {
         Project::truncate();
-
-        $faker = \Faker\Factory::create();
-        $userIds = User::pluck('id');
-        $organizationalUnitIds = OrganizationalUnit::where('owner', true)->pluck('id');
-
-        for ($i = 0; $i < 50; $i++) {
-            Project::create([
-                'name' => $faker->sentence,
-                'owner_id' => $userIds->random(),
-                'organizational_unit_id' => $organizationalUnitIds->random(),
-            ]);
-        }
     }
 }
