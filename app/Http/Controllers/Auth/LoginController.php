@@ -48,8 +48,10 @@ class LoginController extends Controller
 
         $this->clearLoginAttempts($request);
 
+        $locale = app()->getLocale();
+
         return response([
-            'redirectURL' => session('url.intended', url('/'))
+            'redirectURL' => session('url.intended') ?? url("/$locale")
         ]);
     }
 
