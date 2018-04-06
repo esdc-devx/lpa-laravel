@@ -68,6 +68,8 @@
       :total="pagination.total">
     </el-pagination>
 
+    <!-- @todo: Uncomment when backend will handle delete user correctly
+               (receive deleted users when not forced deleted)
     <el-dialog :visible.sync="showDeleteModal" width="30%">
       <span slot="title" class="el-dialog__title">Delete user {{user.name}} ?</span>
       <span>This action cannot be undone.</span>
@@ -75,7 +77,7 @@
         <el-button type="danger" @click="confirmDelete()">Delete</el-button>
         <el-button @click="showDeleteModal = false">Cancel</el-button>
       </span>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
@@ -133,7 +135,7 @@
       scrollToTop() {
         document.querySelectorAll('.el-main')[0].scrollTop = 0;
         // IE11 scroll to top
-        document.documentElement.scrollTop = 0;
+        document.querySelectorAll('.content-wrap')[0].scrollTop = 0
       },
 
       // Form handlers
@@ -146,17 +148,19 @@
         this.$router.push(`${namespace}/edit/${user.id}`);
       },
 
-      deleteUserModal(id) {
-        this.user = this.findUser(id);
-        this.showDeleteModal = true;
-      },
+      // @todo: Uncomment when backend will handle delete user correctly
+      //           (receive deleted users when not forced deleted)
+      // deleteUserModal(id) {
+      //   this.user = this.findUser(id);
+      //   this.showDeleteModal = true;
+      // },
 
-      async confirmDelete() {
-        await this.deleteUser(this.user.id);
-        this.showDeleteModal = false;
-        this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
-        this.triggerLoadUsers();
-      },
+      // async confirmDelete() {
+      //   await this.deleteUser(this.user.id);
+      //   this.showDeleteModal = false;
+      //   this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
+      //   this.triggerLoadUsers();
+      // },
 
       // Filters
       findUser(id) {

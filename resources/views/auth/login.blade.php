@@ -122,8 +122,8 @@
                             </el-input>
                             <form-error v-for="error in verrors.collect('password')" :key="error.id">@{{ error }}</form-error>
                         </el-form-item>
-                        <el-form-item label="{{ __('login.remember') }}" for="remember">
-                            <el-switch name="remember" v-model="remember"></el-switch>
+                        <el-form-item for="remember">
+                            <el-checkbox name="remember" name="remember" v-model="remember" @keyup.native.enter="onSubmit" label="{{ __('login.remember') }}"></el-checkbox>
                         </el-form-item>
 
                         <el-form-item class="controls-wrap">

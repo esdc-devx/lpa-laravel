@@ -1,5 +1,7 @@
 // Adds the promise polyfill for IE 11
-import 'es6-promise/auto';
+if (typeof Promise === 'undefined') {
+  require('es6-promise/auto');
+}
 
 import Vue from 'vue';
 import Vuex from 'vuex';

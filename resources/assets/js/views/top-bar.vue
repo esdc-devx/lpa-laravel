@@ -41,6 +41,8 @@
   import Config from '../config.js';
   import MenuUtils from '../mixins/menu/utils.js';
 
+  import HttpStatusCodes from '../axios/http-status-codes';
+
   export default {
     name: 'top-bar',
 
@@ -90,8 +92,14 @@
 
       async onLogout() {
         this.showAppLoading();
-        let request = await this.logout();
-        window.location = request.responseURL;
+        try {
+          await this.logout();
+          window.location = `/${this.language}/login`;
+        } catch({ response }) {
+          // redirect to login page even if we have an error,
+          // chances are that the user cleared its cache before the action
+          window.location = `/${this.language}/login`;
+        }
       },
 
       getSwitchedLang(lang) {
