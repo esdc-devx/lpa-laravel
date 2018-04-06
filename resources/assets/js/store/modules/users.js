@@ -48,10 +48,8 @@ export default {
 
   actions: {
     async logout({ commit }) {
-      let response;
       try {
-        response = await UserAPI.logout();
-        return response.request.responseURL;
+        await UserAPI.logout();
       } catch(e) {
         throw e;
       }
@@ -126,30 +124,24 @@ export default {
     },
 
     async createUser({ commit }, user) {
-      let response;
       try {
-        response = await UserAPI.createUser(user);
-        return;
+        await UserAPI.createUser(user);
       } catch(e) {
         throw e;
       }
     },
 
     async updateUser({ commit }, user) {
-      let response;
       try {
-        response = await UserAPI.updateUser(user);
-        return;
+        await UserAPI.updateUser(user);
       } catch(e) {
         throw e;
       }
     },
 
     async deleteUser({ commit }, id) {
-      let response;
       try {
-        response = await UserAPI.deleteUser(id);
-        return;
+        await UserAPI.deleteUser(id);
       } catch(e) {
         throw e;
       }
