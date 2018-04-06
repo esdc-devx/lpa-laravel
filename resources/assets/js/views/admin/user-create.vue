@@ -129,18 +129,17 @@
       },
 
       async create() {
-        let response;
         try {
-          response = await this.createUser({
+          await this.createUser({
             username: this.form.username,
             organizational_units: this.form.organizational_units
           });
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.name}</b> has been created.`);
           this.resetForm();
-        } catch(e) {
+        } catch({ response }) {
           this.isSaving = false;
-          this.manageBackendErrors(e.response.data.errors);
+          this.manageBackendErrors(response.data.errors);
         }
       },
 

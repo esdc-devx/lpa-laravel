@@ -69,10 +69,12 @@
   [v-cloak] {
     display: none;
   }
+
   #app, #app > .el-container {
     height: 100%;
     overflow: hidden;
   }
+
   .el-aside {
     position: relative;
     // this allows to make the content shift to the left and take the sidebar's space when collapsed
@@ -80,13 +82,17 @@
     overflow: visible;
     z-index: $--index-top;
   }
+  .content-wrap {
+    background-color: #eaf0f8;
+  }
+
   .el-main {
     position: relative;
     overflow-x: hidden;
     padding: 30px;
     padding-top: 0px;
-    background-color: #eaf0f8;
   }
+
   .el-header {
     padding: 0;
   }
@@ -97,6 +103,7 @@
       // fixes a layout bug for IE11
       overflow: visible;
     }
+
     .body-wrap {
       .content-wrap {
         overflow-x: hidden;

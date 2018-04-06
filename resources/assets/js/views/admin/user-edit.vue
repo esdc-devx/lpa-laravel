@@ -89,15 +89,14 @@
       },
 
       async update() {
-        let response;
         try {
-          response = await this.updateUser({id: this.form.user.id, organizational_units: this.form.user.organizational_units});
+          await this.updateUser({id: this.form.user.id, organizational_units: this.form.user.organizational_units});
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
-        } catch(e) {
+        } catch({ response }) {
           this.isSaving = false;
-          this.errors = e.response.data.errors;
+          this.errors = response.data.errors;
           this.focusOnError();
         }
       },
