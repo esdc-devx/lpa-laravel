@@ -17,11 +17,11 @@ return [
 
     // Application configurations.
     'app' => [
-        'user_model' => env('CAMUNDA_USER_MODEL_CLASS', ''),
-        'storage'    => env('CAMUNDA_STORAGE', ''),
+        'user_model' => 'App\Models\User\User',
+        'storage'    => 'camunda', //-> /storage/app/camunda
         'groups'     => [
-            'admin' => env('CAMUNDA_ADMIN_GROUP', ''),
-            'user'  => env('CAMUNDA_USER_GROUP')
+            'admin' => 'camunda-admin',
+            'user'  => 'lpa-user'
         ],
     ],
 

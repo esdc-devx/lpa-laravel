@@ -4,12 +4,9 @@ namespace App\Repositories;
 
 use App\Models\OrganizationalUnit\OrganizationalUnit;
 
-class OrganizationalUnitRepository
+class OrganizationalUnitRepository extends BaseEloquentRepository
 {
-    public function getAll()
-    {
-        return OrganizationalUnit::all();
-    }
+    protected $model = OrganizationalUnit::class;
 
     public function getOwners()
     {

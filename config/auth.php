@@ -99,4 +99,19 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Account Credentials
+    |--------------------------------------------------------------------------
+    |
+    | Main system account used to run the initial installation of the application.
+    | The account must be an existing account in the active directory.
+    |
+     */
+
+    'admin' => [
+        'username' => env('ADMIN_USERNAME', ''),
+        'password' => env('ADMIN_PASSWORD', ''),
+    ],
+
 ];

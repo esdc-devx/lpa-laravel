@@ -187,8 +187,8 @@ return [
                 |
                 */
 
-                'admin_username' => env('ADLDAP_ADMIN_USERNAME', 'username'),
-                'admin_password' => env('ADLDAP_ADMIN_PASSWORD', 'password'),
+                'admin_username' => env('ADMIN_USERNAME', 'username'),
+                'admin_password' => env('ADMIN_PASSWORD', 'password'),
 
                 /*
                 |--------------------------------------------------------------------------
@@ -214,8 +214,8 @@ return [
                 | If you need to be able to change user passwords on your server, then an
                 | SSL or TLS connection is required. All other operations are allowed
                 | on unsecured protocols.
-                | 
-                | One of these options are definitely recommended if you 
+                |
+                | One of these options are definitely recommended if you
                 | have the ability to connect to your server securely.
                 |
                 */

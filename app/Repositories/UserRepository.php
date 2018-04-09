@@ -3,21 +3,26 @@
 namespace App\Repositories;
 
 use App\Events\UserSaved;
-use App\Events\UserCreated;
 use App\Models\User\User;
 use App\Http\Resources\UserLdap;
 use Adldap\Laravel\Facades\Adldap;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 
 class UserRepository extends BaseEloquentRepository
 {
     const LDAP_SEARCH_LIMIT = 5;
 
-    protected $model = \App\Models\User\User::class;
-    protected $relationships = ['organizationalUnits', 'projects'];
+    protected $model = User::class;
+    protected $relationships = ['roles', 'organizationalUnits', 'projects'];
     protected $requiredRelationships = ['organizationalUnits'];
 
+    /**
+     * Search users in active directory by their name.
+     *
+     * @param  string $search
+     * @param  int $limit
+     * @return Illuminate\Support\Collection
+     */
     public function searchLdap($search, $limit = self::LDAP_SEARCH_LIMIT)
     {
         return Adldap::search()
@@ -33,21 +38,37 @@ class UserRepository extends BaseEloquentRepository
             ->values();
     }
 
+    /**
+     * Retrieve user in active directory from its username.
+     *
+     * @param  string $username
+     * @return Adldap\Models\User|null
+     */
     public function getUserFromLdap($username)
     {
         // @todo: Move logic to a more generic search ldap method.
         return Adldap::search()
-            ->setDn('OU=Users,OU=NCR,OU=CSPS,DC=csps-efpc,DC=com')
             ->where(['samaccountname' => $username])
-            ->get();
+            ->first();
     }
 
+    /**
+     * Return current authenticated user.
+     *
+     * @return App\Models\User|null
+     */
     public function getCurrent()
     {
-        $user = Auth::user();
-        return $user ? $this->getById($user->id) : null;
+        $user = auth()->user();
+        return $user ? $this->with('roles')->getById($user->id) : null;
     }
 
+    /**
+     * Create user.
+     *
+     * @param  array $data
+     * @return App\Models\User
+     */
     public function create(array $data)
     {
         // Wrap the creation process within a database transaction
@@ -55,7 +76,7 @@ class UserRepository extends BaseEloquentRepository
         DB::beginTransaction();
 
         // Fetch user information from active directory.
-        $ldapUserInfo = (new UserLdap($this->getUserFromLdap($data['username'])->first()))
+        $ldapUserInfo = (new UserLdap($this->getUserFromLdap($data['username'])))
             ->toArray();
 
         // Since we authenticate users using LDAP, we can just store a random password.
@@ -69,6 +90,9 @@ class UserRepository extends BaseEloquentRepository
             if (isset($data['organizational_units'])) {
                 $user->organizationalUnits()->attach($data['organizational_units']);
             }
+            if (isset($data['roles'])) {
+                $user->roles()->attach($data['roles']);
+            }
         }
         // Rollback transaction if any exceptions occurs.
         catch (\Exception $e) {
@@ -78,28 +102,42 @@ class UserRepository extends BaseEloquentRepository
 
         DB::commit();
 
-        // Dispatch UserCreated event.
-        event(new UserCreated($user));
-
-        return $this->getById($user->id);
+        // Return user with all of its relationships.
+        return $this->with('all')->getById($user->id);
     }
 
-    public function update($id, array $data)
+    /**
+     * Update user.
+     *
+     * @param  array $data
+     * @return App\Models\User
+     */
+    public function update($id, array $data = [])
     {
-        // Update organizational units.
-        if (isset($data['organizational_units'])) {
-            $this->getById($id)
-                ->organizationalUnits()
-                ->sync($data['organizational_units']);
-        }
         $user = $this->getById($id);
 
-        // Dispatch UserSaved event.
-        event(new UserSaved($user));
+        // Update organizational units.
+        if (isset($data['organizational_units'])) {
+            $user->organizationalUnits()->sync($data['organizational_units']);
+        }
 
+        // Update user roles.
+        if (isset($data['roles'])) {
+            $user->roles()->sync($data['roles']);
+        }
+
+        // Dispatch UserSaved event and return its updated value.
+        $user = $this->with('roles')->getById($id);
+        event(new UserSaved($user));
         return $user;
     }
 
+    /**
+     * Delete user.
+     *
+     * @param  int $id
+     * @return int
+     */
     public function delete($id)
     {
         $delete = parent::delete($id);

@@ -22,6 +22,11 @@ class CamundaEventSubscriber
      */
     public function onUserCreate($event)
     {
+        // Ensure we don't create admin account in Camunda since it already exists.
+        if ($event->user->username === config('auth.admin.username')) {
+            return;
+        }
+
         // Create user profile in Camunda.
         $this->camunda->users()->create($event->user);
 

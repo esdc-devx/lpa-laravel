@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User\User;
+use App\Models\User\Role;
 use App\Repositories\UserRepository;
 use App\Repositories\OrganizationalUnitRepository;
 use App\Http\Resources\UserLdap;
@@ -65,7 +66,8 @@ class UserController extends APIController
     {
         // Return user creation form data.
         return $this->respond([
-            'organizational_units' => $this->organizationalUnits->getAll()->toArray()
+            'organizational_units' => $this->organizationalUnits->getAll()->toArray(),
+            'roles' => Role::all()->toArray(),
         ]);
     }
 
@@ -77,8 +79,14 @@ class UserController extends APIController
      */
     public function store(UserFormRequest $request)
     {
+        // Retrieve only the necessary attributes from the request.
+        $data = $request->only([
+            'username',
+            'organizational_units',
+            'roles',
+        ]);
         return $this->respond(
-            $this->users->create($request->all())
+            $this->users->create($data)
         );
     }
 
@@ -90,9 +98,9 @@ class UserController extends APIController
      */
     public function show($id)
     {
-        // Return specific user.
+        // Return specific user with all of its relationships.
         return $this->respond(
-            $this->users->getById($id)
+            $this->users->with('all')->getById($id)
         );
     }
 
@@ -104,7 +112,12 @@ class UserController extends APIController
      */
     public function edit($id)
     {
-        // @todo: Return user edit form.
+        // Return user edit form data.
+        return $this->respond([
+            'user' => $this->users->with('roles')->getById($id),
+            'organizational_units' => $this->organizationalUnits->getAll()->toArray(),
+            'roles' => Role::all()->toArray(),
+        ]);
     }
 
     /**
@@ -116,7 +129,11 @@ class UserController extends APIController
      */
     public function update(UserFormRequest $request, int $id)
     {
-        $data = $request->only('organizational_units');
+        // Ensure that user cannot update any other attributes.
+        $data = $request->only([
+            'organizational_units',
+            'roles',
+        ]);
         return $this->respond(
             $this->users->update($id, $data)
         );

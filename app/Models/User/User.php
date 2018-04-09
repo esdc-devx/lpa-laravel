@@ -46,6 +46,15 @@ class User extends Authenticatable
      */
     protected $appends = ['deleted', 'name'];
 
+    /**
+     * The events that are dispatched by the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => \App\Events\UserCreated::class
+    ];
+
     public function getNameAttribute()
     {
         return "$this->first_name $this->last_name";
@@ -54,6 +63,16 @@ class User extends Authenticatable
     public function getDeletedAttribute()
     {
         return $this->deleted_at !== null;
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class);
+    }
+
+    public function hasRole(string $role)
+    {
+        return $this->roles()->where('unique_key', $role)->first() !== null;
     }
 
     public function organizationalUnits()
