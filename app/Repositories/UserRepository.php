@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Events\UserSaved;
-use App\Events\UserCreated;
 use App\Models\User\User;
 use App\Http\Resources\UserLdap;
 use Adldap\Laravel\Facades\Adldap;

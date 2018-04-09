@@ -4,7 +4,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User\User;
 use App\Models\User\Role;
-use App\Models\OrganizationalUnit\OrganizationalUnit;
 use App\Repositories\UserRepository;
 
 class UserTableSeeder extends Seeder
