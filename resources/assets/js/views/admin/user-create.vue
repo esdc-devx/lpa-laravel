@@ -174,9 +174,11 @@
       },
 
       // Navigation
-      goBack: _.throttle(function() {
-        this.$router.push(`/${this.language}/admin/users`);
-      }, 500),
+      goBack() {
+        this.$helpers.throttleAction(() => {
+          this.$router.push(`/${this.language}/admin/users`);
+        });
+      },
 
       async triggerLoadUserCreateInfo() {
         this.isUserInfoLoading = true;

@@ -108,9 +108,11 @@
       },
 
       // Navigation
-      goBack: _.throttle(function() {
-        this.$router.push(`/${this.language}/projects`);
-      }, 500)
+      goBack() {
+        this.$helpers.throttleAction(() => {
+          this.$router.push(`/${this.language}/projects`);
+        });
+      },
     },
 
     async mounted() {

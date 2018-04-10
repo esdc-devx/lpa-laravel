@@ -144,9 +144,11 @@
         }
       },
 
-      goBack: _.throttle(function() {
-        this.$router.push(`/${this.language}/admin/users`);
-      }),
+      goBack() {
+        this.$helpers.throttleAction(() => {
+          this.$router.push(`/${this.language}/admin/users`);
+        });
+      },
 
       async triggerLoadUserInfo() {
         this.showMainLoading();
