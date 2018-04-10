@@ -44,13 +44,13 @@
           name="roles"
           valueKey="name"
           multiple
-          @input="handleRolesActions">
+          @change="handleRolesActions">
           <el-option
             v-for="item in roles"
             :key="item.id"
             :label="item.name"
             :value="item.id"
-            :disabled="isSysAdmin && item.name === 'admin'">
+            :disabled="isViewingUserSysAdmin && item.name === 'admin'">
           </el-option>
         </el-select>
       </el-form-item>
@@ -81,7 +81,7 @@
         viewingUser: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`,
         roles: `${namespace}/roles`,
-        isSysAdmin: `${namespace}/isSysAdmin`
+        isViewingUserSysAdmin: `${namespace}/isViewingUserSysAdmin`
       })
     },
 
@@ -109,7 +109,10 @@
         }
         let adminRole = _.find(this.viewingUser.roles, ['unique_key', 'admin']);
         // disallow removing the admin role on the sys.admin
-        if (this.isSysAdmin && ( adminRole && !newVal.includes(adminRole.id) )) {
+        if (this.isViewingUserSysAdmin && ( !newVal.length || !newVal.includes(adminRole.id) )) {
+          this.$alert('You cannot remove administrator role on the system administrator.', {
+            confirmButtonText: 'OK'
+          });
           return;
         }
         this.form.user.roles = newVal;

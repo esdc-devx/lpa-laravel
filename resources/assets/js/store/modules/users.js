@@ -48,8 +48,8 @@ export default {
       };
     },
 
-    isSysAdmin(state) {
-      return state.current.roles.length === 1 && !!_.find(state.current.roles, ['unique_key', 'admin']);
+    isViewingUserSysAdmin(state) {
+      return state.viewing.username === 'lpa_admin';
     },
 
     pagination(state) {
