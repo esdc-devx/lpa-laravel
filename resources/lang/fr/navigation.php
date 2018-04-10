@@ -12,6 +12,7 @@ return [
     'admin_user_create' => 'Créer',
     'admin_user_edit' => 'Éditer',
     'projects' => 'Projets',
+    'projects_create' => 'Créer un projet',
     'learning_products' => 'Produits d\'apprentissage',
     'non_learning_products' => 'Produits de non-apprentissage',
     'not_found' => 'Non trouvé',

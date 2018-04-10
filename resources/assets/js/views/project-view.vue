@@ -9,8 +9,6 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../event-bus.js';
 
-  import LoadStatus from '../store/load-status-constants';
-
   let namespace = 'projects';
 
   export default {

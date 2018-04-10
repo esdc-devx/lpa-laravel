@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import LoadStatus from '../load-status-constants';
 import UserAPI from '../../api/user.js';
 
@@ -11,18 +12,14 @@ export default {
     viewing: {},
     all: [],
     organizationalUnits: [],
+    roles: [],
     pagination: {},
-    currentUserLoadStatus: LoadStatus.NOT_LOADED,
-    viewingUserLoadStatus: LoadStatus.NOT_LOADED
+    currentUserLoadStatus: LoadStatus.NOT_LOADED
   },
 
   getters: {
     currentUserLoadStatus(state) {
       return state.currentUserLoadStatus;
-    },
-
-    viewingUserLoadStatus(state) {
-      return state.viewingUserLoadStatus;
     },
 
     current(state) {
@@ -41,6 +38,20 @@ export default {
       return state.organizationalUnits;
     },
 
+    roles(state) {
+      return state.roles;
+    },
+
+    hasRole(state) {
+      return function(role) {
+        return !!_.find(state.current.roles, ['unique_key', role]);
+      };
+    },
+
+    isSysAdmin(state) {
+      return state.current.roles.length === 1 && !!_.find(state.current.roles, ['unique_key', 'admin']);
+    },
+
     pagination(state) {
       return state.pagination;
     }
@@ -48,27 +59,14 @@ export default {
 
   actions: {
     async logout({ commit }) {
-      try {
-        await UserAPI.logout();
-      } catch(e) {
-        throw e;
-      }
+      await UserAPI.logout();
     },
 
     async loadUsers({ commit }, page) {
-      // commit('setUserLoadStatus', LoadStatus.LOADING_STARTED);
-      let response;
-      try {
-        response = await UserAPI.getUsers(page);
-        commit('setUsers', response.data.data);
-        commit('setPagination', response.data.meta);
-        // commit('setUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-        return response.data.data;
-      } catch(e) {
-        commit('setUsers', {});
-        // commit('setUserLoadStatus', LoadStatus.LOADING_FAILED);
-        throw e;
-      }
+      let response = await UserAPI.getUsers(page);
+      commit('setUsers', response.data.data);
+      commit('setPagination', response.data.meta);
+      return response.data.data;
     },
 
     async loadCurrentUser({ commit }) {
@@ -87,74 +85,48 @@ export default {
     },
 
     async loadViewingUser({ commit }, id) {
-      commit('setViewingUserLoadStatus', LoadStatus.LOADING_STARTED);
-      let response;
-      try {
-        response = await UserAPI.getUser(id);
-        commit('setViewingUser', response.data.data);
-        commit('setViewingUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-        return response.data.data;
-      } catch(e) {
-        commit('setViewingUser', {});
-        commit('setViewingUserLoadStatus', LoadStatus.LOADING_FAILED);
-        throw e;
-      }
+      let response = await UserAPI.getUser(id);
+      commit('setViewingUser', response.data.data);
+      return response.data.data;
     },
 
     async loadUserCreateInfo({ commit }) {
-      let response;
-      try {
-        response = await UserAPI.getUserCreateInfo();
-        commit('setOrganizationalUnits', response.data.data.organizational_units);
-        return response.data.data.organization_units;
-      } catch(e) {
-        commit('setOrganizationalUnits', []);
-        throw e;
-      }
+      let response = await UserAPI.getUserCreateInfo();
+      commit('setOrganizationalUnits', response.data.data.organizational_units);
+      commit('setRoles', response.data.data.roles);
+      return response.data.data;
+    },
+
+    async loadUserEditInfo({ commit }, id) {
+      let response = await UserAPI.getUserEditInfo(id);
+      commit('setViewingUser', response.data.data.user);
+      commit('setOrganizationalUnits', response.data.data.organizational_units);
+      commit('setRoles', response.data.data.roles);
+      return response.data.data;
+    },
+
+    // CRUD methods
+    async createUser({ commit }, user) {
+      await UserAPI.createUser(user);
     },
 
     async searchUser({ commit }, name) {
-      let response;
-      try {
-        response = await UserAPI.searchUser(name);
-        return response.data.data;
-      } catch(e) {
-        throw e;
-      }
-    },
-
-    async createUser({ commit }, user) {
-      try {
-        await UserAPI.createUser(user);
-      } catch(e) {
-        throw e;
-      }
+      let response = await UserAPI.searchUser(name);
+      return response.data.data;
     },
 
     async updateUser({ commit }, user) {
-      try {
-        await UserAPI.updateUser(user);
-      } catch(e) {
-        throw e;
-      }
+      await UserAPI.updateUser(user);
     },
 
     async deleteUser({ commit }, id) {
-      try {
-        await UserAPI.deleteUser(id);
-      } catch(e) {
-        throw e;
-      }
+      await UserAPI.deleteUser(id);
     }
   },
 
   mutations: {
     setCurrentUserLoadStatus(state, status) {
       state.currentUserLoadStatus = status;
-    },
-
-    setViewingUserLoadStatus(state, status) {
-      state.viewingUserLoadStatus = status;
     },
 
     setUsers(state, users) {
@@ -171,6 +143,10 @@ export default {
 
     setOrganizationalUnits(state, organizationalUnits) {
       state.organizationalUnits = organizationalUnits;
+    },
+
+    setRoles(state, roles) {
+      state.roles = roles;
     },
 
     setPagination(state, pagination) {

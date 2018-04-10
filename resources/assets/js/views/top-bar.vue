@@ -24,7 +24,7 @@
             <span v-if="toggledLang === 'en'">English</span>
             <span v-else>Français</span>
           </el-menu-item>
-          <el-menu-item index="" v-if="user.isAdmin" @click="toggleAdminBar">
+          <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar">
             <span>
               <i :class="['el-icon-setting', { 'active' : isAdminBarShown} ]"></i>
             </span>
@@ -52,7 +52,8 @@
       ...mapGetters({
         language: 'language',
         isAdminBarShown: 'isAdminBarShown',
-        user: 'users/current'
+        user: 'users/current',
+        hasRole: 'users/hasRole',
       })
     },
 
@@ -92,6 +93,8 @@
 
       async onLogout() {
         this.showAppLoading();
+        // try-catch here since the logout uses another instance of axios
+        // which doesn't have the interceptors
         try {
           await this.logout();
           window.location = `/${this.language}/login`;

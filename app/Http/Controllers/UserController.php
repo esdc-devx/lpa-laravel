@@ -53,7 +53,7 @@ class UserController extends APIController
         // @todo: Add option to display deleted users?
         $limit = request()->get('limit') ? : self::ITEMS_PER_PAGE;
         return $this->respondWithPagination(
-            $this->users->getPaginated($limit)
+            $this->users->with(['organizationalUnits', 'roles'])->getPaginated($limit)
         );
     }
 
@@ -114,7 +114,7 @@ class UserController extends APIController
     {
         // Return user edit form data.
         return $this->respond([
-            'user' => $this->users->with('roles')->getById($id),
+            'user' => $this->users->with(['organizationalUnits', 'roles'])->getById($id),
             'organizational_units' => $this->organizationalUnits->getAll()->toArray(),
             'roles' => Role::all()->toArray(),
         ]);

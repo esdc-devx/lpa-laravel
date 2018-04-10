@@ -118,7 +118,7 @@
   @import '../../sass/abstracts/vars';
   .breadcrumb {
     // make sure that the breadcrumb doesn't have any space on the left-right
-    margin: auto -30px;
+    margin: auto -30px 20px;
     background-color: $--color-white;
     .el-breadcrumb {
       padding: 10px 30px;

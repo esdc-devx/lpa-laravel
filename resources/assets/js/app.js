@@ -50,7 +50,7 @@ setLanguage()
       });
 
       Vue.use(ElementUI, {
-        i18n: (key, value) => i18n.t(key, value)
+        i18n: (key, value) => window.i18n.t(key, value)
       });
 
       Vue.use(VeeValidate, {
@@ -76,10 +76,10 @@ setLanguage()
       });
     })
     .catch(e => {
-      Notify.notifyError('Languages could not be loaded. Please contact your administrator.');
+      alert('Languages could not be loaded. Please contact your administrator.');
       Vue.$log.error(`[app][loadLanguages]: ${e}`);
     })
   ).catch(e => {
-    Notify.notifyError('Language could not be set. Please contact your administrator.');
+    alert('Language could not be set. Please contact your administrator.');
     Vue.$log.error(`[app][setLanguage]: ${e}`);
   });

@@ -6,13 +6,16 @@
       <el-form-item label="Username" for="username">
         <el-input v-model="form.user.username" disabled></el-input>
       </el-form-item>
+
       <el-form-item label="Name" for="name">
         <el-input v-model="form.user.name" disabled></el-input>
       </el-form-item>
+
       <el-form-item label="Email" for="email">
         <el-input v-model="form.user.email" disabled></el-input>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationalUnits">
+
+      <el-form-item label="Organizational Unit(s)" for="organizationalUnits">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -23,13 +26,35 @@
           valueKey="name"
           multiple>
           <el-option
-            v-for="item in allOrganizationalUnits"
+            v-for="item in organizationalUnits"
             :key="item.id"
             :label="item.name"
             :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
+
+      <el-form-item label="Role(s)" for="roles">
+        <el-select
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
+          v-validate="''"
+          :value="form.user.roles"
+          id="roles"
+          name="roles"
+          valueKey="name"
+          multiple
+          @input="handleRolesActions">
+          <el-option
+            v-for="item in roles"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+            :disabled="isSysAdmin && item.name === 'admin'">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item>
         <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">Save</el-button>
         <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
@@ -54,7 +79,9 @@
       ...mapGetters({
         language: 'language',
         viewingUser: `${namespace}/viewing`,
-        allOrganizationalUnits: 'users/organizationalUnits'
+        organizationalUnits: `${namespace}/organizationalUnits`,
+        roles: `${namespace}/roles`,
+        isSysAdmin: `${namespace}/isSysAdmin`
       })
     },
 
@@ -63,8 +90,7 @@
         isUserInfoLoading: false,
         form: {
           user: {}
-        },
-        selectedOrganizationalUnits: []
+        }
       }
     },
 
@@ -72,12 +98,22 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        updateUser: 'users/updateUser',
-        loadViewingUser: 'users/loadViewingUser',
-        // @removeme: when backend route for edit info is done
-        loadUserCreateInfo: 'users/loadUserCreateInfo'
-        // @todo: loadUserEditInfo: 'users/loadUserEditInfo'
+        updateUser: `${namespace}/updateUser`,
+        loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),
+
+      handleRolesActions(newVal) {
+        // fail safe in case the viewingUser has not yet been loaded
+        if (!this.viewingUser || !this.viewingUser.roles) {
+          return;
+        }
+        let adminRole = _.find(this.viewingUser.roles, ['unique_key', 'admin']);
+        // disallow removing the admin role on the sys.admin
+        if (this.isSysAdmin && ( adminRole && !newVal.includes(adminRole.id) )) {
+          return;
+        }
+        this.form.user.roles = newVal;
+      },
 
       search(name) {
         return this.searchUser(name);
@@ -90,7 +126,11 @@
 
       async update() {
         try {
-          await this.updateUser({id: this.form.user.id, organizational_units: this.form.user.organizational_units});
+          await this.updateUser({
+            id: this.form.user.id,
+            organizational_units: this.form.user.organizational_units,
+            roles: this.form.user.roles
+          });
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
@@ -101,11 +141,6 @@
         }
       },
 
-      loadUser() {
-        let id = this.$route.params.id;
-        return this.loadViewingUser(id);
-      },
-
       goBack: _.throttle(function() {
         this.$router.push(`/${this.language}/admin/users`);
       }),
@@ -113,31 +148,31 @@
       async triggerLoadUserInfo() {
         this.showMainLoading();
         this.isUserInfoLoading = true;
-        // @todo: make only 1 call to loadUserEditInfo
-        await this.loadUser();
-        await this.loadUserCreateInfo();
+        let id = this.$route.params.id;
+        await this.loadUserEditInfo(id);
         this.form.user = Object.assign({}, this.viewingUser);
         // replace our internal organizational_units with only the ids
         // since ElementUI only need ids to populate the selected options
         this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
+        this.form.user.roles = _.map(this.viewingUser.roles, 'id');
         this.isUserInfoLoading = false;
         this.hideMainLoading();
       }
     },
 
-    async mounted() {
+    mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', async () => {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.$validator.reset();
+        // only reload the dropdowns, not the user
         this.isUserInfoLoading = true;
-        // only load the organizational units
-        await this.loadUserCreateInfo();
+        let id = this.$route.params.id;
+        await this.loadUserEditInfo(id);
         this.isUserInfoLoading = false;
       });
-
       this.triggerLoadUserInfo();
     }
   };
