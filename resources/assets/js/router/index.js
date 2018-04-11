@@ -36,15 +36,10 @@ async function beforeProceed(to, from, next) {
     forceProceed = false;
     return;
   }
+
   let isAuth = await isAuthenticated(to, from, next);
   if (isAuth) {
     proceed(to, from, next);
-  } else {
-    forceProceed = true;
-    //@note: when matching a route with a '*' as path,
-    // vue-router needs to know what the dynamic params are
-    // and since * is not a understandable word, it tries to find the param at position '0'
-    router.replace({ name: 'forbidden', params: { '0': to.path } });
   }
 }
 
@@ -81,6 +76,9 @@ function proceed(to, from, next) {
   // user has no access rights for the requested page, redirect to forbidden page
   if (pathForbidden) {
     forceProceed = true;
+    //@note: when matching a route with a '*' as path,
+    // vue-router needs to know what the dynamic params are
+    // and since * is not a understandable word, it tries to find the param at position '0'
     router.replace({name: 'forbidden', params: {'0': newPath}});
     return;
   }

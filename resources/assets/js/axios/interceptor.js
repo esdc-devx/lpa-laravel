@@ -40,9 +40,9 @@ axios.interceptors.response.use(response => response, error => {
         }
       });
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
-    Notify.notifyWarning('You are not authorized to access this page.');
+    router.replace({name: 'forbidden', params: {'0': router.history.current.path}});
   } else if (response.status === HttpStatusCodes.NOT_FOUND) {
-    router.replace(`/${HttpStatusCodes.NOT_FOUND}`);
+    router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
     Notify.notifyError('General exception. Please contact your administrator.');
