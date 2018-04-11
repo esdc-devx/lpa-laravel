@@ -15,9 +15,9 @@
     <!-- Actions -->
     <el-row type="flex" class="row-bg actions" justify="center" :gutter="24">
       <el-col :span="3">
-        <el-button @click="showCreateProjectModal = true">
+        <el-button @click="$router.push(`${language}/projects/create`)">
           <i class="el-icon-edit-outline"></i>
-          <p>Create a New<br>Project</p>
+          <p>Create a<br>Project</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">
@@ -33,11 +33,6 @@
         </el-button>
       </el-col>
     </el-row>
-
-    <project-create
-      v-if="showCreateProjectModal"
-      :show.sync="showCreateProjectModal"
-      @close="showCreateProjectModal = false"/>
   </div>
 </template>
 
@@ -45,23 +40,14 @@
   import { mapGetters } from 'vuex';
   import EventBus from '../event-bus.js';
 
-  import ProjectCreate from '../views/project-create';
-
   export default {
     name: 'home',
 
-    components: { ProjectCreate },
-
     computed: {
       ...mapGetters({
+        language: 'language',
         user: 'users/current'
       })
-    },
-
-    data() {
-      return {
-        showCreateProjectModal: false
-      }
     },
 
     created() {

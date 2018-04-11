@@ -1,10 +1,10 @@
 <template>
   <div class="project-list content">
     <div class="controls">
-      <el-button @click="showCreateModal = true">Create a project</el-button>
+      <el-button @click="$router.push('projects/create')">Create a project</el-button>
     </div>
+
     <el-table
-      empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :data="projects"
       @row-click="viewProject">
@@ -39,11 +39,6 @@
       layout="total, prev, pager, next"
       :total="pagination.total">
     </el-pagination>
-
-    <project-create
-      v-if="showCreateModal"
-      :show.sync="showCreateModal"
-      @close="showCreateModal = false"/>
   </div>
 </template>
 
@@ -52,7 +47,6 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../event-bus.js';
 
-  import ProjectCreate from '../views/project-create';
   import ProjectsAPI from '../api/projects';
 
   let namespace = 'projects';
@@ -62,19 +56,17 @@
 
     data() {
       return {
-        showCreateModal: false,
         showDeleteModal: false,
         currentPage: 1
       }
     },
-
-    components: { ProjectCreate },
 
     computed: {
       ...mapGetters({
         'projects': `${namespace}/all`,
         'pagination': `${namespace}/pagination`
       }),
+
       orgUnit() {
         return _.chain(this.projects)
                 .mapValues('organizational_unit.name')
@@ -143,6 +135,7 @@
 </script>
 
 <style lang="scss">
+  @import '../../sass/abstracts/vars';
   .project-list {
     .el-table__row {
       cursor: pointer;
@@ -154,10 +147,6 @@
       margin-right: 4px;
       margin-top: 2px;
       margin-bottom: 2px;
-    }
-
-    .controls {
-      margin: 20px auto;
     }
   }
 </style>

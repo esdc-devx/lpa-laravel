@@ -35,9 +35,8 @@ export default {
     return axios.get('users/create');
   },
 
-  // @todo: wait for backend route to be implemented
-  getUserEditInfo() {
-    return axios.get('users/edit');
+  getUserEditInfo(id) {
+    return axios.get(`users/${id}/edit`);
   },
 
   searchUser(name) {

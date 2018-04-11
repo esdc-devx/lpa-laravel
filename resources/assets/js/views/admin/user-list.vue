@@ -4,7 +4,6 @@
       <el-button @click="$router.push('users/create')">Create a user</el-button>
     </div>
     <el-table
-      empty-text="Nothing to show here mate"
       :default-sort="{prop: 'id', order: 'ascending'}"
       :data="parsedUsers"
       @cell-click="editUser">
@@ -37,11 +36,26 @@
         label="Organizational Unit(s)">
         <template slot-scope="scope">
           <el-tag
-            v-for="orgUnit in scope.row.organizational_units"
-            :key="orgUnit.id"
+            v-for="item in scope.row.organizational_units"
+            :key="item.id"
             type="info"
             size="small"
-            :title="orgUnit">{{orgUnit}}</el-tag>
+            :title="item">{{item}}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column
+        :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
+        :filter-method="filterGroup"
+        filter-placement="bottom-start"
+        prop="roles"
+        label="Role(s)">
+        <template slot-scope="scope">
+          <el-tag
+            v-for="item in scope.row.roles"
+            :key="item.id"
+            type="info"
+            size="small"
+            :title="item">{{item}}</el-tag>
         </template>
       </el-table-column>
       <!--
@@ -123,6 +137,7 @@
         _.map(this.parsedUsers, item => {
           // concat all organizational units into a string seperated by commas
           item.organizational_units = _.map(item.organizational_units, 'name');
+          item.roles = _.map(item.roles, 'name');
         });
       },
 

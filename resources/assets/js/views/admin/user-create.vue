@@ -24,7 +24,7 @@
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit" for="organizationalUnits" prop="organizational_units">
+      <el-form-item label="Organizational Unit(s)" for="organizationalUnits" prop="organizational_units">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -37,6 +37,26 @@
           multiple>
           <el-option
             v-for="item in organizationalUnits"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="Role(s)" for="roles" prop="roles">
+        <el-select
+          v-loading="isUserInfoLoading"
+          element-loading-spinner="el-icon-loading"
+          :disabled="roles.length <= 1"
+          v-model="form.roles"
+          v-validate="''"
+          id="roles"
+          name="roles"
+          valueKey="name"
+          multiple>
+          <el-option
+            v-for="item in roles"
             :key="item.id"
             :label="item.name"
             :value="item.id">
@@ -71,7 +91,8 @@
     computed: {
       ...mapGetters({
         language: 'language',
-        organizationalUnits: `${namespace}/organizationalUnits`
+        organizationalUnits: `${namespace}/organizationalUnits`,
+        roles: `${namespace}/roles`
       }),
 
       nameRules() {
@@ -88,7 +109,8 @@
         form: {
           name: '',
           username: '',
-          organizational_units: []
+          organizational_units: [],
+          roles: []
         },
         inUserList: []
       }
@@ -130,13 +152,10 @@
 
       async create() {
         try {
-          await this.createUser({
-            username: this.form.username,
-            organizational_units: this.form.organizational_units
-          });
+          await this.createUser(_.omit(this.form, 'name'));
           this.isSaving = false;
           this.notifySuccess(`<b>${this.form.name}</b> has been created.`);
-          this.resetForm();
+          this.goBack();
         } catch({ response }) {
           this.isSaving = false;
           this.manageBackendErrors(response.data.errors);
@@ -155,27 +174,38 @@
       },
 
       // Navigation
-      goBack: _.throttle(function() {
-        this.$router.push(`/${this.language}/admin/users`);
-      }, 500),
+      goBack() {
+        this.$helpers.throttleAction(() => {
+          this.$router.push(`/${this.language}/admin/users`);
+        });
+      },
 
       async triggerLoadUserCreateInfo() {
         this.isUserInfoLoading = true;
         await this.loadUserCreateInfo();
         this.isUserInfoLoading = false;
-      }
-    },
+      },
 
-    async mounted() {
-      EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', async () => {
+      async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
         await this.triggerLoadUserCreateInfo();
-      });
+      }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      // Destroy any events we might be listening
+      // so that they do not get called while being on another page
+      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      next();
+    },
+
+    async mounted() {
+      EventBus.$emit('App:ready');
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
       this.showMainLoading();
       await this.triggerLoadUserCreateInfo();

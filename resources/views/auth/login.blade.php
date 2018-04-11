@@ -86,6 +86,12 @@
             cursor: pointer;
             color: #524f74;
         }
+        .cred-warning {
+            text-align: center;
+        }
+        .cred-warning i {
+            color: #e6a23c;
+        }
     </style>
 </head>
 <body>
@@ -101,6 +107,10 @@
             <el-main>
                 <div class="login-wrap">
                     <div><h2>{{ __('login.title') }}</h2></div>
+                    <p class="cred-warning">
+                        <i class="el-icon-warning"></i>
+                        Your credentials are the same as your machine ones.
+                    </p>
                     <el-form
                         ref="form"
                         label-width="30%"

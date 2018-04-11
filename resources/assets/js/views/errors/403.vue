@@ -6,18 +6,27 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
 
   export default {
-    name: 'not-found',
+    name: 'forbidden',
+
     computed: {
       ...mapGetters([
         'language'
       ])
     },
+
+    methods: {
+      ...mapActions([
+        'hideMainLoading'
+      ])
+    },
+
     created() {
       EventBus.$emit('App:ready');
+      this.hideMainLoading();
     }
   };
 </script>
