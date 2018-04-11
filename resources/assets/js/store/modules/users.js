@@ -48,10 +48,6 @@ export default {
       };
     },
 
-    isViewingUserSysAdmin(state) {
-      return state.viewing.username === 'lpa_admin';
-    },
-
     pagination(state) {
       return state.pagination;
     }

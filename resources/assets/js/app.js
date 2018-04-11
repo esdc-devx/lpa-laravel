@@ -14,6 +14,7 @@ import store from './store/';
 
 import Logger from './logger';
 import Helpers from './helpers';
+import './polyfills';
 import Notify from './mixins/notify';
 
 import { setLanguage, loadLanguages } from './locale';

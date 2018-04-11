@@ -39,18 +39,16 @@
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="''"
-          :value="form.user.roles"
+          v-model="form.user.roles"
           id="roles"
           name="roles"
           valueKey="name"
-          multiple
-          @change="handleRolesActions">
+          multiple>
           <el-option
             v-for="item in roles"
             :key="item.id"
             :label="item.name"
-            :value="item.id"
-            :disabled="isViewingUserSysAdmin && item.name === 'admin'">
+            :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
@@ -67,6 +65,7 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
   import FormUtils from '../../mixins/form/utils.js';
+  import HttpStatusCodes from '../../axios/http-status-codes';
 
   let namespace = 'users';
 
@@ -80,8 +79,7 @@
         language: 'language',
         viewingUser: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`,
-        roles: `${namespace}/roles`,
-        isViewingUserSysAdmin: `${namespace}/isViewingUserSysAdmin`
+        roles: `${namespace}/roles`
       })
     },
 
@@ -101,22 +99,6 @@
         updateUser: `${namespace}/updateUser`,
         loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),
-
-      handleRolesActions(newVal) {
-        // fail safe in case the viewingUser has not yet been loaded
-        if (!this.viewingUser || !this.viewingUser.roles) {
-          return;
-        }
-        let adminRole = _.find(this.viewingUser.roles, ['unique_key', 'admin']);
-        // disallow removing the admin role on the sys.admin
-        if (this.isViewingUserSysAdmin && ( !newVal.length || !newVal.includes(adminRole.id) )) {
-          this.$alert('You cannot remove administrator role on the system administrator.', {
-            confirmButtonText: 'OK'
-          });
-          return;
-        }
-        this.form.user.roles = newVal;
-      },
 
       search(name) {
         return this.searchUser(name);
@@ -138,7 +120,11 @@
           this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
           this.goBack();
         } catch({ response }) {
-          this.isSaving = false;
+          if (response.status === HttpStatusCodes.FORBIDDEN) {
+            this.notifyWarning(response.data.errors);
+            this.isSaving = false;
+            return;
+          }
           this.errors = response.data.errors;
           this.focusOnError();
         }
