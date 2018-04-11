@@ -2,7 +2,6 @@
   <div class="project-list content">
     <div class="controls">
       <el-button @click="$router.push('projects/create')">Create a project</el-button>
-      <el-button disabled>Create Report</el-button>
     </div>
 
     <el-table
