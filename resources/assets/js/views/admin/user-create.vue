@@ -184,19 +184,28 @@
         this.isUserInfoLoading = true;
         await this.loadUserCreateInfo();
         this.isUserInfoLoading = false;
-      }
-    },
+      },
 
-    async mounted() {
-      EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', async () => {
+      async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
         await this.triggerLoadUserCreateInfo();
-      });
+      }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      // Destroy any events we might be listening
+      // so that they do not get called while being on another page
+      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      next();
+    },
+
+    async mounted() {
+      EventBus.$emit('App:ready');
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
       this.showMainLoading();
       await this.triggerLoadUserCreateInfo();

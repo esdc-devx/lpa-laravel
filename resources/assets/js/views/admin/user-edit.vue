@@ -137,7 +137,6 @@
       },
 
       async triggerLoadUserInfo() {
-        this.showMainLoading();
         this.isUserInfoLoading = true;
         let id = this.$route.params.id;
         await this.loadUserEditInfo(id);
@@ -147,23 +146,31 @@
         this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
         this.form.user.roles = _.map(this.viewingUser.roles, 'id');
         this.isUserInfoLoading = false;
-        this.hideMainLoading();
-      }
-    },
+      },
 
-    mounted() {
-      EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', async () => {
+      async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
-        this.$validator.reset();
+        this.resetErrors();
         // only reload the dropdowns, not the user
         this.isUserInfoLoading = true;
         let id = this.$route.params.id;
         await this.loadUserEditInfo(id);
         this.isUserInfoLoading = false;
-      });
+      }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      // Destroy any events we might be listening
+      // so that they do not get called while being on another page
+      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      next();
+    },
+
+    mounted() {
+      EventBus.$emit('App:ready');
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
       this.triggerLoadUserInfo();
     }
   };
