@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Models\User\User;
 use App\Repositories\UserRepository;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Auth\Access\AuthorizationException;
 
 class UserFormRequest extends FormRequest
 {
@@ -62,6 +63,19 @@ class UserFormRequest extends FormRequest
     }
 
     /**
+     * Verify if the user being edited is the main admin account.
+     *
+     * @return bool
+     */
+    protected function userIsAdminAccount()
+    {
+        return strcasecmp(
+            app()->make(UserRepository::class)->getById($this->route('user'))->username,
+            config('auth.admin.username')
+        ) === 0;
+    }
+
+    /**
      * Inject additional custom validation rules.
      *
      * @return bool
@@ -74,6 +88,15 @@ class UserFormRequest extends FormRequest
                 $validator->after(function ($validator) {
                     if ($this->userNotFoundInLdap()) {
                         $validator->errors()->add('username', __('validation.custom.username.not-found'));
+                    }
+                });
+                break;
+
+            // Custom rules for user edit.
+            case 'PUT':
+                $validator->after(function ($validator) {
+                    if ($this->userIsAdminAccount()) {
+                        throw new AuthorizationException('Cannot edit admin account.');
                     }
                 });
                 break;
