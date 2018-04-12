@@ -1,7 +1,7 @@
 <template>
   <el-row class="top-bar" type="flex">
     <el-col :span="8" class="app-title-col">
-      <div><h1><router-link :to="'/' + language">{{ trans('navigation.app_name') }}</router-link></h1></div>
+      <div><h1><router-link :to="'/' + language">{{ trans('base.navigation.app_name') }}</router-link></h1></div>
     </el-col>
     <el-col :span="16" class="nav-col">
       <nav>
@@ -16,13 +16,12 @@
           router>
           <el-submenu index="1" popper-class="sub-menu">
             <template slot="title">{{ user.name }}</template>
-            <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('navigation.profile') }}</span></el-menu-item>
-            <el-menu-item index="" @click="onLogout()"><span>{{ trans('navigation.logout') }}</span></el-menu-item>
+            <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('base.navigation.profile') }}</span></el-menu-item>
+            <el-menu-item index="" @click="onLogout()"><span>{{ trans('base.navigation.logout') }}</span></el-menu-item>
           </el-submenu>
-          <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('navigation.help') }}</span></el-menu-item>
+          <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('base.navigation.help') }}</span></el-menu-item>
           <el-menu-item index="" @click="setLanguage">
-            <span v-if="toggledLang === 'en'">English</span>
-            <span v-else>Français</span>
+            <span>{{ trans('base.navigation.language_toggle') }}</span>
           </el-menu-item>
           <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar">
             <span>

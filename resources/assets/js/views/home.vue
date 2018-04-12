@@ -1,15 +1,11 @@
 <template>
   <div class="home content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('home.welcome', { name: user.first_name }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('pages.home.welcome', { name: user.first_name }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="24">
-        <p>
-          Please select one of the tasks below to continue or navigate LPA using the menu above.
-          <br>
-          First time user? Visit our <a href="/getting-started">Getting started with LPA guide</a>.
-        </p>
+        <p v-html="trans('pages.home.instruction', { href: `${language}/getting-started` })"></p>
       </el-col>
     </el-row>
     <!-- Actions -->

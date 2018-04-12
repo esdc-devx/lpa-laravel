@@ -1,6 +1,6 @@
 <template>
   <div class="project-create content">
-    <h2>{{ trans('navigation.projects_create') }}</h2>
+    <h2>{{ trans('base.navigation.projects_create') }}</h2>
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
       <el-form-item label="Project name" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]"  prop="name">
         <el-input

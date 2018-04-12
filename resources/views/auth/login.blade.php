@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ __('navigation.app_name') }}</title>
+    <title>{{ __('base/navigation.app_name') }}</title>
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
@@ -99,17 +99,16 @@
         <el-container>
             <el-header height="50px">
                 <div class="top-bar">
-                    <h1>{{ __('navigation.app_name') }}</h1>
-                    <a v-if="toggledLocale === 'fr'" :href="'/' + toggledLocale + '/login'" class="lang">Français</a>
-                    <a v-else :href="'/' + toggledLocale + '/login'" class="lang">English</a>
+                    <h1>{{ __('base/navigation.app_name') }}</h1>
+                    <a :href="'/' + toggledLocale + '/login'" class="lang">{{ __('base/navigation.language_toggle') }}</a>
                 </div>
             </el-header>
             <el-main>
                 <div class="login-wrap">
-                    <div><h2>{{ __('login.title') }}</h2></div>
+                    <div><h2>{{ __('pages/login.header') }}</h2></div>
                     <p class="cred-warning">
                         <i class="el-icon-warning"></i>
-                        Your credentials are the same as your machine ones.
+                        {{ __('pages/login.machine_credentials_msg') }}
                     </p>
                     <el-form
                         ref="form"
@@ -117,11 +116,11 @@
                         method="POST"
                         action="{{ route('login') }}">
                         {{ csrf_field() }}
-                        <el-form-item label="{{ __('login.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
+                        <el-form-item label="{{ __('pages/login.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
                             <el-input id="username" name="username" v-model="username" v-validate="'required'" @keyup.native.enter="onSubmit" autofocus></el-input>
                             <form-error v-for="error in verrors.collect('username')" :key="error.id">@{{ error }}</form-error>
                         </el-form-item>
-                        <el-form-item label="{{ __('login.password') }}" for="password" :class="['is-required', {'is-error': verrors.collect('password').length }]" prop="password">
+                        <el-form-item label="{{ __('pages/login.password') }}" for="password" :class="['is-required', {'is-error': verrors.collect('password').length }]" prop="password">
                             <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" @keyup.native.enter="onSubmit">
                                 <i
                                     class="el-icon-view el-input__icon"
@@ -133,11 +132,11 @@
                             <form-error v-for="error in verrors.collect('password')" :key="error.id">@{{ error }}</form-error>
                         </el-form-item>
                         <el-form-item for="remember">
-                            <el-checkbox name="remember" name="remember" v-model="remember" @keyup.native.enter="onSubmit" label="{{ __('login.remember') }}"></el-checkbox>
+                            <el-checkbox name="remember" name="remember" v-model="remember" @keyup.native.enter="onSubmit" label="{{ __('pages/login.remember') }}"></el-checkbox>
                         </el-form-item>
 
                         <el-form-item class="controls-wrap">
-                            <el-button type="primary" :loading="isSaving" @click="onSubmit">{{ __('login.login') }}</el-button>
+                            <el-button type="primary" :loading="isSaving" @click="onSubmit">{{ __('pages/login.login') }}</el-button>
                         </el-form-item>
                     </el-form>
                 </div>

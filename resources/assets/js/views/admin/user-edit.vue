@@ -1,6 +1,6 @@
 <template>
   <div class="user-edit content">
-    <h2>{{ trans('navigation.admin_user_edit') }}</h2>
+    <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
       <el-form-item label="Username" for="username">

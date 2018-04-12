@@ -1,6 +1,6 @@
 <template>
   <div class="user-create content">
-    <h2>{{ trans('navigation.admin_user_create') }}</h2>
+    <h2>{{ trans('base.navigation.admin_user_create') }}</h2>
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
       <el-form-item label="Name" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-autocomplete

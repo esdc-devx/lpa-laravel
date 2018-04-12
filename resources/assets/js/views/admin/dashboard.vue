@@ -1,7 +1,7 @@
 <template>
   <div class="content dashboard">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('navigation.admin_dashboard') }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('base.navigation.admin_dashboard') }}</h2></el-col>
     </el-row>
   </div>
 </template>

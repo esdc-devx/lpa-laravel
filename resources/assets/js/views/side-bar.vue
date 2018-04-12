@@ -44,31 +44,31 @@
       menu() {
         return [
           {
-            text: this.trans('navigation.home'),
+            text: this.trans('base.navigation.home'),
             icon: 'el-icon-menu',
             classes: '',
             index: ''
           },
           {
-            text: this.trans('navigation.dashboard'),
+            text: this.trans('base.navigation.dashboard'),
             icon: 'el-icon-menu',
             classes: 'disabled',
             index: '/dashboard'
           },
           {
-            text: this.trans('navigation.projects'),
+            text: this.trans('base.navigation.projects'),
             icon: 'el-icon-menu',
             classes: '',
             index: '/projects'
           },
           {
-            text: this.trans('navigation.learning_products'),
+            text: this.trans('base.navigation.learning_products'),
             icon: 'el-icon-menu',
             classes: 'disabled',
             index: '/learning-products'
           },
           {
-            text: this.trans('navigation.non_learning_products'),
+            text: this.trans('base.navigation.non_learning_products'),
             icon: 'el-icon-menu',
             classes: 'disabled',
             index: '/non-learning-products'
