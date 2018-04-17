@@ -4,7 +4,7 @@ import _ from 'lodash';
 export default {
   notify(message = '', type = 'info', autoClose = true) {
     Vue.prototype.$notify({
-      title: _.capitalize(type),
+      title: _.capitalize(Vue.prototype.trans("components.notify[" + type + "]")),
       message,
       type,
       dangerouslyUseHTMLString: true,

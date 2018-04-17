@@ -50,6 +50,8 @@ setLanguage()
         }
       });
 
+      // Override the default placeholder for the components that has one
+      ElementUI.Select.props.placeholder.default = '';
       Vue.use(ElementUI, {
         i18n: (key, value) => window.i18n.t(key, value)
       });

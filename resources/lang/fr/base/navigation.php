@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'app_name'              => 'Application de produit d\'apprentissage',
+    'app_name'              => 'Application des produits d\'apprentissage',
     'home'                  => 'Accueil',
     'help'                  => 'Aide',
     'language_toggle'       => 'English',

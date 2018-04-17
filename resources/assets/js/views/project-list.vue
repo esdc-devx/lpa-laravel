@@ -1,7 +1,7 @@
 <template>
   <div class="project-list content">
     <div class="controls">
-      <el-button @click="$router.push('projects/create')">Create a project</el-button>
+      <el-button @click="$router.push('projects/create')">{{ trans('pages.project_list.create_project') }}</el-button>
     </div>
 
     <el-table
@@ -11,20 +11,20 @@
       <el-table-column
         sortable
         prop="id"
-        label="LPA #"
+        :label="trans('entities.project.lpa_num')"
         width="180">
       </el-table-column>
       <el-table-column
         sortable
         prop="name"
-        label="Project Name">
+        :label="trans('entities.project.name')">
       </el-table-column>
       <el-table-column
         :filters="orgUnit"
         :filter-method="filterOrgUnit"
         filter-placement="bottom-start"
         prop="organizational_unit.name"
-        label="Organizational unit">
+        :label="$tc('base.entities.organizational_units')">
         <template slot-scope="scope">
           <el-tag type="info" size="small" :title="scope.row.organizational_unit.name">{{scope.row.organizational_unit.name}}</el-tag>
         </template>

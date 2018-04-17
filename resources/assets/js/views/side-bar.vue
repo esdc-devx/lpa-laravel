@@ -84,7 +84,7 @@
     },
 
     watch: {
-      '$route': function(to) {
+      $route: function(to) {
         // since we do not know when ElementUI will update itself
         // we just wait until the DOM is updated
         this.$nextTick(() => {

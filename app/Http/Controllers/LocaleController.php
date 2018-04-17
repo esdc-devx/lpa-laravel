@@ -12,18 +12,18 @@ class LocaleController extends APIController
      */
     public function index()
     {
-        $languages = [];
+        $translations = [];
         // build up the locales in the response
         foreach (config('app.supported_locales') as $locale) {
-            $languages[$locale] = [];
+            $translations[$locale] = [];
 
             $path = resource_path("lang/$locale");
 
             $data = $this->getDirectoryAsArray(new DirectoryIterator($path));
-            $languages[$locale] = $data;
+            $translations[$locale] = $data;
         }
 
-        return $this->respond($languages);
+        return $this->respond($translations);
     }
 
     public function getDirectoryAsArray(DirectoryIterator $dir)

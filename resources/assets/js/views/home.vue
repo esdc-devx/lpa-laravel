@@ -13,13 +13,13 @@
       <el-col :span="3">
         <el-button @click="$router.push(`${language}/projects/create`)">
           <i class="el-icon-edit-outline"></i>
-          <p>Create a<br>Project</p>
+          <p>{{ trans('pages.project_list.create_project') }}</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">
         <el-button>
           <i class="el-icon-tickets"></i>
-          <p>Create a New<br>Learning Product</p>
+          <p>Create a Learning Product</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">
