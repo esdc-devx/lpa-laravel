@@ -3,19 +3,19 @@
     <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
-      <el-form-item :label="trans('entities.user.username')" for="username">
+      <el-form-item :label="trans('entities.general.username')" for="username">
         <el-input v-model="form.user.username" disabled></el-input>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.user.name')" for="name">
+      <el-form-item :label="trans('entities.general.name')" for="name">
         <el-input v-model="form.user.name" disabled></el-input>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.user.email')" for="email">
+      <el-form-item :label="trans('entities.general.email')" for="email">
         <el-input v-model="form.user.email" disabled></el-input>
       </el-form-item>
 
-      <el-form-item :label="$tc('base.entities.organizational_units', 2)" for="organizationalUnits">
+      <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -34,7 +34,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="trans('base.entities.roles')" for="roles">
+      <el-form-item :label="trans('entities.general.roles')" for="roles">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"

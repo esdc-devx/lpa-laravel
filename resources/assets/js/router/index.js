@@ -228,7 +228,7 @@ const routes = [
     name: 'not-found',
     component: NotFound,
     meta: {
-      title: () => 'base.navigation.not_found',
+      title: () => 'errors.not_found',
       breadcrumbs: () => 'not-found'
     }
   },
@@ -238,7 +238,7 @@ const routes = [
     name: 'forbidden',
     component: Forbidden,
     meta: {
-      title: () => 'base.navigation.forbidden',
+      title: () => 'errors.forbidden',
       breadcrumbs: () => 'forbidden'
     }
   }

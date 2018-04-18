@@ -16,24 +16,24 @@
       <el-table-column
         sortable
         prop="username"
-        :label="trans('entities.user.username')">
+        :label="trans('entities.general.username')">
       </el-table-column>
       <el-table-column
         sortable
         prop="name"
-        :label="trans('entities.user.name')">
+        :label="trans('entities.general.name')">
       </el-table-column>
       <el-table-column
         sortable
         prop="email"
-        :label="trans('entities.user.email')">
+        :label="trans('entities.general.email')">
       </el-table-column>
       <el-table-column
         :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
         :filter-method="filterGroup"
         filter-placement="bottom-start"
         prop="organizational_units"
-        :label="$tc('base.entities.organizational_units', 2)">
+        :label="$tc('entities.general.organizational_units', 2)">
         <template slot-scope="scope">
           <el-tag
             v-for="item in scope.row.organizational_units"
@@ -48,7 +48,7 @@
         :filter-method="filterGroup"
         filter-placement="bottom-start"
         prop="roles"
-        :label="trans('base.entities.roles')">
+        :label="trans('entities.general.roles')">
         <template slot-scope="scope">
           <el-tag
             v-for="item in scope.row.roles"

@@ -2,7 +2,7 @@
   <div class="user-create content">
     <h2>{{ trans('base.navigation.admin_user_create') }}</h2>
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
-      <el-form-item :label="trans('entities.user.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-autocomplete
           id="name"
           name="name"
@@ -24,7 +24,7 @@
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
-      <el-form-item :label="$tc('base.entities.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
+      <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -44,7 +44,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="trans('base.entities.roles')" for="roles" prop="roles">
+      <el-form-item :label="trans('entities.general.roles')" for="roles" prop="roles">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"

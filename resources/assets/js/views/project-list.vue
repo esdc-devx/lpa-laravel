@@ -11,20 +11,20 @@
       <el-table-column
         sortable
         prop="id"
-        :label="trans('entities.project.lpa_num')"
+        :label="trans('entities.general.lpa_num')"
         width="180">
       </el-table-column>
       <el-table-column
         sortable
         prop="name"
-        :label="trans('entities.project.name')">
+        :label="trans('entities.general.name')">
       </el-table-column>
       <el-table-column
         :filters="orgUnit"
         :filter-method="filterOrgUnit"
         filter-placement="bottom-start"
         prop="organizational_unit.name"
-        :label="$tc('base.entities.organizational_units')">
+        :label="$tc('entities.general.organizational_units')">
         <template slot-scope="scope">
           <el-tag type="info" size="small" :title="scope.row.organizational_unit.name">{{scope.row.organizational_unit.name}}</el-tag>
         </template>

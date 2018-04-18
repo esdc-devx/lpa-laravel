@@ -13,7 +13,7 @@ class LocaleController extends APIController
     public function index()
     {
         $translations = [];
-        // build up the locales in the response
+        // Build up the locales in the response.
         foreach (config('app.supported_locales') as $locale) {
             $translations[$locale] = [];
 
@@ -26,13 +26,13 @@ class LocaleController extends APIController
         return $this->respond($translations);
     }
 
-    public function getDirectoryAsArray(DirectoryIterator $dir)
+    protected function getDirectoryAsArray(DirectoryIterator $dir)
     {
         $data = [];
         foreach ($dir as $node) {
             if ($node->isDir() && !$node->isDot()) {
                 $data[$node->getFilename()] = $this->getDirectoryAsArray(new DirectoryIterator($node->getPathname()));
-            } else if ($node->isFile()) {
+            } elseif ($node->isFile()) {
                 $name = basename($node, '.php');
                 $data[$name] = require($node->getPathname());
             }

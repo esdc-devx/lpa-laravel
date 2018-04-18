@@ -1,6 +1,6 @@
 <template>
   <div class="content not-found">
-    <h2>404 - {{ trans('base.navigation.not_found') }}</h2>
+    <h2>404 - {{ trans('errors.not_found') }}</h2>
     <router-link :to="'/' + language">{{ trans('base.navigation.back_to_home') }}</router-link>
   </div>
 </template>

@@ -16,7 +16,5 @@ return [
     'projects_create'       => 'Créer un projet',
     'learning_products'     => 'Produits d\'apprentissage',
     'non_learning_products' => 'Produits de non-apprentissage',
-    'not_found'             => 'Non trouvé',
-    'forbidden'             => 'Accès refusé',
     'back_to_home'          => 'Retourner à la page d\'accueil'
 ];

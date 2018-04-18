@@ -16,7 +16,5 @@ return [
     'projects_create'       => 'Create a project',
     'learning_products'     => 'Learning Products',
     'non_learning_products' => 'Non-Learning Products',
-    'not_found'             => 'Not Found',
-    'forbidden'             => 'Access denied',
     'back_to_home'          => 'Back to Home page'
 ];

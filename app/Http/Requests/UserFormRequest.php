@@ -96,7 +96,7 @@ class UserFormRequest extends FormRequest
             case 'PUT':
                 $validator->after(function ($validator) {
                     if ($this->userIsAdminAccount()) {
-                        throw new AuthorizationException(__('errors.error_edit_admin'));
+                        throw new AuthorizationException('Cannot edit admin account.');
                     }
                 });
                 break;
