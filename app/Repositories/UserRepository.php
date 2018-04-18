@@ -60,14 +60,34 @@ class UserRepository extends BaseEloquentRepository
     public function getCurrent()
     {
         $user = auth()->user();
-        return $user ? $this->with('roles')->getById($user->id) : null;
+        return $user ? $this->with(['organizationalUnits', 'roles'])->getById($user->id) : null;
+    }
+
+    /**
+     * Get paged items
+     *
+     * @param  integer $paged Items per page
+     * @param  string $orderBy Column to sort by
+     * @param  string $sort Sort direction
+     * @return \Illuminate\Pagination\Paginator
+     */
+    public function getPaginated($paged = 15, $orderBy = 'id', $sort = 'asc')
+    {
+        $query = function () use ($paged, $orderBy, $sort) {
+            return $this->model
+                ->where('username', '!=', config('auth.admin.username')) // Exclude admin account.
+                ->with($this->requiredRelationships)
+                ->orderBy($orderBy, $sort)
+                ->paginate($paged);
+        };
+        return $this->doQuery($query);
     }
 
     /**
      * Create user.
      *
      * @param  array $data
-     * @return App\Models\User
+     * @return User
      */
     public function create(array $data)
     {
@@ -110,7 +130,7 @@ class UserRepository extends BaseEloquentRepository
      * Update user.
      *
      * @param  array $data
-     * @return App\Models\User
+     * @return User
      */
     public function update($id, array $data = [])
     {
@@ -130,17 +150,5 @@ class UserRepository extends BaseEloquentRepository
         $user = $this->with('roles')->getById($id);
         event(new UserSaved($user));
         return $user;
-    }
-
-    /**
-     * Delete user.
-     *
-     * @param  int $id
-     * @return int
-     */
-    public function delete($id)
-    {
-        $delete = parent::delete($id);
-        return $delete;
     }
 }

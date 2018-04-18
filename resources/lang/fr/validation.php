@@ -117,6 +117,8 @@ return [
     |
      */
 
-    'attributes' => [],
+    'attributes' => [
+        'organizational_unit' => 'unité organisationnelle'
+    ],
 
 ];

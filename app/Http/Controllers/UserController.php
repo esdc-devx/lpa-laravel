@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User\User;
-use App\Models\User\Role;
-use App\Repositories\UserRepository;
-use App\Repositories\OrganizationalUnitRepository;
+use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserLdap;
+use App\Http\Resources\OrganizationalUnitsCollection;
 use App\Http\Requests\UserFormRequest;
+use App\Models\User\Role;
+use App\Models\User\User;
+use App\Repositories\OrganizationalUnitRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
 
 class UserController extends APIController
 {
@@ -24,11 +26,13 @@ class UserController extends APIController
     /**
      * Search users into LDAP repository.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return \Illuminate\Http\Response
      */
     public function search(Request $request)
     {
+        $this->authorize('search', User::class);
+
         $results = $this->users->searchLdap($request->get('name'));
         return $this->respond(UserLdap::collection($results));
     }
@@ -50,8 +54,8 @@ class UserController extends APIController
      */
     public function index()
     {
-        // @todo: Add option to display deleted users?
         $limit = request()->get('limit') ? : self::ITEMS_PER_PAGE;
+
         return $this->respondWithPagination(
             $this->users->with(['organizationalUnits', 'roles'])->getPaginated($limit)
         );
@@ -64,6 +68,8 @@ class UserController extends APIController
      */
     public function create()
     {
+        $this->authorize('create', User::class);
+
         // Return user creation form data.
         return $this->respond([
             'organizational_units' => $this->organizationalUnits->getAll()->toArray(),
@@ -74,7 +80,7 @@ class UserController extends APIController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\UserFormRequest  $request
+     * @param  UserFormRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(UserFormRequest $request)
@@ -85,6 +91,7 @@ class UserController extends APIController
             'organizational_units',
             'roles',
         ]);
+
         return $this->respond(
             $this->users->create($data)
         );
@@ -112,19 +119,22 @@ class UserController extends APIController
      */
     public function edit($id)
     {
+        $user = $this->users->with(['organizationalUnits', 'roles'])->getById($id);
+        $this->authorize('update', $user);
+
         // Return user edit form data.
         return $this->respond([
-            'user' => $this->users->with(['organizationalUnits', 'roles'])->getById($id),
-            'organizational_units' => $this->organizationalUnits->getAll()->toArray(),
-            'roles' => Role::all()->toArray(),
+            'user'                 => $user,
+            'organizational_units' => $this->organizationalUnits->getAll(),
+            'roles'                => Role::all(),
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  App\Http\Requests\UserFormRequest  $request
-     * @param  int  $id
+     * @param  UserFormRequest $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function update(UserFormRequest $request, int $id)
@@ -134,6 +144,7 @@ class UserController extends APIController
             'organizational_units',
             'roles',
         ]);
+
         return $this->respond(
             $this->users->update($id, $data)
         );
@@ -142,12 +153,14 @@ class UserController extends APIController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  App\Http\Requests\UserFormRequest  $request
-     * @param  int  $id
+     * @param  Request $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserFormRequest $request, int $id)
+    public function destroy(Request $request, $id)
     {
+        $this->authorize('delete', $this->users->getById($id));
+
         // If request has force parameter, permenantely delete the user.
         $method = $request->get('force') ? 'forceDelete' : 'delete';
         return $this->respond(

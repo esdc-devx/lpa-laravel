@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProjectFormRequest;
 use App\Models\Project\Project;
-use App\Repositories\ProjectRepository;
 use App\Repositories\OrganizationalUnitRepository;
+use App\Repositories\ProjectRepository;
+use App\Repositories\UserRepository;
+use Illuminate\Http\Request;
 
 class ProjectController extends APIController
 {
@@ -25,8 +28,9 @@ class ProjectController extends APIController
     public function index()
     {
         $limit = request()->get('limit') ?: self::ITEMS_PER_PAGE;
-        $results = $this->projects->getAll($limit);
-        return $this->respondWithPagination($results);
+        return $this->respondWithPagination(
+            $this->projects->getPaginated($limit)
+        );
     }
 
     /**
@@ -34,69 +38,96 @@ class ProjectController extends APIController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
+        $this->authorize('create', Project::class);
+
         return $this->respond([
-            'organizational_units' => $this->organizationalUnits->getOwners()->toArray()
+            'organizational_units' => $this->organizationalUnits->getOwnersFor(auth()->user())
         ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProjectFormRequest $request)
     {
-        // Response::HTTP_CREATED
+        // Retrieve only the necessary attributes from the request.
+        $data = $request->only([
+            'name',
+            'organizational_unit'
+        ]);
+
+        return $this->respond(
+            $this->projects->create($data)
+        );
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Project  $project
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         return $this->respond([
-            // @todo: Move to Project Repository.
-            'project' => Project::with('owner', 'organizationalUnit')->findOrFail($id)
+            'project' => $this->projects->getById($id)
         ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Project  $project
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Project $project)
+    public function edit($id)
     {
-        //
+        $project = $this->projects->getById($id);
+        $this->authorize('update', $project);
+
+        return $this->respond([
+            'project'              => $project,
+            'organizational_units' => $this->organizationalUnits->getOwnersFor(auth()->user())
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Project  $project
+     * @param  ProjectFormRequest $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Project $project)
+    public function update(ProjectFormRequest $request, $id)
     {
-        //
+        // Ensure that user cannot update any other attributes.
+        $data = $request->only([
+            'name',
+            'organizational_unit',
+        ]);
+
+        return $this->respond(
+            $this->projects->update($id, $data)
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Project  $project
+     * @param  Project $project
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Project $project)
+    public function destroy(Request $request, $id)
     {
-        $project->delete();
+        $this->authorize('delete', $this->projects->getById($id));
+
+        return $this->respond(
+            $this->projects->delete($id)
+        );
     }
 }
