@@ -50,6 +50,8 @@ setLanguage()
         }
       });
 
+      // Override the default placeholder for the components that has one
+      ElementUI.Select.props.placeholder.default = '';
       Vue.use(ElementUI, {
         i18n: (key, value) => window.i18n.t(key, value)
       });
@@ -75,8 +77,7 @@ setLanguage()
         template: '<app/>',
         components: { App }
       });
-    })
-    .catch(e => {
+    }).catch(e => {
       alert('Languages could not be loaded. Please contact your administrator.');
       Vue.$log.error(`[app][loadLanguages]: ${e}`);
     })

@@ -1,21 +1,21 @@
 <template>
   <div class="user-edit content">
-    <h2>{{ trans('navigation.admin_user_edit') }}</h2>
+    <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
-      <el-form-item label="Username" for="username">
+      <el-form-item :label="trans('entities.user.username')" for="username">
         <el-input v-model="form.user.username" disabled></el-input>
       </el-form-item>
 
-      <el-form-item label="Name" for="name">
+      <el-form-item :label="trans('entities.general.name')" for="name">
         <el-input v-model="form.user.name" disabled></el-input>
       </el-form-item>
 
-      <el-form-item label="Email" for="email">
+      <el-form-item :label="trans('entities.user.email')" for="email">
         <el-input v-model="form.user.email" disabled></el-input>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit(s)" for="organizationalUnits">
+      <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -34,7 +34,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Role(s)" for="roles">
+      <el-form-item :label="trans('entities.general.roles')" for="roles">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -54,8 +54,8 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">Save</el-button>
-        <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
+        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
+        <el-button :disabled="isFormDisabled" @click="goBack()">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -94,8 +94,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         updateUser: `${namespace}/updateUser`,
         loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),
@@ -117,7 +115,7 @@
             roles: this.form.user.roles
           });
           this.isSaving = false;
-          this.notifySuccess(`<b>${this.form.user.name}</b> has been updated.`);
+          this.notifySuccess(this.trans('components.notify.updated', { name: this.form.user.name }));
           this.goBack();
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {

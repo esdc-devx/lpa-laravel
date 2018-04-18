@@ -1,8 +1,8 @@
 <template>
   <div class="user-create content">
-    <h2>{{ trans('navigation.admin_user_create') }}</h2>
+    <h2>{{ trans('base.navigation.admin_user_create') }}</h2>
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
-      <el-form-item label="Name" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-autocomplete
           id="name"
           name="name"
@@ -24,7 +24,7 @@
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
-      <el-form-item label="Organizational Unit(s)" for="organizationalUnits" prop="organizational_units">
+      <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -44,7 +44,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="Role(s)" for="roles" prop="roles">
+      <el-form-item :label="trans('entities.general.roles')" for="roles" prop="roles">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
@@ -65,8 +65,8 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">Create</el-button>
-        <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        <el-button :disabled="isFormDisabled" @click="goBack()">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -154,7 +154,7 @@
         try {
           await this.createUser(_.omit(this.form, 'name'));
           this.isSaving = false;
-          this.notifySuccess(`<b>${this.form.name}</b> has been created.`);
+          this.notifySuccess(this.trans('components.notify.created', { name: this.form.user.name }));
           this.goBack();
         } catch({ response }) {
           this.isSaving = false;
@@ -167,7 +167,10 @@
         for (let fieldName in errors) {
           fieldBag = errors[fieldName];
           for (let j = 0; j < fieldBag.length; j++) {
-            this.verrors.add({field: fieldName === 'username' ? 'name' : fieldName, msg: fieldBag[j]})
+            // since we are dealing with a username while sending to the backend,
+            // we need to map the username to the name so that the name field has the error
+            // and not the username field which doesn't exist
+            this.verrors.add({field: fieldName === 'username' ? 'name' : fieldName, msg: fieldBag[j]});
           }
         }
         this.focusOnError();
@@ -203,12 +206,12 @@
       next();
     },
 
-    async mounted() {
+    mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
       this.showMainLoading();
-      await this.triggerLoadUserCreateInfo();
+      this.triggerLoadUserCreateInfo();
       this.hideMainLoading();
     }
   };

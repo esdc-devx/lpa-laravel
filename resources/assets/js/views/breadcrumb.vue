@@ -55,7 +55,7 @@
         delete windowCrumbs[0];
         let windowTitle = _.map(windowCrumbs, 'name').join(' - ');
 
-        window.document.title = this.trans('navigation.app_name') + ' - ' + windowTitle;
+        window.document.title = this.trans('base.navigation.app_name') + ' - ' + windowTitle;
       },
 
       getBreadcrumbs() {

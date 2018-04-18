@@ -136,7 +136,7 @@ function setupAdmin(newPath) {
 // @note: the meta.breadcrumbs property need to follow this convention:
 //            'routeName/someOtherRouteName/currentRouteName'
 //        And for the title, it can only be either a value or a a translatable property
-//            'navigation.admin_user_edit' or
+//            'base.navigation.admin_user_edit' or
 //            `${store.getters['users/viewing'].name}`
 const routes = [
   {
@@ -144,7 +144,7 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-      title: () => 'navigation.home'
+      title: () => 'base.navigation.home'
     }
   },
   {
@@ -152,7 +152,7 @@ const routes = [
     name: 'profile',
     component: Profile,
     meta: {
-      title: () => 'navigation.profile',
+      title: () => 'base.navigation.profile',
       breadcrumbs: () => 'profile'
     }
   },
@@ -161,7 +161,7 @@ const routes = [
     name: 'projects',
     component: ProjectList,
     meta: {
-      title: () => 'navigation.projects',
+      title: () => 'base.navigation.projects',
       breadcrumbs: () => 'projects'
     }
   },
@@ -170,7 +170,7 @@ const routes = [
     name: 'project-create',
     component: ProjectCreate,
     meta: {
-      title: () => 'navigation.projects_create',
+      title: () => 'base.navigation.projects_create',
       breadcrumbs: () => 'projects/project-create'
     }
   },
@@ -188,7 +188,7 @@ const routes = [
     name: 'admin-dashboard',
     component: AdminDashboard,
     meta: {
-      title: () => 'navigation.admin_dashboard',
+      title: () => 'base.navigation.admin_dashboard',
       breadcrumbs: () => 'admin-dashboard'
     }
   },
@@ -197,7 +197,7 @@ const routes = [
     name: 'admin-user-list',
     component: UserList,
     meta: {
-      title: () => 'navigation.admin_user_list',
+      title: () => 'base.navigation.admin_user_list',
       breadcrumbs: () => 'admin-dashboard/admin-user-list'
     }
   },
@@ -206,7 +206,7 @@ const routes = [
     name: 'admin-user-create',
     component: UserCreate,
     meta: {
-      title: () => 'navigation.admin_user_create',
+      title: () => 'base.navigation.admin_user_create',
       breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-create'
     }
   },
@@ -228,7 +228,7 @@ const routes = [
     name: 'not-found',
     component: NotFound,
     meta: {
-      title: () => 'navigation.not_found',
+      title: () => 'errors.not_found',
       breadcrumbs: () => 'not-found'
     }
   },
@@ -238,7 +238,7 @@ const routes = [
     name: 'forbidden',
     component: Forbidden,
     meta: {
-      title: () => 'navigation.forbidden',
+      title: () => 'errors.forbidden',
       breadcrumbs: () => 'forbidden'
     }
   }
