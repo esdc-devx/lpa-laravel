@@ -1,8 +1,8 @@
 <template>
   <div class="project-create content">
-    <h2>{{ trans('navigation.projects_create') }}</h2>
+    <h2>{{ trans('base.navigation.projects_create') }}</h2>
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
-      <el-form-item label="Project name" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]"  prop="name">
+      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]"  prop="name">
         <el-input
           v-model="form.name"
           v-validate="'required'"
@@ -13,7 +13,7 @@
         </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
-      <el-form-item label="Organizational Unit" for="organizationalUnits" :class="['is-required', {'is-error': verrors.collect('organizationalUnits').length }]" prop="organizational_units">
+      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnits" :class="['is-required', {'is-error': verrors.collect('organizationalUnits').length }]" prop="organizational_units">
         <el-select
           :disabled="form.organizational_units.length <= 1"
           v-validate="'required'"
@@ -31,15 +31,15 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">Create</el-button>
-        <el-button :disabled="isFormDisabled" @click="goBack()">Cancel</el-button>
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        <el-button :disabled="isFormDisabled" @click="goBack()">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import EventBus from '../event-bus.js';
   import FormError from '../components/forms/error.vue';
@@ -82,11 +82,6 @@
     },
 
     methods: {
-      ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading'
-      }),
-
       // Form handlers
       onSubmit() {
         this.submit(this.create);

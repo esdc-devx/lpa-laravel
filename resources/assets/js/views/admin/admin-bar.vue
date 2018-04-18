@@ -36,13 +36,13 @@
       admin() {
         return [
           {
-            text: this.trans('navigation.admin_dashboard'),
+            text: this.trans('base.navigation.admin_dashboard'),
             icon: 'el-icon-menu',
             classes: '',
             index: '/admin'
           },
           {
-            text: this.trans('navigation.admin_user_list'),
+            text: this.trans('base.navigation.admin_user_list'),
             icon: 'el-icon-menu',
             classes: '',
             index: '/admin/users'

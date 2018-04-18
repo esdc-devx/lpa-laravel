@@ -1,7 +1,7 @@
 <template>
   <div class="content user-list">
     <div class="controls">
-      <el-button @click="$router.push('users/create')">Create a user</el-button>
+      <el-button @click="$router.push('users/create')">{{ trans('pages.user_list.create_user') }}</el-button>
     </div>
     <el-table
       :default-sort="{prop: 'id', order: 'ascending'}"
@@ -16,24 +16,24 @@
       <el-table-column
         sortable
         prop="username"
-        label="Username">
+        :label="trans('entities.user.username')">
       </el-table-column>
       <el-table-column
         sortable
         prop="name"
-        label="Name">
+        :label="trans('entities.general.name')">
       </el-table-column>
       <el-table-column
         sortable
         prop="email"
-        label="Email">
+        :label="trans('entities.user.email')">
       </el-table-column>
       <el-table-column
         :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
         :filter-method="filterGroup"
         filter-placement="bottom-start"
         prop="organizational_units"
-        label="Organizational Unit(s)">
+        :label="$tc('entities.general.organizational_units', 2)">
         <template slot-scope="scope">
           <el-tag
             v-for="item in scope.row.organizational_units"
@@ -48,7 +48,7 @@
         :filter-method="filterGroup"
         filter-placement="bottom-start"
         prop="roles"
-        label="Role(s)">
+        :label="trans('entities.general.roles')">
         <template slot-scope="scope">
           <el-tag
             v-for="item in scope.row.roles"
@@ -58,19 +58,6 @@
             :title="item">{{item}}</el-tag>
         </template>
       </el-table-column>
-      <!--
-        @todo: Uncomment when backend will handle delete user correctly
-                  (receive deleted users when not forced deleted)
-      -->
-      <!-- <el-table-column
-        label="Operations">
-        <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="danger"
-            @click="deleteUserModal(scope.row.id)">Delete</el-button>
-        </template>
-      </el-table-column> -->
     </el-table>
 
     <el-pagination
@@ -81,17 +68,6 @@
       layout="total, prev, pager, next"
       :total="pagination.total">
     </el-pagination>
-
-    <!-- @todo: Uncomment when backend will handle delete user correctly
-               (receive deleted users when not forced deleted)
-    <el-dialog :visible.sync="showDeleteModal" width="30%">
-      <span slot="title" class="el-dialog__title">Delete user {{user.name}} ?</span>
-      <span>This action cannot be undone.</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="confirmDelete()">Delete</el-button>
-        <el-button @click="showDeleteModal = false">Cancel</el-button>
-      </span>
-    </el-dialog> -->
   </div>
 </template>
 
@@ -118,7 +94,6 @@
           name: null
         },
         parsedUsers: [],
-        showDeleteModal: false,
         currentPage: 1
       }
     },
@@ -127,8 +102,7 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadUsers: `${namespace}/loadUsers`,
-        deleteUser: `${namespace}/deleteUser`
+        loadUsers: `${namespace}/loadUsers`
       }),
 
       parseUsers() {
@@ -155,27 +129,9 @@
 
       // Form handlers
       editUser(user, column) {
-        // @todo: make this text translatable
-        if (column.label === 'Operations') {
-          return;
-        }
         this.scrollToTop();
         this.$router.push(`${namespace}/edit/${user.id}`);
       },
-
-      // @todo: Uncomment when backend will handle delete user correctly
-      //           (receive deleted users when not forced deleted)
-      // deleteUserModal(id) {
-      //   this.user = this.findUser(id);
-      //   this.showDeleteModal = true;
-      // },
-
-      // async confirmDelete() {
-      //   await this.deleteUser(this.user.id);
-      //   this.showDeleteModal = false;
-      //   this.notifySuccess(`<b>${this.user.name}</b> has been deleted.`);
-      //   this.triggerLoadUsers();
-      // },
 
       // Filters
       findUser(id) {
@@ -201,11 +157,23 @@
         await this.loadUsers(page)
         this.parseUsers();
         this.hideMainLoading();
+      },
+
+      async onLanguageUpdate() {
+        await this.triggerLoadUsers();
       }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      // Destroy any events we might be listening
+      // so that they do not get called while being on another page
+      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      next();
     },
 
     mounted() {
       EventBus.$emit('App:ready');
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
       this.triggerLoadUsers();
     }
   };
@@ -218,16 +186,6 @@
     }
     table {
       width: 100%;
-      tbody {
-        tr {
-          .delete-user {
-            position: relative;
-            &:hover {
-              background-color: #d1143a;
-            }
-          }
-        }
-      }
     }
     .el-table__row {
       cursor: pointer;

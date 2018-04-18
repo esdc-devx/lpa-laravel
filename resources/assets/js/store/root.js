@@ -77,6 +77,8 @@ export const actions = {
 
 export const mutations = {
   [types.SET_LANGUAGE](state, lang = state.language) {
+    EventBus.$emit('Store:languageUpdate', lang);
+
     state.language = lang;
     localStorage.setItem('language', lang);
 
@@ -85,8 +87,6 @@ export const mutations = {
     // reflect the language in the lang attribute
     // for accessibility purposes
     document.querySelector('html').lang = lang;
-
-    EventBus.$emit('Store:languageUpdate', lang);
   },
 
   [types.SET_LANGUAGES](state, languages) {

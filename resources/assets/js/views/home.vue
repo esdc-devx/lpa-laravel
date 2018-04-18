@@ -1,15 +1,11 @@
 <template>
   <div class="home content">
     <el-row type="flex" justify="center">
-      <el-col :span="24"><h2>{{ trans('home.welcome', { name: user.first_name }) }}</h2></el-col>
+      <el-col :span="24"><h2>{{ trans('pages.home.welcome', { name: user.first_name }) }}</h2></el-col>
     </el-row>
     <el-row type="flex" justify="center">
       <el-col :span="24">
-        <p>
-          Please select one of the tasks below to continue or navigate LPA using the menu above.
-          <br>
-          First time user? Visit our <a href="/getting-started">Getting started with LPA guide</a>.
-        </p>
+        <p v-html="trans('pages.home.instruction', { href: `${language}/getting-started` })"></p>
       </el-col>
     </el-row>
     <!-- Actions -->
@@ -17,13 +13,13 @@
       <el-col :span="3">
         <el-button @click="$router.push(`${language}/projects/create`)">
           <i class="el-icon-edit-outline"></i>
-          <p>Create a<br>Project</p>
+          <p>{{ trans('pages.project_list.create_project') }}</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">
         <el-button>
           <i class="el-icon-tickets"></i>
-          <p>Create a New<br>Learning Product</p>
+          <p>Create a Learning Product</p>
         </el-button>
       </el-col>
       <el-col :span="3" class="disabled">

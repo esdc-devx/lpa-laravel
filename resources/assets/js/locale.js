@@ -13,7 +13,11 @@ Vue.use(VueI18n);
  * @return {String}        Return the formatted string
  */
 Vue.prototype.trans = (string, args) => {
-  let value = _.get(window.i18n.messages[window.i18n.locale], string, '');
+  let value = _.get(window.i18n.messages[window.i18n.locale], string, string);
+
+  if (string === value) {
+    Vue.$log.warn(`Could not find translatable string for: ${string}`);
+  }
 
   _.eachRight(args, (paramVal, paramKey) => {
     value = _.replace(value, `:${paramKey}`, paramVal);

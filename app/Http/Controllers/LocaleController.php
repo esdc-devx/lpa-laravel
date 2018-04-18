@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use \DirectoryIterator;
 class LocaleController extends APIController
 {
     /**
@@ -11,20 +12,31 @@ class LocaleController extends APIController
      */
     public function index()
     {
-        $languages = [];
+        $translations = [];
+        // Build up the locales in the response.
         foreach (config('app.supported_locales') as $locale) {
-            $languages[$locale] = [];
+            $translations[$locale] = [];
+
+            $path = resource_path("lang/$locale");
+
+            $data = $this->getDirectoryAsArray(new DirectoryIterator($path));
+            $translations[$locale] = $data;
         }
 
-        foreach ($languages as $locale => $strings) {
-            $files = glob(resource_path('lang/' . $locale . '/*.php'));
+        return $this->respond($translations);
+    }
 
-            foreach ($files as $file) {
-                $name = basename($file, '.php');
-                $languages[$locale][$name] = require($file);
+    protected function getDirectoryAsArray(DirectoryIterator $dir)
+    {
+        $data = [];
+        foreach ($dir as $node) {
+            if ($node->isDir() && !$node->isDot()) {
+                $data[$node->getFilename()] = $this->getDirectoryAsArray(new DirectoryIterator($node->getPathname()));
+            } elseif ($node->isFile()) {
+                $name = basename($node, '.php');
+                $data[$name] = require($node->getPathname());
             }
         }
-
-        return $this->respond($languages);
+        return $data;
     }
 }

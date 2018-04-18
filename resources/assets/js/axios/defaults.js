@@ -1,5 +1,7 @@
+import Vue from 'vue';
 import Config from '../config';
 import Notify from '../mixins/notify';
+import '../locale';
 
 let defaultLang = Config.DEFAULT_LANG;
 
@@ -21,7 +23,7 @@ let token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
   defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
-  Notify.notifyError('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
+  Notify.notifyError(Vue.prototype.trans('errors.csrf_not_found'));
 }
 
 export default defaults;
