@@ -94,8 +94,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         updateUser: `${namespace}/updateUser`,
         loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),

@@ -157,11 +157,23 @@
         await this.loadUsers(page)
         this.parseUsers();
         this.hideMainLoading();
+      },
+
+      async onLanguageUpdate() {
+        await this.triggerLoadUsers();
       }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      // Destroy any events we might be listening
+      // so that they do not get called while being on another page
+      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      next();
     },
 
     mounted() {
       EventBus.$emit('App:ready');
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
       this.triggerLoadUsers();
     }
   };

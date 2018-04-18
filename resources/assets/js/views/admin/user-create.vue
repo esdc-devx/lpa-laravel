@@ -206,12 +206,12 @@
       next();
     },
 
-    async mounted() {
+    mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
       this.showMainLoading();
-      await this.triggerLoadUserCreateInfo();
+      this.triggerLoadUserCreateInfo();
       this.hideMainLoading();
     }
   };

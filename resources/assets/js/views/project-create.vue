@@ -39,7 +39,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import EventBus from '../event-bus.js';
   import FormError from '../components/forms/error.vue';
@@ -82,11 +82,6 @@
     },
 
     methods: {
-      ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading'
-      }),
-
       // Form handlers
       onSubmit() {
         this.submit(this.create);
