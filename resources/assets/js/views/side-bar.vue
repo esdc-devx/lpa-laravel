@@ -12,7 +12,7 @@
       </el-menu-item>
     </el-menu>
     <div class="side-bar-toggle" @click="toggleSideBar">
-      <div class="side-bar-toggle-inner">
+      <div :class="['side-bar-toggle-inner', { 'collapsed': isCollapsed }]">
         <span></span>
         <span></span>
         <span></span>
@@ -98,6 +98,16 @@
       toggleSideBar() {
         this.$helpers.throttleAction(() => {
           this.isCollapsed = !this.isCollapsed;
+          this.$nextTick(() => {
+            // When the sidebar collapses-expands, ElementUI re-render the menu
+            // because of that, we need to wait a bit so that it finishes rendering
+            // This only applies to child pages that we want the sidebar to reflect its activeState
+            // e.g.: current page: fr/projects/create, sidebar activeIndex: fr/projects
+            _.delay(() => {
+              let menu = this.$refs.menu;
+              this.setActiveIndex(this.$route, menu);
+            }, 350);
+          });
         });
       }
     },
@@ -151,7 +161,7 @@
           }
           &:nth-of-type(2) {
             top: 50%;
-            // translate the 2nd bar to the left when the menu is collapsed
+            // when menu is expanded, translate 2nd bar on the right
             left: 5px;
             transform: translateY(-50%);
           }
@@ -159,10 +169,10 @@
             bottom: 0;
           }
         }
-      }
-
-      .el-menu--collapse ~ & span:nth-of-type(2) {
-        left: 0;
+        &.collapsed span:nth-of-type(2) {
+          // translate the 2nd bar to the left when the menu is collapsed
+          left: 0px;
+        }
       }
 
       &-inner, &-inner span {

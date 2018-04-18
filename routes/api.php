@@ -12,13 +12,12 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::get('locales', 'LocaleController@index');
 
 Route::middleware('auth:api')->group(function () {
     Route::get('users/current', 'UserController@current');
     Route::get('users/search', 'UserController@search');
     Route::resource('users', 'UserController');
-
-    Route::get('locales', 'LocaleController@index');
 
     Route::resource('projects', 'ProjectController');
 });

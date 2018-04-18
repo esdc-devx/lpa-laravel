@@ -5,7 +5,7 @@ return [
     'info'    => 'Info',
     'warning' => 'Warning',
     'error'   => 'Error',
-    'created' => '<b>:name</b> has been created.',
-    'updated' => '<b>:name</b> has been updated.',
-    'deleted' => '<b>:name</b> has been deleted.',
+    'created' => 'The user <b>:name</b> has been created.',
+    'updated' => 'The user <b>:name</b> has been updated.',
+    'deleted' => 'The user <b>:name</b> has been deleted.',
 ];

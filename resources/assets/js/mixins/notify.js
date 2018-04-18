@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import _ from 'lodash';
+import '../locale';
 
 export default {
   notify(message = '', type = 'info', autoClose = true) {

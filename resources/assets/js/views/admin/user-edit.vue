@@ -34,7 +34,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.user.roles')" for="roles">
+      <el-form-item :label="trans('base.entities.roles')" for="roles">
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"

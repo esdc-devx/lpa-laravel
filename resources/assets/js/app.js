@@ -77,8 +77,7 @@ setLanguage()
         template: '<app/>',
         components: { App }
       });
-    })
-    .catch(e => {
+    }).catch(e => {
       alert('Languages could not be loaded. Please contact your administrator.');
       Vue.$log.error(`[app][loadLanguages]: ${e}`);
     })

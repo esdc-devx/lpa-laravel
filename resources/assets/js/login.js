@@ -15,6 +15,7 @@ import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
 import Logger from './logger';
 import Notify from './mixins/notify';
+import './locale';
 
 import Config from './config';
 
@@ -88,15 +89,27 @@ new Vue({
       } catch({ response }) {
         // catch in case of token mismatch, invalid session, etc due to cache cleared by user
         if (response.status === HttpStatusCodes.BAD_REQUEST) {
-          this.notifyError('Bad request. Please refresh your page.');
+          this.notifyError(Vue.prototype.trans('errors.bad_request'));
           return;
         } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError('Please contact your administrator.');
+          this.notifyError(Vue.prototype.trans('errors.server_error'));
           return;
         }
         this.isSaving = false;
         this.manageBackendErrors(response.data.errors);
       }
+    },
+
+    async loadLanguages() {
+      let request = axios.create({baseURL: '/' + Config.DEFAULT_LANG});
+      let response;
+      response = await request.get('api/locales');
+      window.i18n.messages = response.data.data;
+    },
+
+    setupLocale() {
+      window.i18n = {};
+      window.i18n.locale = Config.DEFAULT_LANG;
     },
 
     manageBackendErrors(errors) {
@@ -111,7 +124,9 @@ new Vue({
     }
   },
 
-  mounted() {
+  async mounted() {
+    this.setupLocale();
+    await this.loadLanguages();
     let spinner = document.querySelectorAll('.loading-spinner')[0];
     if (spinner) {
       spinner.classList.add('fade-out');

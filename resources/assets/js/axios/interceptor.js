@@ -26,11 +26,13 @@ axios.interceptors.response.use(response => response, error => {
   let errorResponse = response.data && response.data.errors ? response.data.errors : '';
   let errorMsg = error.message || '';
 
+  let trans = Vue.prototype.trans;
+
   if (response.status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
     Vue.prototype.$alert(
-      'You are not authenticated. You will be redirected to the login page.',
-      'Error',
+      trans('auth.session_expired'),
+      _.capitalize(trans('components.notify.error')),
       {
         showClose: false,
         confirmButtonText: 'Ok',
@@ -45,9 +47,9 @@ axios.interceptors.response.use(response => response, error => {
     router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
-    Notify.notifyError('General exception. Please contact your administrator.');
+    Notify.notifyError(trans('errors.general'));
   } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
-    Notify.notifyError('Bad request. Please refresh your page.');
+    Notify.notifyError(trans('errors.bad_request'));
   }
 
   Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);
