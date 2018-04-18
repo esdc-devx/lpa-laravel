@@ -5,6 +5,4 @@ return [
     'roles'                => 'Roles',
     'lpa_num'              => 'LPA #',
     'name'                 => 'Name',
-    'username'             => 'Username',
-    'email'                => 'Email',
 ];

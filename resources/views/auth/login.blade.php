@@ -116,7 +116,7 @@
                         method="POST"
                         action="{{ route('login') }}">
                         {{ csrf_field() }}
-                        <el-form-item label="{{ __('pages/login.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
+                        <el-form-item label="{{ __('entities/user.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
                             <el-input id="username" name="username" v-model="username" v-validate="'required'" @keyup.native.enter="onSubmit" autofocus></el-input>
                             <form-error v-for="error in verrors.collect('username')" :key="error.id">@{{ error }}</form-error>
                         </el-form-item>

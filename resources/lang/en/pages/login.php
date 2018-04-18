@@ -2,7 +2,6 @@
 
 return [
     'header'                  => 'Login',
-    'username'                => 'Username',
     'password'                => 'Password',
     'remember'                => 'Remember me',
     'login'                   => 'Login',

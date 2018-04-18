@@ -16,7 +16,7 @@
       <el-table-column
         sortable
         prop="username"
-        :label="trans('entities.general.username')">
+        :label="trans('entities.user.username')">
       </el-table-column>
       <el-table-column
         sortable
@@ -26,7 +26,7 @@
       <el-table-column
         sortable
         prop="email"
-        :label="trans('entities.general.email')">
+        :label="trans('entities.user.email')">
       </el-table-column>
       <el-table-column
         :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"

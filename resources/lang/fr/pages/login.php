@@ -2,7 +2,6 @@
 
 return [
     'header'                  => 'Identification',
-    'username'                => 'Nom d\'utilisateur',
     'password'                => 'Mot de passe',
     'remember'                => 'Se souvenir de moi',
     'login'                   => 'S\'identifier',
