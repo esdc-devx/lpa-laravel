@@ -29,7 +29,7 @@ export default {
     },
 
     removeLanguageFromString(str) {
-      if (str.match(/\/(en|fr)\//)) {
+      if (str.match(/\/(en|fr)\/?/)) {
         let strParsed = str.split('/');
         // remove the language
         strParsed.splice(1, 1);
