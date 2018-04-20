@@ -61,7 +61,7 @@
       getBreadcrumbs() {
         let homeRoute = _.find(this.$router.options.routes, { name: 'home' });
         let crumbs = [{
-          name: this.trans(homeRoute.meta.title()),
+          name: homeRoute.meta.title.call(this),
           path: '/' + this.language
         }];
         let matched = this.$route.matched;
@@ -95,9 +95,9 @@
           // before any store modules has done loading,
           // we need to catch edge cases like deep linking
           // would produce undefined as value
-          outputTitle = crumb.meta.title() === 'undefined' ? '' : crumb.meta.title();
+          outputTitle = crumb.meta.title.call(this) === 'undefined' ? '' : crumb.meta.title.call(this);
           // try to translate the title, or just take it as value
-          title = this.trans(outputTitle) || outputTitle || '';
+          title = outputTitle || '';
           path += '/' + route[i];
 
           // don't add any crumb that do not have a valid title or path

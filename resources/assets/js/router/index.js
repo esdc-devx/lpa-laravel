@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-
 import Config from '../config';
 
 import Home           from '../views/home.vue';
@@ -130,7 +129,6 @@ function setupAdmin(newPath) {
   // make sure that the admin bar is opened when browsing an admin url
   store.dispatch('toggleAdminBar', !!newPath.match(/\/admin/));
 }
-
 // @note: Vue-router needs a name property when using history mode
 // so that it can differ route changes. e.g.: language change
 // @note: the meta.breadcrumbs property need to follow this convention:
@@ -144,7 +142,9 @@ const routes = [
     name: 'home',
     component: Home,
     meta: {
-      title: () => 'base.navigation.home'
+      title() {
+        return this.trans('base.navigation.home');
+      }
     }
   },
   {
@@ -152,7 +152,9 @@ const routes = [
     name: 'profile',
     component: Profile,
     meta: {
-      title: () => 'base.navigation.profile',
+      title() {
+        return this.trans('base.navigation.profile');
+      },
       breadcrumbs: () => 'profile'
     }
   },
@@ -161,7 +163,9 @@ const routes = [
     name: 'projects',
     component: ProjectList,
     meta: {
-      title: () => 'base.navigation.projects',
+      title() {
+        return this.trans('base.navigation.projects');
+      },
       breadcrumbs: () => 'projects'
     }
   },
@@ -170,7 +174,9 @@ const routes = [
     name: 'project-create',
     component: ProjectCreate,
     meta: {
-      title: () => 'base.navigation.projects_create',
+      title() {
+        return this.trans('base.navigation.projects_create');
+      },
       breadcrumbs: () => 'projects/project-create'
     }
   },
@@ -188,7 +194,9 @@ const routes = [
     name: 'admin-dashboard',
     component: AdminDashboard,
     meta: {
-      title: () => 'base.navigation.admin_dashboard',
+      title() {
+        return this.trans('base.navigation.admin_dashboard');
+      },
       breadcrumbs: () => 'admin-dashboard'
     }
   },
@@ -197,7 +205,9 @@ const routes = [
     name: 'admin-user-list',
     component: UserList,
     meta: {
-      title: () => 'base.navigation.admin_user_list',
+      title() {
+        return this.trans('base.navigation.admin_user_list');
+      },
       breadcrumbs: () => 'admin-dashboard/admin-user-list'
     }
   },
@@ -206,7 +216,9 @@ const routes = [
     name: 'admin-user-create',
     component: UserCreate,
     meta: {
-      title: () => 'base.navigation.admin_user_create',
+      title() {
+        return this.trans('base.navigation.admin_user_create');
+      },
       breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-create'
     }
   },
@@ -228,7 +240,9 @@ const routes = [
     name: 'not-found',
     component: NotFound,
     meta: {
-      title: () => 'errors.not_found',
+      title() {
+        return this.trans('errors.not_found');
+      },
       breadcrumbs: () => 'not-found'
     }
   },
@@ -238,7 +252,9 @@ const routes = [
     name: 'forbidden',
     component: Forbidden,
     meta: {
-      title: () => 'errors.forbidden',
+      title() {
+        return this.trans('errors.forbidden');
+      },
       breadcrumbs: () => 'forbidden'
     }
   }
