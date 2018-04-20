@@ -14,6 +14,7 @@ export default {
 
   data() {
     return {
+      swipeTransitionDuration: 500,
       isSaving: false,
       isFormDisabled: false
     };
@@ -25,6 +26,17 @@ export default {
   },
 
   methods: {
+    autofocus(id = '') {
+      _.delay(() => {
+        this.$nextTick(() => {
+          let input = document.getElementById(id) || document.querySelectorAll('input')[0];
+          if (input) {
+            input.focus();
+          }
+        });
+      }, this.swipeTransitionDuration);
+    },
+
     submit(callback) {
       this.isSaving = true;
       this.$validator.validateAll().then(result => {

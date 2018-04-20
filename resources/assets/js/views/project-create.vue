@@ -8,8 +8,7 @@
           v-validate="'required'"
           id="name"
           name="name"
-          auto-complete="off"
-          autofocus>
+          auto-complete="off">
         </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
@@ -112,6 +111,7 @@
 
     async mounted() {
       EventBus.$emit('App:ready');
+      this.autofocus('name');
       // @todo: listen to language change and translate the organizational-units
     }
   };

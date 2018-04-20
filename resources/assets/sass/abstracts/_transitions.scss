@@ -55,41 +55,41 @@
   opacity: 0;
 }
 
-// Swipe Left-Right
-.swipe-left-leave-active, .swipe-left-enter-active,
-.swipe-right-leave-active, .swipe-right-enter-active {
-  animation-duration: .6s;
-  animation-timing-function: ease-in-out;
+/* Swipe Left */
+.swipe-left-enter-active, .swipe-left-leave-active {
+  transition: transform 0.5s ease-in-out;
 }
-.swipe-right-leave-active, .swipe-right-enter-active {
-  animation-direction: reverse;
+.swipe-left-enter {
+  transform: translateX(100%);
 }
-.swipe-left-leave-active, .swipe-right-enter-active {
-  animation-name: swipe-enter-active;
+.swipe-left-enter-to {
+  transform: translateX(0%);
 }
-.swipe-left-enter-active, .swipe-right-leave-active {
-  animation-name: swipe-leave-active;
+.swipe-left-leave {
+  transform: translateX(0%);
+}
+.swipe-left-leave-to {
+  transform: translateX(-100%);
 }
 
-@keyframes swipe-enter-active {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
+/* Swipe Right */
+.swipe-right-enter-active, .swipe-right-leave-active {
+  transition: transform 0.5s ease-in-out;
 }
-@keyframes swipe-leave-active {
-  0% {
-    transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
+.swipe-right-enter {
+  transform: translateX(-100%);
+}
+.swipe-right-enter-to {
+  transform: translateX(0%);
+}
+.swipe-right-leave {
+  transform: translateX(0%);
+}
+.swipe-right-leave-to {
+  transform: translateX(100%);
 }
 
 // General transitions
-
 .fade-in, .fade-out {
   transition: $--fade-linear-transition;
 }
