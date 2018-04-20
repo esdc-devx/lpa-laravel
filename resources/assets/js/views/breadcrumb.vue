@@ -24,7 +24,7 @@
     },
 
     watch: {
-      '$route': function(to) {
+      $route: function(to) {
         this.breadcrumbs = this.getBreadcrumbs();
         this.isHomePage = this.breadcrumbs.length <= 1;
       }

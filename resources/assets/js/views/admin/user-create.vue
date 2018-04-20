@@ -213,6 +213,7 @@
       this.showMainLoading();
       this.triggerLoadUserCreateInfo();
       this.hideMainLoading();
+      this.autofocus('name');
     }
   };
 </script>
