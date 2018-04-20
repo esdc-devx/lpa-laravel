@@ -154,7 +154,7 @@
         try {
           await this.createUser(_.omit(this.form, 'name'));
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notify.created', { name: this.form.user.name }));
+          this.notifySuccess(this.trans('components.notify.created', { name: this.form.name }));
           this.goBack();
         } catch({ response }) {
           this.isSaving = false;
