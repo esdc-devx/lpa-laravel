@@ -1,10 +1,17 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Seeder;
 
 class OrganizationalUnitTableSeeder extends Seeder
 {
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
     protected function data()
     {
         return [
@@ -16,8 +23,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'FC1',
                 'acronym_fr' => 'CF1',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'fmawn',
             ],
             [
                 'owner' => true,
@@ -27,8 +33,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'FC2',
                 'acronym_fr' => 'CF2',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'kroussea',
             ],
             [
                 'owner' => true,
@@ -38,8 +43,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'LDP',
                 'acronym_fr' => 'PDL',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'pmessier',
             ],
             [
                 'owner' => true,
@@ -49,8 +53,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'MDP',
                 'acronym_fr' => 'DPG',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'mpeterso',
             ],
             [
                 'owner' => true,
@@ -60,8 +63,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'OAD',
                 'acronym_fr' => 'ODA',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'cguindon',
             ],
             [
                 'owner' => true,
@@ -71,8 +73,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'LT',
                 'acronym_fr' => 'FL',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'jlambert',
             ],
             [
                 'owner' => true,
@@ -82,8 +83,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'TRANSF',
                 'acronym_fr' => 'TRANSF',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'fmawn',
             ],
             [
                 'owner' => false,
@@ -93,8 +93,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'SCIC',
                 'acronym_fr' => 'CICE',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'kroussea',
             ],
             [
                 'owner' => false,
@@ -104,8 +103,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'CCC',
                 'acronym_fr' => 'CCC',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'cguindon',
             ],
             [
                 'owner' => false,
@@ -115,8 +113,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'GCCAMPUS',
                 'acronym_fr' => 'GCCAMPUS',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'pmessier',
             ],
             [
                 'owner' => false,
@@ -126,8 +123,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'ILMS',
                 'acronym_fr' => 'SGHA',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'mpeterso',
             ],
             [
                 'owner' => false,
@@ -137,8 +133,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'NOP',
                 'acronym_fr' => 'NOP',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'jlambert',
             ],
             [
                 'owner' => false,
@@ -148,8 +143,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'LSD',
                 'acronym_fr' => 'DSA',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'fmawn',
             ],
             [
                 'owner' => false,
@@ -159,8 +153,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'COMMS',
                 'acronym_fr' => 'COMMS',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'kroussea',
             ],
         ];
     }
@@ -182,12 +175,22 @@ class OrganizationalUnitTableSeeder extends Seeder
 
         // Generate Organization Units.
         foreach ($this->data() as $organizationalUnit) {
+            // Get or create user to be set as director for organizational unit.
+            try {
+                $director = $this->users->getItemByColumn($organizationalUnit['director_username'], 'username');
+            }
+            // If user does not exist, create it.
+            catch (ModelNotFoundException $e) {
+                $director = $this->users->create([
+                    'username' => $organizationalUnit['director_username']
+                ]);
+            }
+
             OrganizationalUnit::create([
                 'owner'               => $organizationalUnit['owner'],
                 'unique_key'          => $organizationalUnit['unique_key'],
                 'email'               => $faker->email,
-                'director_first_name' => $faker->firstName,
-                'director_last_name'  => $faker->lastName,
+                'director'            => $director->id,
                 'en'                  => [
                     'name'    => $organizationalUnit['name_en'],
                     'acronym' => $organizationalUnit['acronym_en'],

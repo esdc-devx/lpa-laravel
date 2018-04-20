@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Camunda\Camunda;
+use App\Camunda\Exceptions\ResourceNotFoundException;
 use App\Models\User\User;
 use App\Repositories\UserRepository;
 
@@ -30,9 +31,19 @@ class CamundaEventSubscriber
         // Create user profile in Camunda.
         $this->camunda->users()->create($event->user);
 
-        // Add user to default user group and organizational unit groups.
-        $this->camunda->groups()->add($event->user, $this->camunda->config('app.groups.user'));
-        $this->synchronizeGroups($event->user);
+        try {
+            // Ensure that default user group exists.
+            $this->camunda->groups()->get($this->camunda->config('app.groups.user'));
+
+            // Add user to default user group and organizational unit groups.
+            $this->camunda->groups()->add($event->user, $this->camunda->config('app.groups.user'));
+            $this->synchronizeGroups($event->user);
+        }
+        // When creating users during database seed process, groups won't exist yet in Camunda,
+        // so we need to bypass the group synchronization until they get added during Camunda configuration.
+        catch (ResourceNotFoundException $exception) {
+            return;
+        }
     }
 
     /**

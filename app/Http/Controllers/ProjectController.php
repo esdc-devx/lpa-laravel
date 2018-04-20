@@ -29,7 +29,8 @@ class ProjectController extends APIController
     {
         $limit = request()->get('limit') ?: self::ITEMS_PER_PAGE;
         return $this->respondWithPagination(
-            $this->projects->getPaginated($limit)
+            // @todo: Add process relationship once implemented.
+            $this->projects->with(['state', 'organizationalUnit'])->getPaginated($limit)
         );
     }
 
@@ -75,7 +76,7 @@ class ProjectController extends APIController
     public function show($id)
     {
         return $this->respond([
-            'project' => $this->projects->getById($id)
+            'project' => $this->projects->with('all')->getById($id)
         ]);
     }
 
@@ -87,7 +88,7 @@ class ProjectController extends APIController
      */
     public function edit($id)
     {
-        $project = $this->projects->getById($id);
+        $project = $this->projects->with('organizationalUnit')->getById($id);
         $this->authorize('update', $project);
 
         return $this->respond([

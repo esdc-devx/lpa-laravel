@@ -100,7 +100,7 @@ class UserRepository extends BaseEloquentRepository
             ->toArray();
 
         // Since we authenticate users using LDAP, we can just store a random password.
-        $password = str_random(16);
+        $password = bcrypt(str_random(16));
 
         try {
             // Create user with its relationships.

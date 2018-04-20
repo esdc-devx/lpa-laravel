@@ -8,7 +8,7 @@ use App\Models\Project\ProjectState;
 class ProjectRepository extends BaseEloquentRepository
 {
     protected $model = Project::class;
-    protected $requiredRelationships = ['organizationalUnit', 'createdBy', 'updatedBy', 'state'];
+    protected $relationships = ['organizationalUnit', 'organizationalUnit.director', 'createdBy', 'updatedBy', 'state'];
 
     /**
      * Create Project.

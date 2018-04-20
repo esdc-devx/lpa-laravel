@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Based on https://github.com/dannyweeks/laravel-base-repository
+ * Author: Danny Weeks
+ * Liscence: The MIT License (MIT)
+ */
+
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;

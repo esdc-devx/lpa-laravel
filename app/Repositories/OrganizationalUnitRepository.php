@@ -8,6 +8,7 @@ use App\Models\User\User;
 class OrganizationalUnitRepository extends BaseEloquentRepository
 {
     protected $model = OrganizationalUnit::class;
+    protected $relationships = ['director'];
 
     public function getOwners()
     {

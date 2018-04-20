@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ServerException;
 use App\Camunda\Exceptions\GeneralException;
 use App\Camunda\Exceptions\ProcessEngineException;
+use App\Camunda\Exceptions\ResourceNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
 
 class CamundaConnector
@@ -68,9 +69,9 @@ class CamundaConnector
                     $error = json_decode($e->getResponse()->getBody())->message;
                     throw new GeneralException($error);
 
-                    // Resource not found.
+                // Resource not found.
                 case Response::HTTP_NOT_FOUND:
-                    throw new GeneralException("Resource not found on route [$route]");
+                    throw new ResourceNotFoundException("Resource not found on route [$route]");
 
                 // Method not allowed.
                 case Response::HTTP_METHOD_NOT_ALLOWED:
