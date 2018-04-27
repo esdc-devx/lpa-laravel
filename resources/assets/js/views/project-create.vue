@@ -2,7 +2,7 @@
   <div class="project-create content">
     <h2>{{ trans('base.navigation.projects_create') }}</h2>
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
-      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]"  prop="name">
+      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-input
           v-model="form.name"
           v-validate="'required'"
@@ -12,107 +12,141 @@
         </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
-      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnits" :class="['is-required', {'is-error': verrors.collect('organizationalUnits').length }]" prop="organizational_units">
+      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
         <el-select
-          :disabled="form.organizational_units.length <= 1"
+          v-loading="isProjectInfoLoading"
+          element-loading-spinner="el-icon-loading"
+          :disabled="organizationalUnits.length <= 1"
           v-validate="'required'"
           v-model="form.organizational_unit"
-          id="organizationalUnits"
-          name="organizationalUnits">
+          id="organizationalUnit"
+          name="organizationalUnit"
+          valueKey="name">
           <el-option
-            v-for="item in form.organizational_units"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
+            v-for="item in organizationalUnits"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id">
           </el-option>
         </el-select>
-        <form-error v-for="error in verrors.collect('organizationalUnits')" :key="error.id">{{ error }}</form-error>
+        <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
       <el-form-item class="form-footer">
         <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
-        <el-button :disabled="isFormDisabled" @click="goBack()">{{ trans('base.actions.cancel') }}</el-button>
+        <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
 
   import EventBus from '../event-bus.js';
   import FormError from '../components/forms/error.vue';
   import FormUtils from '../mixins/form/utils.js';
+  import PageUtils from '../mixins/page/utils.js';
 
   let namespace = 'projects';
 
   export default {
     name: 'project-create',
 
-    mixins: [ FormUtils ],
+    mixins: [ FormUtils, PageUtils ],
 
     components: { FormError },
 
     computed: {
       ...mapGetters({
         language: 'language',
+        viewingProject: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`
       })
     },
 
     data() {
       return {
+        isProjectInfoLoading: false,
         form: {
           name: '',
-          organizational_units: [{
-            value: 'FC1',
-            label: 'Functional Community 1'
-          },
-          {
-            value: 'FC2',
-            label: 'Functional Community 2'
-          },
-          {
-            value: 'transformation',
-            label: 'Transformation'
-          }]
+          organizational_unit: []
         }
       }
     },
 
     methods: {
+      ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
+        createProject: `${namespace}/createProject`,
+        canCreateProject: `${namespace}/canCreateProject`,
+        loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
+      }),
+
       // Form handlers
-      onSubmit() {
-        this.submit(this.create);
+      async onSubmit() {
+        // check if user may have lost its privileges
+        let isAllowed = await this.canCreateProject();
+        if (isAllowed) {
+          this.submit(this.create);
+        } else {
+          this.notifyError(this.trans('errors.not_owner'));
+          this.go(`/${this.language}/projects`);
+        }
       },
 
       async create() {
-        // @todo: add call to projects/create
-      },
-
-      manageBackendErrors(errors) {
-        let fieldBag;
-        for (let fieldName in errors) {
-          fieldBag = errors[fieldName];
-          for (let j = 0; j < fieldBag.length; j++) {
-            this.verrors.add({field: fieldName, msg: fieldBag[j]})
-          }
+        try {
+          let project = await this.createProject(this.form);
+          this.$store.commit(`${namespace}/setViewingProject`, project);
+          this.isSaving = false;
+          this.notifySuccess(this.trans('components.notify.created', { name: this.form.name }));
+          this.jumpToCreatedProject();
+        } catch({ response }) {
+          this.isSaving = false;
+          this.manageBackendErrors(response.data.errors);
         }
-        this.focusOnError();
       },
 
       // Navigation
-      goBack() {
+      jumpToCreatedProject() {
         this.$helpers.throttleAction(() => {
-          this.$router.push(`/${this.language}/projects`);
+          this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
         });
       },
+
+      async triggerLoadProjectCreateInfo() {
+        this.isProjectInfoLoading = true;
+        await this.loadProjectCreateInfo();
+        this.isProjectInfoLoading = false;
+      },
+
+      async onLanguageUpdate() {
+        // since on submit the backend returns already translated error messages,
+        // we need to reset the validator messages so that on next submit
+        // the messages are in the correct language
+        this.resetErrors();
+
+        await this.triggerLoadProjectCreateInfo();
+      }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      // Destroy any events we might be listening
+      // so that they do not get called while being on another page
+      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      next();
     },
 
     async mounted() {
       EventBus.$emit('App:ready');
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
+
+      this.showMainLoading();
+      this.triggerLoadProjectCreateInfo();
+      this.hideMainLoading();
       this.autofocus('name');
-      // @todo: listen to language change and translate the organizational-units
     }
   };
 </script>

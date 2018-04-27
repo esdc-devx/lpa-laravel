@@ -109,7 +109,11 @@ export const mutations = {
         spinner.classList.remove('fade-out');
       }
     }
-    state.isAppLoading = isShown;
+
+    // wait until the CSS transition has finished
+    _.delay(() => {
+      state.isAppLoading = isShown;
+    }, 200);
   },
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {

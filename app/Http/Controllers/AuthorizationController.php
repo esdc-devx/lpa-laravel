@@ -19,7 +19,7 @@ class AuthorizationController extends APIController
     }
 
     /**
-     * Authorize project creation.
+     * Authorize project edition.
      *
      * @return \Illuminate\Http\JsonResponse
      */

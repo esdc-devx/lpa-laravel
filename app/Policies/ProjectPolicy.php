@@ -70,16 +70,17 @@ class ProjectPolicy
      * @return mixed
      */
     public function delete(User $user, Project $project) {
+        if ($user->isAdmin()) {
+            // @todo: Ensure that project has no child learning products.
+            return true;
+        }
+
         if (!$user->hasRole('owner')) {
             return false;
         }
 
         // @todo: Ensure that project has no running processes.
 
-        if ($user->isAdmin()) {
-            // @todo: Ensure that project has no child learning products.
-            return true;
-        }
 
         // Ensure that  user is part of the project's organizational unit and that project is still new.
         if ($this->userOwnProject($user, $project) && $project->state->unique_key === 'new') {

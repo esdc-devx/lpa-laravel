@@ -55,7 +55,7 @@
       // cannot use arrow functions here
       // as Vuejs will think that 'this' refers to the function
       // instead of Vuejs instance
-      $route: function(to) {
+      $route: function (to) {
         // since this is a 3rd party library,
         // we do not know when it will update itself
         // so just wait until the DOM is updated

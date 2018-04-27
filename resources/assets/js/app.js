@@ -8,6 +8,8 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
+import DataTables from 'vue-data-tables'
+
 import { sync } from 'vuex-router-sync';
 import router from './router';
 import store from './store/';
@@ -15,12 +17,16 @@ import store from './store/';
 import Logger from './logger';
 import Helpers from './helpers';
 import './polyfills';
+import './filters';
 import Notify from './mixins/notify';
+import Confirm from './mixins/confirm';
 
 import { setLanguage, loadLanguages } from './locale';
 
 import App from './app.vue';
 import Config from './config';
+
+Vue.use(DataTables);
 
 Vue.use(Helpers);
 
@@ -36,6 +42,7 @@ Vue.use(Logger, {
 });
 
 Vue.mixin({ methods: Notify });
+Vue.mixin({ methods: Confirm });
 
 setLanguage()
   .then(loadLanguages()

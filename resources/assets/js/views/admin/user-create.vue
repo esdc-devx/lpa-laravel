@@ -66,7 +66,7 @@
 
       <el-form-item class="form-footer">
         <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
-        <el-button :disabled="isFormDisabled" @click="goBack()">{{ trans('base.actions.cancel') }}</el-button>
+        <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -78,13 +78,14 @@
   import EventBus from '../../event-bus.js';
   import FormError from '../../components/forms/error.vue';
   import FormUtils from '../../mixins/form/utils.js';
+  import PageUtils from '../../mixins/page/utils.js';
 
   let namespace = 'users';
 
   export default {
     name: 'admin-user-create',
 
-    mixins: [ FormUtils ],
+    mixins: [ FormUtils, PageUtils ],
 
     components: { FormError },
 
@@ -155,7 +156,7 @@
           await this.createUser(_.omit(this.form, 'name'));
           this.isSaving = false;
           this.notifySuccess(this.trans('components.notify.created', { name: this.form.name }));
-          this.goBack();
+          this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
           this.isSaving = false;
           this.manageBackendErrors(response.data.errors);
@@ -174,13 +175,6 @@
           }
         }
         this.focusOnError();
-      },
-
-      // Navigation
-      goBack() {
-        this.$helpers.throttleAction(() => {
-          this.$router.push(`/${this.language}/admin/users`);
-        });
       },
 
       async triggerLoadUserCreateInfo() {

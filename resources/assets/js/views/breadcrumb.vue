@@ -24,7 +24,7 @@
     },
 
     watch: {
-      $route: function(to) {
+      $route: function (to) {
         this.breadcrumbs = this.getBreadcrumbs();
         this.isHomePage = this.breadcrumbs.length <= 1;
       }
@@ -125,6 +125,10 @@
       font-size: 18px;
       line-height: 2;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+      .el-breadcrumb__item:not(:last-child) .el-breadcrumb__inner {
+        text-decoration: underline;
+      }
     }
   }
 </style>

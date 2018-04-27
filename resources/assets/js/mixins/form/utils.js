@@ -51,6 +51,20 @@ export default {
       });
     },
 
+    manageBackendErrors(errors) {
+      let fieldBag;
+      for (let fieldName in errors) {
+        fieldBag = errors[fieldName];
+        for (let j = 0; j < fieldBag.length; j++) {
+          // since we are dealing with a username while sending to the backend,
+          // we need to map the username to the name so that the name field has the error
+          // and not the username field which doesn't exist
+          this.verrors.add({field: fieldName, msg: fieldBag[j]});
+        }
+      }
+      this.focusOnError();
+    },
+
     focusOnError() {
       this.$nextTick(() => {
         let errorInput = document.querySelectorAll('.is-error input')[0];

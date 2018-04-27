@@ -28,10 +28,9 @@ class ProjectController extends APIController
     public function index()
     {
         $limit = request()->get('limit') ?: self::ITEMS_PER_PAGE;
-        return $this->respondWithPagination(
-            // @todo: Add process relationship once implemented.
-            $this->projects->with(['state', 'organizationalUnit'])->getPaginated($limit)
-        );
+        return $this->respond([
+            'projects' => $this->projects->with(['state', 'organizationalUnit'])->getAll()
+        ]);
     }
 
     /**

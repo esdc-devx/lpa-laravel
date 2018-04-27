@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import LoadStatus from '../load-status-constants';
-import UserAPI from '../../api/user.js';
+import UserAPI from '../../api/users.js';
 
 export default {
   namespaced: true,
@@ -43,7 +43,7 @@ export default {
     },
 
     hasRole(state) {
-      return function(role) {
+      return function (role) {
         return !!_.find(state.current.roles, ['unique_key', role]);
       };
     },
