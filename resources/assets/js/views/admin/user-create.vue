@@ -28,7 +28,6 @@
         <el-select
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
-          :disabled="organizationalUnits.length <= 1"
           v-model="form.organizational_units"
           v-validate="''"
           id="organizationalUnits"
@@ -155,7 +154,7 @@
         try {
           await this.createUser(_.omit(this.form, 'name'));
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notify.created', { name: this.form.name }));
+          this.notifySuccess(this.trans('components.notice.created', { name: this.form.name }));
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
           this.isSaving = false;

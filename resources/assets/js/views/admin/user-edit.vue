@@ -116,7 +116,7 @@
             roles: this.form.user.roles
           });
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notify.updated', { name: this.form.user.name }));
+          this.notifySuccess(this.trans('components.notice.updated', { name: this.form.user.name }));
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {

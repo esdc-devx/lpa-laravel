@@ -10,6 +10,10 @@ $--color-black: #111;
 -------------------------- */
 $--bg-color-transition-base: background-color .2s cubic-bezier(.645,.045,.355,1);
 
+/* Animation
+-------------------------- */
+$--fade-linear-animation: 200ms linear;
+
 /* z-index
 -------------------------- */
 $--font-path: '../../node_modules/element-ui/lib/theme-chalk/fonts';

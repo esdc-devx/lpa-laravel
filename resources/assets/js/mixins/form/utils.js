@@ -81,7 +81,7 @@ export default {
 
     resetErrors() {
       this.$nextTick(() => {
-        this.$validator.reset();
+        this.verrors.clear();
       });
     }
   }

@@ -16,7 +16,6 @@
         <el-select
           v-loading="isProjectInfoLoading"
           element-loading-spinner="el-icon-loading"
-          :disabled="organizationalUnits.length <= 1"
           v-validate="'required'"
           v-model="form.organizational_unit"
           id="organizationalUnit"
@@ -80,20 +79,12 @@
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
         createProject: `${namespace}/createProject`,
-        canCreateProject: `${namespace}/canCreateProject`,
         loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
       }),
 
       // Form handlers
       async onSubmit() {
-        // check if user may have lost its privileges
-        let isAllowed = await this.canCreateProject();
-        if (isAllowed) {
-          this.submit(this.create);
-        } else {
-          this.notifyError(this.trans('errors.not_owner'));
-          this.go(`/${this.language}/projects`);
-        }
+        this.submit(this.create);
       },
 
       async create() {
@@ -101,7 +92,7 @@
           let project = await this.createProject(this.form);
           this.$store.commit(`${namespace}/setViewingProject`, project);
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notify.created', { name: this.form.name }));
+          this.notifySuccess(this.trans('components.notice.created', { name: this.form.name }));
           this.jumpToCreatedProject();
         } catch({ response }) {
           this.isSaving = false;

@@ -7,7 +7,6 @@ export default {
     // project being viewed
     viewing: {},
     all: [],
-    pagination: {},
     organizationalUnits: []
   },
 
@@ -18,10 +17,6 @@ export default {
 
     viewing(state) {
       return state.viewing;
-    },
-
-    pagination(state) {
-      return state.pagination;
     },
 
     organizationalUnits(state) {
@@ -43,10 +38,9 @@ export default {
       return response.data.data;
     },
 
-    async loadProjects({ commit, dispatch }, page) {
-      let response = await ProjectsAPI.getProjects(page);
+    async loadProjects({ commit, dispatch }) {
+      let response = await ProjectsAPI.getProjects();
       commit('setProjects', response.data.data.projects);
-      commit('setPagination', response.data.meta);
       return response.data.data.projects;
     },
 
@@ -92,10 +86,6 @@ export default {
 
     setViewingProject(state, project) {
       state.viewing = project;
-    },
-
-    setPagination(state, pagination) {
-      state.pagination = pagination;
     },
 
     setOrganizationalUnits(state, organizationalUnits) {

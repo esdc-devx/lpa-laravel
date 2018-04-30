@@ -2,7 +2,6 @@ import Vue from 'vue';
 import { Validator } from 'vee-validate';
 import axios from '../axios/interceptor';
 import * as types from './mutations-types';
-import EventBus from '../event-bus';
 import Config from '../config';
 
 export const state = {
@@ -77,8 +76,6 @@ export const actions = {
 
 export const mutations = {
   [types.SET_LANGUAGE](state, lang = state.language) {
-    EventBus.$emit('Store:languageUpdate', lang);
-
     state.language = lang;
     localStorage.setItem('language', lang);
 

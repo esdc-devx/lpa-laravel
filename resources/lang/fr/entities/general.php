@@ -1,10 +1,6 @@
 <?php
 
 return [
-    'success'              => 'Succès',
-    'info'                 => 'Info',
-    'warning'              => 'Attention',
-    'error'                => 'Erreur',
     'organizational_units' => 'Unité organizationnelle|Unité organizationnelles',
     'roles'                => 'Rôles',
     'lpa_num'              => 'No. APA',

@@ -2,9 +2,8 @@ import _ from 'lodash';
 import axios from '../axios/interceptor';
 
 export default {
-  getProjects(page) {
-    let query = !_.isUndefined(page) ? `?page=${page}` : '';
-    return axios.get(`projects${query}`);
+  getProjects() {
+    return axios.get(`projects`);
   },
 
   getProject(id) {

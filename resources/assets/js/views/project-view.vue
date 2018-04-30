@@ -6,8 +6,8 @@
           <div slot="header" class="clearfix">
             <h2>{{ project.name }}</h2>
             <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-              <el-button class="el-icon-edit" size="mini" @click="edit"></el-button>
-              <el-button class="el-icon-delete" type="warning" size="mini" @click="deleteProjectConfirm"></el-button>
+              <el-button class="el-icon-edit" :disabled="!hasOrganizationalUnit(project.organizational_unit.name)" size="mini" @click="edit"></el-button>
+              <el-button class="el-icon-delete" :disabled="!hasOrganizationalUnit(project.organizational_unit.name)" type="warning" size="mini" @click="deleteProjectConfirm"></el-button>
             </div>
           </div>
           <dl>
@@ -58,6 +58,7 @@
       ...mapGetters({
         language: 'language',
         hasRole: 'users/hasRole',
+        hasOrganizationalUnit: 'users/hasOrganizationalUnit',
         viewingProject: `${namespace}/viewing`
       })
     },
@@ -95,14 +96,17 @@
       },
 
       deleteProjectConfirm() {
-        this.confirmDelete(this.trans('components.confirm.delete_project', {
-          name: this.project.name,
-          id: this.$options.filters.LPANumFilter(this.project.id)
-        })).then(async () => {
-          await this.deleteProject(this.project.id);
-          this.notifySuccess(this.trans('components.notify.deleted', { name: this.project.name }));
-          this.$router.push(`/${this.language}/projects`);
-        });
+        this.confirmDelete(
+          this.trans('components.notice.delete_project', {
+            name: this.project.name,
+            id: this.$options.filters.LPANumFilter(this.project.id)
+          }),
+          async () => {
+            await this.deleteProject(this.project.id);
+            this.notifySuccess(this.trans('components.notice.deleted', { name: this.project.name }));
+            this.$router.push(`/${this.language}/projects`);
+          }
+        );
       }
     },
 
