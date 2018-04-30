@@ -6,7 +6,6 @@ use App\Http\Requests\ProjectFormRequest;
 use App\Models\Project\Project;
 use App\Repositories\OrganizationalUnitRepository;
 use App\Repositories\ProjectRepository;
-use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 
 class ProjectController extends APIController
@@ -27,7 +26,6 @@ class ProjectController extends APIController
      */
     public function index()
     {
-        $limit = request()->get('limit') ?: self::ITEMS_PER_PAGE;
         return $this->respond([
             'projects' => $this->projects->with(['state', 'organizationalUnit'])->getAll()
         ]);
@@ -38,7 +36,7 @@ class ProjectController extends APIController
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
         $this->authorize('create', Project::class);
 
@@ -50,7 +48,7 @@ class ProjectController extends APIController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request $request
+     * @param  ProjectFormRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(ProjectFormRequest $request)
@@ -119,10 +117,10 @@ class ProjectController extends APIController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Project $project
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
         $this->authorize('delete', $this->projects->getById($id));
 

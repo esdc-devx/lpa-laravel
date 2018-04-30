@@ -26,7 +26,7 @@ class ProjectTableSeeder extends Seeder
                 'organizational_unit_id' => $organizationalUnitIds->random(),
                 'state_id' => 1,
                 'created_by' => $userIds->random(),
-            'updated_by' => $userIds->random(),
+                'updated_by' => $userIds->random(),
             ]);
         }
     }
