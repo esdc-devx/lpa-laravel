@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserLdap;
-use App\Http\Resources\OrganizationalUnitsCollection;
 use App\Http\Requests\UserFormRequest;
 use App\Models\User\Role;
 use App\Models\User\User;
@@ -42,7 +40,7 @@ class UserController extends APIController
      *
      * @return \Illuminate\Http\Response
      */
-    public function current(Request $request)
+    public function current()
     {
         return $this->respond($this->users->getCurrent());
     }
@@ -72,8 +70,8 @@ class UserController extends APIController
 
         // Return user creation form data.
         return $this->respond([
-            'organizational_units' => $this->organizationalUnits->getAll()->toArray(),
-            'roles' => Role::all()->toArray(),
+            'organizational_units' => $this->organizationalUnits->getAll(),
+            'roles' => Role::all(),
         ]);
     }
 
