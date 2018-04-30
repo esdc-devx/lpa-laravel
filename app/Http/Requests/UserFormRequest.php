@@ -3,7 +3,6 @@
 namespace App\Http\Requests;
 
 use App\Models\User\User;
-use App\Repositories\UserRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 
@@ -18,11 +17,14 @@ class UserFormRequest extends FormRequest
     {
         // Defer to UserPolicy class to handle authorization.
         switch ($this->method()) {
-            case 'GET':     return true;
-            case 'POST':    return $this->user()->can('create', User::class);
-            case 'PUT':     return $this->user()->can('update', User::find($this->user));
-            case 'DELETE':  return $this->user()->can('delete', User::class);
-            default:        return false;
+            case 'POST':
+                return $this->user()->can('create', User::class);
+
+            case 'PUT':
+                return $this->user()->can('update', User::find($this->user));
+
+            default:
+                return false;
         }
     }
 
@@ -41,13 +43,16 @@ class UserFormRequest extends FormRequest
                     'organizational_units' => 'exists:organizational_units,id',
                     'roles'                => 'exists:roles,id',
                 ];
+
             // Update validation rules.
             case 'PUT':
                 return [
                     'organizational_units' => 'exists:organizational_units,id',
                     'roles'                => 'exists:roles,id',
                 ];
-            default: return [];
+
+            default:
+                return [];
         }
     }
 
@@ -58,21 +63,8 @@ class UserFormRequest extends FormRequest
      */
     protected function userNotFoundInLdap()
     {
-        return app()->make(UserRepository::class)
+        return resolve('App\Repositories\UserRepository')
             ->getUserFromLdap($this->username) === null;
-    }
-
-    /**
-     * Verify if the user being edited is the main admin account.
-     *
-     * @return bool
-     */
-    protected function userIsAdminAccount()
-    {
-        return strcasecmp(
-            app()->make(UserRepository::class)->getById($this->route('user'))->username,
-            config('auth.admin.username')
-        ) === 0;
     }
 
     /**
@@ -88,15 +80,6 @@ class UserFormRequest extends FormRequest
                 $validator->after(function ($validator) {
                     if ($this->userNotFoundInLdap()) {
                         $validator->errors()->add('username', __('validation.custom.username.not-found'));
-                    }
-                });
-                break;
-
-            // Custom rules for user edit.
-            case 'PUT':
-                $validator->after(function ($validator) {
-                    if ($this->userIsAdminAccount()) {
-                        throw new AuthorizationException('Cannot edit admin account.');
                     }
                 });
                 break;

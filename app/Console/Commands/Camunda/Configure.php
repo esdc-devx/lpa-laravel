@@ -5,6 +5,7 @@ namespace App\Console\Commands\Camunda;
 use App\Console\BaseCommand;
 use App\Camunda\APIs\CamundaAuthorizations;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Models\User\User;
 
 class Configure extends BaseCommand
 {
@@ -105,6 +106,12 @@ class Configure extends BaseCommand
                     'id'   => $this->camunda->config('app.groups.user'),
                     'name' => 'LPA User'
                 ]);
+
+                // Add existing users to default lpa-user group.
+                User::where('username', '!=', config('auth.admin.username'))->get()
+                    ->each(function($user) {
+                        $this->camunda->groups()->add($user, $this->camunda->config('app.groups.user'));
+                    });
             }
 
             // Update admin group default values.

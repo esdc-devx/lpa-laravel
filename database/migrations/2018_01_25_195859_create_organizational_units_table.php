@@ -18,8 +18,7 @@ class CreateOrganizationalUnitsTable extends Migration
             $table->string('unique_key')->unique();
             $table->boolean('owner');
             $table->string('email');
-            $table->string('director_first_name');
-            $table->string('director_last_name');
+            $table->integer('director')->unsigned()->index();
             $table->timestamps();
         });
 

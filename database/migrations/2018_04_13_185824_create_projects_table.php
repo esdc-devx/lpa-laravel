@@ -16,21 +16,25 @@ class CreateProjectsTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->integer('owner_id')->unsigned();
             $table->integer('organizational_unit_id')->unsigned();
+            $table->integer('state_id')->unsigned();
+            $table->integer('created_by')->unsigned();
+            $table->integer('updated_by')->unsigned();
             //$table->string('process_instance_id')->unique();
-            //$table->string('state')->unique();
             $table->softDeletes();
             $table->timestamps();
 
-            // @todo: Add indexes.
-
-            /*
-            $table->foreign('owner_id')
-                ->references('id')->on('users');
             $table->foreign('organizational_unit_id')
                 ->references('id')->on('organizational_units');
-            */
+
+            $table->foreign('state_id')
+                ->references('id')->on('project_states');
+
+            $table->foreign('created_by')
+                ->references('id')->on('users');
+
+            $table->foreign('updated_by')
+                ->references('id')->on('users');
         });
     }
 

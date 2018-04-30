@@ -16,18 +16,6 @@
           <p>{{ trans('pages.project_list.create_project') }}</p>
         </el-button>
       </el-col>
-      <el-col :span="3" class="disabled">
-        <el-button>
-          <i class="el-icon-tickets"></i>
-          <p>Create a Learning Product</p>
-        </el-button>
-      </el-col>
-      <el-col :span="3" class="disabled">
-        <el-button>
-          <i class="el-icon-document"></i>
-          <p>Reports</p>
-        </el-button>
-      </el-col>
     </el-row>
   </div>
 </template>

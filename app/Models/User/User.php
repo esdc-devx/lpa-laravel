@@ -75,6 +75,11 @@ class User extends Authenticatable
         return $this->roles()->where('unique_key', $role)->first() !== null;
     }
 
+    public function isAdmin()
+    {
+        return $this->hasRole('admin');
+    }
+
     public function organizationalUnits()
     {
         return $this->belongsToMany(OrganizationalUnit::class);
@@ -82,6 +87,6 @@ class User extends Authenticatable
 
     public function projects()
     {
-        return $this->hasMany(Project::class, 'owner_id');
+        return $this->hasMany(Project::class, 'created_by');
     }
 }

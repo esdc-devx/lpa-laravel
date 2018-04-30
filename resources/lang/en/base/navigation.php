@@ -14,6 +14,7 @@ return [
     'admin_user_edit'       => 'Edit',
     'projects'              => 'Projects',
     'projects_create'       => 'Create a project',
+    'project_edit'          => 'Edit',
     'learning_products'     => 'Learning Products',
     'non_learning_products' => 'Non-Learning Products',
     'back_to_home'          => 'Back to Home page'

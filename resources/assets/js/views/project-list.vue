@@ -1,44 +1,62 @@
 <template>
   <div class="project-list content">
-    <div class="controls">
+    <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="$router.push('projects/create')">{{ trans('pages.project_list.create_project') }}</el-button>
     </div>
 
-    <el-table
-      :default-sort="{prop: 'id', order: 'ascending'}"
-      :data="projects"
+    <data-tables
+      :search-def="{show: false}"
+      :custom-filters="customFilters"
+      :pagination-def="paginationDef"
+      :data="normalizedList"
+      @filter-change="onFilterChange"
+      @current-page-change="scrollToTop"
       @row-click="viewProject">
       <el-table-column
         sortable
         prop="id"
-        :label="trans('entities.general.lpa_num')"
-        width="180">
+        width="180"
+        :label="trans('entities.general.lpa_num')">
+        <template slot-scope="scope">
+          {{ scope.row.id | LPANumFilter }}
+        </template>
       </el-table-column>
       <el-table-column
         sortable
+        :sort-method="onSort"
         prop="name"
         :label="trans('entities.general.name')">
       </el-table-column>
       <el-table-column
-        :filters="orgUnit"
-        :filter-method="filterOrgUnit"
+        sortable
+        :sort-method="onSort"
+        column-key="orgUnit"
+        :filters="getColumnFilters(this.projects, 'organizational_unit.name')"
         filter-placement="bottom-start"
-        prop="organizational_unit.name"
+        prop="organizational_unit"
         :label="$tc('entities.general.organizational_units')">
-        <template slot-scope="scope">
-          <el-tag type="info" size="small" :title="scope.row.organizational_unit.name">{{scope.row.organizational_unit.name}}</el-tag>
-        </template>
       </el-table-column>
-    </el-table>
-
-    <el-pagination
-      background
-      @current-change="handleCurrentChange"
-      :current-page.sync="currentPage"
-      :page-size="pagination.per_page"
-      layout="total, prev, pager, next"
-      :total="pagination.total">
-    </el-pagination>
+      <el-table-column
+        sortable
+        :sort-method="onSort"
+        prop="updated_at"
+        :label="trans('entities.general.updated_at')">
+      </el-table-column>
+      <el-table-column
+        sortable
+        :sort-method="onSort"
+        :filters="getColumnFilters(this.projects, 'state.name')"
+        prop="state"
+        :label="trans('entities.general.status')">
+      </el-table-column>
+      <el-table-column
+        sortable
+        :sort-method="onSort"
+        :filters="getColumnFilters(this.projects, 'process')"
+        prop="process"
+        :label="trans('entities.general.current_process')">
+      </el-table-column>
+    </data-tables>
   </div>
 </template>
 
@@ -46,6 +64,7 @@
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../event-bus.js';
+  import Constants from '../constants.js';
 
   import ProjectsAPI from '../api/projects';
 
@@ -56,24 +75,29 @@
 
     data() {
       return {
-        showDeleteModal: false,
-        currentPage: 1
+        paginationDef: {
+          layout: 'total, prev, pager, next, sizes',
+          // @todo: ideally get values from localstorage
+          pageSize: Constants.PAGE_SIZE_DEFAULT,
+          pageSizes: Constants.PAGE_SIZES,
+          currentPage: 1,
+        },
+        // used in order to sync the pagination with the filters
+        customFilters: [{
+          vals: []
+        }],
+        normalizedList: [],
+        normalizedListAttrs: ['id', 'name', 'organizational_unit.name', 'updated_at', 'state.name']
       }
     },
 
     computed: {
       ...mapGetters({
-        'projects': `${namespace}/all`,
-        'pagination': `${namespace}/pagination`
-      }),
-
-      orgUnit() {
-        return _.chain(this.projects)
-                .mapValues('organizational_unit.name')
-                .toArray().uniq()
-                .map((val, key) => { return { text: val, value: val } })
-                .value();
-      }
+        language: 'language',
+        hasRole: 'users/hasRole',
+        projects: `${namespace}/all`,
+        pagination: `${namespace}/pagination`
+      })
     },
 
     methods: {
@@ -85,16 +109,16 @@
 
       viewProject(project) {
         this.scrollToTop();
-        this.$store.commit(`${namespace}/setProject`, project);
+        this.$store.commit(`${namespace}/setViewingProject`, project);
         this.$router.push(`${namespace}/${project.id}`);
       },
 
-      // Pagination
-      async handleCurrentChange(newCurrentPage) {
-        this.showMainLoading();
-        this.scrollToTop();
-        await this.loadProjects(newCurrentPage);
-        this.hideMainLoading();
+      onFilterChange(filters) {
+        this.customFilters[0].vals = filters.orgUnit;
+      },
+
+      onSort(a, b) {
+        return a.name.localeCompare(b.name, this.language);
       },
 
       scrollToTop() {
@@ -103,27 +127,21 @@
         document.querySelectorAll('.content-wrap')[0].scrollTop = 0
       },
 
-      // Filters
-      findProject(id) {
-        return this.projects[this.findProjectIndex(id)];
-      },
-
-      findProjectIndex(id) {
-        for (var i = 0; i < this.projects.length; i++) {
-          if (this.projects[i].id == id) {
-            return i;
-          }
-        }
-      },
-
-      filterOrgUnit(value, row) {
-        return row.organizational_unit.name === value;
-      },
-
       async triggerLoadProjects() {
         this.showMainLoading();
         await this.$store.dispatch(`${namespace}/loadProjects`);
-        this.hideMainLoading();
+        this.normalizedList = _.map(this.projects, project => {
+          let normProject = _.pick(project, this.normalizedListAttrs);
+          normProject.organizational_unit = normProject.organizational_unit.name;
+          normProject.state = normProject.state.name;
+          // @todo: change to real property instead
+          normProject.process = '';
+          return normProject;
+        });
+
+        this.$nextTick(() => {
+          this.hideMainLoading();
+        });
       },
 
       async onLanguageUpdate() {

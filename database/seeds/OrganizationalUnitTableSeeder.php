@@ -1,10 +1,17 @@
 <?php
 
-use Illuminate\Database\Seeder;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Repositories\UserRepository;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Seeder;
 
 class OrganizationalUnitTableSeeder extends Seeder
 {
+    public function __construct(UserRepository $users)
+    {
+        $this->users = $users;
+    }
+
     protected function data()
     {
         return [
@@ -16,8 +23,7 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'FC1',
                 'acronym_fr' => 'CF1',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'JRICHERG',
             ],
             [
                 'owner' => true,
@@ -27,19 +33,17 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'acronym_en' => 'FC2',
                 'acronym_fr' => 'CF2',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'JRICHERG',
             ],
             [
                 'owner' => true,
                 'unique_key' => 'owner-3',
                 'name_en' => 'Leadership Development Program',
-                'name_fr' => 'Programme de perfectionnement en leadership',
+                'name_fr' => 'Programme de développement de leadership',
                 'acronym_en' => 'LDP',
                 'acronym_fr' => 'PDL',
                 'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'director_username' => 'CVANDALE',
             ],
             [
                 'owner' => true,
@@ -48,9 +52,8 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'name_fr' => 'Perfectionnement en gestion et professionnel',
                 'acronym_en' => 'MDP',
                 'acronym_fr' => 'DPG',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.managementdevelopmentprogram-programmedeperfectionnementdesgestionnaires.efpc@canada.ca',
+                'director_username' => 'CVANDALE',
             ],
             [
                 'owner' => true,
@@ -59,9 +62,8 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'name_fr' => 'Orientation et délégation des pouvoirs',
                 'acronym_en' => 'OAD',
                 'acronym_fr' => 'ODA',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.orientation.efpc@canada.ca',
+                'director_username' => 'JRICHERG',
             ],
             [
                 'owner' => true,
@@ -70,9 +72,8 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'name_fr' => 'Formation linguistique',
                 'acronym_en' => 'LT',
                 'acronym_fr' => 'FL',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.languagelearningapprentissagelinguistique.efpc@canada.ca',
+                'director_username' => 'FMAWN',
             ],
             [
                 'owner' => true,
@@ -81,9 +82,8 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'name_fr' => 'Transformation',
                 'acronym_en' => 'TRANSF',
                 'acronym_fr' => 'TRANSF',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.transformation.efpc@canada.ca',
+                'director_username' => 'RLANDRY',
             ],
             [
                 'owner' => false,
@@ -92,20 +92,18 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'name_fr' => 'Comité d’intégration du contenu de l’école',
                 'acronym_en' => 'SCIC',
                 'acronym_fr' => 'CICE',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.scic.cice.efpc@canada.ca',
+                'director_username' => 'LNOWOSIE',
             ],
             [
                 'owner' => false,
                 'unique_key' => 'client-services',
-                'name_en' => 'Client Services',
-                'name_fr' => 'Services aux clients',
+                'name_en' => 'Clients Services',
+                'name_fr' => 'Service aux clients',
                 'acronym_en' => 'CCC',
                 'acronym_fr' => 'CCC',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.clientservices-servicesclients.efpc@canada.ca',
+                'director_username' => 'LMACMILL',
             ],
             [
                 'owner' => false,
@@ -114,53 +112,48 @@ class OrganizationalUnitTableSeeder extends Seeder
                 'name_fr' => 'GCcampus',
                 'acronym_en' => 'GCCAMPUS',
                 'acronym_fr' => 'GCCAMPUS',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.gccampus.efpc@canada.ca',
+                'director_username' => 'DHILZ',
             ],
             [
                 'owner' => false,
                 'unique_key' => 'ilms',
-                'name_en' => 'ILMS Business Operations',
-                'name_fr' => 'Operations d’affaires SHGA',
+                'name_en' => 'Integrated Learning Management System',
+                'name_fr' => 'Système harmonisé de gestion de l’apprentissage',
                 'acronym_en' => 'ILMS',
-                'acronym_fr' => 'SGHA',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'acronym_fr' => 'SHGA',
+                'email' => 'csps.ilmsbusinessoperationsoperationsdaffaireshga.efpc@canada.ca',
+                'director_username' => 'DHILZ',
             ],
             [
                 'owner' => false,
                 'unique_key' => 'nop',
                 'name_en' => 'National Operations Planning',
-                'name_fr' => 'Planification des opérations national',
+                'name_fr' => 'Planification des opérations nationales',
                 'acronym_en' => 'NOP',
                 'acronym_fr' => 'NOP',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.capacityplanningplanificationdelacapacite.efpc@canada.ca',
+                'director_username' => 'LCYR',
             ],
             [
                 'owner' => false,
                 'unique_key' => 'lsd',
                 'name_en' => 'Learning Solution Division',
-                'name_fr' => 'Division des solutions apprentissage',
+                'name_fr' => 'Division des solutions d\'apprentissage',
                 'acronym_en' => 'LSD',
                 'acronym_fr' => 'DSA',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.learningsolutionsrequest-demandesolutionsapprentissage.efpc@canada.ca',
+                'director_username' => 'LNOWOSIE',
             ],
             [
                 'owner' => false,
                 'unique_key' => 'comms',
-                'name_en' => 'Communications, Marketing & Web Content Management',
-                'name_fr' => 'Communications, marketing  et gestion du Web',
+                'name_en' => 'Communications, Marketing and Web Management',
+                'name_fr' => 'Communications, marketing et gestion du Web',
                 'acronym_en' => 'COMMS',
                 'acronym_fr' => 'COMMS',
-                'email' => '',
-                'director_first_name' => '',
-                'director_last_name' => '',
+                'email' => 'csps.communications.efpc@canada.ca',
+                'director_username' => 'SSTJULIE',
             ],
         ];
     }
@@ -182,12 +175,22 @@ class OrganizationalUnitTableSeeder extends Seeder
 
         // Generate Organization Units.
         foreach ($this->data() as $organizationalUnit) {
+            // Get or create user to be set as director for organizational unit.
+            try {
+                $director = $this->users->getItemByColumn($organizationalUnit['director_username'], 'username');
+            }
+            // If user does not exist, create it.
+            catch (ModelNotFoundException $e) {
+                $director = $this->users->create([
+                    'username' => $organizationalUnit['director_username']
+                ]);
+            }
+
             OrganizationalUnit::create([
                 'owner'               => $organizationalUnit['owner'],
                 'unique_key'          => $organizationalUnit['unique_key'],
                 'email'               => $faker->email,
-                'director_first_name' => $faker->firstName,
-                'director_last_name'  => $faker->lastName,
+                'director'            => $director->id,
                 'en'                  => [
                     'name'    => $organizationalUnit['name_en'],
                     'acronym' => $organizationalUnit['acronym_en'],

@@ -6,6 +6,7 @@ import Home           from '../views/home.vue';
 import Profile        from '../views/profile.vue';
 import ProjectList    from '../views/project-list.vue';
 import ProjectView    from '../views/project-view.vue';
+import ProjectEdit    from '../views/project-edit.vue';
 import ProjectCreate  from '../views/project-create.vue';
 import AdminDashboard from '../views/admin/dashboard.vue';
 import UserList       from '../views/admin/user-list.vue';
@@ -178,6 +179,14 @@ const routes = [
         return this.trans('base.navigation.projects_create');
       },
       breadcrumbs: () => 'projects/project-create'
+    },
+    beforeEnter: async (to, from, next) => {
+      let canCreateProject = await store.dispatch('projects/canCreateProject');
+      if (canCreateProject) {
+        next();
+      } else {
+        router.replace({name: 'forbidden', params: {'0': to.path}});
+      }
     }
   },
   {
@@ -187,6 +196,25 @@ const routes = [
     meta: {
       title: () => `${store.getters['projects/viewing'].name}`,
       breadcrumbs: () => 'projects/project-view'
+    }
+  },
+  {
+    path: '/:lang/projects/:id(\\d+)/edit',
+    name: 'project-edit',
+    component: ProjectEdit,
+    meta: {
+      title: () => {
+        return 'Edit'
+      },
+      breadcrumbs: () => 'projects/project-view/project-edit'
+    },
+    beforeEnter: async (to, from, next) => {
+      let canCreateProject = await store.dispatch('projects/canEditProject', to.params.id);
+      if (canCreateProject) {
+        next();
+      } else {
+        router.replace({name: 'forbidden', params: {'0': to.path}});
+      }
     }
   },
   {

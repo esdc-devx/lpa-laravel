@@ -16,11 +16,9 @@
           router>
           <el-submenu index="1" popper-class="sub-menu">
             <template slot="title">{{ user.name }}</template>
-            <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('base.navigation.profile') }}</span></el-menu-item>
             <el-menu-item index="" @click="onLogout()"><span>{{ trans('base.navigation.logout') }}</span></el-menu-item>
           </el-submenu>
-          <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('base.navigation.help') }}</span></el-menu-item>
-          <el-menu-item index="" @click="setLanguage">
+          <el-menu-item index="" @click="setLanguage" :class="{ 'disabled': isMainLoading }">
             <span>{{ trans('base.navigation.language_toggle') }}</span>
           </el-menu-item>
           <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar">
@@ -37,6 +35,7 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
+  import EventBus from '../event-bus';
   import Config from '../config.js';
   import MenuUtils from '../mixins/menu/utils.js';
 
@@ -49,10 +48,11 @@
 
     computed: {
       ...mapGetters({
+        isMainLoading: 'isMainLoading',
         language: 'language',
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current',
-        hasRole: 'users/hasRole',
+        hasRole: 'users/hasRole'
       })
     },
 
@@ -69,7 +69,7 @@
       // cannot use arrow functions here
       // as Vuejs will think that 'this' refers to the function
       // instead of Vuejs instance
-      $route: function(to) {
+      $route: function (to) {
         // since this is a 3rd party library,
         // we do not know when it will update itself
         // so just wait until the DOM is updated
@@ -79,15 +79,15 @@
         });
       },
 
-      currentLang: function(lang) {
+      currentLang: function (lang) {
         this.toggledLang = this.getSwitchedLang(lang);
       }
     },
 
     methods: {
       ...mapActions({
-        logout: 'users/logout',
-        showAppLoading: 'showAppLoading'
+        showAppLoading: 'showAppLoading',
+        logout: 'users/logout'
       }),
 
       async onLogout() {
@@ -112,6 +112,7 @@
         this.$helpers.throttleAction(() => {
           let storeLang = this.$store.getters.language;
           let newLang = this.getSwitchedLang(storeLang);
+          EventBus.$emit('Store:languageUpdate', newLang);
           let route = Object.assign({}, this.$route);
 
           // change the locale of the translation plugin

@@ -32,7 +32,7 @@ axios.interceptors.response.use(response => response, error => {
     // not logged in, redirect to login
     Vue.prototype.$alert(
       trans('auth.session_expired'),
-      trans('components.notify.error'),
+      trans('entities.general.error'),
       {
         showClose: false,
         confirmButtonText: 'Ok',
@@ -42,7 +42,7 @@ axios.interceptors.response.use(response => response, error => {
         }
       });
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
-    router.replace({name: 'forbidden', params: {'0': router.history.current.path}});
+    Notify.notifyError(trans('errors.forbidden'));
   } else if (response.status === HttpStatusCodes.NOT_FOUND) {
     router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {

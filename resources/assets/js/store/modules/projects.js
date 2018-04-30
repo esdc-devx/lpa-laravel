@@ -7,7 +7,7 @@ export default {
     // project being viewed
     viewing: {},
     all: [],
-    pagination: {}
+    organizationalUnits: []
   },
 
   getters: {
@@ -19,29 +19,63 @@ export default {
       return state.viewing;
     },
 
-    pagination(state) {
-      return state.pagination;
+    organizationalUnits(state) {
+      return state.organizationalUnits;
     }
   },
 
   actions: {
-    async loadProjects({ commit, dispatch }, page) {
-      let response = await ProjectsAPI.getProjects(page);
-      commit('setProjects', response.data.data);
-      commit('setPagination', response.data.meta);
+    async loadProjectCreateInfo({ commit }) {
+      let response = await ProjectsAPI.getProjectCreateInfo();
+      commit('setOrganizationalUnits', response.data.data.organizational_units);
       return response.data.data;
+    },
+
+    async loadProjectEditInfo({ commit }, id) {
+      let response = await ProjectsAPI.getProjectEditInfo(id);
+      commit('setViewingProject', response.data.data.project);
+      commit('setOrganizationalUnits', response.data.data.organizational_units);
+      return response.data.data;
+    },
+
+    async loadProjects({ commit, dispatch }) {
+      let response = await ProjectsAPI.getProjects();
+      commit('setProjects', response.data.data.projects);
+      return response.data.data.projects;
     },
 
     async loadProject({ commit }, id) {
       let response = await ProjectsAPI.getProject(id);
-      commit('setProject', response.data.data.project);
+      commit('setViewingProject', response.data.data.project);
       return response.data.data;
     },
 
+    async canCreateProject({ commit }) {
+      let response = await ProjectsAPI.canCreateProject();
+      return response.data.data.allowed;
+    },
+
+    async canEditProject({ commit }, id) {
+      let response = await ProjectsAPI.canEditProject(id);
+      return response.data.data.allowed;
+    },
+
+    async canDeleteProject({ commit }, id) {
+      let response = await ProjectsAPI.canDeleteProject(id);
+      return response.data.data.allowed;
+    },
+
     async createProject({ commit }, project) {
-      let response = await ProjectsAPI.createProject(project)
-      // commit('setProject', response.data.data.project);
-      // resolve(response.data.data);
+      let response = await ProjectsAPI.createProject(project);
+      return response.data.data;
+    },
+
+    async updateProject({ commit }, project) {
+      await ProjectsAPI.updateProject(project);
+    },
+
+    async deleteProject({ commit }, id) {
+      await ProjectsAPI.deleteProject(id);
     }
   },
 
@@ -50,12 +84,12 @@ export default {
       state.all = projects;
     },
 
-    setProject(state, project) {
+    setViewingProject(state, project) {
       state.viewing = project;
     },
 
-    setPagination(state, pagination) {
-      state.pagination = pagination;
+    setOrganizationalUnits(state, organizationalUnits) {
+      state.organizationalUnits = organizationalUnits;
     }
   }
 };
