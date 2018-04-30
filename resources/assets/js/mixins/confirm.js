@@ -6,7 +6,7 @@ export default {
   confirm(message = '', type = 'warning', action = 'delete', confirmButtonClass = '', thenCallback = _.noop, catchCallback = _.noop) {
     return Vue.prototype.$confirm(
       message,
-      Vue.prototype.trans("entities.general[" + type + "]"),
+      Vue.prototype.trans("components.notice[" + type + "]"),
       {
         type,
         confirmButtonText: this.trans('base.actions[' + action + ']'),

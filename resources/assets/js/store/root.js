@@ -107,10 +107,7 @@ export const mutations = {
       }
     }
 
-    // wait until the CSS transition has finished
-    _.delay(() => {
-      state.isAppLoading = isShown;
-    }, 200);
+    state.isAppLoading = isShown;
   },
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {

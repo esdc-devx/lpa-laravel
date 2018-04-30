@@ -6,8 +6,8 @@
           <div slot="header" class="clearfix">
             <h2>{{ project.name }}</h2>
             <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-              <el-button class="el-icon-edit" :disabled="!hasOrganizationalUnit(project.organizational_unit.name)" size="mini" @click="edit"></el-button>
-              <el-button class="el-icon-delete" :disabled="!hasOrganizationalUnit(project.organizational_unit.name)" type="warning" size="mini" @click="deleteProjectConfirm"></el-button>
+              <el-button class="el-icon-edit" :disabled="!canEdit" size="mini" @click="edit"></el-button>
+              <el-button class="el-icon-delete" :disabled="!canDelete" type="warning" size="mini" @click="deleteProjectConfirm"></el-button>
             </div>
           </div>
           <dl>
@@ -58,13 +58,14 @@
       ...mapGetters({
         language: 'language',
         hasRole: 'users/hasRole',
-        hasOrganizationalUnit: 'users/hasOrganizationalUnit',
         viewingProject: `${namespace}/viewing`
       })
     },
 
     data() {
       return {
+        canEdit: false,
+        canDelete: false,
         project: {
           organizational_unit: {
             director: {}
@@ -80,7 +81,9 @@
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
         loadProject: `${namespace}/loadProject`,
-        deleteProject: `${namespace}/deleteProject`
+        deleteProject: `${namespace}/deleteProject`,
+        canEditProject: `${namespace}/canEditProject`,
+        canDeleteProject: `${namespace}/canDeleteProject`
       }),
 
       async triggerLoadProject() {
@@ -110,6 +113,12 @@
       }
     },
 
+    async created() {
+      let id = this.$route.params.id;
+      this.canEdit = await this.canEditProject(id);
+      this.canDelete = await this.canDeleteProject(id);
+    },
+
     mounted() {
       EventBus.$emit('App:ready');
       this.triggerLoadProject();
@@ -128,16 +137,14 @@
         display: inline-block;
       }
       .el-card__body {
-        display: inline-table;
-        width: 100%;
-        box-sizing: border-box;
+        display: flex;
+        flex-flow: wrap;
       }
       dl {
         width: 25%;
-        box-sizing: border-box;
-        float: left;
         padding-right: 20px;
         margin-top: 0px;
+        box-sizing: border-box;
         dt {
           font-weight: bold;
         }

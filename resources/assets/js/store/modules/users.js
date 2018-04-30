@@ -48,12 +48,6 @@ export default {
       };
     },
 
-    hasOrganizationalUnit(state) {
-      return function (orgUnit) {
-        return !!_.find(state.current.organizational_units, ['name', orgUnit]);
-      };
-    },
-
     pagination(state) {
       return state.pagination;
     }
