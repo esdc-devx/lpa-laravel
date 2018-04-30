@@ -16,10 +16,8 @@
           router>
           <el-submenu index="1" popper-class="sub-menu">
             <template slot="title">{{ user.name }}</template>
-            <el-menu-item :index="'/' + language + '/profile'"><span>{{ trans('base.navigation.profile') }}</span></el-menu-item>
             <el-menu-item index="" @click="onLogout()"><span>{{ trans('base.navigation.logout') }}</span></el-menu-item>
           </el-submenu>
-          <el-menu-item :index="'/' + language + '/help'" class="disabled"><span tabindex="-1">{{ trans('base.navigation.help') }}</span></el-menu-item>
           <el-menu-item index="" @click="setLanguage" :class="{ 'disabled': isMainLoading }">
             <span>{{ trans('base.navigation.language_toggle') }}</span>
           </el-menu-item>
