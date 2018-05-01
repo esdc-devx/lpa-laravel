@@ -14,4 +14,10 @@ let mix = require('laravel-mix');
 mix.js('resources/assets/js/login.js', 'public/js')
    .js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
-   .sourceMaps();
+   .sourceMaps()
+   .browserSync({
+     proxy: "localhost:8000",
+     port: "8000",
+     reloadDelay: 0,
+     notify: false
+   });
