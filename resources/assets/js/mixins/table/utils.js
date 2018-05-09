@@ -14,8 +14,8 @@ export default {
 
     onSort(a, b) {
       // See: https://stackoverflow.com/questions/19993639/difference-in-performance-between-calling-localecompare-on-string-objects-and-c
-      let aName = a.toLowerCase();
-      let bName = b.toLowerCase();
+      let aName = String(a).toLowerCase();
+      let bName = String(b).toLowerCase();
       // Flawless, but not localized
       // if (aName < bName)
       //     return -1;
