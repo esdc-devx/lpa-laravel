@@ -15,35 +15,28 @@ class CreateOrganizationalUnitsTable extends Migration
     {
         Schema::create('organizational_units', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('unique_key')->unique();
+            $table->string('name_key')->unique();
+            $table->string('name_en');
+            $table->string('name_fr');
             $table->boolean('owner');
             $table->string('email');
-            $table->integer('director')->unsigned()->index();
+            $table->integer('director')->unsigned()->nullable();
             $table->timestamps();
+
+            $table->foreign('director')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
         });
 
-        Schema::create('organizational_unit_translations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('locale')->index();
-            $table->integer('organizational_unit_id')->unsigned()->index();
-            $table->string('name');
-            $table->string('acronym');
+        Schema::create('organizational_unit_user', function (Blueprint $table) {
+            $table->integer('organizational_unit_id')->unsigned();
+            $table->integer('user_id')->unsigned();
 
             $table->foreign('organizational_unit_id')
                 ->references('id')
                 ->on('organizational_units')
                 ->onDelete('cascade');
-
-            $table->unique(['organizational_unit_id', 'locale'], 'organizational_unit_index_unique');
-        });
-
-        Schema::create('organizational_unit_user', function (Blueprint $table) {
-            $table->integer('organizational_unit_id')->unsigned()->index();
-            $table->integer('user_id')->unsigned()->index();
-
-            $table->foreign('organizational_unit_id')
-                ->references('id')
-                ->on('organizational_units');
 
             $table->foreign('user_id')
                 ->references('id')
@@ -61,7 +54,6 @@ class CreateOrganizationalUnitsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('organizational_unit_translations');
         Schema::dropIfExists('organizational_unit_user');
         Schema::dropIfExists('organizational_units');
     }

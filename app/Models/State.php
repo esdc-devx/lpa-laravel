@@ -1,21 +1,17 @@
 <?php
 
-namespace App\Models\User;
+namespace App\Models;
 
 use App\Models\LocalizableModel;
 use App\Models\Traits\UsesKeyNameField;
 
-class Role extends LocalizableModel
+class State extends LocalizableModel
 {
     use UsesKeyNameField;
 
     protected $guarded = [];
+    protected $hidden = ['id', 'entity_type'];
     protected $localizable = ['name'];
 
     public $timestamps = false;
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
-    }
 }

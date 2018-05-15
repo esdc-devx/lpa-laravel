@@ -28,10 +28,9 @@ class UserTableSeeder extends Seeder
         Model::reguard();
 
         // Create admin account to boot the application.
-        $role = Role::where('unique_key', 'admin')->firstOrFail();
         $this->users->create([
             'username' => config('auth.admin.username'),
-            'roles' => [$role->id]
+            'roles' => [Role::getByKey('admin')->first()->id]
         ]);
     }
 }

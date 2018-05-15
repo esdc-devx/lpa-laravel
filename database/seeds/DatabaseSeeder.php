@@ -12,11 +12,14 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        $this->call(RoleTableSeeder::class);
-        $this->call(UserTableSeeder::class);
-        $this->call(OrganizationalUnitTableSeeder::class);
-        $this->call(ProjectStatesTableSeeder::class);
-        $this->call(ProjectTableSeeder::class);
+        $this->call([
+            RoleTableSeeder::class,
+            UserTableSeeder::class,
+            OrganizationalUnitTableSeeder::class,
+            StatesTableSeeder::class,
+            ProjectTableSeeder::class,
+            ProcessProjectApprovalSeeder::class,
+        ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

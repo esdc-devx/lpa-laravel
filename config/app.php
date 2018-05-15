@@ -126,6 +126,8 @@ return [
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
+    'log_db_queries' => false,
+
     /*
     |--------------------------------------------------------------------------
     | Mailbox Configuration
@@ -193,7 +195,6 @@ return [
         Adldap\Laravel\AdldapServiceProvider::class,
         Adldap\Laravel\AdldapAuthServiceProvider::class,
         App\Camunda\CamundaServiceProvider::class,
-        Dimsav\Translatable\TranslatableServiceProvider::class,
     ],
 
     /*

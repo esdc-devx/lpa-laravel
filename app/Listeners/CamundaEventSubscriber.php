@@ -29,7 +29,14 @@ class CamundaEventSubscriber
         }
 
         // Create user profile in Camunda.
-        $this->camunda->users()->create($event->user);
+        try {
+            $this->camunda->users()->get($event->user);
+            return;
+        }
+        // Only create user if it doesn't exist in Camunda.
+        catch (ResourceNotFoundException $exception) {
+            $this->camunda->users()->create($event->user);
+        }
 
         try {
             // Ensure that default user group exists.
@@ -65,7 +72,7 @@ class CamundaEventSubscriber
     protected function synchronizeGroups(User $user)
     {
         // Store its current group key values in an array for compare operations.
-        $currentGroups = array_pluck($user->organizationalUnits, 'unique_key');
+        $currentGroups = array_pluck($user->organizationalUnits, 'name_key');
 
         // Get groups currently stored in Camunda for the user.
         $camundaGroups = array_diff(

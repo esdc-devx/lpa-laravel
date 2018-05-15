@@ -6,6 +6,7 @@ use App\Console\BaseCommand;
 use App\Camunda\APIs\CamundaAuthorizations;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
 use App\Models\User\User;
+use App\Camunda\Exceptions\ResourceNotFoundException;
 
 class Configure extends BaseCommand
 {
@@ -86,7 +87,7 @@ class Configure extends BaseCommand
         $headers = ['id', 'name'];
         $data = [];
         foreach ($organizationalUnits as $organizationalUnit) {
-            $data[] = [$organizationalUnit->unique_key, $organizationalUnit->name];
+            $data[] = [$organizationalUnit->name_key, $organizationalUnit->name];
         }
         $this->table($headers, $data);
 
@@ -110,6 +111,13 @@ class Configure extends BaseCommand
                 // Add existing users to default lpa-user group.
                 User::where('username', '!=', config('auth.admin.username'))->get()
                     ->each(function($user) {
+                        try {
+                            $this->camunda->users()->get($user);
+                        }
+                        // Create user if they don't exist in Camunda.
+                        catch (ResourceNotFoundException $e) {
+                            $this->camunda->users()->create($user);
+                        }
                         $this->camunda->groups()->add($user, $this->camunda->config('app.groups.user'));
                     });
             }

@@ -2,18 +2,17 @@
 
 namespace App\Models\OrganizationalUnit;
 
+use App\Models\LocalizableModel;
 use App\Models\User\User;
-use Dimsav\Translatable\Translatable;
-use Illuminate\Database\Eloquent\Model;
 
-class OrganizationalUnit extends Model
+class OrganizationalUnit extends LocalizableModel
 {
-    use Translatable;
-
     protected $guarded = [];
-    protected $hidden = ['translations', 'pivot', 'created_at', 'updated_at'];
-
-    public $translatedAttributes = ['name', 'acronym'];
+    protected $hidden = ['created_at', 'updated_at'];
+    protected $localizable = ['name'];
+    protected $casts = [
+        'owner' => 'boolean',
+    ];
 
     public function director()
     {

@@ -83,7 +83,7 @@ class ProjectPolicy
 
 
         // Ensure that  user is part of the project's organizational unit and that project is still new.
-        if ($this->userOwnProject($user, $project) && $project->state->unique_key === 'new') {
+        if ($this->userOwnProject($user, $project) && $project->state->name_key === 'new') {
             return true;
         }
 
