@@ -18,7 +18,7 @@ class CreateProcessFormsTable extends Migration
             $table->string('name_key');
             $table->string('name_en');
             $table->string('name_fr');
-            $table->integer('process_step_id')->unsigned();
+            $table->unsignedInteger('process_step_id');
             $table->integer('display_sequence');
 
             $table->foreign('process_step_id')

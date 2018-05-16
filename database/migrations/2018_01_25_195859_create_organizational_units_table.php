@@ -20,7 +20,7 @@ class CreateOrganizationalUnitsTable extends Migration
             $table->string('name_fr');
             $table->boolean('owner');
             $table->string('email');
-            $table->integer('director')->unsigned()->nullable();
+            $table->unsignedInteger('director')->nullable();
             $table->timestamps();
 
             $table->foreign('director')
@@ -30,8 +30,8 @@ class CreateOrganizationalUnitsTable extends Migration
         });
 
         Schema::create('organizational_unit_user', function (Blueprint $table) {
-            $table->integer('organizational_unit_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->unsignedInteger('organizational_unit_id');
+            $table->unsignedInteger('user_id');
 
             $table->foreign('organizational_unit_id')
                 ->references('id')

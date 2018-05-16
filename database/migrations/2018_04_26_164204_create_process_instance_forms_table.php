@@ -15,12 +15,11 @@ class CreateProcessInstanceFormsTable extends Migration
     {
         Schema::create('process_instance_forms', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('process_form_id')->unsigned()->nullable();
-            $table->integer('process_instance_step_id')->unsigned();
-            $table->integer('state_id')->unsigned()->nullable();
-            $table->integer('current_editor')->unsigned()->nullable();
-            $table->integer('created_by')->unsigned()->nullable();
-            $table->integer('updated_by')->unsigned()->nullable();
+            $table->unsignedInteger('process_form_id')->nullable();
+            $table->unsignedInteger('process_instance_step_id');
+            $table->unsignedInteger('state_id')->nullable();
+            $table->unsignedInteger('current_editor')->nullable();
+            $table->auditable();
             $table->timestamps();
 
             $table->foreign('process_form_id')
@@ -39,16 +38,6 @@ class CreateProcessInstanceFormsTable extends Migration
                 ->onDelete('set null');
 
             $table->foreign('current_editor')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
-
-            $table->foreign('updated_by')
                 ->references('id')
                 ->on('users')
                 ->onDelete('set null');

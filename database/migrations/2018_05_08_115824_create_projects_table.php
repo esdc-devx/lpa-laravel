@@ -16,12 +16,11 @@ class CreateProjectsTable extends Migration
         Schema::create('projects', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->unique();
-            $table->integer('organizational_unit_id')->unsigned()->nullable();
-            $table->integer('state_id')->unsigned()->nullable();
-            $table->integer('process_instance_id')->unsigned()->unique()->nullable();
-            $table->integer('business_case_id')->unsigned()->unique()->nullable();
-            $table->integer('created_by')->unsigned()->nullable();
-            $table->integer('updated_by')->unsigned()->nullable();
+            $table->unsignedInteger('organizational_unit_id')->nullable();
+            $table->unsignedInteger('state_id')->nullable();
+            $table->unsignedInteger('process_instance_id')->unique()->nullable();
+            $table->unsignedInteger('business_case_id')->unique()->nullable();
+            $table->auditable();
             $table->softDeletes();
             $table->timestamps();
 
@@ -43,16 +42,6 @@ class CreateProjectsTable extends Migration
             $table->foreign('business_case_id')
                 ->references('id')
                 ->on('business_cases')
-                ->onDelete('set null');
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
-
-            $table->foreign('updated_by')
-                ->references('id')
-                ->on('users')
                 ->onDelete('set null');
         });
     }

@@ -15,9 +15,9 @@ class CreateProcessInstanceStepsTable extends Migration
     {
         Schema::create('process_instance_steps', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('process_step_id')->unsigned()->nullable();
-            $table->integer('process_instance_id')->unsigned();
-            $table->integer('state_id')->unsigned()->nullable();
+            $table->unsignedInteger('process_step_id')->nullable();
+            $table->unsignedInteger('process_instance_id');
+            $table->unsignedInteger('state_id')->nullable();
             $table->timestamps();
 
             $table->foreign('process_step_id')

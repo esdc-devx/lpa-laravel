@@ -18,8 +18,13 @@ class CreateProcessStepsTable extends Migration
             $table->string('name_key');
             $table->string('name_en');
             $table->string('name_fr');
-            $table->integer('process_definition_id')->unsigned();
+            $table->unsignedInteger('process_definition_id');
             $table->integer('display_sequence');
+
+            $table->foreign('process_definition_id')
+                ->references('id')
+                ->on('process_definitions')
+                ->onDelete('cascade');
         });
     }
 
