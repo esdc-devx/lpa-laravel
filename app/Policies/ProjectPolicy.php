@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User\User;
+use App\Models\Process\ProcessDefinition;
 use App\Models\Project\Project;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -31,9 +32,9 @@ class ProjectPolicy
      */
     public function before($user, $ability)
     {
-        // For admin users, allow any actions except for delete which has an extra validation.
-        if ($user->isAdmin() && $ability !== 'delete') {
-            return true;
+        // Prevent any actions if user is not an admin or doesn't have the owner role.
+        if (!$user->isAdmin() && !$user->hasRole('owner')) {
+            return false;
         }
     }
 
@@ -44,7 +45,7 @@ class ProjectPolicy
      * @return mixed
      */
     public function create(User $user) {
-        return $user->hasRole('owner');
+        return true;
     }
 
     /**
@@ -55,11 +56,8 @@ class ProjectPolicy
      * @return mixed
      */
     public function update(User $user, Project $project) {
-        if (!$user->hasRole('owner')) {
-            return false;
-        }
         // Ensure that  user is part of the project's organizational unit.
-        return $this->userOwnProject($user, $project);
+        return $user->isAdmin() || $this->userOwnProject($user, $project);
     }
 
     /**
@@ -72,19 +70,49 @@ class ProjectPolicy
     public function delete(User $user, Project $project) {
         if ($user->isAdmin()) {
             // @todo: Ensure that project has no child learning products.
+            // @todo: Add logic to cancel current process if any.
             return true;
         }
 
-        if (!$user->hasRole('owner')) {
+        // Ensure that project has no running processes.
+        if ($project->currentProcess) {
             return false;
         }
 
-        // @todo: Ensure that project has no running processes.
-
-
-        // Ensure that  user is part of the project's organizational unit and that project is still new.
+        // Ensure that user is part of the project's organizational unit and that project is still new.
         if ($this->userOwnProject($user, $project) && $project->state->name_key === 'new') {
             return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determine whether the user can start a project process.
+     *
+     * @param  User $user
+     * @param  Project $project
+     * @param  ProcessDefinition $processDefinition
+     * @return mixed
+     */
+    public function startProcess(User $user, Project $project, ProcessDefinition $processDefinition)
+    {
+        // Ensure that user is part of the project's organizational unit.
+        if (!$user->isAdmin() && !$this->userOwnProject($user, $project)) {
+            return false;
+        }
+
+        // Ensure that project has no running processes.
+        if ($project->currentProcess) {
+            return false;
+        }
+
+        // Handle any business logic for each process.
+        switch ($processDefinition->name_key) {
+            case 'project-approval':
+                // Ensure project is new.
+                return $project->state->name_key === 'new';
+
         }
 
         return false;

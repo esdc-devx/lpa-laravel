@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectFormRequest;
+use App\Models\Process\ProcessDefinition;
 use App\Models\Project\Project;
 use App\Repositories\OrganizationalUnitRepository;
 use App\Repositories\ProjectRepository;
@@ -73,7 +74,8 @@ class ProjectController extends APIController
     public function show($id)
     {
         return $this->respond([
-            'project' => $this->projects->with('all')->getById($id)
+            'project'   => $this->projects->with('all')->getById($id),
+            'processes' => ProcessDefinition::where('entity_type', 'project')->get(),
         ]);
     }
 

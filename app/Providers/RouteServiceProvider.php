@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Process\ProcessDefinition;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -27,6 +28,11 @@ class RouteServiceProvider extends ServiceProvider
         //
 
         parent::boot();
+
+        // Configure route model bindings.
+        Route::bind('processDefinition', function ($value) {
+            return ProcessDefinition::getByKey($value)->first() ?? abort(404);
+        });
     }
 
     /**

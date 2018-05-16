@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Process\ProcessDefinition;
 use App\Models\Project\Project;
 
 class AuthorizationController extends APIController
@@ -39,6 +40,18 @@ class AuthorizationController extends APIController
     {
         return $this->respond([
             'allowed' => auth()->user()->can('delete', $project)
+        ]);
+    }
+
+    /**
+     * Authorize project process initiation.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function startProjectProcess(Project $project, ProcessDefinition $processDefinition)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('start-process', [$project, $processDefinition])
         ]);
     }
 }
