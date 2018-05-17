@@ -19,18 +19,17 @@ class CreateProcessInstanceFormsTable extends Migration
             $table->unsignedInteger('process_instance_step_id');
             $table->unsignedInteger('state_id')->nullable();
             $table->unsignedInteger('current_editor')->nullable();
+            $table->string('engine_task_id')->unique()->index()->nullable();
             $table->auditable();
             $table->timestamps();
 
             $table->foreign('process_form_id')
                 ->references('id')
-                ->on('process_forms')
-                ->onDelete('set null'); //@note: Cascade delete when deleting definition?
+                ->on('process_forms');
 
             $table->foreign('process_instance_step_id')
                 ->references('id')
-                ->on('process_instance_steps')
-                ->onDelete('cascade');
+                ->on('process_instance_steps');
 
             $table->foreign('state_id')
                 ->references('id')

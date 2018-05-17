@@ -20,8 +20,7 @@ class CreateBusinessCasesTable extends Migration
 
             $table->foreign('process_instance_form_id')
                 ->references('id')
-                ->on('process_instance_forms')
-                ->onDelete('cascade');
+                ->on('process_instance_forms');
         });
     }
 

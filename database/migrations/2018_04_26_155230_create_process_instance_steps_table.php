@@ -22,8 +22,7 @@ class CreateProcessInstanceStepsTable extends Migration
 
             $table->foreign('process_step_id')
                 ->references('id')
-                ->on('process_steps')
-                ->onDelete('set null'); //@note: Cascade delete when deleting definition?
+                ->on('process_steps');
 
             $table->foreign('process_instance_id')
                 ->references('id')
