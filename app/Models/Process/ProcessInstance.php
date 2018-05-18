@@ -27,4 +27,13 @@ class ProcessInstance extends Model
     {
         return $this->hasMany(ProcessInstanceStep::class);
     }
+
+    public function scopeWithProcessDetails()
+    {
+        return $this->with([
+            'definition', 'state', 'createdBy', 'updatedBy',
+            'steps', 'steps.definition', 'steps.state',
+            'steps.forms.definition', 'steps.forms.state', 'steps.forms.currentEditor', 'steps.forms.createdBy', 'steps.forms.updatedBy'
+        ]);
+    }
 }

@@ -16,6 +16,8 @@ class CreateProcessInstancesTable extends Migration
         Schema::create('process_instances', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('process_definition_id');
+            $table->string('entity_type');
+            $table->unsignedInteger('entity_id');
             $table->string('engine_process_instance_id')->unique()->index();
             $table->string('engine_auth_token');
             $table->unsignedInteger('entity_previous_state_id')->nullable();

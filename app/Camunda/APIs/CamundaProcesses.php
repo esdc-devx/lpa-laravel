@@ -123,4 +123,15 @@ class CamundaProcesses extends CamundaBaseAPI
     {
         return $this->client->get('history/process-instance', ['processInstanceId' => $id]);
     }
+
+    /**
+     * Delete a process instance from its id.
+     *
+     * @param  string $id
+     * @return object
+     */
+    public function delete(string $id)
+    {
+        return $this->client->delete("process-instance/{$id}");
+    }
 }
