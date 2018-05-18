@@ -30,6 +30,10 @@ export default {
     return axios.get(`authorization/project/delete/${id}`);
   },
 
+  canStartProcess(projectId, processId) {
+    return axios.get(`authorization/project/${projectId}/start-process/${processId}`);
+  },
+
   createProject(project) {
     return axios.post('projects', project);
   },

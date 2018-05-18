@@ -28,6 +28,10 @@ a {
 
 .controls {
   margin-bottom: 20px;
+  // add space between buttons
+  .el-button + .el-button {
+    margin-left: 5px;
+  }
 }
 
 .loading-spinner {

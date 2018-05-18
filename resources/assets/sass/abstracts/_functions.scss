@@ -60,6 +60,14 @@
 }
 
 /**
+ * Encode provided color # to %23.
+ * @param {Color} $color: color to encode
+ */
+@function encodeColor($color) {
+  @return str-replace('#{$color}', '#', '%23');
+}
+
+/**
  * Gets best color saturation from background-color
  * @param  {Color} $bg-color
  * @return {Color}

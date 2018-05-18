@@ -2,6 +2,7 @@
 
 return [
     'ok'      => 'Ok',
+    'start'   => 'Start',
     'cancel'  => 'Cancel',
     'submit'  => 'Submit',
     'create'  => 'Create',

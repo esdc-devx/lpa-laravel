@@ -60,12 +60,12 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../event-bus.js';
-  import Constants from '../constants.js';
+  import EventBus from '../../event-bus.js';
+  import Constants from '../../constants.js';
 
-  import TableUtils from '../mixins/table/utils.js';
+  import TableUtils from '../../mixins/table/utils.js';
 
-  import ProjectsAPI from '../api/projects';
+  import ProjectsAPI from '../../api/projects';
 
   let namespace = 'projects';
 
@@ -166,7 +166,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
+  @import '../../../sass/abstracts/vars';
   .project-list {
     .el-table__row {
       cursor: pointer;
@@ -178,6 +178,9 @@
       margin-right: 4px;
       margin-top: 2px;
       margin-bottom: 2px;
+    }
+    .controls {
+      margin-bottom: 0;
     }
   }
 </style>

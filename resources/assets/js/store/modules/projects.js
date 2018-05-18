@@ -6,6 +6,10 @@ export default {
   state: {
     // project being viewed
     viewing: {},
+    processes: [],
+    currentProcess: {
+      definition: {}
+    },
     all: [],
     organizationalUnits: []
   },
@@ -17,6 +21,14 @@ export default {
 
     viewing(state) {
       return state.viewing;
+    },
+
+    processes(state) {
+      return state.processes;
+    },
+
+    currentProcess(state) {
+      return state.currentProcess;
     },
 
     organizationalUnits(state) {
@@ -47,6 +59,8 @@ export default {
     async loadProject({ commit }, id) {
       let response = await ProjectsAPI.getProject(id);
       commit('setViewingProject', response.data.data.project);
+      commit('setProcesses', response.data.data.processes);
+      commit('setCurrentProcess', response.data.data.project.current_process);
       return response.data.data;
     },
 
@@ -62,6 +76,11 @@ export default {
 
     async canDeleteProject({ commit }, id) {
       let response = await ProjectsAPI.canDeleteProject(id);
+      return response.data.data.allowed;
+    },
+
+    async canStartProcess({ commit }, { projectId, processId }) {
+      let response = await ProjectsAPI.canStartProcess(projectId, processId);
       return response.data.data.allowed;
     },
 
@@ -82,6 +101,14 @@ export default {
   mutations: {
     setProjects(state, projects) {
       state.all = projects;
+    },
+
+    setProcesses(state, processes) {
+      state.processes = processes;
+    },
+
+    setCurrentProcess(state, currentProcess) {
+      state.currentProcess = currentProcess;
     },
 
     setViewingProject(state, project) {

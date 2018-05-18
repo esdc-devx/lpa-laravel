@@ -35,6 +35,7 @@
         'language'
       ])
     },
+
     methods: {
       validateMeta() {
         let matched = this.$route.matched;
@@ -100,8 +101,10 @@
           title = outputTitle || '';
           path += '/' + route[i];
 
-          // don't add any crumb that do not have a valid title or path
-          if (title && path) {
+          // don't add any crumb that do not have a valid path
+          if (path) {
+            // even if the title is empty for now,
+            // it will be processed by the store later on
             crumbs.push({ name: title, path: path });
           }
         }
@@ -120,6 +123,7 @@
     // make sure that the breadcrumb doesn't have any space on the left-right
     margin: auto -30px 20px;
     background-color: $--color-white;
+    box-shadow: $--box-shadow-base;
     .el-breadcrumb {
       padding: 10px 30px;
       font-size: 18px;
