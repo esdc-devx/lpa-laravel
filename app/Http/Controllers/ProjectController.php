@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectFormRequest;
 use App\Models\Process\ProcessDefinition;
+use App\Models\Process\ProcessInstance;
 use App\Models\Project\Project;
 use App\Repositories\OrganizationalUnitRepository;
 use App\Repositories\ProjectRepository;
@@ -130,4 +131,41 @@ class ProjectController extends APIController
             $this->projects->delete($id)
         );
     }
+
+    /**
+     * Start a process instance.
+     *
+     * @param  int $id
+     * @param  ProcessDefinition $processDefinition
+     * @return \Illuminate\Http\Response
+     */
+    public function startProcessInstance($id, ProcessDefinition $processDefinition)
+    {
+        $project = $this->projects->getById($id);
+        $this->authorize('start-process', [$project, $processDefinition]);
+
+        return $this->respond([
+            'process_instance' => \Process::startProcessInstance($processDefinition, $project)
+        ]);
+    }
+
+    /**
+     * Display the process instance.
+     *
+     * @param  int $projectId
+     * @param  int $processInstanceId
+     * @return \Illuminate\Http\Response
+     */
+    public function showProcessInstance($projectId, $processInstanceId)
+    {
+        return $this->respond([
+            'process_instance' => ProcessInstance::withProcessDetails()
+                ->where([
+                    'id' => $processInstanceId,
+                    'entity_type' => 'project',
+                    'entity_id' => $projectId,
+                ])->firstOrFail()
+        ]);
+    }
+
 }

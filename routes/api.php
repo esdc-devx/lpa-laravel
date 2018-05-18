@@ -24,6 +24,10 @@ Route::middleware('auth:api')->group(function () {
     // Project resource routes.
     Route::resource('projects', 'ProjectController');
 
+    // Project process routes.
+    Route::get('projects/{project}/process/{processInstance}', 'ProjectController@showProcessInstance')->name('project.show-process');
+    Route::post('projects/{project}/process/{processDefinition}', 'ProjectController@startProcessInstance')->name('project.start-process');
+
     // Project authorization routes.
     Route::get('authorization/project/create', 'AuthorizationController@createProject')->name('authorization.project.create');
     Route::get('authorization/project/edit/{project}', 'AuthorizationController@editProject')->name('authorization.project.edit');

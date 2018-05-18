@@ -190,6 +190,7 @@ return [
         Adldap\Laravel\AdldapServiceProvider::class,
         Adldap\Laravel\AdldapAuthServiceProvider::class,
         App\Camunda\CamundaServiceProvider::class,
+        App\Process\ProcessServiceProvider::class,
     ],
 
     /*
@@ -240,6 +241,7 @@ return [
 
         // Custom facades.
         'Adldap' => Adldap\Laravel\Facades\Adldap::class,
+        'Process' => App\Process\ProcessManagerFacade::class,
     ],
 
 ];
