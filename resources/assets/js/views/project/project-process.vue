@@ -129,7 +129,8 @@
           display: flex;
           flex-direction: column;
           flex: 1;
-          justify-content: center;
+          justify-content: flex-start;
+          margin-bottom: 0;
         }
       }
       dl {
