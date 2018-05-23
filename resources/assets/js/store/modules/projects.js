@@ -79,13 +79,18 @@ export default {
       return response.data.data.allowed;
     },
 
-    async canStartProcess({ commit }, { projectId, processId }) {
-      let response = await ProjectsAPI.canStartProcess(projectId, processId);
+    async canStartProcess({ commit }, { projectId, processNameKey }) {
+      let response = await ProjectsAPI.canStartProcess(projectId, processNameKey);
       return response.data.data.allowed;
     },
 
     async createProject({ commit }, project) {
       let response = await ProjectsAPI.createProject(project);
+      return response.data.data;
+    },
+
+    async startProcess({ commit }, { projectId, processNameKey }) {
+      let response = await ProjectsAPI.startProcess(projectId, processNameKey);
       return response.data.data;
     },
 
@@ -108,6 +113,8 @@ export default {
     },
 
     setCurrentProcess(state, currentProcess) {
+      // set to default in case there is no process yet
+      currentProcess = currentProcess || state.currentProcess;
       state.currentProcess = currentProcess;
     },
 

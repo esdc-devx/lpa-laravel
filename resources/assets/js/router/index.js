@@ -191,7 +191,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/projects/:id(\\d+)',
+    path: '/:lang/projects/:projectId(\\d+)',
     name: 'project-view',
     component: ProjectView,
     meta: {
@@ -200,7 +200,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/projects/:id(\\d+)/edit',
+    path: '/:lang/projects/:projectId(\\d+)/edit',
     name: 'project-edit',
     component: ProjectEdit,
     meta: {
@@ -222,7 +222,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/projects/:id(\\d+)/:processid',
+    path: '/:lang/projects/:projectId(\\d+)/process/:processId(\\d+)',
     name: 'project-process',
     component: ProjectProcess,
     meta: {
@@ -264,7 +264,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/admin/users/edit/:id(\\d+)',
+    path: '/:lang/admin/users/edit/:userId(\\d+)',
     name: 'admin-user-edit',
     component: UserEdit,
     meta: {

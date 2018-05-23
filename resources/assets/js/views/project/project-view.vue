@@ -16,7 +16,13 @@
           </div>
           <ul class="project-actions-list">
             <li>
-              <el-button v-for="(process, index) in processes" :key="index" :disabled="!canStartProcess({projectId: $route.params.id, processId: process.name_key})" @click="startProcess(process.name_key)" plain>{{ process.name }}</el-button>
+              <el-button
+                v-for="(process, index) in processes"
+                :key="index"
+                :disabled="!processPermissions[process.name_key]"
+                @click="triggerStartProcess(process.name, process.name_key)" plain>
+                  {{ process.name }}
+              </el-button>
             </li>
           </ul>
         </el-card>
@@ -55,6 +61,7 @@
 
     data() {
       return {
+        processPermissions: {},
         project: {
           organizational_unit: {
             director: {}
@@ -71,29 +78,45 @@
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
         loadProject: `${namespace}/loadProject`,
-        canStartProcess: `${namespace}/canStartProcess`
+        canStartProcess: `${namespace}/canStartProcess`,
+        startProcess: `${namespace}/startProcess`
       }),
 
-      startProcess(processNameKey) {
+      triggerStartProcess(processName, processNameKey) {
         // confirm the intention to start a process first
         this.confirmStart(
           this.trans('components.notice.start_process', {
-            process_name: this.project.current_process.definition.name
+            process_name: processName
           }),
-          () => {
-            // await this.startProcess(this.project.id);
-            this.notifySuccess(this.trans('components.notice.started', { name: this.project.current_process.definition.name }));
-            let id = this.$route.params.id;
-            this.$router.push(`${id}/${processNameKey}`);
+          async () => {
+            let response = await this.startProcess({ projectId: this.project.id, processNameKey: processNameKey });
+            this.notifySuccess(this.trans('components.notice.started', { name: processName }));
+            let projectId = this.$route.params.projectId;
+            // @todo: push to projectId/process/processId     instead
+            this.$router.push(`${projectId}/process/${response.process_instance.id}`);
           }
         );
       },
 
+      async getProcessPermissions() {
+        let process;
+        for (let i = 0; i < this.processes.length; i++) {
+          process = this.processes[i];
+          // add reactive properties
+          this.$set(
+            this.processPermissions,
+            process.name_key,
+            await this.canStartProcess({ projectId: this.$route.params.projectId, processNameKey: process.name_key })
+          )
+        }
+      },
+
       async triggerLoadProject() {
         this.showMainLoading();
-        let id = this.$route.params.id;
-        await this.loadProject(id);
+        let projectId = this.$route.params.projectId;
+        await this.loadProject(projectId);
         this.project = Object.assign({}, this.viewingProject);
+        this.getProcessPermissions();
         this.hideMainLoading();
       },
 

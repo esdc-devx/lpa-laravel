@@ -88,9 +88,9 @@
     },
 
     async created() {
-      let id = this.$route.params.id;
-      this.rights.canEdit = await this.canEditProject(id);
-      this.rights.canDelete = await this.canDeleteProject(id);
+      let projectId = this.$route.params.projectId;
+      this.rights.canEdit = await this.canEditProject(projectId);
+      this.rights.canDelete = await this.canDeleteProject(projectId);
     }
   };
 </script>

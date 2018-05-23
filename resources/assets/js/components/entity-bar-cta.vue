@@ -5,7 +5,7 @@
       <li class="entity-bar-item"><span class="entity-bar-item-label">{{ trans('entities.process.current') }}</span> <span class="entity-bar-item-value">{{ dataProp.current_process ? dataProp.current_process.definition.name : trans('entities.general.na') }}</span></li>
     </ul>
     <div class="controls">
-      <el-button v-if="dataProp.current_process" type="success" size="mini" @click="continueToProcess(dataProp.current_process.definition.name_key)">{{ trans('entities.process.view') }} <i class="el-icon-arrow-right"></i></el-button>
+      <el-button v-if="dataProp.current_process" type="success" size="mini" @click="continueToProcess(dataProp.current_process.id)">{{ trans('entities.process.view') }} <i class="el-icon-arrow-right"></i></el-button>
     </div>
   </div>
 </template>
@@ -26,9 +26,9 @@
     },
 
     methods: {
-      continueToProcess(processName) {
-        let id = this.$route.params.id;
-        this.$router.push(`${id}/${processName}`);
+      continueToProcess(processId) {
+        let projectId = this.$route.params.projectId;
+        this.$router.push(`${projectId}/process/${processId}`);
       }
     }
   };

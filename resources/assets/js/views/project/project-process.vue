@@ -29,7 +29,8 @@
             <dd>{{ process.updated_at }}</dd>
           </dl>
           <div class="controls">
-            <el-button size="small" type="danger" plain>Cancel Process<i class="el-icon-close"></i></el-button>
+            <!-- @todo: #LPA-4906 -->
+            <!-- <el-button size="small" type="danger" plain>Cancel Process<i class="el-icon-close"></i></el-button> -->
           </div>
         </el-card>
       </el-col>
@@ -84,8 +85,8 @@
 
       async triggerLoadProject() {
         this.showMainLoading();
-        let id = this.$route.params.id;
-        await this.loadProject(id);
+        let projectId = this.$route.params.projectId;
+        await this.loadProject(projectId);
         this.project = Object.assign({}, this.viewingProject);
         this.hideMainLoading();
       },
