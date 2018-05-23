@@ -45,11 +45,11 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.general.roles')" for="roles" prop="roles">
+      <el-form-item :label="trans('entities.user.roles')" for="roles" prop="roles">
         <el-select
           id="roles"
           name="roles"
-          :data-vv-as="trans('entities.general.roles')"
+          :data-vv-as="trans('entities.user.roles')"
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           :disabled="roles.length <= 1"
