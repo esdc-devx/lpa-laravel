@@ -48,7 +48,7 @@
         :filter-method="filterGroup"
         filter-placement="bottom-start"
         prop="roles"
-        :label="trans('entities.general.roles')">
+        :label="trans('entities.user.roles')">
         <template slot-scope="scope">
           <el-tag
             v-for="item in scope.row.roles"

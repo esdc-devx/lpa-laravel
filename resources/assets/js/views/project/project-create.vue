@@ -4,22 +4,24 @@
     <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
       <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-input
-          v-model="form.name"
-          v-validate="'required'"
           id="name"
           name="name"
+          :data-vv-as="trans('entities.general.name')"
+          v-model="form.name"
+          v-validate="'required'"
           auto-complete="off">
         </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
       <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
         <el-select
+          id="organizationalUnit"
+          name="organizationalUnit"
+          :data-vv-as="$tc('entities.general.organizational_units')"
           v-loading="isProjectInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="'required'"
           v-model="form.organizational_unit"
-          id="organizationalUnit"
-          name="organizationalUnit"
           valueKey="name">
           <el-option
             v-for="item in organizationalUnits"

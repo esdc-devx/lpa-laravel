@@ -17,12 +17,13 @@
 
       <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
         <el-select
+          id="organizationalUnits"
+          name="organizationalUnits"
+          :data-vv-as="$tc('entities.general.organizational_units', 2)"
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="''"
           v-model="form.user.organizational_units"
-          id="organizationalUnits"
-          name="organizationalUnits"
           valueKey="name"
           multiple>
           <el-option
@@ -34,14 +35,15 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.general.roles')" for="roles">
+      <el-form-item :label="trans('entities.user.roles')" for="roles">
         <el-select
+          id="roles"
+          name="roles"
+          :data-vv-as="trans('entities.user.roles')"
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="''"
           v-model="form.user.roles"
-          id="roles"
-          name="roles"
           valueKey="name"
           multiple>
           <el-option

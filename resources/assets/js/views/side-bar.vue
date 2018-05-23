@@ -37,10 +37,6 @@
         'language'
       ]),
 
-      collapsedIcon() {
-        return this.isCollapsed ? 'el-icon-arrow-right' : 'el-icon-arrow-left';
-      },
-
       menu() {
         return [
           {

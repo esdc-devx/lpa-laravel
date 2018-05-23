@@ -6,6 +6,7 @@
         <el-autocomplete
           id="name"
           name="name"
+          :data-vv-as="trans('entities.general.name')"
           ref="name"
           popper-class="name-autocomplete"
           v-validate="nameRules"
@@ -26,12 +27,13 @@
 
       <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
         <el-select
+          id="organizationalUnits"
+          name="organizationalUnits"
+          :data-vv-as="$tc('entities.general.organizational_units', 2)"
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-model="form.organizational_units"
           v-validate="''"
-          id="organizationalUnits"
-          name="organizationalUnits"
           valueKey="name"
           multiple>
           <el-option
@@ -43,15 +45,16 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.general.roles')" for="roles" prop="roles">
+      <el-form-item :label="trans('entities.user.roles')" for="roles" prop="roles">
         <el-select
+          id="roles"
+          name="roles"
+          :data-vv-as="trans('entities.user.roles')"
           v-loading="isUserInfoLoading"
           element-loading-spinner="el-icon-loading"
           :disabled="roles.length <= 1"
           v-model="form.roles"
           v-validate="''"
-          id="roles"
-          name="roles"
           valueKey="name"
           multiple>
           <el-option
