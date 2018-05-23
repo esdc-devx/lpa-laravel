@@ -3,19 +3,26 @@
     <h2>{{ trans('base.navigation.project_edit') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
-      <el-form-item :label="$tc('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
-        <el-input v-model="form.project.name" v-validate="'required'" name="name"></el-input>
+      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+        <el-input
+          id="name"
+          name="name"
+          :data-vv-as="trans('entities.general.name')"
+          v-model="form.project.name"
+          v-validate="'required'">
+        </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
       <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizationalUnit">
         <el-select
+          id="organizationalUnit"
+          name="organizationalUnit"
+          :data-vv-as="$tc('entities.general.organizational_units')"
           v-loading="isProjectInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="'required'"
           v-model="form.project.organizational_unit"
-          id="organizationalUnit"
-          name="organizationalUnit"
           valueKey="name">
           <el-option
             v-for="item in organizationalUnits"

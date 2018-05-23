@@ -138,7 +138,7 @@
       }
       .el-card__body {
         display: flex;
-        flex-flow: wrap;
+        flex-wrap: wrap;
       }
       dl {
         width: 25%;
