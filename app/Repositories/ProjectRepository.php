@@ -3,12 +3,16 @@
 namespace App\Repositories;
 
 use App\Models\Project\Project;
-use App\Models\Project\ProjectState;
+use App\Models\State;
 
 class ProjectRepository extends BaseEloquentRepository
 {
     protected $model = Project::class;
-    protected $relationships = ['organizationalUnit', 'organizationalUnit.director', 'createdBy', 'updatedBy', 'state'];
+    protected $relationships = [
+        'organizationalUnit', 'organizationalUnit.director',
+        'currentProcess.definition', 'currentProcess.state',
+        'createdBy', 'updatedBy', 'state'
+    ];
 
     /**
      * Create Project.
@@ -21,7 +25,7 @@ class ProjectRepository extends BaseEloquentRepository
         $project = $this->model->create([
             'name'                   => $data['name'],
             'organizational_unit_id' => $data['organizational_unit'],
-            'state_id'               => ProjectState::getFromKey('new')->id,
+            'state_id'               => State::getByKey('project.new')->first()->id,
             'created_by'             => auth()->user()->id,
             'updated_by'             => auth()->user()->id,
         ]);

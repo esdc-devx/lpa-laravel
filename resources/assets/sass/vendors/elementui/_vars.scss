@@ -3,8 +3,17 @@
 /* Colors
 -------------------------- */
 $--color-primary: #524f74;
-$--color-text-primary: #111;
+$--color-white: #fff;
 $--color-black: #111;
+$--color-success: #8cc63f;
+$--color-text-primary: $--color-primary;
+
+/* Border
+-------------------------- */
+$--border-color-base: #cccde7;
+$--border-color-light: mix($--border-color-base, $--color-white, 85%);
+$--border-color-lighter: mix($--border-color-base, $--color-white, 90%);
+$--border-color-extra-light: mix($--border-color-base, $--color-white, 95%);
 
 /* Transition
 -------------------------- */

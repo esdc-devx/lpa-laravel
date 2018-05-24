@@ -2,18 +2,17 @@
 
 namespace App\Models\User;
 
-use Dimsav\Translatable\Translatable;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\LocalizableModel;
+use App\Models\Traits\UsesKeyNameField;
 
-class Role extends Model
+class Role extends LocalizableModel
 {
-    use Translatable;
+    use UsesKeyNameField;
 
     protected $guarded = [];
-    protected $hidden = ['translations', 'pivot'];
+    protected $localizable = ['name'];
 
     public $timestamps = false;
-    public $translatedAttributes = ['name'];
 
     public function users()
     {

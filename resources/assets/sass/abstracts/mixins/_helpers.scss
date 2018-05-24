@@ -147,3 +147,46 @@
     @include triangle($color, down, $border-width, $border-height);
   }
 }
+
+/**
+ * Used in order to determine styling for x number or between x to x number of items
+ * ol li {
+ *   @include quantity-query(from 3)     { // styling if the list has 3 or more items }
+ *   @include quantity-query(to 5)       { // styling if the list has 5 or less items }
+ *   @include quantity-query(from 3 to 5){ // styling if the list has between 3 and 5 items }
+ * }
+ * @param {Custom} $query: possible values are: from #, to #, from # to #
+ */
+@mixin quantity-query($query){
+  // find to and from index in query
+  $at-least: index($query,from);
+  $at-most : index($query,to);
+
+  // loop through selectors to find the last selector of each part
+  // the "alphabet" loop is just a simple way to listify selectors
+  // (if the selector has more than 26 parts – you're on your own)
+  @each $selector in & {
+    $list:();
+    @each $a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m, $n, $o, $p, $q, $r, $s, $t, $u, $v, $w, $x, $y, $z in $selector {
+      $list:append($list, $a $b $c $d $e $f $g $h $i $j $k $l $m $n $o $p $q $r $s $t $u $v $w $x $y $z);
+    }
+    $last: nth($list, length($list));
+
+    // print nth selectors
+    @if $at-least and $at-most {
+      $min: nth($query, min($at-least, $at-most)+1);
+      $max: nth($query, max($at-least, $at-most)+1);
+      &:nth-last-child(n+#{$min}):nth-last-child(-n+#{$max}):first-child,
+      &:nth-last-child(n+#{$min}):nth-last-child(-n+#{$max}):first-child ~ #{$last} { @content; }
+    } @else if $at-least {
+      $min: nth($query, $at-least+1);
+      &:nth-last-child(n+#{$min}),
+      &:nth-last-child(n+#{$min}) ~ #{$last} { @content; }
+    } @else if $at-most {
+      $max: nth($query, $at-most+1);
+      &:nth-last-child(-n+#{$max}):first-child,
+      &:nth-last-child(-n+#{$max}):first-child ~ #{$last} { @content; }
+    }
+  }
+}
+

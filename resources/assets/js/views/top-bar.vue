@@ -165,6 +165,7 @@
     .el-col {
       display: flex;
       align-items: center;
+      flex: 1;
       &.nav-col {
         justify-content: flex-end;
       }

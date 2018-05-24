@@ -4,10 +4,11 @@ import Config from '../config';
 
 import Home           from '../views/home.vue';
 import Profile        from '../views/profile.vue';
-import ProjectList    from '../views/project-list.vue';
-import ProjectView    from '../views/project-view.vue';
-import ProjectEdit    from '../views/project-edit.vue';
-import ProjectCreate  from '../views/project-create.vue';
+import ProjectList    from '../views/project/project-list.vue';
+import ProjectView    from '../views/project/project-view.vue';
+import ProjectEdit    from '../views/project/project-edit.vue';
+import ProjectCreate  from '../views/project/project-create.vue';
+import ProjectProcess from '../views/project/project-process.vue';
 import AdminDashboard from '../views/admin/dashboard.vue';
 import UserList       from '../views/admin/user-list.vue';
 import UserCreate     from '../views/admin/user-create.vue';
@@ -185,12 +186,12 @@ const routes = [
       if (canCreateProject) {
         next();
       } else {
-        router.replace({name: 'forbidden', params: {'0': to.path}});
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
       }
     }
   },
   {
-    path: '/:lang/projects/:id(\\d+)',
+    path: '/:lang/projects/:projectId(\\d+)',
     name: 'project-view',
     component: ProjectView,
     meta: {
@@ -199,22 +200,34 @@ const routes = [
     }
   },
   {
-    path: '/:lang/projects/:id(\\d+)/edit',
+    path: '/:lang/projects/:projectId(\\d+)/edit',
     name: 'project-edit',
     component: ProjectEdit,
     meta: {
-      title: () => {
-        return 'Edit'
+      title() {
+        return this.trans('base.navigation.project_edit');
       },
       breadcrumbs: () => 'projects/project-view/project-edit'
     },
     beforeEnter: async (to, from, next) => {
-      let canCreateProject = await store.dispatch('projects/canEditProject', to.params.id);
+      let canCreateProject = await store.dispatch(
+        'projects/canEditProject',
+        to.params.id
+      );
       if (canCreateProject) {
         next();
       } else {
-        router.replace({name: 'forbidden', params: {'0': to.path}});
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
       }
+    }
+  },
+  {
+    path: '/:lang/projects/:projectId(\\d+)/process/:processId(\\d+)',
+    name: 'project-process',
+    component: ProjectProcess,
+    meta: {
+      title: () => `${store.getters['projects/currentProcess'].definition.name}`,
+      breadcrumbs: () => 'projects/project-view/project-process'
     }
   },
   {
@@ -251,7 +264,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/admin/users/edit/:id(\\d+)',
+    path: '/:lang/admin/users/edit/:userId(\\d+)',
     name: 'admin-user-edit',
     component: UserEdit,
     meta: {

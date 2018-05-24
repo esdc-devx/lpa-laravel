@@ -126,6 +126,8 @@ return [
 
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
+    'log_db_queries' => false,
+
     /*
     |--------------------------------------------------------------------------
     | Mailbox Configuration
@@ -177,23 +179,18 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
-         * Package Service Providers...
-         */
-
-        /*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\DatabaseServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-
-        // Custom service providers.
         Adldap\Laravel\AdldapServiceProvider::class,
         Adldap\Laravel\AdldapAuthServiceProvider::class,
         App\Camunda\CamundaServiceProvider::class,
-        Dimsav\Translatable\TranslatableServiceProvider::class,
+        App\Process\ProcessServiceProvider::class,
     ],
 
     /*
@@ -244,6 +241,7 @@ return [
 
         // Custom facades.
         'Adldap' => Adldap\Laravel\Facades\Adldap::class,
+        'Process' => App\Process\ProcessManagerFacade::class,
     ],
 
 ];

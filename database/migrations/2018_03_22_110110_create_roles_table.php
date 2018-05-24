@@ -15,30 +15,19 @@ class CreateRolesTable extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('unique_key')->unique();
+            $table->string('name_key')->unique();
+            $table->string('name_en');
+            $table->string('name_fr');
         });
 
-        Schema::create('role_translations', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('locale')->index();
-            $table->integer('role_id')->unsigned()->index();
-            $table->string('name');
+        Schema::create('role_user', function (Blueprint $table) {
+            $table->integer('role_id')->unsigned();
+            $table->integer('user_id')->unsigned();
 
             $table->foreign('role_id')
                 ->references('id')
                 ->on('roles')
                 ->onDelete('cascade');
-
-            $table->unique(['role_id', 'locale'], 'role_index_unique');
-        });
-
-        Schema::create('role_user', function (Blueprint $table) {
-            $table->integer('role_id')->unsigned()->index();
-            $table->integer('user_id')->unsigned()->index();
-
-            $table->foreign('role_id')
-                ->references('id')
-                ->on('roles');
 
             $table->foreign('user_id')
                 ->references('id')
@@ -56,7 +45,6 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_translations');
         Schema::dropIfExists('role_user');
         Schema::dropIfExists('roles');
     }

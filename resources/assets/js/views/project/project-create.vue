@@ -1,20 +1,19 @@
 <template>
-  <div class="project-edit content">
-    <h2>{{ trans('base.navigation.project_edit') }}</h2>
-
-    <el-form label-width="30%" :disabled="isFormDisabled">
+  <div class="project-create content">
+    <h2>{{ trans('base.navigation.projects_create') }}</h2>
+    <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
       <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
         <el-input
           id="name"
           name="name"
           :data-vv-as="trans('entities.general.name')"
-          v-model="form.project.name"
-          v-validate="'required'">
+          v-model="form.name"
+          v-validate="'required'"
+          auto-complete="off">
         </el-input>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
-
-      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizationalUnit">
+      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
         <el-select
           id="organizationalUnit"
           name="organizationalUnit"
@@ -22,7 +21,7 @@
           v-loading="isProjectInfoLoading"
           element-loading-spinner="el-icon-loading"
           v-validate="'required'"
-          v-model="form.project.organizational_unit"
+          v-model="form.organizational_unit"
           valueKey="name">
           <el-option
             v-for="item in organizationalUnits"
@@ -34,9 +33,9 @@
         <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
-      <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
-        <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects/${form.project.id}`)">{{ trans('base.actions.cancel') }}</el-button>
+      <el-form-item class="form-footer">
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -44,15 +43,16 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../event-bus.js';
-  import FormError from '../components/forms/error.vue';
-  import FormUtils from '../mixins/form/utils.js';
-  import PageUtils from '../mixins/page/utils.js';
+
+  import EventBus from '../../event-bus.js';
+  import FormError from '../../components/forms/error.vue';
+  import FormUtils from '../../mixins/form/utils.js';
+  import PageUtils from '../../mixins/page/utils.js';
 
   let namespace = 'projects';
 
   export default {
-    name: 'project-edit',
+    name: 'project-create',
 
     mixins: [ FormUtils, PageUtils ],
 
@@ -70,45 +70,48 @@
       return {
         isProjectInfoLoading: false,
         form: {
-          project: {}
+          name: '',
+          organizational_unit: []
         }
-      };
+      }
     },
 
     methods: {
       ...mapActions({
-        updateProject: `${namespace}/updateProject`,
-        loadProjectEditInfo: `${namespace}/loadProjectEditInfo`
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
+        createProject: `${namespace}/createProject`,
+        loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
       }),
 
-      onSubmit() {
-        this.submit(this.update);
+      // Form handlers
+      async onSubmit() {
+        this.submit(this.create);
       },
 
-      async update() {
+      async create() {
         try {
-          await this.updateProject({
-            id: this.form.project.id,
-            name: this.form.project.name,
-            organizational_unit: this.form.project.organizational_unit
-          });
+          let project = await this.createProject(this.form);
+          this.$store.commit(`${namespace}/setViewingProject`, project);
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notice.updated', { name: this.form.project.name }));
-          this.go(`/${this.language}/projects/${this.form.project.id}`);
+          this.notifySuccess(this.trans('components.notice.created', { name: this.form.name }));
+          this.jumpToCreatedProject();
         } catch({ response }) {
           this.isSaving = false;
           this.manageBackendErrors(response.data.errors);
         }
       },
 
-      async triggerLoadProjectEditInfo() {
+      // Navigation
+      jumpToCreatedProject() {
+        this.$helpers.throttleAction(() => {
+          this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
+        });
+      },
+
+      async triggerLoadProjectCreateInfo() {
         this.isProjectInfoLoading = true;
-        let id = this.$route.params.id;
-        await this.loadProjectEditInfo(id);
-        this.form.project = Object.assign({}, this.viewingProject);
-        // replace our internal organizational_units with only the ids
-        // since ElementUI only need ids to populate the selected options
-        this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
+        await this.loadProjectCreateInfo();
         this.isProjectInfoLoading = false;
       },
 
@@ -117,11 +120,8 @@
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
-        // only reload the dropdowns, not the project
-        this.isProjectInfoLoading = true;
-        let id = this.$route.params.id;
-        await this.loadProjectEditInfo(id);
-        this.isProjectInfoLoading = false;
+
+        await this.triggerLoadProjectCreateInfo();
       }
     },
 
@@ -132,17 +132,21 @@
       next();
     },
 
-    mounted() {
+    async mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-      this.triggerLoadProjectEditInfo();
+
+      this.showMainLoading();
+      this.triggerLoadProjectCreateInfo();
+      this.hideMainLoading();
+      this.autofocus('name');
     }
   };
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
-  .project-edit {
+  @import '../../../sass/abstracts/vars';
+  .project-create {
     margin: 0 auto;
     h2 {
       text-align: center;
@@ -153,6 +157,24 @@
       margin: 0 auto;
       .el-select {
         width: 75%;
+      }
+    }
+  }
+  .el-autocomplete-suggestion.name-autocomplete {
+    li {
+      line-height: 20px;
+      padding: 7px 10px;
+
+      .autocomplete-popper-inner-wrap {
+        overflow: hidden;
+        .value {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .link {
+          font-size: 12px;
+          color: #b4b4b4;
+        }
       }
     }
   }

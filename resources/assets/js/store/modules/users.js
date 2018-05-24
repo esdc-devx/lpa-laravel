@@ -44,7 +44,7 @@ export default {
 
     hasRole(state) {
       return function (role) {
-        return !!_.find(state.current.roles, ['unique_key', role]);
+        return !!_.find(state.current.roles, ['name_key', role]);
       };
     },
 

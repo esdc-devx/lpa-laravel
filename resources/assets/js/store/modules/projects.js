@@ -6,6 +6,10 @@ export default {
   state: {
     // project being viewed
     viewing: {},
+    processes: [],
+    currentProcess: {
+      definition: {}
+    },
     all: [],
     organizationalUnits: []
   },
@@ -17,6 +21,14 @@ export default {
 
     viewing(state) {
       return state.viewing;
+    },
+
+    processes(state) {
+      return state.processes;
+    },
+
+    currentProcess(state) {
+      return state.currentProcess;
     },
 
     organizationalUnits(state) {
@@ -47,6 +59,8 @@ export default {
     async loadProject({ commit }, id) {
       let response = await ProjectsAPI.getProject(id);
       commit('setViewingProject', response.data.data.project);
+      commit('setProcesses', response.data.data.processes);
+      commit('setCurrentProcess', response.data.data.project.current_process);
       return response.data.data;
     },
 
@@ -65,8 +79,18 @@ export default {
       return response.data.data.allowed;
     },
 
+    async canStartProcess({ commit }, { projectId, processNameKey }) {
+      let response = await ProjectsAPI.canStartProcess(projectId, processNameKey);
+      return response.data.data.allowed;
+    },
+
     async createProject({ commit }, project) {
       let response = await ProjectsAPI.createProject(project);
+      return response.data.data;
+    },
+
+    async startProcess({ commit }, { projectId, processNameKey }) {
+      let response = await ProjectsAPI.startProcess(projectId, processNameKey);
       return response.data.data;
     },
 
@@ -82,6 +106,16 @@ export default {
   mutations: {
     setProjects(state, projects) {
       state.all = projects;
+    },
+
+    setProcesses(state, processes) {
+      state.processes = processes;
+    },
+
+    setCurrentProcess(state, currentProcess) {
+      // set to default in case there is no process yet
+      currentProcess = currentProcess || state.currentProcess;
+      state.currentProcess = currentProcess;
     },
 
     setViewingProject(state, project) {

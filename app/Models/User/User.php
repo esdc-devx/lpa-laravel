@@ -72,7 +72,7 @@ class User extends Authenticatable
 
     public function hasRole(string $role)
     {
-        return $this->roles()->where('unique_key', $role)->first() !== null;
+        return $this->roles()->where('name_key', $role)->first() !== null;
     }
 
     public function isAdmin()

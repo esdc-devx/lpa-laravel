@@ -96,8 +96,8 @@ class CamundaProcesses extends CamundaBaseAPI
         try {
             // Format post data.
             $postData = [
-                'business_key' => $data['business_key'] ?? null,
-                'variables'    => isset($data['business_key']) ? json_encode((object) $data['variables']) : null,
+                'businessKey' => $data['business_key'] ?? null,
+                'variables'   => $data['variables'] ?? null,
             ];
 
             // Start a specific version of the process definition from its id.
@@ -122,5 +122,16 @@ class CamundaProcesses extends CamundaBaseAPI
     public function getInstance(string $id)
     {
         return $this->client->get('history/process-instance', ['processInstanceId' => $id]);
+    }
+
+    /**
+     * Delete a process instance from its id.
+     *
+     * @param  string $id
+     * @return void
+     */
+    public function delete(string $id)
+    {
+        return $this->client->delete("process-instance/{$id}");
     }
 }

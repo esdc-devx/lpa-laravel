@@ -133,8 +133,8 @@
 
       async triggerLoadUserInfo() {
         this.isUserInfoLoading = true;
-        let id = this.$route.params.id;
-        await this.loadUserEditInfo(id);
+        let userId = this.$route.params.userId;
+        await this.loadUserEditInfo(userId);
         this.form.user = Object.assign({}, this.viewingUser);
         // replace our internal organizational_units with only the ids
         // since ElementUI only need ids to populate the selected options
@@ -150,8 +150,8 @@
         this.resetErrors();
         // only reload the dropdowns, not the user
         this.isUserInfoLoading = true;
-        let id = this.$route.params.id;
-        await this.loadUserEditInfo(id);
+        let userId = this.$route.params.userId;
+        await this.loadUserEditInfo(userId);
         this.isUserInfoLoading = false;
       }
     },
