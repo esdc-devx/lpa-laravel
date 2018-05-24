@@ -2,7 +2,7 @@
   <div class="project-view content">
     <el-row>
       <el-col>
-        <entity-bar-cta :data="project" type="project"/>
+        <process-current-bar :data="project" type="project"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" class="equal-height">
@@ -36,7 +36,7 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
 
-  import EntityBarCta from '../../components/entity-bar-cta.vue';
+  import ProcessCurrentBar from '../../components/process-current-bar.vue';
   import ProjectInfo from '../../components/project-info.vue';
 
   let namespace = 'projects';
@@ -44,7 +44,7 @@
   export default {
     name: 'project-view',
 
-    components: { EntityBarCta, ProjectInfo },
+    components: { ProcessCurrentBar, ProjectInfo },
 
     computed: {
       ...mapGetters({
