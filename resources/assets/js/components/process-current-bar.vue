@@ -1,8 +1,8 @@
 <template>
-  <div class="entity-bar-cta">
-    <ul class="entity-bar">
-      <li class="entity-bar-item"><span class="entity-bar-item-label">{{ trans(`entities['${entityType}'].status`) }}</span> <span class="entity-bar-item-value">{{ dataProp.state.name }}</span></li>
-      <li class="entity-bar-item"><span class="entity-bar-item-label">{{ trans('entities.process.current') }}</span> <span class="entity-bar-item-value">{{ dataProp.current_process ? dataProp.current_process.definition.name : trans('entities.general.na') }}</span></li>
+  <div class="process-current-bar">
+    <ul class="process-current-bar-list">
+      <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans(`entities['${entityType}'].status`) }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.state.name }}</span></li>
+      <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans('entities.process.current') }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.current_process ? dataProp.current_process.definition.name : trans('entities.general.na') }}</span></li>
     </ul>
     <div class="controls">
       <el-button v-if="dataProp.current_process" type="success" size="mini" @click="continueToProcess(dataProp.current_process.id)">{{ trans('entities.process.view') }} <i class="el-icon-arrow-right"></i></el-button>
@@ -12,7 +12,7 @@
 
 <script>
   export default {
-    name: 'entity-bar-cta',
+    name: 'process-current-bar',
 
     props: [ 'data', 'type' ],
 
@@ -27,8 +27,8 @@
 
     methods: {
       continueToProcess(processId) {
-        let projectId = this.$route.params.projectId;
-        this.$router.push(`${projectId}/process/${processId}`);
+        let id = this.$route.params[`${this.entityType}Id`];
+        this.$router.push(`${id}/process/${processId}`);
       }
     }
   };
@@ -52,10 +52,10 @@
     background-image: url($image);
   }
 
-  .entity-bar-cta {
+  .process-current-bar {
     display: flex;
     margin-bottom: 20px;
-    .entity-bar {
+    &-list {
       list-style: none;
       padding: 0;
       margin: 0;
