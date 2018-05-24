@@ -2,11 +2,16 @@
 
 namespace App\Models\Traits;
 
-/**
- * Add a query scope accessor by name_key value.
- */
 trait UsesKeyNameField
 {
+    /**
+     * Add a query scope accessor by name_key value.
+     *
+     * @param  Illuminate\Database\Query $query
+     * @param  string $key | Identifier used to retrieve an entry by name_key.
+     *                       Key can be composed with entity_type using dot not notation (i.e. project.completed)
+     * @return void
+     */
     public function scopeGetByKey($query, $key)
     {
         $identifier = explode('.', $key);

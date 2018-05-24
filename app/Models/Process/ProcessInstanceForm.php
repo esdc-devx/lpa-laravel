@@ -6,7 +6,6 @@ use App\Models\State;
 use App\Models\Traits\UsesUserAudit;
 use App\Models\User\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 class ProcessInstanceForm extends Model
 {

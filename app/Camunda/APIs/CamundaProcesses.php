@@ -128,7 +128,7 @@ class CamundaProcesses extends CamundaBaseAPI
      * Delete a process instance from its id.
      *
      * @param  string $id
-     * @return object
+     * @return void
      */
     public function delete(string $id)
     {

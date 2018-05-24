@@ -3,7 +3,6 @@
 namespace App\Process;
 
 use App\Camunda\Camunda;
-use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
 use App\Models\State;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessInstance;
@@ -38,6 +37,7 @@ class ProcessManager {
             $processDefinition = ProcessDefinition::getByKey($processDefinitionKey)->first();
         }
 
+        // Generate a random string used as a token for webservice authentication calls from Camunda.
         $authToken = str_random(24);
         $processState = State::getByKey('process-instance.running')->first();
         $stepState = State::getByKey('process-step.locked')->first();
