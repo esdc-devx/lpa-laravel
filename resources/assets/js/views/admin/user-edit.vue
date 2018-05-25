@@ -3,16 +3,25 @@
     <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
+
       <el-form-item :label="trans('entities.user.username')" for="username">
-        <el-input v-model="form.user.username" disabled></el-input>
+        <el-input name="username" v-model="form.user.username" disabled></el-input>
       </el-form-item>
 
       <el-form-item :label="trans('entities.general.name')" for="name">
-        <el-input v-model="form.user.name" disabled></el-input>
+        <el-input name="name" v-model="form.user.name" disabled></el-input>
       </el-form-item>
 
       <el-form-item :label="trans('entities.user.email')" for="email">
-        <el-input v-model="form.user.email" disabled></el-input>
+        <el-input name="email" v-model="form.user.email" disabled></el-input>
+      </el-form-item>
+
+      <el-form-item :label="trans('entities.general.created_at')" for="created_at">
+        <el-input name="created_at" v-model="form.user.created_at" disabled></el-input>
+      </el-form-item>
+
+      <el-form-item :label="trans('entities.general.updated_at')" for="updated_at">
+        <el-input name="updated_at" v-model="form.user.updated_at" disabled></el-input>
       </el-form-item>
 
       <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
