@@ -24,7 +24,7 @@
       ])
     },
 
-    created() {
+    mounted() {
       EventBus.$emit('App:ready');
       this.hideMainLoading();
     }

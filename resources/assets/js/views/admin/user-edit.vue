@@ -134,13 +134,18 @@
       async triggerLoadUserInfo() {
         this.isUserInfoLoading = true;
         let userId = this.$route.params.userId;
-        await this.loadUserEditInfo(userId);
-        this.form.user = Object.assign({}, this.viewingUser);
-        // replace our internal organizational_units with only the ids
-        // since ElementUI only need ids to populate the selected options
-        this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
-        this.form.user.roles = _.map(this.viewingUser.roles, 'id');
-        this.isUserInfoLoading = false;
+        try {
+          await this.loadUserEditInfo(userId);
+          EventBus.$emit('App:ready');
+          this.form.user = Object.assign({}, this.viewingUser);
+          // replace our internal organizational_units with only the ids
+          // since ElementUI only need ids to populate the selected options
+          this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
+          this.form.user.roles = _.map(this.viewingUser.roles, 'id');
+          this.isUserInfoLoading = false;
+        } catch(e) {
+          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        }
       },
 
       async onLanguageUpdate() {
@@ -163,10 +168,14 @@
       next();
     },
 
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.triggerLoadUserInfo();
+      });
+    },
+
     mounted() {
-      EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-      this.triggerLoadUserInfo();
     }
   };
 </script>

@@ -34,7 +34,7 @@
       })
     },
 
-    created() {
+    mounted() {
       EventBus.$emit('App:ready');
     }
   };

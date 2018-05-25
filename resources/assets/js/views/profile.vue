@@ -10,7 +10,7 @@
   export default {
     name: 'my-profile',
 
-    created() {
+    mounted() {
       EventBus.$emit('App:ready');
     }
   };

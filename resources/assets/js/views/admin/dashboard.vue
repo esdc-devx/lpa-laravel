@@ -10,7 +10,8 @@
   import EventBus from '../../event-bus.js';
   export default {
     name: 'admin-dashboard',
-    created() {
+
+    mounted() {
       EventBus.$emit('App:ready');
     }
   };
