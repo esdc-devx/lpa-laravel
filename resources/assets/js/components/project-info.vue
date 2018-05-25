@@ -3,8 +3,8 @@
     <div slot="header">
       <h2>{{ projectProp.name }}</h2>
       <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-        <el-button class="el-icon-edit" :disabled="!rights.canEdit" size="mini" @click="edit"></el-button>
-        <el-button class="el-icon-delete" :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm" plain></el-button>
+        <el-button class="el-icon-edit" :disabled="!rights.canEdit" size="mini" @click="edit()"></el-button>
+        <el-button class="el-icon-delete" :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain></el-button>
       </div>
     </div>
     <dl>
@@ -53,6 +53,7 @@
 
     computed: {
       ...mapGetters({
+        language: 'language',
         hasRole: 'users/hasRole'
       }),
 

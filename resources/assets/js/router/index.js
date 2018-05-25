@@ -212,7 +212,7 @@ const routes = [
     beforeEnter: async (to, from, next) => {
       let canCreateProject = await store.dispatch(
         'projects/canEditProject',
-        to.params.id
+        to.params.projectId
       );
       if (canCreateProject) {
         next();
