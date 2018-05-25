@@ -36,7 +36,7 @@ axios.interceptors.response.use(response => response, error => {
       {
         type: 'info',
         showClose: false,
-        confirmButtonText: 'Ok',
+        confirmButtonText: trans('base.actions.ok'),
         callback: action => {
           // we need to change the location manually since the backend handles the login page
           window.location.href = `/${store.getters.language}/login`;
@@ -44,8 +44,6 @@ axios.interceptors.response.use(response => response, error => {
       });
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
     Notify.notifyError(trans('errors.forbidden'));
-  } else if (response.status === HttpStatusCodes.NOT_FOUND) {
-    router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
     Notify.notifyError(trans('errors.general'));

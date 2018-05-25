@@ -80,9 +80,23 @@
             id: this.$options.filters.LPANumFilter(this.project.id)
           }),
           async () => {
-            await this.deleteProject(this.project.id);
-            this.notifySuccess(this.trans('components.notice.deleted', { name: this.project.name }));
-            this.$router.push(`/${this.language}/projects`);
+            try {
+              await this.deleteProject(this.project.id);
+              this.notifySuccess(this.trans('components.notice.deleted', { name: this.project.name }));
+              this.$router.push(`/${this.language}/projects`);
+            } catch(e) {
+              this.$alert(
+                this.trans('components.notice.deleted_project'),
+                this.trans('components.notice.info'),
+                {
+                  type: 'info',
+                  confirmButtonText: this.trans('base.actions.ok'),
+                  callback: action => {
+                    this.$router.push(`/${this.language}/projects`);
+                  }
+                }
+              );
+            }
           }
         );
       }

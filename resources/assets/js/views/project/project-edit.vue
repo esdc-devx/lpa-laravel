@@ -104,12 +104,17 @@
       async triggerLoadProjectEditInfo() {
         this.isProjectInfoLoading = true;
         let projectId = this.$route.params.projectId;
-        await this.loadProjectEditInfo(projectId);
-        this.form.project = Object.assign({}, this.viewingProject);
-        // replace our internal organizational_units with only the ids
-        // since ElementUI only need ids to populate the selected options
-        this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
-        this.isProjectInfoLoading = false;
+        try {
+          await this.loadProjectEditInfo(projectId);
+          EventBus.$emit('App:ready');
+          this.form.project = Object.assign({}, this.viewingProject);
+          // replace our internal organizational_units with only the ids
+          // since ElementUI only need ids to populate the selected options
+          this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
+          this.isProjectInfoLoading = false;
+        } catch(e) {
+          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        }
       },
 
       async onLanguageUpdate() {
@@ -132,10 +137,14 @@
       next();
     },
 
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.triggerLoadProjectEditInfo();
+      });
+    },
+
     mounted() {
-      EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-      this.triggerLoadProjectEditInfo();
     }
   };
 </script>

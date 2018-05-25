@@ -36,6 +36,8 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
 
+  import HttpStatusCodes from '../../axios/http-status-codes';
+
   import ProcessCurrentBar from '../../components/process-current-bar.vue';
   import ProjectInfo from '../../components/project-info.vue';
 
@@ -114,10 +116,15 @@
       async triggerLoadProject() {
         this.showMainLoading();
         let projectId = this.$route.params.projectId;
-        await this.loadProject(projectId);
-        this.project = Object.assign({}, this.viewingProject);
-        this.getProcessPermissions();
-        this.hideMainLoading();
+        try {
+          await this.loadProject(projectId);
+          EventBus.$emit('App:ready');
+          this.project = Object.assign({}, this.viewingProject);
+          this.getProcessPermissions();
+          this.hideMainLoading();
+        } catch(e) {
+          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        }
       },
 
       async onLanguageUpdate() {
@@ -132,10 +139,14 @@
       next();
     },
 
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.triggerLoadProject();
+      });
+    },
+
     mounted() {
-      EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-      this.triggerLoadProject();
     }
   };
 </script>

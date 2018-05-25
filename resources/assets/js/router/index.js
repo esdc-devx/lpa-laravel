@@ -16,8 +16,8 @@ import UserEdit       from '../views/admin/user-edit.vue';
 import NotFound       from '../views/errors/404.vue';
 import Forbidden      from '../views/errors/403.vue';
 
-import LoadStatus from '../store/load-status-constants';
-import store from '../store/';
+import LoadStatus      from '../store/load-status-constants';
+import store           from '../store/';
 import HttpStatusCodes from '../axios/http-status-codes';
 
 import Notify from '../mixins/notify';
@@ -210,14 +210,18 @@ const routes = [
       breadcrumbs: () => 'projects/project-view/project-edit'
     },
     beforeEnter: async (to, from, next) => {
-      let canCreateProject = await store.dispatch(
-        'projects/canEditProject',
-        to.params.projectId
-      );
-      if (canCreateProject) {
-        next();
-      } else {
-        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      try {
+        let canCreateProject = await store.dispatch(
+          'projects/canEditProject',
+          to.params.projectId
+        );
+        if (canCreateProject) {
+          next();
+        } else {
+          router.replace({ name: 'forbidden', params: { '0': to.path } });
+        }
+      } catch (e) {
+        router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
       }
     }
   },
