@@ -119,6 +119,12 @@
     .el-card__body {
       display: flex;
       flex-wrap: wrap;
+      > * {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        justify-content: flex-start;
+      }
     }
     dl {
       width: 25%;
@@ -126,7 +132,7 @@
       margin-top: 0px;
       box-sizing: border-box;
       &:first-of-type {
-        width: 100%;
+        flex-basis: 100%;
       }
       dt {
         font-weight: bold;

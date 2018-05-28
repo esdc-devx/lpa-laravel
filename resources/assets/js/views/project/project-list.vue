@@ -39,7 +39,7 @@
       <el-table-column
         sortable="custom"
         prop="updated_at"
-        :label="trans('entities.general.updated_at')">
+        :label="trans('entities.general.updated')">
       </el-table-column>
       <el-table-column
         sortable="custom"

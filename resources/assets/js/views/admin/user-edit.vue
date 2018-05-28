@@ -16,11 +16,11 @@
         <el-input name="email" v-model="form.user.email" disabled></el-input>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.general.created_at')" for="created_at">
+      <el-form-item :label="trans('entities.general.created')" for="created_at">
         <el-input name="created_at" v-model="form.user.created_at" disabled></el-input>
       </el-form-item>
 
-      <el-form-item :label="trans('entities.general.updated_at')" for="updated_at">
+      <el-form-item :label="trans('entities.general.updated')" for="updated_at">
         <el-input name="updated_at" v-model="form.user.updated_at" disabled></el-input>
       </el-form-item>
 
