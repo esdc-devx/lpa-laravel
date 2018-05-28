@@ -13,19 +13,13 @@
             <dd>{{ process.state.name }}</dd>
           </dl>
           <dl>
-            <dt>{{ trans(`entities.process.started_by`) }}</dt>
+            <dt>{{ trans(`entities.process.started`) }}</dt>
             <dd>TODO</dd>
-          </dl>
-          <dl>
-            <dt>{{ trans(`entities.process.started_on`) }}</dt>
             <dd>{{ process.created_at }}</dd>
           </dl>
           <dl>
-            <dt>{{ trans('entities.general.updated_by') }}</dt>
+            <dt>{{ trans('entities.general.updated') }}</dt>
             <dd>TODO</dd>
-          </dl>
-          <dl>
-            <dt>{{ trans('entities.general.updated_at') }}</dt>
             <dd>{{ process.updated_at }}</dd>
           </dl>
           <div class="controls">
@@ -144,11 +138,15 @@
           margin: 0;
           margin-top: 5px;
         }
+        dd + dd {
+          margin-top: 0;
+        }
       }
 
       .controls {
         margin-bottom: 0;
         align-items: flex-end;
+        justify-content: center;
         .el-button {
           font-weight: bold;
           i {
