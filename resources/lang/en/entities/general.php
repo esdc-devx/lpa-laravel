@@ -7,7 +7,7 @@ return [
     'director'             => 'Director',
     'current_process'      => 'Current Process',
     'created'              => 'Created',
-    'updated'              => 'Last Modified',
+    'updated'              => 'Modified',
     'status'               => 'Status',
     'na'                   => 'Not Applicable',
 ];
