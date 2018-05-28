@@ -39,6 +39,7 @@ export default {
 
     submit(callback) {
       this.isSaving = true;
+      this.resetErrors();
       this.$validator.validateAll().then(result => {
         if (result) {
           if (_.isFunction(callback)) {
