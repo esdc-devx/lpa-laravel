@@ -31,7 +31,7 @@
       </el-table-column>
       <el-table-column
         sortable="custom"
-        column-key="orgUnit"
+        column-key="organizational_unit"
         :filters="getColumnFilters(this.normalizedList, 'organizational_unit')"
         prop="organizational_unit"
         :label="$tc('entities.general.organizational_units')">
@@ -43,12 +43,14 @@
       </el-table-column>
       <el-table-column
         sortable="custom"
+        column-key="state"
         :filters="getColumnFilters(this.normalizedList, 'state')"
         prop="state"
         :label="trans('entities.general.status')">
       </el-table-column>
       <el-table-column
         sortable="custom"
+        column-key="current_process"
         :filters="getColumnFilters(this.normalizedList, 'current_process')"
         prop="current_process"
         :label="trans('entities.general.current_process')">

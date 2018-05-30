@@ -4,7 +4,7 @@ import EventBus from '../../event-bus.js';
 export default {
   data() {
     return {
-      filters: [],
+      filters: {},
       // used in order to sync the pagination with the filters
       customFilters: [],
       paginationDef: {
@@ -39,10 +39,9 @@ export default {
       // since _.keys and _.values return an array and that we are only dealing with 1 applied filter at a time,
       // just take the first and only one index
       this.filters[_.keys(filters)[0]] = _.values(filters)[0];
-      this.filters.length = _.keys(filters).length;
 
       // loop through all the applied filters, and build the customFilters
-      for (let i = 0; i < _.values(this.filters).length; i++) {
+      for (let i = 0; i < _.keys(this.filters).length; i++) {
         // make sure to make the customFilter reactive
         this.$set(this.customFilters, i, {});
         this.$set(this.customFilters[i], 'vals', _.values(this.filters)[i]);
@@ -79,7 +78,7 @@ export default {
      */
     beforeLanguageUpdate(updateLanguage) {
       // if no filters are set, just proceed updating the language
-      if (!this.filters.length) {
+      if (!_.values(this.filters).length) {
         updateLanguage();
         return;
       }
@@ -97,9 +96,8 @@ export default {
       )
       .then(() => {
         // reset the sorting and filtering
-        this.customFilters = [{
-          vals: []
-        }];
+        this.filters = {};
+        this.customFilters = [];
         this.$refs.table.$refs.elTable.clearFilter();
         updateLanguage();
       })
