@@ -30,6 +30,10 @@ export default {
       }
     },
 
+    /**
+     * Called upon changing the filters on a column
+     * @param Object filters - column's filters
+     */
     onFilterChange(filters) {
       // store the current filter changed
       // since _.keys and _.values return an array and that we are only dealing with 1 applied filter at a time,
