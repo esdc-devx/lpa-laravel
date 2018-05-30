@@ -44,6 +44,9 @@ export default {
       }
     },
 
+    /**
+     * Sorting method called when a column header is clicked to compare each rows and sort them accordingly
+     */
     onSort(a, b) {
       // See: https://stackoverflow.com/questions/19993639/difference-in-performance-between-calling-localecompare-on-string-objects-and-c
       let aName = String(a).toLowerCase();
@@ -66,7 +69,16 @@ export default {
       return _.isNaN(flag) ? collator.compare(aName, bName) : flag;
     },
 
+    /**
+     * Called when toggling language in order to reset the filters on confirmation
+     */
     beforeLanguageUpdate(updateLanguage) {
+      // if no filters are set, just proceed updating the language
+      if (!this.filters.length) {
+        updateLanguage();
+        return;
+      }
+
       this.$confirm(
         this.trans('components.notice.language_toggle'),
         this.trans('components.notice.warning'),
