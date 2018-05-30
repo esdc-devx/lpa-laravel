@@ -38,8 +38,16 @@ export default {
       // store the current filter changed
       // since _.keys and _.values return an array and that we are only dealing with 1 applied filter at a time,
       // just take the first and only one index
-      this.filters[_.keys(filters)[0]] = _.values(filters)[0];
+      let filter = _.values(filters)[0];
+      if (filter.length) {
+        this.filters[_.keys(filters)[0]] = _.values(filters)[0];
+      } else {
+        // filter removed
+        delete this.filters[_.keys(filters)[0]];
+      }
 
+      // reset custom filters so that we can rebuild them
+      this.customFilters = [];
       // loop through all the applied filters, and build the customFilters
       for (let i = 0; i < _.keys(this.filters).length; i++) {
         // make sure to make the customFilter reactive
