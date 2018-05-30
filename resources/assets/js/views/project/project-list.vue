@@ -31,8 +31,8 @@
       </el-table-column>
       <el-table-column
         sortable="custom"
-        column-key="orgUnit"
-        :filters="getColumnFilters(this.projects, 'organizational_unit.name')"
+        column-key="organizational_unit"
+        :filters="getColumnFilters(this.normalizedList, 'organizational_unit')"
         prop="organizational_unit"
         :label="$tc('entities.general.organizational_units')">
       </el-table-column>
@@ -43,14 +43,16 @@
       </el-table-column>
       <el-table-column
         sortable="custom"
-        :filters="getColumnFilters(this.projects, 'state.name')"
+        column-key="state"
+        :filters="getColumnFilters(this.normalizedList, 'state')"
         prop="state"
         :label="trans('entities.general.status')">
       </el-table-column>
       <el-table-column
         sortable="custom"
-        :filters="getColumnFilters(this.projects, 'process')"
-        prop="process"
+        column-key="current_process"
+        :filters="getColumnFilters(this.normalizedList, 'current_process')"
+        prop="current_process"
         :label="trans('entities.general.current_process')">
       </el-table-column>
     </data-tables>
@@ -61,11 +63,8 @@
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
-  import Constants from '../../constants.js';
 
   import TableUtils from '../../mixins/table/utils.js';
-
-  import ProjectsAPI from '../../api/projects';
 
   let namespace = 'projects';
 
@@ -76,19 +75,8 @@
 
     data() {
       return {
-        paginationDef: {
-          layout: 'total, prev, pager, next, sizes',
-          // @todo: ideally get values from localstorage
-          pageSize: Constants.PAGE_SIZE_DEFAULT,
-          pageSizes: Constants.PAGE_SIZES,
-          currentPage: 1
-        },
-        // used in order to sync the pagination with the filters
-        customFilters: [{
-          vals: []
-        }],
         normalizedList: [],
-        normalizedListAttrs: ['id', 'name', 'organizational_unit.name', 'updated_at', 'state.name']
+        normalizedListAttrs: ['id', 'name', 'organizational_unit.name', 'updated_at', 'state.name', 'current_process']
       }
     },
 
@@ -114,10 +102,6 @@
         this.$router.push(`${namespace}/${project.id}`);
       },
 
-      onFilterChange(filters) {
-        this.customFilters[0].vals = filters.orgUnit;
-      },
-
       onHeaderClick(col, e) {
         this.headerClick(col, e);
       },
@@ -136,7 +120,7 @@
           normProject.organizational_unit = normProject.organizational_unit.name;
           normProject.state = normProject.state.name;
           // @todo: change to real property instead
-          normProject.process = '';
+          normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
           return normProject;
         });
 

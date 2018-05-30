@@ -5,9 +5,9 @@ return [
     'lpa_num'              => 'No. APA',
     'name'                 => 'Nom',
     'director'             => 'Directeur',
-    'current_process'      => 'Processus courrant',
+    'current_process'      => 'Processus en cours',
     'created'              => 'Créé',
     'updated'              => 'Modifié',
-    'status'               => 'Status',
+    'status'               => 'État',
     'na'                   => 'Sans objet',
 ];

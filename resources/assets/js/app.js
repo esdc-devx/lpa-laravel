@@ -14,7 +14,7 @@ import { sync } from 'vuex-router-sync';
 import router from './router';
 import store from './store/';
 
-import Logger from './logger';
+import Logger from './plugins/logger';
 import Helpers from './helpers';
 import './polyfills';
 import './filters';
