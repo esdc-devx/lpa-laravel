@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:process id="lpa-poc-phase-1" name="LPA POC Phase 1" isExecutable="true" camunda:versionTag="Ajout d&#39;une variable">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="owner" label="Owner" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0swmovm</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_02rck8b">
+      <bpmn:incoming>SequenceFlow_0stz2fj</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0stz2fj" sourceRef="assess-business-case" targetRef="EndEvent_02rck8b" />
+    <bpmn:sequenceFlow id="SequenceFlow_10mvl52" sourceRef="prepare-business-case" targetRef="assess-business-case" />
+    <bpmn:sequenceFlow id="SequenceFlow_0swmovm" sourceRef="StartEvent_1" targetRef="prepare-business-case" />
+    <bpmn:userTask id="prepare-business-case" name="Prepare Business Case" camunda:candidateGroups="owner-1,comms">
+      <bpmn:incoming>SequenceFlow_0swmovm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10mvl52</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="assess-business-case" name="Assess Business Case" camunda:candidateGroups="scic">
+      <bpmn:incoming>SequenceFlow_10mvl52</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0stz2fj</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="lpa-poc-phase-1">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="169" y="113" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="142" y="149" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_02rck8b_di" bpmnElement="EndEvent_02rck8b">
+        <dc:Bounds x="633" y="113" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="651" y="153" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0stz2fj_di" bpmnElement="SequenceFlow_0stz2fj">
+        <di:waypoint xsi:type="dc:Point" x="544" y="131" />
+        <di:waypoint xsi:type="dc:Point" x="633" y="131" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="588.5" y="110" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_10mvl52_di" bpmnElement="SequenceFlow_10mvl52">
+        <di:waypoint xsi:type="dc:Point" x="362" y="131" />
+        <di:waypoint xsi:type="dc:Point" x="444" y="131" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="403" y="110" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0swmovm_di" bpmnElement="SequenceFlow_0swmovm">
+        <di:waypoint xsi:type="dc:Point" x="205" y="131" />
+        <di:waypoint xsi:type="dc:Point" x="236" y="131" />
+        <di:waypoint xsi:type="dc:Point" x="236" y="131" />
+        <di:waypoint xsi:type="dc:Point" x="262" y="131" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="251" y="125" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1y25eey_di" bpmnElement="prepare-business-case">
+        <dc:Bounds x="262" y="91" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1fi3xxl_di" bpmnElement="assess-business-case">
+        <dc:Bounds x="444" y="91" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
