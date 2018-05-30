@@ -114,6 +114,9 @@ export default {
   },
 
   mounted() {
+    // fix pagination styling since vue-data-tables doesn't support  passing 'background as property
+    this.$refs.table.$el.querySelector('.el-pagination').classList.add('is-background');
+
     EventBus.$on('TopBar:beforeLanguageUpdate', this.beforeLanguageUpdate);
   }
 };
