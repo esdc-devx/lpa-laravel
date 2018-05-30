@@ -109,6 +109,10 @@
       },
 
       setLanguage() {
+        EventBus.$emit('TopBar:beforeLanguageUpdate', this.doSetLanguage);
+      },
+
+      doSetLanguage() {
         this.$helpers.throttleAction(() => {
           let storeLang = this.$store.getters.language;
           let newLang = this.getSwitchedLang(storeLang);

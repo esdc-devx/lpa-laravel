@@ -9,6 +9,7 @@ return [
     'updated'         => '<b>:name</b> a été mis-à-jour.',
     'deleted'         => '<b>:name</b> a été supprimé.',
     'started'         => '<b>:name</b> a été démarré.',
+    'language_toggle' => 'Changer la langue réinitialisera les filtres du tableau. Voulez-vous poursuivre?',
     'delete_project'  => 'Vous êtes sur le point de supprimer le projet <b>:name</b> (<b> ID projet: :id </b>) et toutes les informations associées. Voulez-vous poursuivre?',
     'deleted_project' => 'La suppression a échoué car le projet a déjà été supprimé.',
     'start_process'   => 'Voulez-vous démarrer le processus <b>:process_name</b> pour le projet courant?',

@@ -13,7 +13,7 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
-import Logger from './logger';
+import Logger from './plugins/logger';
 import Notify from './mixins/notify';
 import './locale';
 

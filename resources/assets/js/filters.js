@@ -9,9 +9,12 @@ Vue.filter('LPANumFilter', function (id) {
 Vue.mixin({
   methods: {
     getColumnFilters(list, attr) {
+      // grab the attrs values,
+      // put them in an array, remove dupplicates, remove falsy values,
+      // and then rearrange its format to match ElementUI's
       return _.chain(list)
               .mapValues(attr)
-              .toArray().uniq()
+              .toArray().uniq().compact()
               .map((val, key) => { return { text: val, value: val } })
               .value();
     }
