@@ -7,6 +7,7 @@ import Config from '../config';
 export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
+  shouldConfirmBeforeLeaving: false,
   isAdminBarShown: false,
   isAppLoading: false,
   isMainLoading: false
@@ -31,6 +32,10 @@ export const getters = {
 
   isMainLoading(state) {
     return state.isMainLoading;
+  },
+
+  shouldConfirmBeforeLeaving(state) {
+    return state.shouldConfirmBeforeLeaving;
   }
 };
 
@@ -71,6 +76,10 @@ export const actions = {
 
   hideMainLoading({ commit }, context) {
     commit(types.TOGGLE_MAIN_LOADING, false);
+  },
+
+  shouldConfirmBeforeLeaving({ commit }, context) {
+    commit(types.SHOULD_CONFIRM_BEFORE_LEAVING, context);
   }
 };
 
@@ -112,5 +121,9 @@ export const mutations = {
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {
     state.isMainLoading = isShown;
+  },
+
+  [types.SHOULD_CONFIRM_BEFORE_LEAVING](state, val) {
+    state.shouldConfirmBeforeLeaving = val;
   }
 };

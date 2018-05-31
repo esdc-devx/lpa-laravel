@@ -52,7 +52,8 @@
         language: 'language',
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current',
-        hasRole: 'users/hasRole'
+        hasRole: 'users/hasRole',
+        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
       })
     },
 
@@ -109,7 +110,11 @@
       },
 
       setLanguage() {
-        EventBus.$emit('TopBar:beforeLanguageUpdate', this.doSetLanguage);
+        if (this.shouldConfirmBeforeLeaving) {
+          EventBus.$emit('TopBar:beforeLanguageUpdate', this.doSetLanguage);
+        } else {
+          this.doSetLanguage();
+        }
       },
 
       doSetLanguage() {

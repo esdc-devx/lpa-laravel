@@ -1,3 +1,5 @@
+import { mapActions } from 'vuex';
+
 import Constants from '../../constants.js';
 import EventBus from '../../event-bus.js';
 
@@ -18,6 +20,10 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'shouldConfirmBeforeLeaving'
+    ]),
+
     // handle click on sortable and filterable columns
     // since ElementUI has no behavior when clicking a column that has both methods
     headerClick(col, e) {
@@ -40,6 +46,9 @@ export default {
       // just take the first and only one index
       let filter = _.values(filters)[0];
       if (filter.length) {
+        // let the store know that it should make the user confirm before leaving the page
+        this.shouldConfirmBeforeLeaving(true);
+        // apply filter
         this.filters[_.keys(filters)[0]] = _.values(filters)[0];
       } else {
         // filter removed
@@ -103,6 +112,8 @@ export default {
         }
       )
       .then(() => {
+        // reset the confirmation flag
+        this.shouldConfirmBeforeLeaving(false);
         // reset the sorting and filtering
         this.filters = {};
         this.customFilters = [];
@@ -111,6 +122,13 @@ export default {
       })
       .catch(() => false);
     }
+  },
+
+  beforeRouteLeave(to, from, next) {
+    // Destroy any events we might be listening
+    // so that they do not get called while being on another page
+    EventBus.$off('TopBar:beforeLanguageUpdate', this.beforeLanguageUpdate);
+    next();
   },
 
   mounted() {

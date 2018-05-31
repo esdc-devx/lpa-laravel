@@ -84,8 +84,7 @@
       ...mapGetters({
         language: 'language',
         hasRole: 'users/hasRole',
-        projects: `${namespace}/all`,
-        pagination: `${namespace}/pagination`
+        projects: `${namespace}/all`
       })
     },
 
