@@ -53,7 +53,7 @@
         column-key="current_process"
         :filters="getColumnFilters(this.normalizedList, 'current_process')"
         prop="current_process"
-        :label="trans('entities.general.current_process')">
+        :label="trans('entities.process.current')">
       </el-table-column>
     </data-tables>
   </div>

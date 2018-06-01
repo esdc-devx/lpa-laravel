@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'status'          => 'État du project :',
+    'status' => 'État du projet'
 ];
