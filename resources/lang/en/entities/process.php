@@ -2,7 +2,7 @@
 
 return [
     'id'         => 'Process ID',
-    'start'      => 'Start new Process',
+    'start'      => 'Start a Process',
     'started'    => 'Started',
     'current'    => 'Process Status',
     'view'       => 'View Process',

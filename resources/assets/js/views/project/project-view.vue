@@ -87,7 +87,8 @@
       triggerStartProcess(processName, processNameKey) {
         // confirm the intention to start a process first
         this.confirmStart(
-          this.trans('components.notice.start_process', {
+          this.trans('entities.process.start'),
+          this.trans('components.notice.message.start_process', {
             process_name: processName
           }),
           async () => {
