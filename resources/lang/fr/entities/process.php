@@ -4,6 +4,6 @@ return [
     'id'         => 'Id. processus',
     'start'      => 'Démarrer un processus',
     'started'    => 'Démarré',
-    'current'    => 'État du processus',
+    'current'    => 'Processus en cours',
     'view'       => 'Voir le processus',
 ];
