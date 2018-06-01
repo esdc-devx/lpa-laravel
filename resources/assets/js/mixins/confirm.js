@@ -4,6 +4,7 @@ import '../locale';
 
 export default {
   _confirm(
+    title,
     message = '',
     action = 'delete',
     confirmButtonClass = '',
@@ -11,10 +12,11 @@ export default {
     catchCallback = _.noop
   ) {
     let type = 'warning';
+    title = title || Vue.prototype.trans('components.notice[' + type + ']');
     return Vue.prototype
       .$confirm(
         message,
-        Vue.prototype.trans('components.notice[' + type + ']'),
+        title,
         {
           type,
           confirmButtonText: this.trans('base.actions[' + action + ']'),
@@ -27,8 +29,9 @@ export default {
       .catch(catchCallback);
   },
 
-  confirm(message, action = 'create', confirmButtonClass = '', thenCallback = _.noop, catchCallback = _.noop) {
+  confirm(title, message, action = 'create', confirmButtonClass = '', thenCallback = _.noop, catchCallback = _.noop) {
     return this._confirm(
+      title,
       message,
       action,
       confirmButtonClass,
@@ -37,8 +40,9 @@ export default {
     );
   },
 
-  confirmStart(message, thenCallback = _.noop, catchCallback = _.noop) {
+  confirmStart(title, message, thenCallback = _.noop, catchCallback = _.noop) {
     return this._confirm(
+      title,
       message,
       'start',
       '',
@@ -47,8 +51,9 @@ export default {
     );
   },
 
-  confirmDelete(message, thenCallback = _.noop, catchCallback = _.noop) {
+  confirmDelete(title, message, thenCallback = _.noop, catchCallback = _.noop) {
     return this._confirm(
+      title,
       message,
       'delete',
       'el-button--danger',

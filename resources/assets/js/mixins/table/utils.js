@@ -101,8 +101,8 @@ export default {
       }
 
       this.$confirm(
-        this.trans('components.notice.language_toggle'),
-        this.trans('components.notice.warning'),
+        this.trans('components.notice.message.language_toggle'),
+        this.trans('components.notice.type.warning'),
         {
           type: 'warning',
           confirmButtonText: this.trans('base.actions.continue'),

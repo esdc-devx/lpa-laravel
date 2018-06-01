@@ -75,7 +75,8 @@
 
       deleteProjectConfirm() {
         this.confirmDelete(
-          this.trans('components.notice.delete_project', {
+          this.trans('components.notice.title.delete_project'),
+          this.trans('components.notice.message.delete_project', {
             name: this.project.name,
             id: this.$options.filters.LPANumFilter(this.project.id)
           }),
@@ -86,10 +87,11 @@
               this.$router.push(`/${this.language}/projects`);
             } catch(e) {
               this.$alert(
-                this.trans('components.notice.deleted_project'),
-                this.trans('components.notice.info'),
+                this.trans('components.notice.message.deleted_project'),
+                this.trans('components.notice.type.error'),
                 {
-                  type: 'info',
+                  type: 'error',
+                  showClose: false,
                   confirmButtonText: this.trans('base.actions.ok'),
                   callback: action => {
                     this.$router.push(`/${this.language}/projects`);

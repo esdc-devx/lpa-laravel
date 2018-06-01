@@ -32,7 +32,7 @@ axios.interceptors.response.use(response => response, error => {
     // not logged in, redirect to login
     Vue.prototype.$alert(
       trans('auth.session_expired'),
-      trans('components.notice.info'),
+      trans('components.notice.type.info'),
       {
         type: 'info',
         showClose: false,
