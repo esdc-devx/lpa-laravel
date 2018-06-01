@@ -13,7 +13,7 @@ class ProcessProjectApprovalSeeder extends Seeder
             'entity_type' => 'project',
             'name_key'    => 'project-approval',
             'name_en'     => 'Project Approval',
-            'name_fr'     => 'Approbation de projet',
+            'name_fr'     => 'Approbation d\'un projet',
             'steps'       => [
                 [
                     'name_key' => 'business-case',

@@ -9,11 +9,11 @@
             <dd>{{ process.id | LPANumFilter }}</dd>
           </dl>
           <dl>
-            <dt>{{ trans(`entities.process.current`) }}</dt>
+            <dt>{{ trans('entities.process.status') }}</dt>
             <dd>{{ process.state.name }}</dd>
           </dl>
           <dl>
-            <dt>{{ trans(`entities.process.started`) }}</dt>
+            <dt>{{ trans('entities.process.started') }}</dt>
             <dd>TODO</dd>
             <dd>{{ process.created_at }}</dd>
           </dl>

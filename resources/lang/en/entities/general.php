@@ -5,7 +5,6 @@ return [
     'lpa_num'              => 'LPA #',
     'name'                 => 'Name',
     'director'             => 'Director',
-    'current_process'      => 'Current Process',
     'created'              => 'Created',
     'updated'              => 'Modified',
     'status'               => 'Status',
