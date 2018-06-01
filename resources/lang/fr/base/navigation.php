@@ -9,7 +9,7 @@ return [
     'logout'                => 'Se déconnecter',
     'dashboard'             => 'Tableau de bord',
     'admin_dashboard'       => 'Tableau de bord d\'administration',
-    'admin_user_list'       => 'Usagers',
+    'admin_user_list'       => 'Utilisateurs',
     'admin_user_create'     => 'Créer',
     'admin_user_edit'       => 'Éditer',
     'projects'              => 'Projets',
