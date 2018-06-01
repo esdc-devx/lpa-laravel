@@ -177,7 +177,7 @@ const routes = [
     component: ProjectCreate,
     meta: {
       title() {
-        return this.trans('base.navigation.projects_create');
+        return this.trans('base.navigation.create');
       },
       breadcrumbs: () => 'projects/project-create'
     },
