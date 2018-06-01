@@ -205,7 +205,7 @@ const routes = [
     component: ProjectEdit,
     meta: {
       title() {
-        return this.trans('base.navigation.project_edit');
+        return this.trans('base.navigation.edit');
       },
       breadcrumbs: () => 'projects/project-view/project-edit'
     },

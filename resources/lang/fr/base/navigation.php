@@ -7,6 +7,7 @@ return [
     'language_toggle'       => 'English',
     'profile'               => 'Mon profile',
     'logout'                => 'Se déconnecter',
+    'edit'                  => 'Modifier',
     'dashboard'             => 'Tableau de bord',
     'admin_dashboard'       => 'Tableau de bord d\'administration',
     'admin_user_list'       => 'Utilisateurs',

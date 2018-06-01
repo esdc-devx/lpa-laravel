@@ -7,6 +7,7 @@ return [
     'language_toggle'       => 'Français',
     'profile'               => 'My Profile',
     'logout'                => 'Logout',
+    'edit'                  => 'Edit',
     'dashboard'             => 'Dashboard',
     'admin_dashboard'       => 'Admin Dashboard',
     'admin_user_list'       => 'Users',
