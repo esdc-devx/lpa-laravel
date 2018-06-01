@@ -14,7 +14,7 @@
       @current-page-change="scrollToTop"
       @row-click="viewProject"
       @header-click="onHeaderClick"
-      :sort-method="onSort">
+      :sort-method="$helpers.localeSort">
       <el-table-column
         sortable="custom"
         prop="id"
@@ -32,7 +32,7 @@
       <el-table-column
         sortable="custom"
         column-key="organizational_unit"
-        :filters="getColumnFilters(this.normalizedList, 'organizational_unit')"
+        :filters="orgUnitFilters"
         prop="organizational_unit"
         :label="$tc('entities.general.organizational_units')">
       </el-table-column>
@@ -85,7 +85,12 @@
         language: 'language',
         hasRole: 'users/hasRole',
         projects: `${namespace}/all`
-      })
+      }),
+
+      orgUnitFilters() {
+        return this.getColumnFilters(this.normalizedList, 'organizational_unit')
+                   .sort((a, b) => this.$helpers.localeSort(a, b, 'text'));
+      }
     },
 
     methods: {
