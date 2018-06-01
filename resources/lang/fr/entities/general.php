@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'organizational_units' => 'Unité organisationnelle|Unitées organisationnelles',
+    'organizational_units' => 'Unité organisationnelle|Unités organisationnelles',
     'lpa_num'              => 'No. APA',
     'name'                 => 'Nom',
     'director'             => 'Directeur',
