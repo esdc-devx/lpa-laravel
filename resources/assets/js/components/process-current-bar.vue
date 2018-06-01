@@ -5,7 +5,7 @@
       <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans('entities.process.current') }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.current_process ? dataProp.current_process.definition.name : trans('entities.general.na') }}</span></li>
     </ul>
     <div class="controls">
-      <el-button v-if="dataProp.current_process" type="success" size="mini" @click="continueToProcess(dataProp.current_process.id)">{{ trans('entities.process.view') }} <i class="el-icon-arrow-right"></i></el-button>
+      <el-button :disabled="!dataProp.current_process" type="success" size="mini" @click="continueToProcess(dataProp.current_process.id)">{{ trans('entities.process.view') }} <i class="el-icon-arrow-right"></i></el-button>
     </div>
   </div>
 </template>
