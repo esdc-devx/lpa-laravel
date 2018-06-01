@@ -75,7 +75,7 @@
 
       deleteProjectConfirm() {
         this.confirmDelete(
-          this.trans('entities.project.delete_project'),
+          this.trans('components.notice.title.delete_project'),
           this.trans('components.notice.message.delete_project', {
             name: this.project.name,
             id: this.$options.filters.LPANumFilter(this.project.id)

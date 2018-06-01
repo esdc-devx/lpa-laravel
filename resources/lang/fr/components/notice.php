@@ -1,11 +1,14 @@
 <?php
 
 return [
-    'type' => [
+    'type'    => [
         'success'         => 'Succès',
         'info'            => 'Info',
         'warning'         => 'Attention',
         'error'           => 'Erreur',
+    ],
+    'title'   => [
+        'delete_project'  => 'Supprimer le projet',
     ],
     'message' => [
         'language_toggle' => 'Changer la langue réinitialisera les filtres du tableau. Voulez-vous poursuivre?',
@@ -13,8 +16,8 @@ return [
         'deleted_project' => 'La suppression a échoué car le projet a déjà été supprimé.',
         'start_process'   => 'Voulez-vous démarrer le processus <b>:process_name</b> pour le projet courant?',
     ],
-    'created'             => '<b>:name</b> a été créé.',
-    'updated'             => '<b>:name</b> a été mis-à-jour.',
-    'deleted'             => '<b>:name</b> a été supprimé.',
-    'started'             => '<b>:name</b> a été démarré.',
+    'created' => '<b>:name</b> a été créé.',
+    'updated' => '<b>:name</b> a été mis-à-jour.',
+    'deleted' => '<b>:name</b> a été supprimé.',
+    'started' => '<b>:name</b> a été démarré.',
 ];
