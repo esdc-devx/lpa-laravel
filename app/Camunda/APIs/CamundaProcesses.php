@@ -134,4 +134,15 @@ class CamundaProcesses extends CamundaBaseAPI
     {
         return $this->client->delete("process-instance/{$id}");
     }
+
+    /**
+     * Retrieve process instance variables from its id.
+     *
+     * @param  string $id
+     * @return array
+     */
+    public function getVariables(string $id)
+    {
+        return (array) $this->client->get('history/variable-instance', ['processInstanceId' => $id]);
+    }
 }

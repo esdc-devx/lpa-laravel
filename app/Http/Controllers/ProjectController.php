@@ -145,7 +145,7 @@ class ProjectController extends APIController
         $this->authorize('start-process', [$project, $processDefinition]);
 
         return $this->respond([
-            'process_instance' => \Process::startProcessInstance($processDefinition, $project)
+            'process_instance' => \Process::startProcessInstance($processDefinition, $project)->getProcessInstance()
         ]);
     }
 
