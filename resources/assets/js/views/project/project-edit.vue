@@ -1,6 +1,6 @@
 <template>
   <div class="project-edit content">
-    <h2>{{ trans('base.navigation.project_edit') }}</h2>
+    <h2>{{ trans('pages.project_edit.title') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
       <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
