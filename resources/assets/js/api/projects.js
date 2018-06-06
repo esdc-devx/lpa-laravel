@@ -38,6 +38,10 @@ export default {
     return axios.post(`projects/${projectId}/process/${processNameKey}`);
   },
 
+  getProcess(projectId, processId) {
+    return axios.get(`projects/${projectId}/process/${processId}`);
+  },
+
   createProject(project) {
     return axios.post('projects', project);
   },

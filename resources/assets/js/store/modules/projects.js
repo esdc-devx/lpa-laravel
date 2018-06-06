@@ -8,7 +8,8 @@ export default {
     viewing: {},
     processes: [],
     currentProcess: {
-      definition: {}
+      definition: {},
+      state: {}
     },
     all: [],
     organizationalUnits: []
@@ -61,6 +62,12 @@ export default {
       commit('setViewingProject', response.data.data.project);
       commit('setProcesses', response.data.data.processes);
       commit('setCurrentProcess', response.data.data.project.current_process);
+      return response.data.data;
+    },
+
+    async loadProcess({ commit }, { projectId, processId }) {
+      let response = await ProjectsAPI.getProcess(projectId, processId);
+      commit('setCurrentProcess', response.data.data.process_instance);
       return response.data.data;
     },
 

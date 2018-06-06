@@ -118,7 +118,7 @@
 
 /**
  * Shorthand to create up-down arrows entirely colored
- * @param  {Color}           $color:   $brand-primary
+ * @param  {Color}           $color:   $--color-primary
  * @param  {Unit size}       $border-width:   5px
  * @param  {Unit size}       $border-height:  6px
  */
@@ -190,3 +190,12 @@
   }
 }
 
+/**
+ * Shorthand to apply background-image from svg name
+ * @param  {String} $name
+ * @param  {Color}  $color: $--color-primary
+ */
+@mixin svg($name, $color: $--color-primary) {
+  $svg: get-svg($name, $color);
+  background: url($svg) center no-repeat;
+}

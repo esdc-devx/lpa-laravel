@@ -23,7 +23,7 @@
           </el-menu-item>
           <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar">
             <span>
-              <i :class="['el-icon-setting', { 'active' : isAdminBarShown} ]"></i>
+              <i :class="['el-icon-lpa-settings', { 'active' : isAdminBarShown} ]"></i>
             </span>
           </el-menu-item>
         </el-menu>

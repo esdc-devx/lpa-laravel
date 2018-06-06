@@ -41,13 +41,13 @@
         return [
           {
             text: this.trans('base.navigation.home'),
-            icon: 'el-icon-menu',
+            icon: 'el-icon-lpa-home',
             classes: '',
             index: ''
           },
           {
             text: this.trans('base.navigation.projects'),
-            icon: 'el-icon-menu',
+            icon: 'el-icon-lpa-projects',
             classes: '',
             index: '/projects'
           }
@@ -114,9 +114,9 @@
       width: $side-bar-collapsed-width;
       height: 50px;
       cursor: pointer;
-      transition: $--bg-color-transition-base;
+      transition: $bg-color-transition-base;
       &:hover {
-        transition: $--bg-color-transition-base;
+        transition: $bg-color-transition-base;
         background-color: #322f43;
       }
       &-inner {
@@ -176,8 +176,12 @@
     }
     span, i {
       transition: $--all-transition;
-      color: mix($--color-white, $side-bar-fill, 75%);
       vertical-align: middle !important;
+      color: $--color-white;
+      opacity: 0.8;
+    }
+    i {
+      width: $svg-icons-size !important;
     }
     .el-menu-item {
       transition: $--all-transition;
@@ -186,7 +190,8 @@
         background-color: mix($--color-black, $side-bar-fill, 25%);
         span, i {
           transition: $--all-transition;
-          color: mix($--color-white, $side-bar-fill, 95%);
+          color: $--color-white;
+          opacity: 1;
         }
       }
       &.is-active {
@@ -202,7 +207,8 @@
           transition: $--all-transition;
         }
         span, i {
-          color: mix($--color-white, $side-bar-fill, 95%);
+          color: $--color-white;
+          opacity: 1;
         }
       }
     }
