@@ -6,7 +6,7 @@
         <!-- get process info from api call instead on the project -->
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ currentProcess.id | LPANumFilter }}</dd>
+            <dd>{{ currentProcess.engine_process_instance_id }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.status') }}</dt>
@@ -14,12 +14,12 @@
           </dl>
           <dl>
             <dt>{{ trans('entities.process.started') }}</dt>
-            <dd>TODO</dd>
+            <dd>{{ currentProcess.created_by.name }}</dd>
             <dd>{{ currentProcess.created_at }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>TODO</dd>
+            <dd>{{ currentProcess.updated_by.name }}</dd>
             <dd>{{ currentProcess.updated_at }}</dd>
           </dl>
           <div class="controls">
@@ -60,7 +60,7 @@
     <el-row>
       <el-tabs type="border-card" class="no-shadow">
         <el-tab-pane>
-          <span slot="label"><i class="el-icon-lpa-form"></i> <b>Forms</b></span>
+          <span slot="label"><i class="el-icon-lpa-form"></i> <b>{{ trans('pages.process.forms') }}</b></span>
           <el-table
             class="process-forms-table"
             :data="forms"
@@ -151,11 +151,14 @@
           return this.currentProcess.steps.length - 1;
         }
 
-        for (let i = 0; i < this.currentProcess.steps.length; i++) {
-          if (this.currentProcess.steps[i].state.name_key !== 'locked') {
-            return i;
+        let active = 0;
+        // grab the last step that is not locked
+        _.forEach(this.currentProcess.steps, (step, i) => {
+          if (step.state.name_key !== 'locked') {
+            active = i;
           }
-        }
+        });
+        return active;
       },
 
       onStepChange(index) {
@@ -267,11 +270,20 @@
         margin: 0;
       }
       .el-step {
+        .el-step__title, .el-step__description {
+          transition: all 0.3s ease;
+        }
         &:hover {
-          .el-step__head .el-step__icon, .el-step__main {
-            transition: transform 0.3s ease;
+          .el-step__head .el-step__icon {
+            transition: all 0.3s ease;
             transform: scale(1.1);
             transform-origin: center;
+          }
+          .el-step__title {
+            font-size: 130%;
+          }
+          .el-step__description {
+            font-size: 100%;
           }
         }
 
@@ -282,13 +294,16 @@
 
         &.is-selected {
           // Default
-          .el-step__head .el-step__icon, .el-step__main {
-            transition: transform 0.3s ease;
+          .el-step__head .el-step__icon {
+            transition: all 0.3s ease;
             transform: scale(1.2);
             transform-origin: center;
           }
+          .el-step__title {
+            font-size: 140%;
+          }
           .el-step__description {
-            font-size: 10px;
+            font-size: 110%;
           }
 
           // Locked

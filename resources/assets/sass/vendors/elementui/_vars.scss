@@ -1,9 +1,9 @@
-@import './element-variables';
 // ElementUI variable overrides
 
 /* Colors
 -------------------------- */
 $--color-primary: #524f74;
+$--color-white:   #fff;
 $--color-black:   #111;
 $--color-text-primary: $--color-primary;
 
@@ -17,3 +17,5 @@ $--border-color-extra-light: mix($--border-color-base, $--color-white, 95%);
 /* z-index
 -------------------------- */
 $--font-path: '../../node_modules/element-ui/lib/theme-chalk/fonts';
+
+@import './element-variables';

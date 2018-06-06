@@ -71,7 +71,7 @@ class StatesTableSeeder extends Seeder
                 [
                     'name_key' => 'locked',
                     'name_en'  => 'Locked',
-                    'name_fr'  => 'Vérrouillé'
+                    'name_fr'  => 'Verrouillé'
                 ],
                 [
                     'name_key' => 'unlocked',
@@ -93,7 +93,7 @@ class StatesTableSeeder extends Seeder
                 [
                     'name_key' => 'locked',
                     'name_en'  => 'Locked',
-                    'name_fr'  => 'Vérrouillé'
+                    'name_fr'  => 'Verrouillé'
                 ],
                 [
                     'name_key' => 'unlocked',

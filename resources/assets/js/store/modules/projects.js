@@ -9,7 +9,9 @@ export default {
     processes: [],
     currentProcess: {
       definition: {},
-      state: {}
+      state: {},
+      created_by: {},
+      updated_by: {}
     },
     all: [],
     organizationalUnits: []
