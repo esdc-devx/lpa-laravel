@@ -95,7 +95,7 @@ class ProcessManager {
                         'process_instance_step_id' => $processInstanceStep->id,
                         'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
                         'created_by'               => $user->id,
-                        'updated_by'               => $user->id,
+                        'updated_at'               => null,
                     ]);
                     // Create an empty data class model mapped to the process instance form (i.e. BusinessCase, ArchitecturePlan, etc.).
                     if ($businessObject = Relation::getMorphedModel($form->name_key)) {
