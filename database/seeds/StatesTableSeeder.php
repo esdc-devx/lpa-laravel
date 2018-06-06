@@ -20,11 +20,6 @@ class StatesTableSeeder extends Seeder
                     'name_fr'  => 'Défini'
                 ],
                 [
-                    'name_key' => 'rejected',
-                    'name_en'  => 'Rejected',
-                    'name_fr'  => 'Rejeté'
-                ],
-                [
                     'name_key' => 'approved',
                     'name_en'  => 'Approved',
                     'name_fr'  => 'Approuvé'
