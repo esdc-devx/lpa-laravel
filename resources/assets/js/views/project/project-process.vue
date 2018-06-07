@@ -170,7 +170,7 @@
         await this.loadProject(projectId);
       },
 
-      async triggerLoadInstance() {
+      async triggerLoadProcessInstance() {
         let processId = this.$route.params.processId;
         await this.loadInstance(processId);
 
@@ -183,7 +183,7 @@
         try {
           this.showMainLoading();
           await this.triggerLoadProject();
-          await this.triggerLoadInstance();
+          await this.triggerLoadProcessInstance();
           this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
