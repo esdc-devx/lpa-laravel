@@ -2,18 +2,14 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-
-class LocalizableModel extends Model
+class LocalizableModel extends BaseModel
 {
-
     /**
      * Localized attributes.
      *
      * @var array
      */
     protected $localizable = [];
-
 
     /**
      * Whether or not to hide translated attributes.
@@ -22,14 +18,12 @@ class LocalizableModel extends Model
      */
     protected $hideLocaleSpecificAttributes = true;
 
-
     /**
      * Whether or not to append translatable attributes to array.
      *
      * @var boolean
      */
     protected $appendLocalizedAttributes = true;
-
 
     /**
      * Make a new translatable model.

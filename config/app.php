@@ -244,4 +244,11 @@ return [
         'Process' => App\Process\ProcessManagerFacade::class,
     ],
 
+    // Used to resolve model class from a string, usually stored into the database or as a route parameter.
+    // These definitions will be bound to the the service container upon app initialization.
+    'entity_types' => [
+        'business-case' => App\Models\Project\BusinessCase::class,
+        'project' => App\Models\Project\Project::class,
+    ],
+
 ];

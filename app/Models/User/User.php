@@ -2,17 +2,23 @@
 
 namespace App\Models\User;
 
-use Laravel\Passport\HasApiTokens;
 use Adldap\Laravel\Traits\HasLdapUser;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\BaseModel;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
 use App\Models\Project\Project;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\Access\Authorizable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
 
-class User extends Authenticatable
+class User extends BaseModel implements
+    AuthenticatableContract,
+    AuthorizableContract
 {
-    use Notifiable, HasLdapUser, HasApiTokens, SoftDeletes;
+    use Notifiable, HasLdapUser, HasApiTokens, SoftDeletes, Authenticatable, Authorizable;
 
     /**
      * The attributes that are mass assignable.

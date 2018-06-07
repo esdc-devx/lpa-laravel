@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Process\ProcessDefinition;
-use Illuminate\Http\Response;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -26,13 +26,23 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
-
         parent::boot();
 
-        // Configure route model bindings.
+        /*
+         * Configure route model bindings.
+         */
+
+        // Resolve process definition from its key.
         Route::bind('processDefinition', function ($value) {
-            return ProcessDefinition::getByKey($value)->first() ?? abort(Response::HTTP_NOT_FOUND);
+            return ProcessDefinition::getByKey($value)->firstOrFail();
+        });
+
+        // Resolve model class from entityType string.
+        Route::bind('entityType', function($value) {
+            if ($entityType = config('app.entity_types')[$value] ?? null) {
+                return resolve($entityType);
+            }
+            throw new ModelNotFoundException();
         });
     }
 
