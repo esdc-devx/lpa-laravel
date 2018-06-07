@@ -33,7 +33,7 @@ export default {
 
     async loadProjectEditInfo({ commit }, id) {
       let response = await ProjectsAPI.getProjectEditInfo(id);
-      commit('setViewingProject', response.data.data.project);
+      commit('setViewing', response.data.data.project);
       commit('setOrganizationalUnits', response.data.data.organizational_units);
       return response.data.data;
     },
@@ -46,7 +46,7 @@ export default {
 
     async loadProject({ commit }, id) {
       let response = await ProjectsAPI.getProject(id);
-      commit('setViewingProject', response.data.data.project);
+      commit('setViewing', response.data.data.project);
       return response.data.data;
     },
 
@@ -65,22 +65,22 @@ export default {
       return response.data.data.allowed;
     },
 
-    async canStartProcess({ commit }, { projectId, processNameKey }) {
-      let response = await ProjectsAPI.canStartProcess(projectId, processNameKey);
+    async canStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
+      let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
       return response.data.data.allowed;
     },
 
-    async createProject({ commit }, project) {
-      let response = await ProjectsAPI.createProject(project);
+    async create({ commit }, project) {
+      let response = await ProjectsAPI.create(project);
       return response.data.data;
     },
 
-    async updateProject({ commit }, project) {
-      await ProjectsAPI.updateProject(project);
+    async update({ commit }, project) {
+      await ProjectsAPI.update(project);
     },
 
-    async deleteProject({ commit }, id) {
-      await ProjectsAPI.deleteProject(id);
+    async delete({ commit }, id) {
+      await ProjectsAPI.delete(id);
     }
   },
 
@@ -89,7 +89,7 @@ export default {
       state.all = projects;
     },
 
-    setViewingProject(state, project) {
+    setViewing(state, project) {
       state.viewing = project;
     },
 

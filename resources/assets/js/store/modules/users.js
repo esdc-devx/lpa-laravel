@@ -81,7 +81,7 @@ export default {
 
     async loadViewingUser({ commit }, id) {
       let response = await UserAPI.getUser(id);
-      commit('setViewingUser', response.data.data);
+      commit('setViewing', response.data.data);
       return response.data.data;
     },
 
@@ -94,28 +94,28 @@ export default {
 
     async loadUserEditInfo({ commit }, id) {
       let response = await UserAPI.getUserEditInfo(id);
-      commit('setViewingUser', response.data.data.user);
+      commit('setViewing', response.data.data.user);
       commit('setOrganizationalUnits', response.data.data.organizational_units);
       commit('setRoles', response.data.data.roles);
       return response.data.data;
     },
 
     // CRUD methods
-    async createUser({ commit }, user) {
-      await UserAPI.createUser(user);
+    async create({ commit }, user) {
+      await UserAPI.create(user);
     },
 
-    async searchUser({ commit }, name) {
-      let response = await UserAPI.searchUser(name);
+    async search({ commit }, name) {
+      let response = await UserAPI.search(name);
       return response.data.data;
     },
 
-    async updateUser({ commit }, user) {
-      await UserAPI.updateUser(user);
+    async update({ commit }, user) {
+      await UserAPI.update(user);
     },
 
-    async deleteUser({ commit }, id) {
-      await UserAPI.deleteUser(id);
+    async delete({ commit }, id) {
+      await UserAPI.delete(id);
     }
   },
 
@@ -132,7 +132,7 @@ export default {
       state.current = user;
     },
 
-    setViewingUser(state, user) {
+    setViewing(state, user) {
       state.viewing = user;
     },
 

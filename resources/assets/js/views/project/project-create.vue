@@ -80,7 +80,7 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        createProject: `${namespace}/createProject`,
+        createProject: `${namespace}/create`,
         loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
       }),
 
@@ -92,7 +92,7 @@
       async create() {
         try {
           let project = await this.createProject(this.form);
-          this.$store.commit(`${namespace}/setViewingProject`, project);
+          this.$store.commit(`${namespace}/setViewing`, project);
           this.isSaving = false;
           this.notifySuccess(this.trans('components.notice.created', { name: this.form.name }));
           this.jumpToCreatedProject();

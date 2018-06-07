@@ -123,8 +123,8 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        searchUser: `${namespace}/searchUser`,
-        createUser: `${namespace}/createUser`,
+        searchUser: `${namespace}/search`,
+        createUser: `${namespace}/create`,
         loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
       }),
 

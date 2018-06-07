@@ -30,30 +30,26 @@ export default {
     return axios.get(`authorization/project/delete/${id}`);
   },
 
-  canStartProcess(projectId, processNameKey) {
-    return axios.get(`authorization/project/${projectId}/start-process/${processNameKey}`);
-  },
-
-  startProcess(projectId, processNameKey) {
-    return axios.post(`projects/${projectId}/process/${processNameKey}`);
+  canStartProcess(projectId, processDefinitionNameKey) {
+    return axios.get(`authorization/project/${projectId}/start-process/${processDefinitionNameKey}`);
   },
 
   getProcess(projectId, processId) {
     return axios.get(`projects/${projectId}/process/${processId}`);
   },
 
-  createProject(project) {
+  create(project) {
     return axios.post('projects', project);
   },
 
-  updateProject(project) {
+  update(project) {
     return axios.put(`projects/${project.id}`, {
       name: project.name,
       organizational_unit: project.organizational_unit
     });
   },
 
-  deleteProject(id) {
+  delete(id) {
     return axios.delete(`projects/${id}`);
   }
 };

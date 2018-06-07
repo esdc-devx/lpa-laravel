@@ -4,7 +4,7 @@ export default {
   namespaced: true,
 
   state: {
-    all: [],
+    definitions: [],
     viewing: {
       definition: {},
       state: {},
@@ -14,8 +14,8 @@ export default {
   },
 
   getters: {
-    all(state) {
-      return state.all;
+    definitions(state) {
+      return state.definitions;
     },
 
     viewing(state) {
@@ -24,27 +24,27 @@ export default {
   },
 
   actions: {
-    async loadProcesses({ commit }, entityType) {
-      let response = await ProcessAPI.getProcesses(entityType);
-      commit('setProcesses', response.data.data.process_definitions);
+    async loadDefinitions({ commit }, entityType) {
+      let response = await ProcessAPI.getDefinitions(entityType);
+      commit('setDefinitions', response.data.data.process_definitions);
       return response.data.data;
     },
 
-    async loadProcess({ commit }, processId) {
-      let response = await ProcessAPI.getProcess(processId);
+    async loadInstance({ commit }, processId) {
+      let response = await ProcessAPI.getInstance(processId);
       commit('setViewing', response.data.data.process_instance);
       return response.data.data;
     },
 
-    async startProcess({ commit }, { nameKey, entityId }) {
-      let response = await ProcessAPI.startProcess(nameKey, entityId);
+    async start({ commit }, { nameKey, entityId }) {
+      let response = await ProcessAPI.start(nameKey, entityId);
       return response.data.data;
     }
   },
 
   mutations: {
-    setProcesses(state, processes) {
-      state.all = processes;
+    setDefinitions(state, definitions) {
+      state.definitions = definitions;
     },
 
     setViewing(state, viewing) {

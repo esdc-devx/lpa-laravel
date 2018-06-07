@@ -106,7 +106,7 @@
 
     methods: {
       ...mapActions({
-        updateUser: `${namespace}/updateUser`,
+        updateUser: `${namespace}/update`,
         loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),
 

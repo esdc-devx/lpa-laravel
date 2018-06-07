@@ -77,7 +77,7 @@
 
     methods: {
       ...mapActions({
-        updateProject: `${namespace}/updateProject`,
+        updateProject: `${namespace}/update`,
         loadProjectEditInfo: `${namespace}/loadProjectEditInfo`
       }),
 

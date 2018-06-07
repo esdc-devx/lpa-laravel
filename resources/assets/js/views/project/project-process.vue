@@ -138,7 +138,7 @@
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
         loadProject: 'projects/loadProject',
-        loadProcess: `${namespace}/loadProcess`
+        loadInstance: `${namespace}/loadInstance`
       }),
 
       getFormRowClassName({row, rowIndex}) {
@@ -170,9 +170,9 @@
         await this.loadProject(projectId);
       },
 
-      async triggerLoadProcess() {
+      async triggerLoadInstance() {
         let processId = this.$route.params.processId;
-        await this.loadProcess(processId);
+        await this.loadInstance(processId);
 
         this.activeStep = this.getActiveStep();
         // make sure that the selectedIndex is updated
@@ -183,7 +183,7 @@
         try {
           this.showMainLoading();
           await this.triggerLoadProject();
-          await this.triggerLoadProcess();
+          await this.triggerLoadInstance();
           this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);

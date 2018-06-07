@@ -17,9 +17,9 @@
           <ul class="project-actions-list">
             <li>
               <el-button
-                v-for="(process, index) in processes"
+                v-for="(process, index) in definitions"
                 :key="index"
-                :disabled="!processPermissions[process.name_key]"
+                :disabled="!processDefinitionPermissions[process.name_key]"
                 @click="triggerStartProcess(process.name, process.name_key)" plain>
                   {{ process.name }}
               </el-button>
@@ -53,7 +53,7 @@
         language: 'language',
         hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
-        processes: `processes/all`
+        definitions: `processes/definitions`
       }),
 
       canBeVisible() {
@@ -63,7 +63,7 @@
 
     data() {
       return {
-        processPermissions: {},
+        processDefinitionPermissions: {},
         project: {
           organizational_unit: {
             director: {}
@@ -81,8 +81,8 @@
         hideMainLoading: 'hideMainLoading',
         loadProject: `${namespace}/loadProject`,
         canStartProcess: `${namespace}/canStartProcess`,
-        loadProcesses: `processes/loadProcesses`,
-        startProcess: `processes/startProcess`
+        loadProcessDefinitions: `processes/loadDefinitions`,
+        startProcess: `processes/start`
       }),
 
       triggerStartProcess(processName, processNameKey) {
@@ -96,21 +96,20 @@
             let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
             this.notifySuccess(this.trans('components.notice.started', { name: processName }));
             let projectId = this.$route.params.projectId;
-            // @todo: push to projectId/process/processId     instead
             this.$router.push(`${projectId}/process/${response.process_instance.id}`);
           }
         );
       },
 
-      async getProcessPermissions() {
-        let process;
-        for (let i = 0; i < this.processes.length; i++) {
-          process = this.processes[i];
+      async getProcessDefinitionPermissions() {
+        let definition;
+        for (let i = 0; i < this.definitions.length; i++) {
+          definition = this.definitions[i];
           // add reactive properties
           this.$set(
-            this.processPermissions,
-            process.name_key,
-            await this.canStartProcess({ projectId: this.$route.params.projectId, processNameKey: process.name_key })
+            this.processDefinitionPermissions,
+            definition.name_key,
+            await this.canStartProcess({ projectId: this.$route.params.projectId, processDefinitionNameKey: definition.name_key })
           )
         }
       },
@@ -120,10 +119,10 @@
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProject(projectId);
-          await this.loadProcesses('project');
+          await this.loadProcessDefinitions('project');
           EventBus.$emit('App:ready');
           this.project = Object.assign({}, this.viewingProject);
-          this.getProcessPermissions();
+          this.getProcessDefinitionPermissions();
           this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
