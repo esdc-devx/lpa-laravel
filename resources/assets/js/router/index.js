@@ -230,7 +230,7 @@ const routes = [
     name: 'project-process',
     component: ProjectProcess,
     meta: {
-      title: () => `${store.getters['projects/currentProcess'].definition.name}`,
+      title: () => `${store.getters['processes/viewing'].definition.name}`,
       breadcrumbs: () => 'projects/project-view/project-process'
     }
   },

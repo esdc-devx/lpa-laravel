@@ -53,7 +53,7 @@
         language: 'language',
         hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
-        processes: `${namespace}/processes`
+        processes: `processes/all`
       }),
 
       canBeVisible() {
@@ -81,7 +81,8 @@
         hideMainLoading: 'hideMainLoading',
         loadProject: `${namespace}/loadProject`,
         canStartProcess: `${namespace}/canStartProcess`,
-        startProcess: `${namespace}/startProcess`
+        loadProcesses: `processes/loadProcesses`,
+        startProcess: `processes/startProcess`
       }),
 
       triggerStartProcess(processName, processNameKey) {
@@ -92,7 +93,7 @@
             process_name: processName
           }),
           async () => {
-            let response = await this.startProcess({ projectId: this.project.id, processNameKey: processNameKey });
+            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
             this.notifySuccess(this.trans('components.notice.started', { name: processName }));
             let projectId = this.$route.params.projectId;
             // @todo: push to projectId/process/processId     instead
@@ -114,11 +115,12 @@
         }
       },
 
-      async triggerLoadProject() {
+      async fetch() {
         this.showMainLoading();
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProject(projectId);
+          await this.loadProcesses('project');
           EventBus.$emit('App:ready');
           this.project = Object.assign({}, this.viewingProject);
           this.getProcessPermissions();
@@ -129,7 +131,7 @@
       },
 
       async onLanguageUpdate() {
-        await this.triggerLoadProject();
+        await this.fetch();
       }
     },
 
@@ -142,7 +144,7 @@
 
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        vm.triggerLoadProject();
+        vm.fetch();
       });
     },
 

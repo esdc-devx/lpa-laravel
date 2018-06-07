@@ -1,4 +1,4 @@
-import ProjectsAPI from '../../api/projects';
+import ProcessAPI from '../../api/processes';
 
 export default {
   namespaced: true,
@@ -24,19 +24,20 @@ export default {
   },
 
   actions: {
-    async loadProcess({ commit }, { entityId, processId }) {
-      let response = await ProjectsAPI.getProcess(entityId, processId);
+    async loadProcesses({ commit }, entityType) {
+      let response = await ProcessAPI.getProcesses(entityType);
+      commit('setProcesses', response.data.data.process_definitions);
+      return response.data.data;
+    },
+
+    async loadProcess({ commit }, processId) {
+      let response = await ProcessAPI.getProcess(processId);
       commit('setViewing', response.data.data.process_instance);
       return response.data.data;
     },
 
-    async canStartProcess({ commit }, { entityId, processNameKey }) {
-      let response = await ProjectsAPI.canStartProcess(entityId, processNameKey);
-      return response.data.data.allowed;
-    },
-
-    async startProcess({ commit }, { entityId, processNameKey }) {
-      let response = await ProjectsAPI.startProcess(entityId, processNameKey);
+    async startProcess({ commit }, { nameKey, entityId }) {
+      let response = await ProcessAPI.startProcess(nameKey, entityId);
       return response.data.data;
     }
   },

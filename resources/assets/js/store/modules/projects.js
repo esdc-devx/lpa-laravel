@@ -65,6 +65,11 @@ export default {
       return response.data.data.allowed;
     },
 
+    async canStartProcess({ commit }, { projectId, processNameKey }) {
+      let response = await ProjectsAPI.canStartProcess(projectId, processNameKey);
+      return response.data.data.allowed;
+    },
+
     async createProject({ commit }, project) {
       let response = await ProjectsAPI.createProject(project);
       return response.data.data;
