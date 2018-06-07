@@ -75,8 +75,7 @@ class ProjectController extends APIController
     public function show($id)
     {
         return $this->respond([
-            'project'   => $this->projects->with('all')->getById($id),
-            'processes' => ProcessDefinition::where('entity_type', 'project')->get(),
+            'project' => $this->projects->with('all')->getById($id),
         ]);
     }
 
@@ -131,41 +130,4 @@ class ProjectController extends APIController
             $this->projects->delete($id)
         );
     }
-
-    /**
-     * Start a process instance.
-     *
-     * @param  int $id
-     * @param  ProcessDefinition $processDefinition
-     * @return \Illuminate\Http\Response
-     */
-    public function startProcessInstance($id, ProcessDefinition $processDefinition)
-    {
-        $project = $this->projects->getById($id);
-        $this->authorize('start-process', [$project, $processDefinition]);
-
-        return $this->respond([
-            'process_instance' => \Process::startProcessInstance($processDefinition, $project)->getProcessInstance()
-        ]);
-    }
-
-    /**
-     * Display the process instance.
-     *
-     * @param  int $projectId
-     * @param  int $processInstanceId
-     * @return \Illuminate\Http\Response
-     */
-    public function showProcessInstance($projectId, $processInstanceId)
-    {
-        return $this->respond([
-            'process_instance' => ProcessInstance::withProcessDetails()
-                ->where([
-                    'id' => $processInstanceId,
-                    'entity_type' => 'project',
-                    'entity_id' => $projectId,
-                ])->firstOrFail()
-        ]);
-    }
-
 }

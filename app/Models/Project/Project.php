@@ -2,19 +2,17 @@
 
 namespace App\Models\Project;
 
+use App\Models\BaseModel;
 use App\Models\OrganizationalUnit\OrganizationalUnit;
 use App\Models\Process\ProcessInstance;
 use App\Models\State;
 use App\Models\Traits\UsesUserAudit;
 use App\Models\User\User;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Project extends Model
+class Project extends BaseModel
 {
     use SoftDeletes, UsesUserAudit;
-
-    public static $entityType = 'project';
 
     protected $guarded = [];
     protected $hidden = ['organizational_unit_id', 'state_id', 'business_case_id', 'process_instance_id'];

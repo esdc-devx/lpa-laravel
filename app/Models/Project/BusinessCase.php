@@ -2,10 +2,10 @@
 
 namespace App\Models\Project;
 
+use App\Models\BaseModel;
 use App\Models\Process\ProcessInstanceForm;
-use Illuminate\Database\Eloquent\Model;
 
-class BusinessCase extends Model
+class BusinessCase extends BaseModel
 {
     protected $guarded = [];
     protected $hidden = ['process_instance_form_id'];

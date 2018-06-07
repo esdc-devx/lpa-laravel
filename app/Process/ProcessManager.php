@@ -8,7 +8,6 @@ use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Process\ProcessInstanceStep;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 
 class ProcessManager {
@@ -28,7 +27,7 @@ class ProcessManager {
      * Start a process instance.
      *
      * @param  mixed $processDefinition
-     * @param  Illuminate\Database\Eloquent\Model $entity
+     * @param  App\Models\BaseModel $entity
      * @return App\Models\Process\ProcessInstance
      */
     public function startProcessInstance($processDefinition, $entity)
@@ -43,7 +42,7 @@ class ProcessManager {
             $processDefinition = ProcessDefinition::getByKey($processDefinition)->firstOrFail();
         }
 
-        $this->entityType = $entity::$entityType;
+        $this->entityType = $entity::getEntityType();
         // Generate a random string used as a token for webservice authentication calls from Camunda.
         $authToken = str_random(24);
         $processState = State::getByKey('process-instance.running')->first();
@@ -90,7 +89,7 @@ class ProcessManager {
 
                 // Create process instance form entries from process definition.
                 foreach ($step['forms'] as $form) {
-                    $formInstance = ProcessInstanceForm::create([
+                    $processInstanceForm = ProcessInstanceForm::create([
                         'process_form_id'          => $form->id,
                         'process_instance_step_id' => $processInstanceStep->id,
                         'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
@@ -98,9 +97,9 @@ class ProcessManager {
                         'updated_at'               => null,
                     ]);
                     // Create an empty data class model mapped to the process instance form (i.e. BusinessCase, ArchitecturePlan, etc.).
-                    if ($businessObject = Relation::getMorphedModel($form->name_key)) {
-                        $businessObject::create([
-                            'process_instance_form_id' => $formInstance->id,
+                    if ($formModelClass = config('app.entity_types')[$form->name_key] ?? null) {
+                        resolve($formModelClass)::create([
+                            'process_instance_form_id' => $processInstanceForm->id,
                         ]);
                     }
                 }

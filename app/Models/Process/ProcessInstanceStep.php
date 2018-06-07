@@ -2,10 +2,10 @@
 
 namespace App\Models\Process;
 
+use App\Models\BaseModel;
 use App\Models\State;
-use Illuminate\Database\Eloquent\Model;
 
-class ProcessInstanceStep extends Model
+class ProcessInstanceStep extends BaseModel
 {
     protected $guarded = [];
     protected $hidden = ['id', 'process_step_id', 'process_instance_id', 'state_id', 'created_at', 'updated_at'];

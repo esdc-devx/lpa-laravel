@@ -64,7 +64,7 @@
 
     methods: {
       ...mapActions({
-        deleteProject: `${namespace}/deleteProject`,
+        deleteProject: `${namespace}/delete`,
         canEditProject: `${namespace}/canEditProject`,
         canDeleteProject: `${namespace}/canDeleteProject`
       }),

@@ -6,21 +6,21 @@
         <!-- get process info from api call instead on the project -->
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ currentProcess.engine_process_instance_id }}</dd>
+            <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.status') }}</dt>
-            <dd>{{ currentProcess.state.name }}</dd>
+            <dd>{{ viewingProcess.state.name }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.started') }}</dt>
-            <dd>{{ currentProcess.created_by.name }}</dd>
-            <dd>{{ currentProcess.created_at }}</dd>
+            <dd>{{ viewingProcess.created_by.name }}</dd>
+            <dd>{{ viewingProcess.created_at }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ currentProcess.updated_by.name }}</dd>
-            <dd>{{ currentProcess.updated_at }}</dd>
+            <dd>{{ viewingProcess.updated_by.name }}</dd>
+            <dd>{{ viewingProcess.updated_at }}</dd>
           </dl>
           <div class="controls">
             <!-- @todo: #LPA-4906 -->
@@ -34,7 +34,7 @@
       <el-col>
         <el-card shadow="never" class="process-steps">
           <div slot="header">
-            <h3>{{ currentProcess.definition.name }}</h3>
+            <h3>{{ viewingProcess.definition.name }}</h3>
           </div>
           <el-steps :active="activeStep" finish-status="success" align-center>
             <el-step
@@ -101,7 +101,7 @@
 
   import HttpStatusCodes from '../../axios/http-status-codes';
 
-  let namespace = 'projects';
+  let namespace = 'processes';
 
   export default {
     name: 'project-process',
@@ -116,11 +116,11 @@
     computed: {
       ...mapGetters({
         language: 'language',
-        currentProcess: `${namespace}/currentProcess`
+        viewingProcess: `${namespace}/viewing`
       }),
 
       steps() {
-        return _.sortBy(this.currentProcess.steps, 'definition.display_sequence');
+        return _.sortBy(this.viewingProcess.steps, 'definition.display_sequence');
       },
 
       forms() {
@@ -137,8 +137,8 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadProject: `${namespace}/loadProject`,
-        loadProcess: `${namespace}/loadProcess`
+        loadProject: 'projects/loadProject',
+        loadProcessInstance: `${namespace}/loadInstance`
       }),
 
       getFormRowClassName({row, rowIndex}) {
@@ -147,13 +147,13 @@
 
       getActiveStep() {
         // when process is completed, just use the last step as the active one
-        if (this.currentProcess.state.name_key === 'completed') {
-          return this.currentProcess.steps.length - 1;
+        if (this.viewingProcess.state.name_key === 'completed') {
+          return this.viewingProcess.steps.length - 1;
         }
 
         let active = 0;
         // grab the last step that is not locked
-        _.forEach(this.currentProcess.steps, (step, i) => {
+        _.forEach(this.viewingProcess.steps, (step, i) => {
           if (step.state.name_key !== 'locked') {
             active = i;
           }
@@ -170,10 +170,9 @@
         await this.loadProject(projectId);
       },
 
-      async triggerLoadProcess() {
-        let projectId = this.$route.params.projectId;
+      async triggerLoadProcessInstance() {
         let processId = this.$route.params.processId;
-        await this.loadProcess({projectId, processId});
+        await this.loadProcessInstance(processId);
 
         this.activeStep = this.getActiveStep();
         // make sure that the selectedIndex is updated
@@ -184,7 +183,7 @@
         try {
           this.showMainLoading();
           await this.triggerLoadProject();
-          await this.triggerLoadProcess();
+          await this.triggerLoadProcessInstance();
           this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);

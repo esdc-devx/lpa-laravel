@@ -24,11 +24,15 @@ Route::middleware('auth:api')->group(function () {
     // Project resource routes.
     Route::resource('projects', 'ProjectController');
 
-    // Project process routes.
-    Route::get('projects/{project}/process/{processInstance}', 'ProjectController@showProcessInstance')->name('project.show-process');
-    Route::post('projects/{project}/process/{processDefinition}', 'ProjectController@startProcessInstance')->name('project.start-process');
+    // Process definition routes.
+    Route::get('process-definitions/{entityType}', 'ProcessDefinitionController@show')->name('process-definitions.show');
+    Route::post('process-definitions/{processDefinition}', 'ProcessDefinitionController@startProcess')->name('process-definitions.start-process');
+
+    // Process instance routes.
+    Route::get('process-instances/{id}', 'ProcessInstanceController@show')->name('process-instances.show');
 
     // Project authorization routes.
+    // @todo: Refactor into one generic route? i.e. authorization/{entityType}/{action}
     Route::get('authorization/project/create', 'AuthorizationController@createProject')->name('authorization.project.create');
     Route::get('authorization/project/edit/{project}', 'AuthorizationController@editProject')->name('authorization.project.edit');
     Route::get('authorization/project/delete/{project}', 'AuthorizationController@deleteProject')->name('authorization.project.delete');

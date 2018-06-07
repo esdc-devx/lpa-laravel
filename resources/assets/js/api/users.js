@@ -19,15 +19,19 @@ export default {
     return axios.get(`users/${request}`);
   },
 
-  createUser(user) {
+  create(user) {
     return axios.post('users', user);
   },
 
-  updateUser(user) {
+  search(name) {
+    return axios.get(`users/search?name=${name}`);
+  },
+
+  update(user) {
     return axios.put(`users/${user.id}`, user);
   },
 
-  deleteUser(id) {
+  delete(id) {
     return axios.delete(`users/${id}`);
   },
 
@@ -37,9 +41,5 @@ export default {
 
   getUserEditInfo(id) {
     return axios.get(`users/${id}/edit`);
-  },
-
-  searchUser(name) {
-    return axios.get(`users/search?name=${name}`);
   }
 };

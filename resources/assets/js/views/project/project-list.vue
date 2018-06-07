@@ -102,7 +102,7 @@
 
       viewProject(project) {
         this.scrollToTop();
-        this.$store.commit(`${namespace}/setViewingProject`, project);
+        this.$store.commit(`${namespace}/setViewing`, project);
         this.$router.push(`${namespace}/${project.id}`);
       },
 
