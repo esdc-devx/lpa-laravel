@@ -2,11 +2,11 @@
 
 namespace App\Models\Process;
 
+use App\Models\BaseModel;
 use App\Models\State;
 use App\Models\Traits\UsesUserAudit;
-use Illuminate\Database\Eloquent\Model;
 
-class ProcessInstance extends Model
+class ProcessInstance extends BaseModel
 {
     use UsesUserAudit;
 
