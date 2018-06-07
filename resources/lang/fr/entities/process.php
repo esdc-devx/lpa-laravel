@@ -7,4 +7,5 @@ return [
     'current' => 'Processus en cours',
     'status'  => 'État du processus',
     'view'    => 'Voir le processus',
+    'step'    => 'Étape :num',
 ];

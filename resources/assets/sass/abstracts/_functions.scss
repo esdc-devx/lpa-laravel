@@ -1,4 +1,55 @@
 /**
+ * Generate an icon based on the name provided
+ * @param {String} $name
+ * @param {Color} $color
+ * @return {String} icon wanted
+ */
+ @function get-svg($name, $color: $--color-primary) {
+  @if type-of($name) != string {
+    @error '`#{$name}` is not a string for `get-svg`';
+    @return null;
+  }
+  @if type-of($color) != color {
+    @error '`#{$color}` is not a color for `get-svg`';
+    @return null;
+  }
+
+  $encodedColor: str-replace('#{$color}', '#', '%23');
+
+  // IE11 *must* use this quoting format of encoded SVGs or it just won't work.
+  // "data:image... attr='' ..."
+  $data-image: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\'';
+
+  // since IE11 is really picky with encoded SVGs, we need to use and escape single quotes
+  // IE11 proper align dead center method
+  $IE11-fix: 'preserveAspectRatio=\'xMidYMid\'';
+
+  // get item from list
+  $item: null;
+  @for $i from 1 through length($svg-icons) {
+    // get the one that matches the wanted name
+    @if nth(nth($svg-icons, $i), 1) == $name {
+      $item: nth($svg-icons, $i);
+    }
+  }
+
+  // if not found throw an error
+  @if type-of($item) == null {
+    @error 'There is no svg named `#{$name}` in $svg-icons.';
+    @return null;
+  }
+
+  // get the svg part of list item
+  $svg-dirty: nth($item, length($item));
+  // replace its $fill-color placeholder for the wanted color
+  $svg-dirty: str-replace($svg-dirty, '$fill-color', '#{$encodedColor}');
+  // build the actual svg
+  $svg: '#{$data-image} #{$IE11-fix} #{$svg-dirty}';
+
+  @return $svg;
+}
+
+/**
  * Returns the opposite direction of each direction in a list
  * @author Hugo Giraudel
  * @param {List} $directions - List of initial directions

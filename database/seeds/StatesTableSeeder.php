@@ -20,11 +20,6 @@ class StatesTableSeeder extends Seeder
                     'name_fr'  => 'Défini'
                 ],
                 [
-                    'name_key' => 'rejected',
-                    'name_en'  => 'Rejected',
-                    'name_fr'  => 'Rejeté'
-                ],
-                [
                     'name_key' => 'approved',
                     'name_en'  => 'Approved',
                     'name_fr'  => 'Approuvé'
@@ -71,12 +66,12 @@ class StatesTableSeeder extends Seeder
                 [
                     'name_key' => 'locked',
                     'name_en'  => 'Locked',
-                    'name_fr'  => 'Vérouillé'
+                    'name_fr'  => 'Verrouillé'
                 ],
                 [
                     'name_key' => 'unlocked',
                     'name_en'  => 'Unlocked',
-                    'name_fr'  => 'Dévérouillé'
+                    'name_fr'  => 'Déverrouillé'
                 ],
                 [
                     'name_key' => 'done',
@@ -93,12 +88,12 @@ class StatesTableSeeder extends Seeder
                 [
                     'name_key' => 'locked',
                     'name_en'  => 'Locked',
-                    'name_fr'  => 'Vérouillé'
+                    'name_fr'  => 'Verrouillé'
                 ],
                 [
                     'name_key' => 'unlocked',
                     'name_en'  => 'Unlocked',
-                    'name_fr'  => 'Dévérouillé'
+                    'name_fr'  => 'Déverrouillé'
                 ],
                 [
                     'name_key' => 'submitted',

@@ -11,7 +11,7 @@
       </el-col>
       <el-col :span="6" v-if="canBeVisible">
         <el-card shadow="never" class="project-actions">
-          <div slot="header" class="clearfix">
+          <div slot="header">
             <h3>{{ trans('entities.process.start') }}</h3>
           </div>
           <ul class="project-actions-list">

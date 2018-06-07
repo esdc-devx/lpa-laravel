@@ -3,9 +3,8 @@
 /* Colors
 -------------------------- */
 $--color-primary: #524f74;
-$--color-white: #fff;
-$--color-black: #111;
-$--color-success: #8cc63f;
+$--color-white:   #fff;
+$--color-black:   #111;
 $--color-text-primary: $--color-primary;
 
 /* Border
@@ -15,18 +14,8 @@ $--border-color-light: mix($--border-color-base, $--color-white, 85%);
 $--border-color-lighter: mix($--border-color-base, $--color-white, 90%);
 $--border-color-extra-light: mix($--border-color-base, $--color-white, 95%);
 
-/* Transition
--------------------------- */
-$--bg-color-transition-base: background-color .2s cubic-bezier(.645,.045,.355,1);
-
-/* Animation
--------------------------- */
-$--fade-linear-animation: 200ms linear;
-
 /* z-index
 -------------------------- */
 $--font-path: '../../node_modules/element-ui/lib/theme-chalk/fonts';
-$--index-notify: 3000;
-$--index-loading: 10000;
 
 @import './element-variables';

@@ -3,8 +3,8 @@
     <div slot="header">
       <h2>{{ projectProp.name }}</h2>
       <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-        <el-button class="el-icon-edit" :disabled="!rights.canEdit" size="mini" @click="edit()"></el-button>
-        <el-button class="el-icon-delete" :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain></el-button>
+        <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
+        <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain><i class="el-icon-lpa-delete"></i></el-button>
       </div>
     </div>
     <dl>
@@ -113,6 +113,9 @@
 </script>
 
 <style lang="scss">
+  @import '../../sass/abstracts/vars';
+  @import '../../sass/abstracts/functions';
+  @import '../../sass/abstracts/mixins/helpers';
   .project-info {
     h2 {
       margin: 0;
@@ -157,6 +160,14 @@
         align-items: center;
         float: right;
         margin-bottom: 0;
+        button {
+          &:hover i.el-icon-lpa-delete {
+            @include svg(delete, $--color-white);
+          }
+          i {
+            @include size(12px);
+          }
+        }
       }
     }
   }

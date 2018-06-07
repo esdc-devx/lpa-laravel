@@ -14,7 +14,7 @@ class Project extends Model
 {
     use SoftDeletes, UsesUserAudit;
 
-    public static $entity_type = 'project';
+    public static $entityType = 'project';
 
     protected $guarded = [];
     protected $hidden = ['organizational_unit_id', 'state_id', 'business_case_id', 'process_instance_id'];

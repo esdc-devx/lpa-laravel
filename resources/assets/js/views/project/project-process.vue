@@ -6,21 +6,21 @@
         <!-- get process info from api call instead on the project -->
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ process.id | LPANumFilter }}</dd>
+            <dd>{{ currentProcess.engine_process_instance_id }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.status') }}</dt>
-            <dd>{{ process.state.name }}</dd>
+            <dd>{{ currentProcess.state.name }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.started') }}</dt>
-            <dd>TODO</dd>
-            <dd>{{ process.created_at }}</dd>
+            <dd>{{ currentProcess.created_by.name }}</dd>
+            <dd>{{ currentProcess.created_at }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>TODO</dd>
-            <dd>{{ process.updated_at }}</dd>
+            <dd>{{ currentProcess.updated_by.name }}</dd>
+            <dd>{{ currentProcess.updated_at }}</dd>
           </dl>
           <div class="controls">
             <!-- @todo: #LPA-4906 -->
@@ -28,6 +28,68 @@
           </div>
         </el-card>
       </el-col>
+    </el-row>
+
+    <el-row>
+      <el-col>
+        <el-card shadow="never" class="process-steps">
+          <div slot="header">
+            <h3>{{ currentProcess.definition.name }}</h3>
+          </div>
+          <el-steps :active="activeStep" finish-status="success" align-center>
+            <el-step
+              v-for="(step, index) in steps"
+              :class="{ 'is-selected': selectedIndex === index }"
+              :title="trans('entities.process.step', { num: index + 1 })"
+              :description="step.definition.name"
+              :key="index"
+              @click.native="onStepChange(index)"
+              :status="
+                step.state.name_key === 'locked' ? 'wait' :
+                step.state.name_key === 'unlocked' ? 'process' :
+                step.state.name_key === 'done' ? 'success' :
+                step.state.name_key === 'cancelled' ? 'error' : ''
+              "
+              :icon="'el-icon-lpa-' + step.state.name_key">
+            </el-step>
+          </el-steps>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <el-row>
+      <el-tabs type="border-card" class="no-shadow">
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-lpa-form"></i> <b>{{ trans('pages.process.forms') }}</b></span>
+          <el-table
+            class="process-forms-table"
+            :data="forms"
+            :row-class-name="getFormRowClassName"
+            stripe>
+            <el-table-column
+              prop="definition.name"
+              :label="trans('entities.general.name')">
+            </el-table-column>
+            <el-table-column
+              :label="trans('entities.general.status')"
+              width="160px"
+              class-name="status">
+              <template slot-scope="scope">
+                <span>{{ scope.row.state.name }}</span>
+                <i :class="'el-icon-lpa-' + scope.row.state.name_key"></i>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="trans('entities.general.updated')">
+              <template slot-scope="scope">
+                <span>{{ scope.row.updated_by ? scope.row.updated_by.name : trans('entities.general.na') }}</span>
+                <br>
+                <span>{{ scope.row.updated_at }}</span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+      </el-tabs>
     </el-row>
   </div>
 </template>
@@ -37,76 +99,118 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
 
+  import HttpStatusCodes from '../../axios/http-status-codes';
+
   let namespace = 'projects';
 
   export default {
     name: 'project-process',
 
-    computed: {
-      ...mapGetters({
-        language: 'language',
-        viewingProject: `${namespace}/viewing`
-      }),
-
-      process() {
-        return this.project.current_process;
+    data() {
+      return {
+        activeStep: 0,
+        selectedIndex: null
       }
     },
 
-    data() {
-      return {
-        project: {
-          organizational_unit: {
-            director: {}
-          },
-          current_process: {
-            definition: {},
-            state: {}
-          },
-          state: {},
-          created_by: {},
-          updated_by: {}
+    computed: {
+      ...mapGetters({
+        language: 'language',
+        currentProcess: `${namespace}/currentProcess`
+      }),
+
+      steps() {
+        return _.sortBy(this.currentProcess.steps, 'definition.display_sequence');
+      },
+
+      forms() {
+        // steps might not be loaded yet
+        if (!this.steps[this.selectedIndex]) {
+          return [];
         }
-      };
+
+        return _.sortBy(this.steps[this.selectedIndex].forms, 'definition.display_sequence');
+      }
     },
 
     methods: {
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadProject: `${namespace}/loadProject`
+        loadProject: `${namespace}/loadProject`,
+        loadProcess: `${namespace}/loadProcess`
       }),
 
-      async triggerLoadProject() {
-        this.showMainLoading();
-        let projectId = this.$route.params.projectId;
-        await this.loadProject(projectId);
-        this.project = Object.assign({}, this.viewingProject);
-        this.hideMainLoading();
+      getFormRowClassName({row, rowIndex}) {
+        return row.state.name_key;
       },
 
-      async onLanguageUpdate() {
-        await this.triggerLoadProject();
+      getActiveStep() {
+        // when process is completed, just use the last step as the active one
+        if (this.currentProcess.state.name_key === 'completed') {
+          return this.currentProcess.steps.length - 1;
+        }
+
+        let active = 0;
+        // grab the last step that is not locked
+        _.forEach(this.currentProcess.steps, (step, i) => {
+          if (step.state.name_key !== 'locked') {
+            active = i;
+          }
+        });
+        return active;
+      },
+
+      onStepChange(index) {
+        this.selectedIndex = index;
+      },
+
+      async triggerLoadProject() {
+        let projectId = this.$route.params.projectId;
+        await this.loadProject(projectId);
+      },
+
+      async triggerLoadProcess() {
+        let projectId = this.$route.params.projectId;
+        let processId = this.$route.params.processId;
+        await this.loadProcess({projectId, processId});
+
+        this.activeStep = this.getActiveStep();
+        // make sure that the selectedIndex is updated
+        this.selectedIndex = this.activeStep;
+      },
+
+      async fetch() {
+        try {
+          this.showMainLoading();
+          await this.triggerLoadProject();
+          await this.triggerLoadProcess();
+          this.hideMainLoading();
+        } catch(e) {
+          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        }
       }
     },
 
     beforeRouteLeave(to, from, next) {
       // Destroy any events we might be listening
       // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+      EventBus.$off('Store:languageUpdate', this.fetch);
       next();
     },
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-      this.triggerLoadProject();
+      EventBus.$on('Store:languageUpdate', this.fetch);
+      this.fetch();
     }
   };
 </script>
 
 <style lang="scss">
   @import '../../../sass/abstracts/vars';
+  @import '../../../sass/abstracts/functions';
+  @import '../../../sass/abstracts/mixins/helpers';
 
   .project-process {
     margin: 0 auto;
@@ -156,6 +260,125 @@
         }
         .el-button + .el-button {
           margin-left: 5px;
+        }
+      }
+    }
+
+    .process-steps {
+      .el-card__header h3 {
+        text-align: center;
+        margin: 0;
+      }
+      .el-step {
+        .el-step__title, .el-step__description {
+          transition: all 0.3s ease;
+        }
+        &:hover {
+          .el-step__head .el-step__icon {
+            transition: all 0.3s ease;
+            transform: scale(1.1);
+            transform-origin: center;
+          }
+          .el-step__title {
+            font-size: 130%;
+          }
+          .el-step__description {
+            font-size: 100%;
+          }
+        }
+
+        .el-step__head .el-step__icon, .el-step__main {
+          transition: transform 0.3s ease;
+          cursor: pointer;
+        }
+
+        &.is-selected {
+          // Default
+          .el-step__head .el-step__icon {
+            transition: all 0.3s ease;
+            transform: scale(1.2);
+            transform-origin: center;
+          }
+          .el-step__title {
+            font-size: 140%;
+          }
+          .el-step__description {
+            font-size: 110%;
+          }
+
+          // Locked
+          .el-step__head.is-wait .el-step__icon-inner {
+            @include svg(locked, $--color-text-regular);
+          }
+          .el-step__title.is-wait, .el-step__description.is-wait {
+            color: $--color-text-regular !important;
+          }
+        }
+
+        // Unlocked
+        .el-step__title.is-process, .el-step__description.is-process {
+          color: $color-unlocked !important;
+        }
+        // Locked
+        .el-step__title.is-wait, .el-step__description.is-wait {
+          color: $--color-text-placeholder !important;
+        }
+        .el-step__head.is-wait .el-step__icon-inner {
+          @include svg(locked, $--color-text-placeholder);
+        }
+        // Completed
+        .el-step__title.is-success, .el-step__description.is-success {
+          color: $--color-success !important;
+        }
+        // Cancelled
+        .el-step__title.is-error, .el-step__description.is-error {
+          color: $--color-danger !important;
+        }
+      }
+
+      .el-step__icon-inner {
+        @include size(100%);
+        padding: 5px;
+      }
+      .el-step__main {
+        margin-top: 10px;
+        .el-step__title {
+          font-weight: bold;
+        }
+        .el-step__description {
+          font-weight: 500;
+        }
+      }
+    }
+
+    .process-forms-table {
+      .locked {
+        color: $color-locked;
+      }
+      .unlocked {
+        color: $color-unlocked;
+      }
+      .submitted {
+        color: $color-completed;
+      }
+      .rejected {
+        color: $color-cancelled;
+      }
+      .done {
+        color: $color-completed;
+      }
+      .cancelled {
+        color: $color-cancelled;
+      }
+
+      .status .cell {
+        display: flex;
+        align-items: center;
+        span {
+          flex: 1;
+        }
+        i {
+          @include size(20px);
         }
       }
     }

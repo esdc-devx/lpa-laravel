@@ -7,4 +7,5 @@ return [
     'current' => 'Current Process',
     'status'  => 'Process Status',
     'view'    => 'View Process',
+    'step'    => 'Step :num',
 ];
