@@ -161,8 +161,10 @@
         float: right;
         margin-bottom: 0;
         button {
-          &:hover i.el-icon-lpa-delete {
-            @include svg(delete, $--color-white);
+          &:hover, &:focus {
+            i.el-icon-lpa-delete {
+              @include svg(delete, $--color-white);
+            }
           }
           i {
             @include size(12px);
