@@ -9,7 +9,7 @@ class ProcessDefinitionController extends APIController
     /**
      * Retrieve all processes for a specific entity type.
      *
-     * @param App\Models\BaseModel $entityClass
+     * @param  App\Models\BaseModel $entityClass
      * @return \Illuminate\Http\Response
      */
     public function show($entityClass)
@@ -22,7 +22,7 @@ class ProcessDefinitionController extends APIController
     /**
      * Start a new process for a given entity.
      *
-     * @param ProcessDefinition $processDefinition
+     * @param  ProcessDefinition $processDefinition
      * @return \Illuminate\Http\Response
      */
     public function startProcess($processDefinition)
