@@ -9,7 +9,6 @@ class Role extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $guarded = [];
     protected $localizable = ['name'];
 
     public $timestamps = false;

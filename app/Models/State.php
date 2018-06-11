@@ -9,7 +9,6 @@ class State extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $guarded = [];
     protected $hidden = ['id', 'entity_type'];
     protected $localizable = ['name'];
 

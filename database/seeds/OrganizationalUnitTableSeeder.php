@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Models\OrganizationalUnit;
 use App\Repositories\UserRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Seeder;

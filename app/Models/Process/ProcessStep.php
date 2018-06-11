@@ -6,7 +6,6 @@ use App\Models\LocalizableModel;
 
 class ProcessStep extends LocalizableModel
 {
-    protected $guarded = [];
     protected $hidden = ['id', 'process_definition_id'];
     protected $localizable = ['name'];
 

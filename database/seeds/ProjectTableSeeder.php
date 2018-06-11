@@ -3,7 +3,7 @@
 use Illuminate\Database\Seeder;
 use App\Models\User\User;
 use App\Models\Project\Project;
-use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Models\OrganizationalUnit;
 
 class ProjectTableSeeder extends Seeder
 {
