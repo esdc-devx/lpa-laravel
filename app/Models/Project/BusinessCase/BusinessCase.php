@@ -1,20 +1,30 @@
 <?php
 
-namespace App\Models\Project;
+namespace App\Models\Project\BusinessCase;
 
 use App\Models\BaseModel;
 use App\Models\Process\ProcessInstanceForm;
 
 class BusinessCase extends BaseModel
 {
-    protected $guarded = [];
     protected $hidden = ['process_instance_form_id'];
 
     public $timestamps = false;
 
+    // These relationships will be loaded when retrieving the model.
+    public static $relationships = [
+        'processInstanceForm', 'processInstanceForm.definition', 'processInstanceForm.currentEditor',
+        'requestSource'
+    ];
+
     public function processInstanceForm()
     {
-        return $this->belongsTo(ProcessInstanceForm::class)->with('state', 'currentEditor', 'createdBy', 'updatedBy');
+        return $this->belongsTo(ProcessInstanceForm::class)->with('state', 'currentEditor', 'updatedBy');
+    }
+
+    public function requestSource()
+    {
+        return $this->belongsToMany(RequestSource::class);
     }
 
     // @note: Move to a re-usable trait?

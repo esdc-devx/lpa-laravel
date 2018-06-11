@@ -4,9 +4,9 @@ namespace App\Providers;
 
 use App\Models\Process\ProcessDefinition;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -33,16 +33,13 @@ class RouteServiceProvider extends ServiceProvider
          */
 
         // Resolve process definition from its key.
-        Route::bind('processDefinition', function ($value) {
-            return ProcessDefinition::getByKey($value)->firstOrFail();
+        Route::bind('processDefinition', function ($processDefinitionKey) {
+            return ProcessDefinition::getByKey($processDefinitionKey)->firstOrFail();
         });
 
-        // Resolve model class from entityType string.
-        Route::bind('entityType', function($value) {
-            if ($entityType = config('app.entity_types')[$value] ?? null) {
-                return resolve($entityType);
-            }
-            throw new ModelNotFoundException();
+        // Resolve model class from entity type string.
+        Route::bind('entityType', function($entityTypeKey) {
+            return entity($entityTypeKey);
         });
     }
 

@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,6 +31,10 @@ Route::middleware('auth:api')->group(function () {
 
     // Process instance routes.
     Route::get('process-instances/{id}', 'ProcessInstanceController@show')->name('process-instances.show');
+
+    // List entities routes.
+    Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
+    Route::get('lists', 'ListController@showMultiple')->name('lists.show-multiple');
 
     // Project authorization routes.
     // @todo: Refactor into one generic route? i.e. authorization/{entityType}/{action}

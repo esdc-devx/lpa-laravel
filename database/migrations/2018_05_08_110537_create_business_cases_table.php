@@ -17,6 +17,8 @@ class CreateBusinessCasesTable extends Migration
             $table->increments('id');
             $table->integer('process_instance_form_id')->unsigned();
             $table->text('business_issue')->nullable();
+            $table->string('request_source_other')->nullable();
+            $table->text('learning_response_strategy')->nullable();
 
             $table->foreign('process_instance_form_id')
                 ->references('id')
