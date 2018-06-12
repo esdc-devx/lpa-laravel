@@ -75,7 +75,7 @@
     overflow: hidden;
   }
 
-  .el-aside {
+  .body-wrap > .el-aside {
     position: relative;
     // this allows to make the content shift to the left and take the sidebar's space when collapsed
     width: auto !important;

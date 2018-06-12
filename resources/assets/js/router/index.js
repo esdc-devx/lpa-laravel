@@ -2,23 +2,24 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Config from '../config';
 
-import Home           from '../views/home.vue';
-import Profile        from '../views/profile.vue';
-import ProjectList    from '../views/project/project-list.vue';
-import ProjectView    from '../views/project/project-view.vue';
-import ProjectEdit    from '../views/project/project-edit.vue';
-import ProjectCreate  from '../views/project/project-create.vue';
-import ProjectProcess from '../views/project/project-process.vue';
-import AdminDashboard from '../views/admin/dashboard.vue';
-import UserList       from '../views/admin/user-list.vue';
-import UserCreate     from '../views/admin/user-create.vue';
-import UserEdit       from '../views/admin/user-edit.vue';
-import NotFound       from '../views/errors/404.vue';
-import Forbidden      from '../views/errors/403.vue';
+import Home               from '../views/home.vue';
+import Profile            from '../views/profile.vue';
+import ProjectList        from '../views/project/project-list.vue';
+import ProjectView        from '../views/project/project-view.vue';
+import ProjectEdit        from '../views/project/project-edit.vue';
+import ProjectCreate      from '../views/project/project-create.vue';
+import ProjectProcess     from '../views/project/project-process.vue';
+import ProjectProcessForm from '../views/project/project-process-form.vue';
+import AdminDashboard     from '../views/admin/dashboard.vue';
+import UserList           from '../views/admin/user-list.vue';
+import UserCreate         from '../views/admin/user-create.vue';
+import UserEdit           from '../views/admin/user-edit.vue';
+import NotFound           from '../views/errors/404.vue';
+import Forbidden          from '../views/errors/403.vue';
 
-import LoadStatus      from '../store/load-status-constants';
-import store           from '../store/';
-import HttpStatusCodes from '../axios/http-status-codes';
+import LoadStatus         from '../store/load-status-constants';
+import store              from '../store/';
+import HttpStatusCodes    from '../axios/http-status-codes';
 
 import Notify from '../mixins/notify';
 
@@ -230,8 +231,17 @@ const routes = [
     name: 'project-process',
     component: ProjectProcess,
     meta: {
-      title: () => `${store.getters['processes/viewing'].definition.name}`,
+      title: () => `${store.getters['projects/currentProcess'].definition.name}`,
       breadcrumbs: () => 'projects/project-view/project-process'
+    }
+  },
+  {
+    path: '/:lang/projects/:projectId(\\d+)/process/:processId(\\d+)/form/:formId(\\d+)',
+    name: 'project-process-form',
+    component: ProjectProcessForm,
+    meta: {
+      title: () => `Form`,
+      breadcrumbs: () => 'projects/project-view/project-process/project-process-form'
     }
   },
   {

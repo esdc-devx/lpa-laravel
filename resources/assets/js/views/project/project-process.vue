@@ -6,21 +6,21 @@
         <!-- get process info from api call instead on the project -->
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
+            <dd>{{ currentProcess.engine_process_instance_id }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.status') }}</dt>
-            <dd>{{ viewingProcess.state.name }}</dd>
+            <dd>{{ currentProcess.state.name }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.started') }}</dt>
-            <dd>{{ viewingProcess.created_by.name }}</dd>
-            <dd>{{ viewingProcess.created_at }}</dd>
+            <dd>{{ currentProcess.created_by.name }}</dd>
+            <dd>{{ currentProcess.created_at }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ viewingProcess.updated_by.name }}</dd>
-            <dd>{{ viewingProcess.updated_at }}</dd>
+            <dd>{{ currentProcess.updated_by.name }}</dd>
+            <dd>{{ currentProcess.updated_at }}</dd>
           </dl>
           <div class="controls">
             <!-- @todo: #LPA-4906 -->
@@ -34,7 +34,7 @@
       <el-col>
         <el-card shadow="never" class="process-steps">
           <div slot="header">
-            <h3>{{ viewingProcess.definition.name }}</h3>
+            <h3>{{ currentProcess.definition.name }}</h3>
           </div>
           <el-steps :active="activeStep" finish-status="success" align-center>
             <el-step
@@ -69,6 +69,9 @@
             <el-table-column
               prop="definition.name"
               :label="trans('entities.general.name')">
+              <template slot-scope="scope">
+                <el-button type="text" @click="goToForm(scope.row)">{{ scope.row.definition.name }}</el-button>
+              </template>
             </el-table-column>
             <el-table-column
               :label="trans('entities.general.status')"
@@ -101,7 +104,7 @@
 
   import HttpStatusCodes from '../../axios/http-status-codes';
 
-  let namespace = 'processes';
+  let namespace = 'projects';
 
   export default {
     name: 'project-process',
@@ -116,11 +119,11 @@
     computed: {
       ...mapGetters({
         language: 'language',
-        viewingProcess: `${namespace}/viewing`
+        currentProcess: `${namespace}/currentProcess`
       }),
 
       steps() {
-        return _.sortBy(this.viewingProcess.steps, 'definition.display_sequence');
+        return _.sortBy(this.currentProcess.steps, 'definition.display_sequence');
       },
 
       forms() {
@@ -137,8 +140,8 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadProject: 'projects/loadProject',
-        loadProcessInstance: `${namespace}/loadInstance`
+        loadProject: `${namespace}/loadProject`,
+        loadProcess: `${namespace}/loadProcess`
       }),
 
       getFormRowClassName({row, rowIndex}) {
@@ -147,13 +150,13 @@
 
       getActiveStep() {
         // when process is completed, just use the last step as the active one
-        if (this.viewingProcess.state.name_key === 'completed') {
-          return this.viewingProcess.steps.length - 1;
+        if (this.currentProcess.state.name_key === 'completed') {
+          return this.currentProcess.steps.length - 1;
         }
 
         let active = 0;
         // grab the last step that is not locked
-        _.forEach(this.viewingProcess.steps, (step, i) => {
+        _.forEach(this.currentProcess.steps, (step, i) => {
           if (step.state.name_key !== 'locked') {
             active = i;
           }
@@ -165,14 +168,20 @@
         this.selectedIndex = index;
       },
 
+      goToForm(form) {
+        let processId = this.$route.params.processId;
+        this.$router.push(`${processId}/form/${form.id}`);
+      },
+
       async triggerLoadProject() {
         let projectId = this.$route.params.projectId;
         await this.loadProject(projectId);
       },
 
-      async triggerLoadProcessInstance() {
+      async triggerLoadProcess() {
+        let projectId = this.$route.params.projectId;
         let processId = this.$route.params.processId;
-        await this.loadProcessInstance(processId);
+        await this.loadProcess({projectId, processId});
 
         this.activeStep = this.getActiveStep();
         // make sure that the selectedIndex is updated
@@ -183,7 +192,7 @@
         try {
           this.showMainLoading();
           await this.triggerLoadProject();
-          await this.triggerLoadProcessInstance();
+          await this.triggerLoadProcess();
           this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
@@ -210,6 +219,7 @@
   @import '../../../sass/abstracts/vars';
   @import '../../../sass/abstracts/functions';
   @import '../../../sass/abstracts/mixins/helpers';
+  @import '../../../sass/base/helpers';
 
   .project-process {
     margin: 0 auto;
@@ -307,31 +317,31 @@
 
           // Locked
           .el-step__head.is-wait .el-step__icon-inner {
-            @include svg(locked, $--color-text-regular);
+            @include svg(locked, map-get($color-form-states, locked));
           }
           .el-step__title.is-wait, .el-step__description.is-wait {
-            color: $--color-text-regular !important;
+            color: map-get($color-form-states, locked) !important;
           }
         }
 
         // Unlocked
         .el-step__title.is-process, .el-step__description.is-process {
-          color: $color-unlocked !important;
+          color: map-get($color-form-states, unlocked) !important;
         }
         // Locked
         .el-step__title.is-wait, .el-step__description.is-wait {
-          color: $--color-text-placeholder !important;
+          color: lighten(map-get($color-form-states, locked), 25%) !important;
         }
         .el-step__head.is-wait .el-step__icon-inner {
-          @include svg(locked, $--color-text-placeholder);
+          @include svg(locked, lighten(map-get($color-form-states, locked), 25%));
         }
         // Completed
         .el-step__title.is-success, .el-step__description.is-success {
-          color: $--color-success !important;
+          color: map-get($color-form-states, success) !important;
         }
         // Cancelled
         .el-step__title.is-error, .el-step__description.is-error {
-          color: $--color-danger !important;
+          color: map-get($color-form-states, cancelled) !important;
         }
       }
 
@@ -351,23 +361,20 @@
     }
 
     .process-forms-table {
-      .locked {
-        color: $color-locked;
-      }
-      .unlocked {
-        color: $color-unlocked;
-      }
-      .submitted {
-        color: $color-completed;
-      }
-      .rejected {
-        color: $color-cancelled;
-      }
-      .done {
-        color: $color-completed;
-      }
-      .cancelled {
-        color: $color-cancelled;
+      @each $state, $color in $color-form-states {
+        .#{$state} {
+          color: $color;
+          button {
+            @extend .fake-link;
+            color: inherit;
+            display: inline-block;
+            vertical-align: super;
+            border-bottom-color: lighten($color, 20%);
+            &:hover {
+              border-bottom-color: $color;
+            }
+          }
+        }
       }
 
       .status .cell {
