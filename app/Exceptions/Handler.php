@@ -60,8 +60,7 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         // Render Rest API errors.
-        if ($request->wantsJson()) {
-
+        if (collect($request->getAcceptableContentTypes())->contains('application/json')) {
             // Handle Camunda errors.
             if ($exception instanceof CamundaGeneralException) {
                 return $this->respondInternalError("CamundaGeneralException: {$exception->getMessage()}");
