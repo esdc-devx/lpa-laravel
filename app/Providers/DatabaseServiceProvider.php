@@ -40,15 +40,8 @@ class DatabaseServiceProvider extends ServiceProvider
             $this->unsignedInteger('created_by')->nullable();
             $this->unsignedInteger('updated_by')->nullable();
 
-            $this->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
-
-            $this->foreign('updated_by')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
+            $this->referenceOn('created_by', 'users')->onDelete('set null');
+            $this->referenceOn('updated_by', 'users')->onDelete('set null');
         });
 
         // Add default table structure for listable models.
@@ -61,25 +54,26 @@ class DatabaseServiceProvider extends ServiceProvider
             $this->boolean('active')->default(1);
         });
 
+        // Add foreign key macro.
+        Blueprint::macro('referenceOn', function ($column, $table, $references = 'id') {
+            return $this->foreign($column, db_index_name($this->getTable() . '_' . $column))
+                ->references($references)
+                ->on($table);
+        });
+
         // Add default table structure for pivot tables.
-        Blueprint::macro('pivot', function($table1, $table2, $primary = null) {
+        Blueprint::macro('pivot', function($table1, $table2) {
+            $table = $this->getTable();
             $tableColumn1 = str_singular($table1) . '_id';
             $tableColumn2 = str_singular($table2) . '_id';
 
             $this->unsignedInteger($tableColumn1);
             $this->unsignedInteger($tableColumn2);
 
-            $this->foreign($tableColumn1)
-                ->references('id')
-                ->on($table1)
-                ->onDelete('cascade');
+            $this->referenceOn($tableColumn1, $table1)->onDelete('cascade');
+            $this->referenceOn($tableColumn2, $table2)->onDelete('cascade');
 
-            $this->foreign($tableColumn2)
-                ->references('id')
-                ->on($table2)
-                ->onDelete('cascade');
-
-            $this->primary([$tableColumn1, $tableColumn2], ($primary ?? null));
+            $this->primary([$tableColumn1, $tableColumn2], db_index_name("{$table}_primary"));
         });
     }
 }

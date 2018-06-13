@@ -21,10 +21,7 @@ class CreateProcessStepsTable extends Migration
             $table->unsignedInteger('process_definition_id');
             $table->integer('display_sequence');
 
-            $table->foreign('process_definition_id')
-                ->references('id')
-                ->on('process_definitions')
-                ->onDelete('cascade');
+            $table->referenceOn('process_definition_id', 'process_definitions')->onDelete('cascade');
         });
     }
 

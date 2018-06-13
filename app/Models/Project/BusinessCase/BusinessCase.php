@@ -12,9 +12,9 @@ class BusinessCase extends BaseModel
     public $timestamps = false;
 
     // These relationships will be loaded when retrieving the model.
-    public static $relationships = [
+    public $relationships = [
         'processInstanceForm', 'processInstanceForm.definition', 'processInstanceForm.currentEditor',
-        'requestSource'
+        'requestSources', 'potentialSolutionTypes', 'governmentPriorities'
     ];
 
     public function processInstanceForm()
@@ -22,9 +22,19 @@ class BusinessCase extends BaseModel
         return $this->belongsTo(ProcessInstanceForm::class)->with('state', 'currentEditor', 'updatedBy');
     }
 
-    public function requestSource()
+    public function requestSources()
     {
         return $this->belongsToMany(RequestSource::class);
+    }
+
+    public function potentialSolutionTypes()
+    {
+        return $this->belongsToMany(PotentialSolutionType::class);
+    }
+
+    public function governmentPriorities()
+    {
+        return $this->belongsToMany(GovernmentPriority::class);
     }
 
     // @note: Move to a re-usable trait?

@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Process\ProcessDefinition;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Models\Process\ProcessInstanceForm;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
@@ -40,6 +40,17 @@ class RouteServiceProvider extends ServiceProvider
         // Resolve model class from entity type string.
         Route::bind('entityType', function($entityTypeKey) {
             return entity($entityTypeKey);
+        });
+
+        // Resolve process instance form data from process instance form id.
+        Route::bind('processInstanceForm', function ($processInstanceFormId) {
+            $formDataClass = ProcessInstanceForm::findOrFail($processInstanceFormId)->definition->name_key;
+            if ($entityTypeClass = entity($formDataClass)) {
+                $entity = $entityTypeClass->with($entityTypeClass->relationships)
+                    ->where('process_instance_form_id', $processInstanceFormId)
+                    ->firstOrFail();
+                return $entity;
+            }
         });
     }
 

@@ -32,6 +32,9 @@ Route::middleware('auth:api')->group(function () {
     // Process instance routes.
     Route::get('process-instances/{id}', 'ProcessInstanceController@show')->name('process-instances.show');
 
+    // Process instance form routes.
+    Route::get('process-instance-forms/{processInstanceForm}', 'ProcessInstanceFormController@show')->name('process-instance-forms.show');
+
     // List entities routes.
     Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
     Route::get('lists', 'ListController@showMultiple')->name('lists.show-multiple');

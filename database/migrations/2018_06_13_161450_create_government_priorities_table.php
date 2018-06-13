@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRequestSourcesTable extends Migration
+class CreateGovernmentPrioritiesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateRequestSourcesTable extends Migration
      */
     public function up()
     {
-        Schema::create('request_sources', function (Blueprint $table) {
+        Schema::create('government_priorities', function (Blueprint $table) {
             $table->listable();
         });
 
-        Schema::create('business_case_request_source', function (Blueprint $table) {
-            $table->pivot('business_cases', 'request_sources');
+        Schema::create('business_case_government_priority', function (Blueprint $table) {
+            $table->pivot('business_cases', 'government_priorities');
         });
     }
 
@@ -29,7 +29,7 @@ class CreateRequestSourcesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('business_case_request_source');
-        Schema::dropIfExists('request_sources');
+        Schema::dropIfExists('business_case_government_priority');
+        Schema::dropIfExists('government_priorities');
     }
 }

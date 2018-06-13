@@ -250,8 +250,10 @@ return [
     // These definitions will be bound to the the service container upon app initialization.
     'entity_types' => [
         'business-case' => App\Models\Project\BusinessCase\BusinessCase::class,
+        'community' => App\Models\Community::class,
+        'government-priority' => App\Models\Project\BusinessCase\GovernmentPriority::class,
+        'potential-solution-type' => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'project' => App\Models\Project\Project::class,
         'request-source' => App\Models\Project\BusinessCase\RequestSource::class,
-        'community' => App\Models\Community::class,
     ],
 ];

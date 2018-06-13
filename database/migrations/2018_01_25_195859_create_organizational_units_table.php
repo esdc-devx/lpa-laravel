@@ -23,10 +23,7 @@ class CreateOrganizationalUnitsTable extends Migration
             $table->unsignedInteger('director')->nullable();
             $table->timestamps();
 
-            $table->foreign('director')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
+            $table->referenceOn('director', 'users')->onDelete('set null');
         });
 
         Schema::create('organizational_unit_user', function (Blueprint $table) {
