@@ -16,8 +16,8 @@
           <el-header height="auto">
             <admin-bar/>
           </el-header>
+          <breadcrumb/>
           <el-main>
-            <breadcrumb/>
             <main-content/>
           </el-main>
         </el-container>
