@@ -2,7 +2,7 @@
   <div class="project-process content">
     <el-row>
       <el-col>
-        <el-card shadow="never" class="info-box">
+        <info-box>
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
             <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
@@ -25,7 +25,7 @@
             <!-- @todo: #LPA-4906 -->
             <!-- <el-button size="small" type="danger" plain>Cancel Process<i class="el-icon-close"></i></el-button> -->
           </div>
-        </el-card>
+        </info-box>
       </el-col>
     </el-row>
 
@@ -103,10 +103,14 @@
 
   import HttpStatusCodes from '../../axios/http-status-codes';
 
+  import InfoBox from '../../components/info-box.vue';
+
   let namespace = 'processes';
 
   export default {
     name: 'project-process',
+
+    components: { InfoBox },
 
     data() {
       return {

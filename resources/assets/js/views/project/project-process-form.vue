@@ -2,7 +2,7 @@
   <div class="project-process-form content">
     <el-row>
       <el-col>
-        <el-card shadow="never" class="info-box">
+        <info-box>
           <dl>
             <dt>{{ trans('entities.form.status') }}</dt>
             <dd>Status</dd>
@@ -20,7 +20,7 @@
             <dd>Name</dd>
             <dd>Date</dd>
           </dl>
-        </el-card>
+        </info-box>
       </el-col>
     </el-row>
     <el-row class="form-row">
@@ -31,28 +31,13 @@
             <el-header class="form-header-details"><i class="el-icon-lpa-form"></i>Course Operational Details Form</el-header>
           </div>
           <el-main>
-            <el-tabs ref="tabs" type="border-card" tabPosition="left" :value="'' + activeIndex" @tab-click="onTabClick">
-              <el-tab-pane>
-                <span slot="label"><span class="index-marker"></span>Business Drivers</span>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-                Route <br>
-              </el-tab-pane>
-              <el-tab-pane>
-                <span slot="label"><span class="index-marker"></span>Proposal</span>
-                Config
-              </el-tab-pane>
-
-            </el-tabs>
+            <component
+              :is="formComponent"
+              ref="tabs"
+              type="border-card"
+              tabPosition="left"
+              :value.sync="activeIndex">
+            </component>
           </el-main>
           <div class="form-footer">
             <el-footer height="50px"></el-footer>
@@ -61,14 +46,14 @@
                 <el-button
                   size="mini"
                   icon="el-icon-arrow-left"
-                  :disabled="activeIndex === 0"
-                  @click="activeIndex !== 0 ? --activeIndex : activeIndex">
+                  :disabled="isPrevDisabled"
+                  @click="prevTabIndex()">
                     Back
                 </el-button>
                 <el-button
                   size="mini"
-                  :disabled="activeIndex === tabsLength"
-                  @click="activeIndex !== tabsLength ? ++activeIndex : activeIndex">
+                  :disabled="isNextDisabled"
+                  @click="nextTabIndex()">
                     Next<i class="el-icon-arrow-right el-icon-right"></i>
                 </el-button>
               </div>
@@ -92,22 +77,40 @@
 
   import HttpStatusCodes from '../../axios/http-status-codes';
 
+  import InfoBox from '../../components/info-box.vue';
+
+  import BusinessCase from '../../components/forms/entities/business-case';
+
   let namespace = 'projects';
 
   export default {
     name: 'project-process-form',
 
+    components: { InfoBox, BusinessCase },
+
     data() {
       return {
         activeIndex: 0,
-        tabsLength: 0
+        tabsLength: 0,
+        currentFormComponent: ''
       }
     },
 
     computed: {
       ...mapGetters({
         language: 'language',
-      })
+      }),
+
+      formComponent() {
+        return this.currentFormComponent;
+      },
+
+      isPrevDisabled() {
+        return parseInt(this.activeIndex, 10) === 0;
+      },
+      isNextDisabled() {
+        return parseInt(this.activeIndex, 10) === this.tabsLength;
+      }
     },
 
     methods: {
@@ -118,19 +121,29 @@
         loadProcessInstance: 'processes/loadInstance'
       }),
 
+      prevTabIndex() {
+        let index = parseInt(this.activeIndex, 10);
+        index = index !== '0' ? --index : index;
+        // cast to string since el-tabs value prop requires a string to work
+        this.activeIndex = `${index}`;
+      },
+
+      nextTabIndex() {
+        let index = parseInt(this.activeIndex, 10);
+        index = index !== this.tabsLength ? ++index : index;
+        // cast to string since el-tabs value prop requires a string to work
+        this.activeIndex = `${index}`;
+      },
+
       setupStage() {
         this.$nextTick(() => {
           // we need to wait until the dom is ready
           // so that we have access to the tabs panes
-          if (this.$refs.tabs) {
+          if (this.$refs.tabs.$children[0].panes) {
             // tabsLength needs to be zero-based
-            this.tabsLength = this.$refs.tabs.panes.length - 1;
+            this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
           }
         });
-      },
-
-      onTabClick(tab, e) {
-        this.activeIndex = parseInt(tab.index, 10);
       },
 
       async triggerLoadProject() {
@@ -148,6 +161,9 @@
           this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
+          // @todo: replace component by dynamic name_key
+          this.currentFormComponent = 'business-case';
+          this.setupStage();
           this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
@@ -166,7 +182,6 @@
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.fetch);
       this.fetch();
-      this.setupStage();
     }
   };
 </script>
@@ -181,28 +196,35 @@
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
-    span.index-marker {
-      width: 12px;
-      height: 12px;
-      background-color: #ccc;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 10px;
-    }
 
     .el-tabs {
+      position: absolute;
       // fixes the height of the tab list when there are less tabs than content
       display: flex;
+      width: 100%;
       height: 100%;
       .el-tabs__content {
         overflow: auto;
         flex: 1;
       }
-      .is-active span.index-marker {
-        background-color: $--color-primary;
-      }
-      .el-tabs__item {
+      .el-tabs__item.is-left {
+        padding-left: 30px;
         text-align: left;
+        &:after {
+          content: '';
+          position: absolute;
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 12px;
+          height: 12px;
+          background-color: #ccc;
+          border-radius: 50%;
+          display: inline-block;
+        }
+        &.is-active:after {
+          background-color: $--color-primary;
+        }
       }
     }
 
@@ -219,10 +241,6 @@
       .el-col, .form-wrap {
         height: 100%;
       }
-      .el-tabs {
-        position: absolute;
-        width: 100%;
-      }
     }
     .form-wrap {
       header, footer {
@@ -233,7 +251,7 @@
       }
       header {
         height: 40px !important;
-        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        box-shadow: $box-shadow-base-bottom;
         &.form-header-details {
           justify-content: flex-start;
           i {
@@ -243,11 +261,21 @@
         }
       }
       footer {
-        box-shadow: 0 -3px 6px rgba(0,0,0,0.16), 0 -3px 6px rgba(0,0,0,0.23);
+        box-shadow: $box-shadow-base-top;
       }
       .el-main {
-        padding: 0;
         overflow: hidden;
+        background-color: $--color-white;
+        // make sure that when the content is loading, that we display a fake form index so that layout is consistant
+        &:before {
+          content: '';
+          position: absolute;
+          left: 0;
+          top: 0;
+          height: 100%;
+          background-color: $--background-color-base;
+          border: 1px solid $--border-color-base;
+        }
       }
       .form-header, .form-footer {
         z-index: $--index-top;
@@ -260,8 +288,12 @@
         padding: 0 30px;
         border-right: 1px solid;
       }
-      .form-header header:first-of-type, .form-footer footer:first-of-type, .el-tabs__header {
+      .form-header header:first-of-type, .form-footer footer:first-of-type,
+      .el-tabs__header,
+      .el-main:before {
         width: 20%;
+        min-width: 250px;
+        box-sizing: border-box;
       }
 
       .form-footer {

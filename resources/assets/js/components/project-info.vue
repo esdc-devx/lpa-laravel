@@ -1,6 +1,6 @@
 <template>
   <div class="project-info">
-    <el-card shadow="never" class="info-box">
+    <info-box>
       <div slot="header">
         <h2>{{ projectProp.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
@@ -30,17 +30,21 @@
         <dd>{{ projectProp.updated_by.name }}</dd>
         <dd>{{ projectProp.updated_at }}</dd>
       </dl>
-    </el-card>
+    </info-box>
   </div>
 </template>
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
+  import InfoBox from './info-box.vue';
+
   let namespace = 'projects';
 
   export default {
     name: 'project-info',
+
+    components: { InfoBox },
 
     props: [ 'project' ],
 

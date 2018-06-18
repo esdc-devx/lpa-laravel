@@ -89,7 +89,7 @@
   .el-main {
     position: relative;
     overflow-x: hidden;
-    padding: 30px;
+    padding: 0;
     padding-top: 0px;
   }
 

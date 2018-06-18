@@ -61,3 +61,7 @@ $index-loading: 10000;
 
 // Transition
 $bg-color-transition-base: background-color .2s cubic-bezier(.645,.045,.355,1);
+
+// Box-shadow
+$box-shadow-base-bottom: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+$box-shadow-base-top: 0 -3px 6px rgba(0,0,0,0.16), 0 -3px 6px rgba(0,0,0,0.23);
