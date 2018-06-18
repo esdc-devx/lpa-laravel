@@ -1,44 +1,50 @@
 <template>
-  <el-card shadow="never" class="project-info">
-    <div slot="header">
-      <h2>{{ projectProp.name }}</h2>
-      <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-        <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
-        <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain><i class="el-icon-lpa-delete"></i></el-button>
+  <div class="project-info">
+    <info-box>
+      <div slot="header">
+        <h2>{{ projectProp.name }}</h2>
+        <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
+          <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
+          <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain><i class="el-icon-lpa-delete"></i></el-button>
+        </div>
       </div>
-    </div>
-    <dl>
-      <dt>{{ trans('entities.general.lpa_num') }}</dt>
-      <dd>{{ projectProp.id | LPANumFilter }}</dd>
-    </dl>
-    <dl>
-      <dt>{{ $tc('entities.general.organizational_units') }}</dt>
-      <dd>{{ projectProp.organizational_unit.name }}</dd>
-    </dl>
-    <dl>
-      <dt>{{ trans('entities.general.director') }}</dt>
-      <dd>{{ projectProp.organizational_unit.director.name }}</dd>
-    </dl>
-    <dl>
-      <dt>{{ trans('entities.general.created') }}</dt>
-      <dd>{{ projectProp.created_by.name }}</dd>
-      <dd>{{ projectProp.created_at }}</dd>
-    </dl>
-    <dl>
-      <dt>{{ trans('entities.general.updated') }}</dt>
-      <dd>{{ projectProp.updated_by.name }}</dd>
-      <dd>{{ projectProp.updated_at }}</dd>
-    </dl>
-  </el-card>
+      <dl>
+        <dt>{{ trans('entities.general.lpa_num') }}</dt>
+        <dd>{{ projectProp.id | LPANumFilter }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ $tc('entities.general.organizational_units') }}</dt>
+        <dd>{{ projectProp.organizational_unit.name }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ trans('entities.general.director') }}</dt>
+        <dd>{{ projectProp.organizational_unit.director.name }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ trans('entities.general.created') }}</dt>
+        <dd>{{ projectProp.created_by.name }}</dd>
+        <dd>{{ projectProp.created_at }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ trans('entities.general.updated') }}</dt>
+        <dd>{{ projectProp.updated_by.name }}</dd>
+        <dd>{{ projectProp.updated_at }}</dd>
+      </dl>
+    </info-box>
+  </div>
 </template>
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
+  import InfoBox from './info-box.vue';
+
   let namespace = 'projects';
 
   export default {
     name: 'project-info',
+
+    components: { InfoBox },
 
     props: [ 'project' ],
 
@@ -116,62 +122,41 @@
   @import '../../sass/abstracts/vars';
   @import '../../sass/abstracts/functions';
   @import '../../sass/abstracts/mixins/helpers';
+
   .project-info {
-    h2 {
-      margin: 0;
-      display: inline-block;
-    }
-    .el-card__body {
-      display: flex;
-      flex-wrap: wrap;
-      > * {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        justify-content: flex-start;
-      }
-    }
-    dl {
-      width: 25%;
-      padding-right: 20px;
-      margin-top: 0px;
-      box-sizing: border-box;
-      &:first-of-type {
-        flex-basis: 100%;
-      }
-      dt {
-        font-weight: bold;
-      }
-      dd {
+    .info-box {
+      h2 {
         margin: 0;
-        margin-top: 5px;
+        display: inline-block;
       }
-      dd + dd {
-        margin-top: 0;
+      dl {
+        width: 25%;
+        &:first-of-type {
+          flex-basis: 100%;
+        }
       }
-    }
 
-    .el-card__header div {
-      display: flex;
-      justify-content: space-between;
-
-      .controls {
+      .el-card__header div {
         display: flex;
-        align-items: center;
-        float: right;
-        margin-bottom: 0;
-        button {
-          &:hover, &:focus {
-            i.el-icon-lpa-delete {
-              @include svg(delete, $--color-white);
+        justify-content: space-between;
+
+        .controls {
+          display: flex;
+          align-items: center;
+          float: right;
+          margin-bottom: 0;
+          button {
+            &:hover, &:focus {
+              i.el-icon-lpa-delete {
+                @include svg(delete, $--color-white);
+              }
             }
-          }
-          i {
-            @include size(12px);
+            i {
+              @include size(12px);
+            }
           }
         }
       }
     }
   }
-
 </style>

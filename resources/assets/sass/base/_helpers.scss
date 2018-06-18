@@ -18,3 +18,13 @@
 .no-shadow {
   box-shadow: none;
 }
+
+.fake-link {
+  transition: 0.3s ease;
+  border-bottom: 2px solid lighten($--color-primary, 20%);
+  padding-bottom: 0px;
+  &:hover {
+    padding-bottom: 2px;
+    border-bottom-color: $--color-primary;
+  }
+}

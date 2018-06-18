@@ -149,17 +149,19 @@
 
 <style lang="scss">
   @import '../../sass/abstracts/vars';
+  @import '../../sass/base/helpers';
+
   .breadcrumb {
-    // make sure that the breadcrumb doesn't have any space on the left-right
-    margin: auto -30px 20px;
     background-color: $--color-white;
     box-shadow: $--box-shadow-base;
+    position: relative;
+    z-index: $--index-top;
     .el-breadcrumb {
       padding: 20px 30px;
       font-size: 18px;
 
       .el-breadcrumb__item:not(:last-child) .el-breadcrumb__inner {
-        text-decoration: underline;
+        @extend .fake-link;
       }
     }
   }

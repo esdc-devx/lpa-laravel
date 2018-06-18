@@ -52,20 +52,23 @@
 
     methods: {
       isParentChild(to, from) {
-        const toSplit = to.path.split('/');
-        const fromSplit = from.path.split('/');
-        const toDepth = toSplit.length;
-        const fromDepth = fromSplit.length;
+        // make sure paths are loaded
+        if (to.meta.breadcrumbs && from.meta.breadcrumbs) {
+          // as the path can contain inaccessible path,
+          // we have to base the logic on the breadcrumb instead
+          const toSplit = to.meta.breadcrumbs().split('/');
+          const fromSplit = from.meta.breadcrumbs().split('/');
+          const toDepth = toSplit.length;
+          const fromDepth = fromSplit.length;
 
-        // this basically checks for when we are going back and forward
-        // for backwards actions: if the FROM last slug is equal to the TO last - 1 slug
-        // for forwards actions:  if the TO last slug is equal to the FROM last - 1 slug
-        // then this logic is duplicated
-        // for max 2 level up in case we get url change like so:
-        // /en/admin/users => /en/admin/users/edit/3
-        if (fromSplit[fromDepth - 1] === toSplit[toDepth - 2] || toSplit[toDepth - 1] === fromSplit[fromDepth - 2] ||
-            fromSplit[fromDepth - 1] === toSplit[toDepth - 3] || toSplit[toDepth - 1] === fromSplit[fromDepth - 3]) {
-          return true;
+          // this basically checks for when we are going back and forward
+          // for backwards actions: if the FROM last slug is equal to the TO last - 1 slug
+          // for forwards actions:  if the TO last slug is equal to the FROM last - 1 slug
+          // then this logic is duplicated
+          if (fromSplit[fromDepth - 1] === toSplit[toDepth - 2] || toSplit[toDepth - 1] === fromSplit[fromDepth - 2]) {
+            return true;
+          }
+          return false;
         }
         return false;
       }

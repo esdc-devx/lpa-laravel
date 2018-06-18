@@ -16,8 +16,8 @@
           <el-header height="auto">
             <admin-bar/>
           </el-header>
+          <breadcrumb/>
           <el-main>
-            <breadcrumb/>
             <main-content/>
           </el-main>
         </el-container>
@@ -75,7 +75,7 @@
     overflow: hidden;
   }
 
-  .el-aside {
+  .body-wrap > .el-aside {
     position: relative;
     // this allows to make the content shift to the left and take the sidebar's space when collapsed
     width: auto !important;
@@ -89,7 +89,7 @@
   .el-main {
     position: relative;
     overflow-x: hidden;
-    padding: 30px;
+    padding: 0;
     padding-top: 0px;
   }
 
