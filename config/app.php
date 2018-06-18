@@ -191,6 +191,7 @@ return [
         Adldap\Laravel\AdldapAuthServiceProvider::class,
         App\Camunda\CamundaServiceProvider::class,
         App\Process\ProcessServiceProvider::class,
+        Nestable\NestableServiceProvider::class,
     ],
 
     /*
@@ -242,13 +243,17 @@ return [
         // Custom facades.
         'Adldap' => Adldap\Laravel\Facades\Adldap::class,
         'Process' => App\Process\ProcessManagerFacade::class,
+        'Nestable' => Nestable\Facades\NestableService::class,
     ],
 
     // Used to resolve model class from a string, usually stored into the database or as a route parameter.
     // These definitions will be bound to the the service container upon app initialization.
     'entity_types' => [
-        'business-case' => App\Models\Project\BusinessCase::class,
+        'business-case' => App\Models\Project\BusinessCase\BusinessCase::class,
+        'community' => App\Models\Community::class,
+        'government-priority' => App\Models\Project\BusinessCase\GovernmentPriority::class,
+        'potential-solution-type' => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'project' => App\Models\Project\Project::class,
+        'request-source' => App\Models\Project\BusinessCase\RequestSource::class,
     ],
-
 ];

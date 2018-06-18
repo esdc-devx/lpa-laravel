@@ -7,7 +7,6 @@ use App\Models\State;
 
 class ProcessInstanceStep extends BaseModel
 {
-    protected $guarded = [];
     protected $hidden = ['id', 'process_step_id', 'process_instance_id', 'state_id', 'created_at', 'updated_at'];
 
     public function definition()

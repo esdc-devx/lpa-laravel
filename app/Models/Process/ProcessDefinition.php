@@ -9,7 +9,6 @@ class ProcessDefinition extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $guarded = [];
     protected $hidden = ['id'];
     protected $localizable = ['name'];
 

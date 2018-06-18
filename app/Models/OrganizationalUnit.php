@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Models\OrganizationalUnit;
+namespace App\Models;
 
 use App\Models\LocalizableModel;
 use App\Models\User\User;
 
 class OrganizationalUnit extends LocalizableModel
 {
-    protected $guarded = [];
     protected $hidden = ['created_at', 'updated_at'];
     protected $localizable = ['name'];
     protected $casts = [

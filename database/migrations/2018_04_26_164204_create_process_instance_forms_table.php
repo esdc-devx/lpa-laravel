@@ -23,23 +23,10 @@ class CreateProcessInstanceFormsTable extends Migration
             $table->auditable();
             $table->timestamps();
 
-            $table->foreign('process_form_id')
-                ->references('id')
-                ->on('process_forms');
-
-            $table->foreign('process_instance_step_id')
-                ->references('id')
-                ->on('process_instance_steps');
-
-            $table->foreign('state_id')
-                ->references('id')
-                ->on('states')
-                ->onDelete('set null');
-
-            $table->foreign('current_editor')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
+            $table->referenceOn('process_form_id', 'process_forms');
+            $table->referenceOn('process_instance_step_id', 'process_instance_steps');
+            $table->referenceOn('state_id', 'states')->onDelete('set null');
+            $table->referenceOn('current_editor', 'users')->onDelete('set null');
         });
     }
 

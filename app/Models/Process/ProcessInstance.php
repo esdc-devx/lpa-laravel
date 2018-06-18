@@ -10,7 +10,6 @@ class ProcessInstance extends BaseModel
 {
     use UsesUserAudit;
 
-    protected $guarded = [];
     protected $hidden = ['process_definition_id', 'state_id', 'engine_auth_token'];
 
     public function definition()
