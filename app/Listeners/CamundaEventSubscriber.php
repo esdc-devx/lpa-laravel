@@ -63,6 +63,24 @@ class CamundaEventSubscriber
     }
 
     /**
+     * Handle process instance form claim event.
+     */
+    public function onProcessInstanceFormClaim($event)
+    {
+        // Claim task associated to process form instance.
+        $this->camunda->tasks()->claim($event->processInstanceForm->engine_task_id, $event->user);
+    }
+
+    /**
+     * Handle process instance form unclaim event.
+     */
+    public function onProcessInstanceFormUnclaim($event)
+    {
+        // Unclaim task associated to process form instance.
+        $this->camunda->tasks()->unclaim($event->processInstanceForm->engine_task_id);
+    }
+
+    /**
      * Compare user groups with those stored in Camunda
      * and synchronize them.
      *
@@ -106,6 +124,16 @@ class CamundaEventSubscriber
         $events->listen(
             'App\Events\UserSaved',
             'App\Listeners\CamundaEventSubscriber@onUserSave'
+        );
+
+        $events->listen(
+            'App\Events\ProcessInstanceFormClaimed',
+            'App\Listeners\CamundaEventSubscriber@onProcessInstanceFormClaim'
+        );
+
+        $events->listen(
+            'App\Events\ProcessInstanceFormUnclaimed',
+            'App\Listeners\CamundaEventSubscriber@onProcessInstanceFormUnclaim'
         );
     }
 

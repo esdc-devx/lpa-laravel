@@ -33,7 +33,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('process-instances/{id}', 'ProcessInstanceController@show')->name('process-instances.show');
 
     // Process instance form routes.
-    Route::get('process-instance-forms/{processInstanceForm}', 'ProcessInstanceFormController@show')->name('process-instance-forms.show');
+    Route::get('process-instance-forms/{processInstanceFormData}', 'ProcessInstanceFormController@show')->name('process-instance-forms.show');
+    Route::put('process-instance-forms/{id}/claim', 'ProcessInstanceFormController@claim')->name('process-instance-forms.claim');
+    Route::put('process-instance-forms/{id}/unclaim', 'ProcessInstanceFormController@unclaim')->name('process-instance-forms.unclaim');
+    Route::put('process-instance-forms/{processInstanceFormData}/edit', 'ProcessInstanceFormController@edit')->name('process-instance-forms.edit');
 
     // List entities routes.
     Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
@@ -45,4 +48,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/project/edit/{project}', 'AuthorizationController@editProject')->name('authorization.project.edit');
     Route::get('authorization/project/delete/{project}', 'AuthorizationController@deleteProject')->name('authorization.project.delete');
     Route::get('authorization/project/{project}/start-process/{processDefinition}', 'AuthorizationController@startProjectProcess')->name('authorization.project.start-process');
+
+    // Process instance form authorization routes.
+    Route::get('authorization/process-instance-form/claim/{processInstanceForm}', 'AuthorizationController@claimProcessInstanceForm')->name('authorization.process-instance-form.claim');
+    Route::get('authorization/process-instance-form/unclaim/{processInstanceForm}', 'AuthorizationController@unclaimProcessInstanceForm')->name('authorization.process-instance-form.unclaim');
+
 });

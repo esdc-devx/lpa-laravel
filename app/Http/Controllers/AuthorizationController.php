@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Process\ProcessDefinition;
+use App\Models\Process\ProcessInstanceForm;
 use App\Models\Project\Project;
 
 class AuthorizationController extends APIController
@@ -52,6 +53,30 @@ class AuthorizationController extends APIController
     {
         return $this->respond([
             'allowed' => auth()->user()->can('start-process', [$project, $processDefinition])
+        ]);
+    }
+
+    /**
+     * Authorize process instance form claim action.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function claimProcessInstanceForm(ProcessInstanceForm $processInstanceForm)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('claim', $processInstanceForm)
+        ]);
+    }
+
+    /**
+     * Authorize process instance form unclaim action.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unclaimProcessInstanceForm(ProcessInstanceForm $processInstanceForm)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('unclaim', $processInstanceForm)
         ]);
     }
 }

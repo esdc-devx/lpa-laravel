@@ -78,7 +78,7 @@ class User extends BaseModel implements
 
     public function hasRole(string $role)
     {
-        return $this->roles()->where('name_key', $role)->first() !== null;
+        return $this->roles->where('name_key', $role)->first() !== null;
     }
 
     public function isAdmin()

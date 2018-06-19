@@ -42,8 +42,8 @@ class RouteServiceProvider extends ServiceProvider
             return entity($entityTypeKey);
         });
 
-        // Resolve process instance form data from process instance form id.
-        Route::bind('processInstanceForm', function ($processInstanceFormId) {
+        // Resolve process instance form data entity from process instance form id.
+        Route::bind('processInstanceFormData', function ($processInstanceFormId) {
             $formDataClass = ProcessInstanceForm::findOrFail($processInstanceFormId)->definition->name_key;
             if ($entityTypeClass = entity($formDataClass)) {
                 $entity = $entityTypeClass->with($entityTypeClass->relationships)
