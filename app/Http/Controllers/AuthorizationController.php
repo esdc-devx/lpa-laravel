@@ -91,4 +91,5 @@ class AuthorizationController extends APIController
             'allowed' => auth()->user()->can('edit', $processInstanceForm)
         ]);
     }
+
 }

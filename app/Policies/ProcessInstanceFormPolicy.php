@@ -103,7 +103,6 @@ class ProcessInstanceFormPolicy
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
             return false;
         }
-
         return true;
     }
 }

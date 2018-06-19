@@ -15,7 +15,6 @@
 Route::get('locales', 'LocaleController@index');
 
 Route::middleware('auth:api')->group(function () {
-
     // User resource routes.
     Route::get('users/current', 'UserController@current')->name('users.current');
     Route::get('users/search', 'UserController@search')->name('users.search');

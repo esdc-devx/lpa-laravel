@@ -29,7 +29,6 @@ class ProcessInstanceFormController extends APIController
         $processInstanceForm = ProcessInstanceForm::findOrFail($id);
 
         $this->authorize('claim', $processInstanceForm);
-
         return $this->respond(
             $processInstanceForm->claim()
         );
