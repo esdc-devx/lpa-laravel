@@ -2,6 +2,7 @@
 
 namespace App\Camunda\APIs;
 
+use App\Models\Process\ProcessInstance;
 use App\Models\User\User;
 use App\Camunda\Exceptions\GeneralException;
 use App\Camunda\Exceptions\ProcessEngineException;
@@ -30,14 +31,20 @@ class CamundaTasks extends CamundaBaseAPI
     }
 
     /**
-     * Get tasks assigned to a specific user.
+     * Get tasks for a user or process instance.
      *
-     * @param  User $user
+     * @param  mixed $source
      * @return array
      */
-    public function for(User $user)
+    public function for($source)
     {
-        return $this->client->get('task', ['assignee' => $user->username]);
+        if ($source instanceof User) {
+            return $this->client->get('task', ['assignee' => $user->username]);
+        }
+        if ($source instanceof ProcessInstance) {
+            return $this->client->get('task', ['processInstanceId' => $source->engine_process_instance_id]);
+        }
+        return [];
     }
 
     /**
@@ -86,9 +93,14 @@ class CamundaTasks extends CamundaBaseAPI
      */
     public function assign(string $id, User $user = null)
     {
-        return $this->client->post("task/$taskId/assignee", [
+        return $this->client->post("task/$id/assignee", [
             'id' => $id,
             'userId' => isset($user) ? $user->username : $this->username,
         ]);
+    }
+
+    public function getCandidates(string $id)
+    {
+        return $this->client->get("task/$id/identity-links");
     }
 }

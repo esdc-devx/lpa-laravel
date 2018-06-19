@@ -13,7 +13,7 @@ class BusinessCase extends BaseModel
 
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
-        'processInstanceForm', 'processInstanceForm.definition', 'processInstanceForm.currentEditor',
+        'processInstanceForm', 'processInstanceForm.definition', 'processInstanceForm.organizationalUnit', 'processInstanceForm.currentEditor',
         'requestSources', 'potentialSolutionTypes', 'governmentPriorities'
     ];
 
