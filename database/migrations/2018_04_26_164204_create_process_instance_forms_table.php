@@ -18,6 +18,7 @@ class CreateProcessInstanceFormsTable extends Migration
             $table->unsignedInteger('process_form_id')->nullable();
             $table->unsignedInteger('process_instance_step_id');
             $table->unsignedInteger('state_id')->nullable();
+            $table->unsignedInteger('organizational_unit_id')->nullable();
             $table->unsignedInteger('current_editor')->nullable();
             $table->string('engine_task_id')->unique()->index()->nullable();
             $table->auditable();
@@ -26,6 +27,7 @@ class CreateProcessInstanceFormsTable extends Migration
             $table->referenceOn('process_form_id', 'process_forms');
             $table->referenceOn('process_instance_step_id', 'process_instance_steps');
             $table->referenceOn('state_id', 'states')->onDelete('set null');
+            $table->referenceOn('organizational_unit_id', 'organizational_units')->onDelete('set null');
             $table->referenceOn('current_editor', 'users')->onDelete('set null');
         });
     }

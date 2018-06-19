@@ -60,7 +60,7 @@ class UserRepository extends BaseEloquentRepository
     public function getCurrent()
     {
         $user = auth()->user();
-        return $user ? $this->with(['organizationalUnits', 'roles'])->getById($user->id) : null;
+        return $user ? $user->load(['organizationalUnits', 'roles']) : null;
     }
 
     /**

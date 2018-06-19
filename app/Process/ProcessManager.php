@@ -3,20 +3,21 @@
 namespace App\Process;
 
 use App\Camunda\Camunda;
-use App\Models\State;
+use App\Models\OrganizationalUnit;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Process\ProcessInstanceStep;
+use App\Models\State;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class ProcessManager {
 
     protected $camunda;
     protected $processInstance;
-    protected $engineProcessInstanceId;
-    protected $entityType;
     protected $processStates = [];
+    protected $processTasks = [];
 
     public function __construct(Camunda $camunda)
     {
@@ -42,24 +43,21 @@ class ProcessManager {
             $processDefinition = ProcessDefinition::getByKey($processDefinition)->firstOrFail();
         }
 
-        $this->entityType = $entity::getEntityType();
         // Generate a random string used as a token for webservice authentication calls from Camunda.
         $authToken = str_random(24);
+        $entityType = $entity::getEntityType();
         $processState = State::getByKey('process-instance.running')->first();
         $user = auth()->user();
 
         // Start process in Camunda.
-        $this->engineProcessInstanceId = $this->camunda->processes()->start([
+        $engineProcessInstanceId = $this->camunda->processes()->start([
             'key'          => $processDefinition->name_key,
-            'business_key' => "{$this->entityType}:{$entity->id}",
+            'business_key' => "$entityType:{$entity->id}",
             'variables'    => [
                 'authToken' => ['value' => $authToken, 'type' => 'String'],
                 'owner'     => ['value' => $entity->organizationalUnit->name_key, 'type' => 'String']
             ]
         ])->id;
-
-        // Resolve all process states (entity, steps, and forms) from Camunda.
-        $this->resolveStates();
 
         // Wrap the creation process within a database transaction
         // to ensure easy rollback in case something goes wrong.
@@ -67,23 +65,29 @@ class ProcessManager {
 
         try {
             // Create process instance.
-            $processInstance = ProcessInstance::create([
-                'entity_type'                => $this->entityType,
+            $this->processInstance = ProcessInstance::create([
+                'entity_type'                => $entityType,
                 'entity_id'                  => $entity->id,
                 'entity_previous_state_id'   => $entity->state_id,
                 'process_definition_id'      => $processDefinition->id,
-                'engine_process_instance_id' => $this->engineProcessInstanceId,
+                'engine_process_instance_id' => $engineProcessInstanceId,
                 'engine_auth_token'          => $authToken,
                 'state_id'                   => $processState->id,
                 'created_by'                 => $user->id,
                 'updated_by'                 => $user->id,
             ]);
 
+            // Resolve all process states (entity, steps, and forms) from Camunda.
+            $this->resolveStates();
+
+            // Resolve all process tasks from Camunda.
+            $this->resolveTasks();
+
             // Create process instance steps entries from process definition.
             foreach ($processDefinition['steps'] as $step) {
                 $processInstanceStep = ProcessInstanceStep::create([
                     'process_step_id'     => $step->id,
-                    'process_instance_id' => $processInstance->id,
+                    'process_instance_id' => $this->processInstance->id,
                     'state_id'            => $this->processStates["step-{$step->name_key}"]->id,
                 ]);
 
@@ -93,32 +97,37 @@ class ProcessManager {
                         'process_form_id'          => $form->id,
                         'process_instance_step_id' => $processInstanceStep->id,
                         'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
+                        'organizational_unit_id'   => isset($this->processTasks[$form->name_key]) ? $this->processTasks[$form->name_key]->organizationalUnit->id : null,
+                        'engine_task_id'           => isset($this->processTasks[$form->name_key]) ? $this->processTasks[$form->name_key]->id : null,
                         'created_by'               => $user->id,
                         'updated_at'               => null,
                     ]);
+
                     // Create an empty data class model mapped to the process instance form (i.e. BusinessCase, ArchitecturePlan, etc.).
-                    if ($formModelClass = config('app.entity_types')[$form->name_key] ?? null) {
-                        resolve($formModelClass)::create([
+                    try {
+                        entity($form->name_key)::create([
                             'process_instance_form_id' => $processInstanceForm->id,
                         ]);
+                    }
+                    // Since form data classes are not all yet implemented, ignore this exception.
+                    catch (ModelNotFoundException $e) {
                     }
                 }
             }
 
             // Link process instance to the entity.
-            $entity->currentProcess()->associate($processInstance);
+            $entity->currentProcess()->associate($this->processInstance);
             $entity->updatedBy()->associate($user);
             $entity->save();
         }
         // Rollback transaction if any exceptions occurs and cancel process instance in Camunda.
         catch (\Exception $e) {
             DB::rollBack();
-            $this->camunda->processes()->delete($this->engineProcessInstanceId);
+            $this->camunda->processes()->delete($engineProcessInstanceId);
             throw $e;
         }
 
         DB::commit();
-        $this->processInstance = $processInstance;
         return $this;
     }
 
@@ -139,8 +148,6 @@ class ProcessManager {
         }
 
         $this->processInstance = $processInstance;
-        $this->engineProcessInstanceId = $processInstance->engine_process_instance_id;
-        $this->entityType = $processInstance->entity_type;
 
         return $this;
     }
@@ -152,7 +159,7 @@ class ProcessManager {
      */
     protected function resolveStates()
     {
-        if (is_null($this->engineProcessInstanceId)) {
+        if (is_null($this->processInstance)) {
             throw new \Exception('Cannot resolve process states, you must first load a process.');
         }
 
@@ -162,7 +169,7 @@ class ProcessManager {
         });
 
         // Retrieve process variables from Camunda.
-        $processVariables = $this->camunda->processes()->getVariables($this->engineProcessInstanceId);
+        $processVariables = $this->camunda->processes()->getVariables($this->processInstance->engine_process_instance_id);
 
         // Filter through variables and only keep those related to process states.
         collect($processVariables)->filter(function($variable) {
@@ -173,7 +180,7 @@ class ProcessManager {
             $state = str_replace_first('state-', '', kebab_case($variable->name));
             switch (true) {
                 case $state == 'entity':
-                    $key = "{$this->entityType}.{$variable->value}";
+                    $key = "{$this->processInstance->entity_type}.{$variable->value}";
                     break;
                 case starts_with($state, 'step'):
                     $key = "process-step.{$variable->value}";
@@ -184,6 +191,41 @@ class ProcessManager {
             }
             $this->processStates[$state] = $states[$key];
         });
+
+        return $this;
+    }
+
+    /**
+     * Retrieve and map Camunda process tasks to their appropriate forms.
+     *
+     * @return $this
+     */
+    protected function resolveTasks()
+    {
+        if (is_null($this->processInstance)) {
+            throw new \Exception('Cannot resolve process tasks, you must first load a process.');
+        }
+
+        // Retrieve all organizational units and re-key collection for easier reference during mapping.
+        $organizationalUnits = OrganizationalUnit::all()->keyBy(function ($item) {
+            return $item->name_key;
+        });
+
+        // Get all tasks for current process.
+        $tasks = $this->camunda->tasks()->for($this->processInstance);
+        foreach ($tasks as $task) {
+            // Since it's technically possible to have multiple candidate groups
+            // for a same task we only get the first one.
+            $organizationalUnitKey = collect($this->camunda->tasks()->getCandidates($task->id))
+                ->filter(function ($item, $key) {
+                    return $item->type == 'candidate' && $item->groupId !== null;
+                })
+                ->first()
+                ->groupId;
+
+            $task->organizationalUnit = $organizationalUnits[$organizationalUnitKey];
+            $this->processTasks[$task->formKey] = $task;
+        }
 
         return $this;
     }
