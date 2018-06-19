@@ -36,6 +36,7 @@ Route::middleware('auth:api')->group(function () {
     Route::put('process-instance-forms/{id}/claim', 'ProcessInstanceFormController@claim')->name('process-instance-forms.claim');
     Route::put('process-instance-forms/{id}/unclaim', 'ProcessInstanceFormController@unclaim')->name('process-instance-forms.unclaim');
     Route::put('process-instance-forms/{processInstanceFormData}/edit', 'ProcessInstanceFormController@edit')->name('process-instance-forms.edit');
+    Route::put('process-instance-forms/{processInstanceFormData}/submit', 'ProcessInstanceFormController@submit')->name('process-instance-forms.submit');
 
     // List entities routes.
     Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
@@ -51,5 +52,6 @@ Route::middleware('auth:api')->group(function () {
     // Process instance form authorization routes.
     Route::get('authorization/process-instance-form/claim/{processInstanceForm}', 'AuthorizationController@claimProcessInstanceForm')->name('authorization.process-instance-form.claim');
     Route::get('authorization/process-instance-form/unclaim/{processInstanceForm}', 'AuthorizationController@unclaimProcessInstanceForm')->name('authorization.process-instance-form.unclaim');
+    Route::get('authorization/process-instance-form/edit/{processInstanceForm}', 'AuthorizationController@editProcessInstanceForm')->name('authorization.process-instance-form.edit');
 
 });

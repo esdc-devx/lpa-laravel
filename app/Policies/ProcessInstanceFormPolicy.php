@@ -26,13 +26,18 @@ class ProcessInstanceFormPolicy
             return false;
         }
 
+        // Admin users can claim the form from this point.
+        if ($user->isAdmin()) {
+            return true;
+        }
+
         // Ensure that user have the right roles.
-        if (! $user->isAdmin() && ! $user->hasRole('process-contributor')) {
+        if (! $user->hasRole('process-contributor')) {
             return false;
         }
 
         // Ensure that user is part of candidate editor organizational unit.
-        if (! $user->organizationalUnits->firstWhere('id', $processInstanceForm->organizational_unit_id)) {
+        if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
             return false;
         }
 
@@ -72,11 +77,33 @@ class ProcessInstanceFormPolicy
      */
     public function edit(User $user, ProcessInstanceForm $processInstanceForm)
     {
+        $processInstanceForm->load('currentEditor');
+
+        // Ensure the form is claimed.
+        if (is_null($processInstanceForm->currentEditor)) {
+            return false;
+        }
+
         // Ensure current editor is the same as the user making the request.
-        if (! is_null($processInstanceForm->currentEditor) && $processInstanceForm->currentEditor->is($user)) {
+        if (! $processInstanceForm->currentEditor->is($user)) {
+            return false;
+        }
+
+        // Admin users can edit the form from this point.
+        if ($user->isAdmin()) {
             return true;
         }
 
-        return false;
+        // Ensure that user have the right roles.
+        if (! $user->hasRole('process-contributor')) {
+            return false;
+        }
+
+        // Ensure that user is part of candidate editor organizational unit.
+        if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
+            return false;
+        }
+
+        return true;
     }
 }

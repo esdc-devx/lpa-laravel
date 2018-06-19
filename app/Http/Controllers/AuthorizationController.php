@@ -79,4 +79,16 @@ class AuthorizationController extends APIController
             'allowed' => auth()->user()->can('unclaim', $processInstanceForm)
         ]);
     }
+
+    /**
+     * Authorize process instance form edit action.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editProcessInstanceForm(ProcessInstanceForm $processInstanceForm)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('edit', $processInstanceForm)
+        ]);
+    }
 }
