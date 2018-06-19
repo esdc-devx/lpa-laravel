@@ -76,6 +76,16 @@ class User extends BaseModel implements
         return $this->belongsToMany(Role::class);
     }
 
+    public function organizationalUnits()
+    {
+        return $this->belongsToMany(OrganizationalUnit::class);
+    }
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class, 'created_by');
+    }
+
     public function hasRole(string $role)
     {
         return $this->roles->where('name_key', $role)->first() !== null;
@@ -86,13 +96,16 @@ class User extends BaseModel implements
         return $this->hasRole('admin');
     }
 
-    public function organizationalUnits()
+    public function belongsToOrganizationalUnit($organizationalUnit)
     {
-        return $this->belongsToMany(OrganizationalUnit::class);
-    }
+        if (is_numeric($organizationalUnit)) {
+            return $this->organizationalUnits->firstWhere('id', $organizationalUnit) !== null;
+        }
 
-    public function projects()
-    {
-        return $this->hasMany(Project::class, 'created_by');
+        if ($organizationalUnit instanceof OrganizationalUnit) {
+            return $this->organizationalUnits->firstWhere('id', $organizationalUnit->id) !== null;
+        }
+
+        return false;
     }
 }

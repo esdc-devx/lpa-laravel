@@ -10,6 +10,7 @@ class Role extends LocalizableModel
     use UsesKeyNameField;
 
     protected $localizable = ['name'];
+    protected $hidden = ['pivot'];
 
     public $timestamps = false;
 

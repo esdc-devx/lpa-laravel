@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\FormInstanceFormRequest;
+use App\Http\Requests\ProcessInstanceFormRequest;
 use App\Models\Process\ProcessInstanceForm;
 
 class ProcessInstanceFormController extends APIController
@@ -55,20 +55,28 @@ class ProcessInstanceFormController extends APIController
     /**
      * Edit process instance form data.
      *
+     * @param  ProcessInstanceFormRequest $request
      * @param  App\Models\BaseModel $processInstanceFormData
      * @return \Illuminate\Http\Response
      */
-    public function edit($processInstanceFormData)
+    public function edit(ProcessInstanceFormRequest $request, $processInstanceFormData)
     {
-        $this->authorize('edit', $processInstanceFormData->processInstanceForm);
+        return $this->respond(
+            $processInstanceFormData->saveFormData($request->all())
+        );
+    }
 
-        // @todo: Update form data.
-        // @todo: Update form modified by/on.
-        // @todo: Update process modified by/on.
-        // @todo: Update entity modified by/on.
-
-
-        return $this->respond([
-        ]);
+    /**
+     * Submit process instance form data.
+     *
+     * @param  ProcessInstanceFormRequest $request
+     * @param  App\Models\BaseModel $processInstanceFormData
+     * @return \Illuminate\Http\Response
+     */
+    public function submit(ProcessInstanceFormRequest $request, $processInstanceFormData)
+    {
+        return $this->respond(
+            $processInstanceFormData->saveFormData($request->all())
+        );
     }
 }

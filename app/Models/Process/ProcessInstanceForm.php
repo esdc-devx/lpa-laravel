@@ -38,7 +38,7 @@ class ProcessInstanceForm extends BaseModel
 
     public function step()
     {
-        return $this->belongsTo(ProcessInstanceStep::class);
+        return $this->belongsTo(ProcessInstanceStep::class, 'process_instance_step_id');
     }
 
     /**
@@ -51,7 +51,7 @@ class ProcessInstanceForm extends BaseModel
     {
         $user = $user ?? auth()->user();
         $this->currentEditor()->associate($user);
-        $this->save();
+        $this->save(['timestamps' => false]);
 
         // Dispatch event for CamundaEventSubscriber to respond for.
         event(new ProcessInstanceFormClaimed($user, $this));
@@ -67,7 +67,7 @@ class ProcessInstanceForm extends BaseModel
     public function unclaim()
     {
         $this->currentEditor()->dissociate();
-        $this->save();
+        $this->save(['timestamps' => false]);
 
         // Dispatch event for CamundaEventSubscriber to respond for.
         event(new ProcessInstanceFormUnclaimed($this));
