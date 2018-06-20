@@ -5,11 +5,11 @@
         <info-box>
           <dl>
             <dt>{{ trans('entities.form.status') }}</dt>
-            <dd>Status</dd>
+            <dd>{{ processInstanceForm.state.name }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.form.current_editor') }}</dt>
-            <dd>Editor</dd>
+            <dd>{{ processInstanceForm.current_editor }}</dd>
           </dl>
           <dl>
             <dt>{{ $tc('entities.general.organizational_units') }}</dt>
@@ -17,8 +17,8 @@
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>Name</dd>
-            <dd>Date</dd>
+            <dd>{{ processInstanceForm.updated_by }}</dd>
+            <dd>{{ processInstanceForm.updated_at }}</dd>
           </dl>
         </info-box>
       </el-col>
@@ -27,17 +27,19 @@
       <el-col>
         <el-container class="form-wrap" direction="vertical">
           <div class="form-header">
-            <el-header>Form Index</el-header>
-            <el-header class="form-header-details"><i class="el-icon-lpa-form"></i>Course Operational Details Form</el-header>
+            <el-header>{{ trans('entities.form.form_index') }}</el-header>
+            <el-header class="form-header-details"><i class="el-icon-lpa-form"></i>{{ viewingForm.process_instance_form.definition.name }}</el-header>
           </div>
           <el-main>
-            <component
-              :is="formComponent"
-              ref="tabs"
-              type="border-card"
-              tabPosition="left"
-              :value.sync="activeIndex">
-            </component>
+            <el-form label-position="top" @submit.native.prevent>
+              <component
+                :is="formComponent"
+                ref="tabs"
+                type="border-card"
+                tabPosition="left"
+                :value.sync="activeIndex">
+              </component>
+            </el-form>
           </el-main>
           <div class="form-footer">
             <el-footer height="50px"></el-footer>
@@ -48,19 +50,20 @@
                   icon="el-icon-arrow-left"
                   :disabled="isPrevDisabled"
                   @click="prevTabIndex()">
-                    Back
+                    {{ trans('base.pagination.previous') }}
                 </el-button>
                 <el-button
                   size="mini"
                   :disabled="isNextDisabled"
                   @click="nextTabIndex()">
-                    Next<i class="el-icon-arrow-right el-icon-right"></i>
+                    {{ trans('base.pagination.next') }}<i class="el-icon-arrow-right el-icon-right"></i>
                 </el-button>
               </div>
               <div class="form-footer-actions">
-                <el-button size="mini">Cancel</el-button>
+                <!-- @todo: lpa-5280 -->
+                <!-- <el-button size="mini">Cancel</el-button>
                 <el-button size="mini">Save</el-button>
-                <el-button size="mini">Submit</el-button>
+                <el-button size="mini">Submit</el-button> -->
               </div>
             </el-footer>
           </div>
@@ -99,6 +102,8 @@
     computed: {
       ...mapGetters({
         language: 'language',
+        viewingProcess: 'processes/viewing',
+        viewingForm: 'processes/viewingForm'
       }),
 
       formComponent() {
@@ -110,6 +115,10 @@
       },
       isNextDisabled() {
         return parseInt(this.activeIndex, 10) === this.tabsLength;
+      },
+
+      processInstanceForm() {
+        return this.viewingForm.process_instance_form;
       }
     },
 
@@ -118,7 +127,8 @@
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
         loadProject: 'projects/loadProject',
-        loadProcessInstance: 'processes/loadInstance'
+        loadProcessInstance: 'processes/loadInstance',
+        loadProcessInstanceForm: 'processes/loadInstanceForm'
       }),
 
       prevTabIndex() {
@@ -156,11 +166,18 @@
         await this.loadProcessInstance(processId);
       },
 
+      async triggerLoadProcessInstanceForm() {
+        let formId = this.$route.params.formId;
+        await this.loadProcessInstanceForm(formId);
+
+      },
+
       async fetch() {
         try {
           this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
+          await this.triggerLoadProcessInstanceForm();
           // @todo: replace component by dynamic name_key
           this.currentFormComponent = 'business-case';
           this.setupStage();
@@ -210,11 +227,18 @@
       .el-tabs__item.is-left {
         padding-left: 30px;
         text-align: left;
-        &:after {
+        &:hover span:after {
+          background-color: $--color-primary-light-4;
+        }
+        &.is-active span:after {
+          background-color: $--color-primary;
+        }
+        span:after {
           content: '';
           position: absolute;
           left: 10px;
           top: 50%;
+          transition: $--all-transition;
           transform: translateY(-50%);
           width: 12px;
           height: 12px;
@@ -222,8 +246,11 @@
           border-radius: 50%;
           display: inline-block;
         }
-        &.is-active:after {
-          background-color: $--color-primary;
+        span.is-error {
+          color: $--color-danger;
+          &:after {
+            background-color: $--color-danger;
+          }
         }
       }
     }
@@ -275,6 +302,17 @@
           height: 100%;
           background-color: $--background-color-base;
           border: 1px solid $--border-color-base;
+        }
+        .has-other .el-form-item__content {
+          display: flex;
+          align-items: flex-start;
+          // make sure childrens are spaced
+          > * {
+            // make the last child take all the remaining space
+            &:last-child {
+              flex: 1;
+            }
+          }
         }
       }
       .form-header, .form-footer {

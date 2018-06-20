@@ -64,13 +64,12 @@
             class="process-forms-table"
             :data="forms"
             :row-class-name="getFormRowClassName"
+            @row-click="viewForm"
             stripe>
             <el-table-column
               prop="definition.name"
-              :label="trans('entities.general.name')">
-              <template slot-scope="scope">
-                <el-button type="text" @click="goToForm(scope.row)">{{ scope.row.definition.name }}</el-button>
-              </template>
+              :label="trans('entities.general.name')"
+              class-name="name">
             </el-table-column>
             <el-table-column
               :label="trans('entities.general.status')"
@@ -147,6 +146,11 @@
         loadProcessInstance: `${namespace}/loadInstance`
       }),
 
+      viewForm(form) {
+        let processId = this.$route.params.processId;
+        this.$router.push(`${processId}/form/${form.id}`);
+      },
+
       getFormRowClassName({row, rowIndex}) {
         return row.state.name_key;
       },
@@ -169,11 +173,6 @@
 
       onStepChange(index) {
         this.selectedIndex = index;
-      },
-
-      goToForm(form) {
-        let processId = this.$route.params.processId;
-        this.$router.push(`${processId}/form/${form.id}`);
       },
 
       async triggerLoadProject() {
@@ -337,19 +336,12 @@
     }
 
     .process-forms-table {
+      .el-table__row {
+        cursor: pointer;
+      }
       @each $state, $color in $color-form-states {
-        .#{$state} {
+        .#{$state} .name, .#{$state} .status {
           color: $color;
-          button {
-            @extend .fake-link;
-            color: inherit;
-            display: inline-block;
-            vertical-align: super;
-            border-bottom-color: lighten($color, 20%);
-            &:hover {
-              border-bottom-color: $color;
-            }
-          }
         }
       }
 
