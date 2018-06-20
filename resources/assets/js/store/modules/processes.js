@@ -10,6 +10,12 @@ export default {
       state: {},
       created_by: {},
       updated_by: {}
+    },
+    viewingForm: {
+      process_instance_form: {
+        definition: {},
+        state: {}
+      }
     }
   },
 
@@ -20,6 +26,10 @@ export default {
 
     viewing(state) {
       return state.viewing;
+    },
+
+    viewingForm(state) {
+      return state.viewingForm;
     }
   },
 
@@ -33,6 +43,12 @@ export default {
     async loadInstance({ commit }, processId) {
       let response = await ProcessAPI.getInstance(processId);
       commit('setViewing', response.data.data.process_instance);
+      return response.data.data;
+    },
+
+    async loadInstanceForm({ commit }, formId) {
+      let response = await ProcessAPI.getInstanceForm(formId);
+      commit('setViewingForm', response.data.data);
       return response.data.data;
     },
 
@@ -51,6 +67,12 @@ export default {
       // set to default in case there is no process yet
       viewing = viewing || state.viewing;
       state.viewing = viewing;
+    },
+
+    setViewingForm(state, viewingForm) {
+      // set to default in case there is no process yet
+      viewingForm = viewingForm || state.viewingForm;
+      state.viewingForm = viewingForm;
     }
   }
 };

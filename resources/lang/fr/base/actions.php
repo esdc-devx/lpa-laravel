@@ -2,6 +2,8 @@
 
 return [
     'ok'       => 'Ok',
+    'yes'      => 'Oui',
+    'no'       => 'Non',
     'continue' => 'Poursuivre',
     'start'    => 'Démarrer',
     'cancel'   => 'Annuler',

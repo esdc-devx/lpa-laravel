@@ -12,5 +12,9 @@ export default {
 
   getInstance(entityId) {
     return axios.get(`process-instances/${entityId}`);
+  },
+
+  getInstanceForm(formId) {
+    return axios.get(`process-instance-forms/${formId}`);
   }
 };
