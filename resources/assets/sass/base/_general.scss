@@ -22,8 +22,13 @@ a {
 .content {
   $el-main-padding: 30px;
   position: absolute;
+  // allocate space under breadcrumb
+  top: 20px;
   // remove padding-left and right
   width: calc(100% - (#{$el-main-padding} * 2));
+  // allow transition between contents
+  // to keep their position while transitioning
+  padding: 0 30px;
 }
 
 .controls {

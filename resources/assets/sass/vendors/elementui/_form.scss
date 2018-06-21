@@ -3,3 +3,13 @@
   position: relative;
   display: flex;
 }
+
+// make sure the select tags do not overflow
+.el-select__tags-text {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: middle;
+}

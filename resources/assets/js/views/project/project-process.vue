@@ -2,8 +2,7 @@
   <div class="project-process content">
     <el-row>
       <el-col>
-        <el-card shadow="never" class="process-info">
-        <!-- get process info from api call instead on the project -->
+        <info-box>
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
             <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
@@ -26,7 +25,7 @@
             <!-- @todo: #LPA-4906 -->
             <!-- <el-button size="small" type="danger" plain>Cancel Process<i class="el-icon-close"></i></el-button> -->
           </div>
-        </el-card>
+        </info-box>
       </el-col>
     </el-row>
 
@@ -65,10 +64,12 @@
             class="process-forms-table"
             :data="forms"
             :row-class-name="getFormRowClassName"
+            @row-click="viewForm"
             stripe>
             <el-table-column
               prop="definition.name"
-              :label="trans('entities.general.name')">
+              :label="trans('entities.general.name')"
+              class-name="name">
             </el-table-column>
             <el-table-column
               :label="trans('entities.general.status')"
@@ -101,10 +102,14 @@
 
   import HttpStatusCodes from '../../axios/http-status-codes';
 
+  import InfoBox from '../../components/info-box.vue';
+
   let namespace = 'processes';
 
   export default {
     name: 'project-process',
+
+    components: { InfoBox },
 
     data() {
       return {
@@ -140,6 +145,11 @@
         loadProject: 'projects/loadProject',
         loadProcessInstance: `${namespace}/loadInstance`
       }),
+
+      viewForm(form) {
+        let processId = this.$route.params.processId;
+        this.$router.push(`${processId}/form/${form.id}`);
+      },
 
       getFormRowClassName({row, rowIndex}) {
         return row.state.name_key;
@@ -210,40 +220,15 @@
   @import '../../../sass/abstracts/vars';
   @import '../../../sass/abstracts/functions';
   @import '../../../sass/abstracts/mixins/helpers';
+  @import '../../../sass/base/helpers';
 
   .project-process {
     margin: 0 auto;
 
-    .process-info {
+    .info-box {
       h2 {
         margin: 0;
         display: inline-block;
-      }
-      .el-card__body {
-        display: flex;
-        flex-flow: wrap;
-        > * {
-          display: flex;
-          flex-direction: column;
-          flex: 1;
-          justify-content: flex-start;
-          margin-bottom: 0;
-        }
-      }
-      dl {
-        padding-right: 20px;
-        margin-top: 0px;
-        box-sizing: border-box;
-        dt {
-          font-weight: bold;
-        }
-        dd {
-          margin: 0;
-          margin-top: 5px;
-        }
-        dd + dd {
-          margin-top: 0;
-        }
       }
 
       .controls {
@@ -307,31 +292,31 @@
 
           // Locked
           .el-step__head.is-wait .el-step__icon-inner {
-            @include svg(locked, $--color-text-regular);
+            @include svg(locked, map-get($color-form-states, locked));
           }
           .el-step__title.is-wait, .el-step__description.is-wait {
-            color: $--color-text-regular !important;
+            color: map-get($color-form-states, locked) !important;
           }
         }
 
         // Unlocked
         .el-step__title.is-process, .el-step__description.is-process {
-          color: $color-unlocked !important;
+          color: map-get($color-form-states, unlocked) !important;
         }
         // Locked
         .el-step__title.is-wait, .el-step__description.is-wait {
-          color: $--color-text-placeholder !important;
+          color: lighten(map-get($color-form-states, locked), 25%) !important;
         }
         .el-step__head.is-wait .el-step__icon-inner {
-          @include svg(locked, $--color-text-placeholder);
+          @include svg(locked, lighten(map-get($color-form-states, locked), 25%));
         }
         // Completed
         .el-step__title.is-success, .el-step__description.is-success {
-          color: $--color-success !important;
+          color: map-get($color-form-states, success) !important;
         }
         // Cancelled
         .el-step__title.is-error, .el-step__description.is-error {
-          color: $--color-danger !important;
+          color: map-get($color-form-states, cancelled) !important;
         }
       }
 
@@ -351,23 +336,13 @@
     }
 
     .process-forms-table {
-      .locked {
-        color: $color-locked;
+      .el-table__row {
+        cursor: pointer;
       }
-      .unlocked {
-        color: $color-unlocked;
-      }
-      .submitted {
-        color: $color-completed;
-      }
-      .rejected {
-        color: $color-cancelled;
-      }
-      .done {
-        color: $color-completed;
-      }
-      .cancelled {
-        color: $color-cancelled;
+      @each $state, $color in $color-form-states {
+        .#{$state} .name, .#{$state} .status {
+          color: $color;
+        }
       }
 
       .status .cell {

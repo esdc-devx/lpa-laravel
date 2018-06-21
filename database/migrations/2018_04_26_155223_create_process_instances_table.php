@@ -25,14 +25,8 @@ class CreateProcessInstancesTable extends Migration
             $table->auditable();
             $table->timestamps();
 
-            $table->foreign('process_definition_id')
-                ->references('id')
-                ->on('process_definitions');
-
-            $table->foreign('state_id')
-                ->references('id')
-                ->on('states')
-                ->onDelete('set null');
+            $table->referenceOn('process_definition_id', 'process_definitions');
+            $table->referenceOn('state_id', 'states')->onDelete('set null');
         });
     }
 

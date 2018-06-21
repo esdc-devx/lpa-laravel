@@ -25,10 +25,5 @@ class AppServiceProvider extends ServiceProvider
     {
         // Ignore migrations used for oauth api access manager.
         \Laravel\Passport\Passport::ignoreMigrations();
-
-        // Bind model classes to their entity_type string.
-        foreach(config('app.entity_types') as $alias => $modelClass) {
-            $this->app->bind($alias, $modelClass);
-        }
     }
 }

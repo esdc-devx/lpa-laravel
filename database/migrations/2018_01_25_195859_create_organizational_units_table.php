@@ -23,27 +23,11 @@ class CreateOrganizationalUnitsTable extends Migration
             $table->unsignedInteger('director')->nullable();
             $table->timestamps();
 
-            $table->foreign('director')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
+            $table->referenceOn('director', 'users')->onDelete('set null');
         });
 
         Schema::create('organizational_unit_user', function (Blueprint $table) {
-            $table->unsignedInteger('organizational_unit_id');
-            $table->unsignedInteger('user_id');
-
-            $table->foreign('organizational_unit_id')
-                ->references('id')
-                ->on('organizational_units')
-                ->onDelete('cascade');
-
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->onDelete('cascade');
-
-            $table->primary(['organizational_unit_id', 'user_id']);
+            $table->pivot('organizational_units', 'users');
         });
     }
 

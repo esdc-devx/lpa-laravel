@@ -54,7 +54,6 @@
 
   .process-current-bar {
     display: flex;
-    margin-bottom: 20px;
     &-list {
       list-style: none;
       padding: 0;

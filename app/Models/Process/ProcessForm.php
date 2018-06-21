@@ -6,7 +6,6 @@ use App\Models\LocalizableModel;
 
 class ProcessForm extends LocalizableModel
 {
-    protected $guarded = [];
     protected $hidden = ['id', 'process_step_id'];
     protected $localizable = ['name'];
 

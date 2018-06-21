@@ -19,6 +19,10 @@ class DatabaseSeeder extends Seeder
             StatesTableSeeder::class,
             ProjectTableSeeder::class,
             ProcessProjectApprovalSeeder::class,
+            RequestSourceTableSeeder::class,
+            PotentialSolutionTypeTableSeeder::class,
+            GovernmentPriorityTableSeeder::class,
+            CommunitiesTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

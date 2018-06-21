@@ -11,8 +11,7 @@ class ProcessInstanceForm extends BaseModel
 {
     use UsesUserAudit;
 
-    protected $guarded = [];
-    protected $hidden = ['process_form_id', 'process_instance_id', 'state_id', 'process_instance_step_id'];
+    protected $hidden = ['process_form_id', 'process_instance_id', 'state_id', 'process_instance_step_id', 'created_at', 'created_by'];
 
     public function definition()
     {

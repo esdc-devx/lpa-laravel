@@ -15,12 +15,16 @@ class CreateBusinessCasesTable extends Migration
     {
         Schema::create('business_cases', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('process_instance_form_id')->unsigned();
+            $table->unsignedInteger('process_instance_form_id');
+            // Business Drivers fields.
+            $table->string('request_source_other')->nullable();
             $table->text('business_issue')->nullable();
-
-            $table->foreign('process_instance_form_id')
-                ->references('id')
-                ->on('process_instance_forms');
+            // Proposal fields.
+            $table->text('learning_response_strategy')->nullable();
+            $table->string('potential_solution_type_other')->nullable();
+            $table->boolean('is_required_training')->nullable();
+            // Foreign keys.
+            $table->referenceOn('process_instance_form_id', 'process_instance_forms');
         });
     }
 

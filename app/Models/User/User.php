@@ -4,7 +4,7 @@ namespace App\Models\User;
 
 use Adldap\Laravel\Traits\HasLdapUser;
 use App\Models\BaseModel;
-use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Models\OrganizationalUnit;
 use App\Models\Project\Project;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;

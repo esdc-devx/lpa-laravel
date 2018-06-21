@@ -24,25 +24,10 @@ class CreateProjectsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->foreign('organizational_unit_id')
-                ->references('id')
-                ->on('organizational_units')
-                ->onDelete('set null');
-
-            $table->foreign('state_id')
-                ->references('id')
-                ->on('states')
-                ->onDelete('set null');
-
-            $table->foreign('process_instance_id')
-                ->references('id')
-                ->on('process_instances')
-                ->onDelete('set null');
-
-            $table->foreign('business_case_id')
-                ->references('id')
-                ->on('business_cases')
-                ->onDelete('set null');
+            $table->referenceOn('organizational_unit_id', 'organizational_units')->onDelete('set null');
+            $table->referenceOn('state_id', 'states')->onDelete('set null');
+            $table->referenceOn('process_instance_id', 'process_instances')->onDelete('set null');
+            $table->referenceOn('business_case_id', 'business_cases')->onDelete('set null');
         });
     }
 

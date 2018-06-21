@@ -5,7 +5,7 @@ namespace App\Console\Commands\Camunda;
 use App\Camunda\APIs\CamundaAuthorizations;
 use App\Camunda\Exceptions\ResourceNotFoundException;
 use App\Console\BaseCommand;
-use App\Models\OrganizationalUnit\OrganizationalUnit;
+use App\Models\OrganizationalUnit;
 use App\Models\User\User;
 
 class Configure extends BaseCommand

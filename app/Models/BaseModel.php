@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
+    protected $guarded = [];
+
     /**
      * Return entity type string from model class name.
      *
