@@ -9,7 +9,7 @@
           </dl>
           <dl>
             <dt>{{ trans('entities.form.current_editor') }}</dt>
-            <dd>{{ processInstanceForm.current_editor }}</dd>
+            <dd>{{ processInstanceForm.current_editor ? processInstanceForm.current_editor.name : trans('entities.general.na') }}</dd>
           </dl>
           <dl>
             <dt>{{ $tc('entities.general.organizational_units') }}</dt>
@@ -17,7 +17,7 @@
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ processInstanceForm.updated_by }}</dd>
+            <dd>{{ processInstanceForm.updated_by ? processInstanceForm.updated_by.name : trans('entities.general.na') }}</dd>
             <dd>{{ processInstanceForm.updated_at }}</dd>
           </dl>
         </info-box>
