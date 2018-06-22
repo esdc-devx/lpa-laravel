@@ -10,25 +10,25 @@
     "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "browser-sync": "^2.24.4",
-    "browser-sync-webpack-plugin": "^2.2.2",
-    "cross-env": "^5.1.6",
-    "laravel-mix": "^2.1.11"
+    "babel-core": "6.26.3",
+    "babel-loader": "7.1.4",
+    "browser-sync": "2.24.4",
+    "browser-sync-webpack-plugin": "2.2.2",
+    "cross-env": "5.2.0",
+    "laravel-mix": "2.1.11"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "element-theme-chalk": "^2.4.0",
-    "element-ui": "^2.4.0",
-    "es6-promise": "^4.2.4",
-    "lodash": "^4.17.10",
-    "vee-validate": "^2.0.9",
-    "vue": "^2.5.16",
-    "vue-data-tables": "^3.2.0",
-    "vue-i18n": "^7.7.0",
-    "vue-router": "^3.0.1",
-    "vuex": "^3.0.1",
-    "vuex-router-sync": "^5.0.0"
+    "axios": "0.18.0",
+    "element-theme-chalk": "2.4.1",
+    "element-ui": "2.4.1",
+    "es6-promise": "4.2.4",
+    "lodash": "4.17.10",
+    "vee-validate": "2.0.9",
+    "vue": "2.5.16",
+    "vue-data-tables": "3.2.0",
+    "vue-i18n": "7.8.1",
+    "vue-router": "3.0.1",
+    "vuex": "3.0.1",
+    "vuex-router-sync": "5.0.0"
   }
 }
