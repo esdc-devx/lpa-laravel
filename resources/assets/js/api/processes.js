@@ -3,7 +3,7 @@ import axios from '../axios/interceptor';
 
 export default {
   start(nameKey, entityId) {
-    return axios.post(`process-definitions/${nameKey}/?entity_id=${entityId}`);
+    return axios.post(`process-definitions/${nameKey}?entity_id=${entityId}`);
   },
 
   getDefinitions(entityType) {
