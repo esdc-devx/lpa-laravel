@@ -231,6 +231,10 @@
         // reset the fields states
         // so that we get a pristine form
         this.resetFieldsState();
+
+        this.notifyInfo({
+          message: this.trans('components.notice.changes_discarded')
+        });
       },
 
       async onSave() {
@@ -240,6 +244,9 @@
         // so that we get a pristine form with the new values
         this.resetFieldsState();
         this.isSaving = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.changes_saved')
+        });
       },
 
       setupStage() {

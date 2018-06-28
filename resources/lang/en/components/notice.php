@@ -21,4 +21,6 @@ return [
     'updated' => '<b>:name</b> has been updated.',
     'deleted' => '<b>:name</b> has been deleted.',
     'started' => '<b>:name</b> has been started.',
+    'changes_saved'     => 'Changes have been saved.',
+    'changes_discarded' => 'Changes have been discarded.',
 ];
