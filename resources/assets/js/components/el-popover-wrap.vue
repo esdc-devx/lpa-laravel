@@ -51,8 +51,11 @@
         margin-bottom: 0;
       }
     }
-    ul li span {
-      font-weight: 500;
+    ul {
+      margin: 0;
+      li span {
+        font-weight: 500;
+      }
     }
   }
 </style>
