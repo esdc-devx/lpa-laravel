@@ -59,6 +59,10 @@
     .el-checkbox {
       margin-left: 20px;
       margin-right: 20px;
+      display: inline-table;
+      // make sure the line-height is constant here
+      // as it needs to be vertically centered with its folowing input
+      line-height: 40px !important;
     }
     .el-input-wrap {
       flex: 1;

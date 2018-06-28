@@ -13,3 +13,8 @@
   display: inline-block;
   vertical-align: middle;
 }
+
+// this fixes a color contrast issue when the radio buttons are disabled ans selected
+.el-radio-button__orig-radio:disabled:checked + .el-radio-button__inner {
+  color: $--color-white;
+}

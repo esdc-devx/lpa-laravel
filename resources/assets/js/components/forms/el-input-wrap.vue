@@ -1,6 +1,6 @@
 <template>
   <div class="el-input-wrap">
-    <el-input ref="input" :autosize="{ minRows: 2 }" v-bind="$attrs" @input.native="updateValue($event.target.value)" :maxlength="charsLimit">
+    <el-input ref="input" :autosize="{ minRows: 2 }" v-bind="$attrs" :value="value" @input.native="updateValue($event.target.value)" :maxlength="charsLimit">
       <slot></slot>
     </el-input>
     <span v-if="maxlength" class="char-count">
@@ -20,16 +20,17 @@
         type: String,
         default: null
       },
-      value: String
-    },
-
-    data() {
-      return {
-        charCount: 0
-      }
+      value: String,
+      default: ''
     },
 
     computed: {
+      charCount() {
+        if (this.value) {
+          return this.value.length;
+        }
+        return 0;
+      },
       charsLimit() {
         return this.maxlength;
       }
@@ -37,8 +38,6 @@
 
     methods: {
       updateValue: function (value) {
-        // update the char count
-        this.charCount = value.length;
         // update parent data so that we can still v-model on the parent
         this.$emit('input', value);
       }

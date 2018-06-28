@@ -15,6 +15,7 @@ return [
         'delete_project'  => 'You are about to delete the project named "<b>:name</b>" (<b>LPA #: :id</b>) and all its related information. Do you want to continue?',
         'deleted_project' => 'The deletion failed because the project has already been deleted.',
         'start_process'   => 'Do you want to start the <b>:process_name</b> process for the current project?',
+        'lose_changes'    => 'Changes have not been saved yet. Do you want to discard those changes?',
     ],
     'created' => '<b>:name</b> has been created.',
     'updated' => '<b>:name</b> has been updated.',

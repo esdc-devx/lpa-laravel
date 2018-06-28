@@ -3,24 +3,24 @@ import _ from 'lodash';
 import '../locale';
 
 export default {
-  _confirm(
+  _confirm({
     title,
     message = '',
     action = 'delete',
     confirmButtonClass = '',
-    thenCallback = _.noop,
-    catchCallback = _.noop
-  ) {
+    thenCallback,
+    catchCallback
+  }) {
     let type = 'warning';
     title = title || Vue.prototype.trans('components.notice[' + type + ']');
-    return Vue.prototype
+    Vue.prototype
       .$confirm(
         message,
         title,
         {
           type,
           confirmButtonText: this.trans('base.actions[' + action + ']'),
-          confirmButtonClass: confirmButtonClass,
+          confirmButtonClass,
           cancelButtonText: this.trans('base.actions.cancel'),
           dangerouslyUseHTMLString: true
         }
@@ -29,36 +29,54 @@ export default {
       .catch(catchCallback);
   },
 
-  confirm(title, message, action = 'create', confirmButtonClass = '', thenCallback = _.noop, catchCallback = _.noop) {
-    return this._confirm(
-      title,
-      message,
-      action,
-      confirmButtonClass,
-      thenCallback,
-      catchCallback
-    );
+  confirm({ title, message, action = 'create', confirmButtonClass = '' }) {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title,
+        message,
+        action,
+        confirmButtonClass,
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
   },
 
-  confirmStart(title, message, thenCallback = _.noop, catchCallback = _.noop) {
-    return this._confirm(
-      title,
-      message,
-      'start',
-      '',
-      thenCallback,
-      catchCallback
-    );
+  confirmStart({ title, message }) {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title,
+        message,
+        action: 'start',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
   },
 
-  confirmDelete(title, message, thenCallback = _.noop, catchCallback = _.noop) {
-    return this._confirm(
-      title,
-      message,
-      'delete',
-      'el-button--danger',
-      thenCallback,
-      catchCallback
-    );
+  confirmDelete({ title, message }) {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title,
+        message,
+        action: 'delete',
+        confirmButtonClass: 'el-button--danger',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
+  },
+
+  confirmLoseChanges() {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title: this.trans('components.notice.type.warning'),
+        message: this.trans('components.notice.message.lose_changes'),
+        action: 'discard',
+        confirmButtonClass: 'el-button--danger',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
   }
 };

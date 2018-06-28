@@ -53,7 +53,7 @@
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current',
         hasRole: 'users/hasRole',
-        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
+        shouldConfirmBeforeLanguageChange: 'shouldConfirmBeforeLanguageChange'
       })
     },
 
@@ -110,7 +110,7 @@
       },
 
       setLanguage() {
-        if (this.shouldConfirmBeforeLeaving) {
+        if (this.shouldConfirmBeforeLanguageChange) {
           EventBus.$emit('TopBar:beforeLanguageUpdate', this.doSetLanguage);
         } else {
           this.doSetLanguage();

@@ -54,6 +54,8 @@
   export default {
     name: 'project-create',
 
+    inject: ['$validator'],
+
     mixins: [ FormUtils, PageUtils ],
 
     components: { FormError },
@@ -94,7 +96,9 @@
           let project = await this.createProject(this.form);
           this.$store.commit(`${namespace}/setViewing`, project);
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notice.created', { name: this.form.name }));
+          this.notifySuccess({
+            message: this.trans('components.notice.created', { name: this.form.name })
+          });
           this.jumpToCreatedProject();
         } catch({ response }) {
           this.isSaving = false;

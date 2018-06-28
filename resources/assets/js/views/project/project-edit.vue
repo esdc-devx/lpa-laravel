@@ -54,6 +54,8 @@
   export default {
     name: 'project-edit',
 
+    inject: ['$validator'],
+
     mixins: [ FormUtils, PageUtils ],
 
     components: { FormError },
@@ -93,7 +95,9 @@
             organizational_unit: this.form.project.organizational_unit
           });
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notice.updated', { name: this.form.project.name }));
+          this.notifySuccess({
+            message: this.trans('components.notice.updated', { name: this.form.project.name })
+          });
           this.go(`/${this.language}/projects/${this.form.project.id}`);
         } catch({ response }) {
           this.isSaving = false;

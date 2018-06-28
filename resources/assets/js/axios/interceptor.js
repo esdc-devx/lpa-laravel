@@ -43,12 +43,18 @@ axios.interceptors.response.use(response => response, error => {
         }
       });
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
-    Notify.notifyError(trans('errors.forbidden'));
+    Notify.notifyError({
+      message: trans('errors.forbidden')
+    });
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
-    Notify.notifyError(trans('errors.general'));
+    Notify.notifyError({
+      message: trans('errors.general')
+    });
   } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
-    Notify.notifyError(trans('errors.bad_request'));
+    Notify.notifyError({
+      message: trans('errors.bad_request')
+    });
   }
 
   Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);

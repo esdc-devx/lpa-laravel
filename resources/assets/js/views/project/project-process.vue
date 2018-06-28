@@ -208,10 +208,13 @@
       next();
     },
 
+    created() {
+      this.fetch();
+    },
+
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.fetch);
-      this.fetch();
     }
   };
 </script>

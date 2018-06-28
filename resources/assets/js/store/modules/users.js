@@ -48,6 +48,12 @@ export default {
       };
     },
 
+    isCurrentEditor(state) {
+      return function (username) {
+        return state.current.username === username;
+      };
+    },
+
     pagination(state) {
       return state.pagination;
     }
