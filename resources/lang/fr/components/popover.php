@@ -13,6 +13,10 @@ return [
     'help' => [
         'title' => 'Aide',
         'business_issue' => 'Quels sont les enjeux opérationnels, problèmes ou lacunes en matière de rendement que l’École tente de régler?',
-        'potential_solution_types' => 'Solution commerciale : matériel d\'un tiers exigeant un achat, par exemple, Skillsofts',
+        'potential_solution_types' => '
+            <ul>
+                <li><span>Solution commerciale</span> : matériel d\'un tiers exigeant un achat, par exemple, Skillsofts.</li>
+            </ul>
+        ',
     ],
 ];

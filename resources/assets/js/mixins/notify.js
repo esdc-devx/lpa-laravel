@@ -15,18 +15,34 @@ export default {
   },
 
   notifySuccess({ message, autoClose = true }) {
-    this._notify(message, 'success', autoClose);
+    this._notify({
+      message,
+      type: 'success',
+      autoClose
+    });
   },
 
   notifyInfo({ message, autoClose = true }) {
-    this._notify(message, 'info', autoClose);
+    this._notify({
+      message,
+      type: 'info',
+      autoClose
+    });
   },
 
   notifyWarning({ message, autoClose = true }) {
-    this._notify(message, 'warning', autoClose);
+    this._notify({
+      message,
+      type: 'warning',
+      autoClose
+    });
   },
 
   notifyError({ message, autoClose = false }) {
-    this._notify(message, 'error', autoClose);
+    this._notify({
+      message,
+      type: 'error',
+      autoClose
+    });
   }
 };

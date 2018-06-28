@@ -13,6 +13,9 @@ return [
     'help' => [
         'title' => 'Help',
         'business_issue' => 'What are the business issues, problems or performance gaps that the School is trying to solve?',
-        'potential_solution_types' => 'COTS: Third party material that requires purchase. E.g.: Skillsofts',
+        'potential_solution_types' => '
+            <ul>
+                <li><span>COTS</span>: Third party material that requires purchase. E.g.: Skillsofts.</li>
+            </ul>',
     ],
 ];

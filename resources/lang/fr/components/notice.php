@@ -15,10 +15,12 @@ return [
         'delete_project'  => 'Vous vous apprêtez à supprimer le projet intitulé «&nbsp;<b>:name</b>&nbsp;» (<b>No.&nbsp;APA&nbsp;:&nbsp;:id</b>) ainsi que toutes ses informations associées. Voulez-vous poursuivre?',
         'deleted_project' => 'La suppression a échoué car le projet a déjà été supprimé.',
         'start_process'   => 'Voulez-vous démarrer le processus <b>:process_name</b> pour le projet courant?',
-        'lose_changes'    => 'Les changements n\'ont pas encore été sauvegardés. Voulez-vous supprimer ces changements?',
+        'lose_changes'    => 'Des changements n\'ont pas encore été sauvegardés. Voulez-vous supprimer ces changements?',
     ],
     'created' => '<b>:name</b> a été créé.',
     'updated' => '<b>:name</b> a été mis-à-jour.',
     'deleted' => '<b>:name</b> a été supprimé.',
     'started' => '<b>:name</b> a été démarré.',
+    'changes_saved'     => 'Les changements ont été sauvegardés.',
+    'changes_discarded' => 'Les changements ont été supprimés.',
 ];
