@@ -11,6 +11,7 @@ return [
     'create'   => 'Créer',
     'update'   => 'Mettre à jour',
     'delete'   => 'Supprimer',
+    'discard'  => 'Supprimer',
     'confirm'  => 'Confirmer',
     'close'    => 'Fermer',
     'save'     => 'Sauvegarder'

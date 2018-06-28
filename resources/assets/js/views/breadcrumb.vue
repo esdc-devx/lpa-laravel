@@ -2,7 +2,7 @@
   <transition name="fade" mode="in-out">
     <div v-show="isHomePage === false" class="breadcrumb">
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item v-for="(crumb, index) in getBreadcrumbs()" :to="{ path: crumb.path }" :key="index">{{ crumb.name }}</el-breadcrumb-item>
+        <el-breadcrumb-item v-for="(crumb, index) in getBreadcrumbs()" :to="{ path: '/' + language + '/' + crumb.path }" :key="index">{{ crumb.name }}</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
   </transition>
@@ -10,6 +10,7 @@
 
 <script>
   import _ from 'lodash';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'breadcrumb',
@@ -22,6 +23,9 @@
     },
 
     computed: {
+      ...mapGetters([
+        'language'
+      ]),
       isHomePage: function() {
         return this.breadcrumbs.length <= 1;
       }
@@ -88,7 +92,7 @@
         let homeRoute = _.find(this.$router.options.routes, { name: 'home' });
         let crumbs = [{
           name: homeRoute.meta.title.call(this),
-          path: '/'
+          path: ''
         }];
 
         if (!this.validateMeta()) {
@@ -110,17 +114,14 @@
         // build up the breadcrumbs data
         for (let i = 0; i < matchedCrumbsArr.length; i++) {
           crumb = _.find(this.$router.options.routes, { name: matchedCrumbsArr[i] });
-          // since the meta is executed
-          // before any store modules has done loading,
-          // we need to catch edge cases like deep linking
-          // would produce undefined as value
-          outputTitle = crumb.meta.title.call(this) === 'undefined' ? '' : crumb.meta.title.call(this);
+          outputTitle = crumb.meta.title.call(this);
+
           // try to translate the title, or just take it as value
           title = outputTitle || '';
           resolvedPath = _.compact(crumb.path.split('/'));
           // remove the language since we will add a reactive value
           resolvedPath.splice(0, 1);
-          path = '/' + this.resolvePath(resolvedPath.join('/'));
+          path = this.resolvePath(resolvedPath.join('/'));
 
           // don't add any crumb that do not have a valid path
           if (path) {

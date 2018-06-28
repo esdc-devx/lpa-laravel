@@ -23,7 +23,9 @@ let token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
   defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 } else {
-  Notify.notifyError(Vue.prototype.trans('errors.csrf_not_found'));
+  Notify.notifyError({
+    message: Vue.prototype.trans('errors.csrf_not_found')
+  });
 }
 
 export default defaults;

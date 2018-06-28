@@ -89,10 +89,14 @@ new Vue({
       } catch({ response }) {
         // catch in case of token mismatch, invalid session, etc due to cache cleared by user
         if (response.status === HttpStatusCodes.BAD_REQUEST) {
-          this.notifyError(Vue.prototype.trans('errors.bad_request'));
+          this.notifyError({
+            message: Vue.prototype.trans('errors.bad_request')
+          });
           return;
         } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError(Vue.prototype.trans('errors.server_error'));
+          this.notifyError({
+            message: Vue.prototype.trans('errors.server_error')
+          });
           return;
         }
         this.isSaving = false;

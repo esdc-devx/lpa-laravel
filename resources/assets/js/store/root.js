@@ -7,6 +7,7 @@ import Config from '../config';
 export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
+  shouldConfirmBeforeLanguageChange: false,
   shouldConfirmBeforeLeaving: false,
   isAdminBarShown: false,
   isAppLoading: false,
@@ -32,6 +33,10 @@ export const getters = {
 
   isMainLoading(state) {
     return state.isMainLoading;
+  },
+
+  shouldConfirmBeforeLanguageChange(state) {
+    return state.shouldConfirmBeforeLanguageChange;
   },
 
   shouldConfirmBeforeLeaving(state) {
@@ -78,7 +83,11 @@ export const actions = {
     commit(types.TOGGLE_MAIN_LOADING, false);
   },
 
-  shouldConfirmBeforeLeaving({ commit }, context) {
+  confirmBeforeLanguageChange({ commit }, context) {
+    commit(types.SHOULD_CONFIRM_BEFORE_LANGUAGE_CHANGE, context);
+  },
+
+  confirmBeforeLeaving({ commit }, context) {
     commit(types.SHOULD_CONFIRM_BEFORE_LEAVING, context);
   }
 };
@@ -121,6 +130,10 @@ export const mutations = {
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {
     state.isMainLoading = isShown;
+  },
+
+  [types.SHOULD_CONFIRM_BEFORE_LANGUAGE_CHANGE](state, val) {
+    state.shouldConfirmBeforeLanguageChange = val;
   },
 
   [types.SHOULD_CONFIRM_BEFORE_LEAVING](state, val) {

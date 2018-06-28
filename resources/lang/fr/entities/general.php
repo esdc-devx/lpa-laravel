@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'assigned_organizational_units' => 'Unité organisationnelle assignée|Unitées organisationnelle assignées',
     'organizational_units' => 'Unité organisationnelle|Unités organisationnelles',
     'lpa_num'              => 'No. APA',
     'name'                 => 'Nom',

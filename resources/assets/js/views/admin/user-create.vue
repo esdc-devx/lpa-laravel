@@ -87,6 +87,8 @@
   export default {
     name: 'admin-user-create',
 
+    inject: ['$validator'],
+
     mixins: [ FormUtils, PageUtils ],
 
     components: { FormError },
@@ -139,7 +141,9 @@
           this.inUserList = _.map(users, 'name');
           callback(users);
         } catch(e) {
-          this.$notifyError('Unable to retrieve users.');
+          this.$notifyError({
+            message: 'Unable to retrieve users.'
+          });
           this.$log.error(`[user-create][querySearchAsync] ${e}`);
         }
       },
@@ -157,7 +161,9 @@
         try {
           await this.createUser(_.omit(this.form, 'name'));
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notice.created', { name: this.form.name }));
+          this.notifySuccess({
+            message: this.trans('components.notice.created', { name: this.form.name })
+          });
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
           this.isSaving = false;

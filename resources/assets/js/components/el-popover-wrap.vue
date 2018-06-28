@@ -2,18 +2,18 @@
   <el-popover
     popper-class="el-popover-wrap"
     placement="bottom-start"
-    width="200"
+    width="auto"
     trigger="hover">
       <span slot="reference"><i class="el-icon-lpa-popover"></i></span>
       <p v-if="description">
-        <b>{{ trans('components.popover.description') }}</b>
+        <b>{{ trans('components.popover.description.title') }}</b>
         <br>
-        {{ description }}
+        <span v-html="description"></span>
       </p>
       <p v-if="help">
-        <b>{{ trans('components.popover.help') }}</b>
+        <b>{{ trans('components.popover.help.title') }}</b>
         <br>
-        {{ help }}
+        <span v-html="help"></span>
       </p>
   </el-popover>
 </template>
@@ -42,11 +42,17 @@
 
   .el-popover-wrap {
     text-align: left;
+    &.el-popover {
+      max-width: 400px;
+    }
     p {
       margin-top: 0;
       &:last-of-type {
         margin-bottom: 0;
       }
+    }
+    ul li span {
+      font-weight: 500;
     }
   }
 </style>

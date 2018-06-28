@@ -5,7 +5,9 @@ export default {
 
   state: {
     // project being viewed
-    viewing: {},
+    viewing: {
+      name: ''
+    },
     all: [],
     organizationalUnits: []
   },
