@@ -150,21 +150,22 @@
         },
         // update the value server side
         async set(val) {
-          await this.showMainLoading();
           if (val) {
+            await this.showMainLoading();
             await this.claimForm(this.$route.params.formId);
             await this.hideMainLoading();
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
               .then(async () => {
+                await this.showMainLoading();
                 this.discardChanges();
                 await this.unclaimForm(this.$route.params.formId);
                 await this.hideMainLoading();
               }).catch(async () => {
-                await this.hideMainLoading();
                 return false;
               });
           } else {
+            await this.showMainLoading();
             await this.unclaimForm(this.$route.params.formId);
             await this.hideMainLoading();
           }
@@ -247,6 +248,8 @@
         // reset the fields states
         // so that we get a pristine form with the new values
         this.resetFieldsState();
+        // reaffect the changes to our cache
+        Object.assign(this.originalFormData, this.$refs.tabs.form);
         this.isSaving = false;
         this.notifySuccess({
           message: this.trans('components.notice.changes_saved')
@@ -304,21 +307,30 @@
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
+      },
+
+      beforeLogout(callback) {
+        this.confirmLoseChanges().then(async () => {
+          await this.showMainLoading();
+          await this.unclaimForm(this.$route.params.formId);
+          await this.hideMainLoading();
+          callback();
+        }).catch(() => false);
       }
     },
 
     beforeRouteLeave(to, from, next) {
       if (this.shouldConfirmBeforeLeaving) {
         this.confirmLoseChanges().then(async () => {
-          this.discardChanges();
-          this.isClaiming = false;
+          await this.showMainLoading();
+          await this.unclaimForm(this.$route.params.formId);
+          await this.hideMainLoading();
           next();
         }).catch(() => false);
       } else {
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
         EventBus.$off('Store:languageUpdate', this.fetch);
-        window.onbeforeunload = null;
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
           this.isClaiming = false;
@@ -328,9 +340,6 @@
     },
 
     async created() {
-      window.onbeforeunload = function (evt) {
-        return '';
-      };
       let formId = this.$route.params.formId;
       this.rights.canEdit = await this.canEditForm(formId);
       this.rights.canClaim = await this.canClaimForm(formId);
@@ -340,6 +349,7 @@
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.fetch);
+      EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
       this.fetch();
     }
   };

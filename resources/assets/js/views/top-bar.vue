@@ -53,7 +53,8 @@
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current',
         hasRole: 'users/hasRole',
-        shouldConfirmBeforeLanguageChange: 'shouldConfirmBeforeLanguageChange'
+        shouldConfirmBeforeLanguageChange: 'shouldConfirmBeforeLanguageChange',
+        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
       })
     },
 
@@ -92,7 +93,15 @@
         logout: 'users/logout'
       }),
 
-      async onLogout() {
+      onLogout() {
+        if (this.shouldConfirmBeforeLeaving) {
+          EventBus.$emit('TopBar:beforeLogout', this.doLogout);
+        } else {
+          this.doLogout();
+        }
+      },
+
+      async doLogout() {
         this.showAppLoading();
         // try-catch here since the logout uses another instance of axios
         // which doesn't have the interceptors
