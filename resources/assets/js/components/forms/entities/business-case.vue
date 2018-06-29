@@ -201,13 +201,14 @@
       },
 
       async fetchLists() {
+        await this.showMainLoading();
         this.isInfoLoading = true;
         let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority');
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
         this.isInfoLoading = false;
-        this.hideMainLoading();
+        await this.hideMainLoading();
       }
     },
 

@@ -150,19 +150,19 @@
         },
         // update the value server side
         async set(val) {
-          this.showMainLoading();
+          await this.showMainLoading();
           if (val) {
             await this.claimForm(this.$route.params.formId);
-            this.hideMainLoading();
+            await this.hideMainLoading();
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
-              .then(() => {
+              .then(async () => {
                 this.discardChanges();
-                this.hideMainLoading();
+                await this.hideMainLoading();
               }).catch(() => false);
           } else {
             await this.unclaimForm(this.$route.params.formId);
-            this.hideMainLoading();
+            await this.hideMainLoading();
           }
         }
       },
@@ -290,12 +290,13 @@
 
       async fetch() {
         try {
-          this.showMainLoading();
+          await this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
           this.currentFormComponent = this.viewingFormInfo.definition.name_key;
           this.setupStage();
+          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
