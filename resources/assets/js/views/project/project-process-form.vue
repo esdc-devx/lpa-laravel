@@ -158,6 +158,7 @@
             this.confirmLoseChanges()
               .then(async () => {
                 this.discardChanges();
+                await this.unclaimForm(this.$route.params.formId);
                 await this.hideMainLoading();
               }).catch(() => false);
           } else {
