@@ -160,7 +160,10 @@
                 this.discardChanges();
                 await this.unclaimForm(this.$route.params.formId);
                 await this.hideMainLoading();
-              }).catch(() => false);
+              }).catch(async () => {
+                await this.hideMainLoading();
+                return false;
+              });
           } else {
             await this.unclaimForm(this.$route.params.formId);
             await this.hideMainLoading();
