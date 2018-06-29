@@ -53,5 +53,4 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/process-instance-form/claim/{processInstanceForm}', 'AuthorizationController@claimProcessInstanceForm')->name('authorization.process-instance-form.claim');
     Route::get('authorization/process-instance-form/unclaim/{processInstanceForm}', 'AuthorizationController@unclaimProcessInstanceForm')->name('authorization.process-instance-form.unclaim');
     Route::get('authorization/process-instance-form/edit/{processInstanceForm}', 'AuthorizationController@editProcessInstanceForm')->name('authorization.process-instance-form.edit');
-
 });

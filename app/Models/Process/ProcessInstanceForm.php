@@ -74,4 +74,38 @@ class ProcessInstanceForm extends BaseModel
 
         return $this;
     }
+
+    /**
+     * Assign user to be able to edit the form.
+     *
+     * @param  User $user
+     * @return $this
+     */
+    public function claim(User $user = null)
+    {
+        $user = $user ?? auth()->user();
+        $this->currentEditor()->associate($user);
+        $this->save();
+
+        // Dispatch event for CamundaEventSubscriber to respond for.
+        event(new ProcessInstanceFormClaimed($user, $this));
+
+        return $this;
+    }
+
+    /**
+     * Remove current form editor.
+     *
+     * @return $this
+     */
+    public function unclaim()
+    {
+        $this->currentEditor()->dissociate();
+        $this->save();
+
+        // Dispatch event for CamundaEventSubscriber to respond for.
+        event(new ProcessInstanceFormUnclaimed($this));
+
+        return $this;
+    }
 }
