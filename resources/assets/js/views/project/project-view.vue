@@ -116,7 +116,7 @@
       },
 
       async fetch() {
-        this.showMainLoading();
+        await this.showMainLoading();
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProject(projectId);
@@ -124,7 +124,7 @@
           EventBus.$emit('App:ready');
           this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
-          this.hideMainLoading();
+          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }

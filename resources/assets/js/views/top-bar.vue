@@ -88,6 +88,7 @@
     methods: {
       ...mapActions({
         showAppLoading: 'showAppLoading',
+        showMainLoading: 'showMainLoading',
         logout: 'users/logout'
       }),
 
@@ -117,7 +118,11 @@
         }
       },
 
-      doSetLanguage() {
+      async doSetLanguage() {
+        // @todo: we probably should hide the app entirely
+        // to avoid seeing bouncing texts
+        // @note: hideMainLoading is called when the language is set in router
+        await this.showMainLoading();
         this.$helpers.throttleAction(() => {
           let storeLang = this.$store.getters.language;
           let newLang = this.getSwitchedLang(storeLang);

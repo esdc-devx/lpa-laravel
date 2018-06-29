@@ -117,8 +117,8 @@
       },
 
       async triggerLoadProjects() {
-        this.showMainLoading();
-        await this.$store.dispatch(`${namespace}/loadProjects`);
+        await this.showMainLoading();
+        await this.loadProjects();
         this.normalizedList = _.map(this.projects, project => {
           let normProject = _.pick(project, this.normalizedListAttrs);
           normProject.organizational_unit = normProject.organizational_unit.name;
@@ -128,9 +128,7 @@
           return normProject;
         });
 
-        this.$nextTick(() => {
-          this.hideMainLoading();
-        });
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {

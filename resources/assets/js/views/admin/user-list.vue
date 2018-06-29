@@ -152,11 +152,11 @@
 
       async triggerLoadUsers(page) {
         this.$parent.$el.scrollTop = 0;
-        this.showMainLoading();
+        await this.showMainLoading();
         page = _.isUndefined(page) ? this.currentPage : page;
         await this.loadUsers(page)
         this.parseUsers();
-        this.hideMainLoading();
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
