@@ -9,18 +9,19 @@ return [
     ],
     'title'   => [
         'delete_project'  => 'Delete Project',
+        'pending_changes' => 'Pending Changes',
     ],
     'message' => [
         'language_toggle' => 'Changing the language will reset the table filters. Do you want to continue?',
         'delete_project'  => 'You are about to delete the project named "<b>:name</b>" (<b>LPA #: :id</b>) and all its related information. Do you want to continue?',
         'deleted_project' => 'The deletion failed because the project has already been deleted.',
         'start_process'   => 'Do you want to start the <b>:process_name</b> process for the current project?',
-        'lose_changes'    => 'Changes have not been saved yet. Do you want to discard those changes?',
+        'pending_changes' => 'Changes have not been saved yet. Do you want to discard those changes?',
     ],
     'created' => '<b>:name</b> has been created.',
     'updated' => '<b>:name</b> has been updated.',
     'deleted' => '<b>:name</b> has been deleted.',
     'started' => '<b>:name</b> has been started.',
-    'changes_saved'     => 'Changes have been saved.',
-    'changes_discarded' => 'Changes have been discarded.',
+    'changes_saved'     => 'The Changes have been saved.',
+    'changes_discarded' => 'The Changes have been discarded.',
 ];

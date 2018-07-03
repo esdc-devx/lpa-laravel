@@ -27,7 +27,9 @@
           </el-option>
         </el-select>
         <el-input-other-wrap
+          name="request_source_other"
           v-model="form.request_source_other"
+          v-validate="{ rules: { required: this.isRequestSourceOther} }"
           :isChecked.sync="isRequestSourceOther"
           maxlength="100">
         </el-input-other-wrap>
@@ -101,8 +103,10 @@
           </el-option>
         </el-select>
         <el-input-other-wrap
+          name="potential_solution_type_other"
           v-model="form.potential_solution_type_other"
           :isChecked.sync="isPotentialSolutionTypesOther"
+          v-validate="{ rules: { required: this.isPotentialSolutionTypesOther} }"
           maxlength="1250"
           type="textarea">
         </el-input-other-wrap>
@@ -207,6 +211,11 @@
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
+
+        // make the checkboxes react
+        // based on the value of its correcponding field
+        this.isRequestSourceOther = !!this.form.request_source_other;
+        this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }

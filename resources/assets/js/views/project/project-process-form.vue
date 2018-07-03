@@ -125,8 +125,7 @@
           canEdit: false,
           canClaim: false,
           canUnclaim: false
-        },
-        isSaving: false
+        }
       }
     },
 
@@ -152,8 +151,17 @@
         async set(val) {
           if (val) {
             await this.showMainLoading();
-            await this.claimForm(this.$route.params.formId);
-            await this.hideMainLoading();
+            try {
+              await this.claimForm(this.$route.params.formId);
+              await this.hideMainLoading();
+            } catch({ response }) {
+              if (response.status === HttpStatusCodes.FORBIDDEN) {
+                this.discardChanges();
+                // reload the process_instance_form data since we are unsynced
+                await this.triggerLoadProcessInstanceForm();
+                await this.hideMainLoading();
+              }
+            }
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
               .then(async () => {
@@ -229,6 +237,7 @@
       },
 
       discardChanges() {
+        let formWasDirty = this.isFormDirty;
         // set the form data back to original state
         for (const key in this.originalFormData) {
           this.$set(this.$refs.tabs.form, key, this.originalFormData[key]);
@@ -237,23 +246,54 @@
         // so that we get a pristine form
         this.resetFieldsState();
 
-        this.notifyInfo({
-          message: this.trans('components.notice.changes_discarded')
+        if (formWasDirty) {
+          this.notifyInfo({
+            message: this.trans('components.notice.changes_discarded')
+          });
+        }
+      },
+
+      // Used in order to remove unnecessary props from response
+      // and convert arrays into only ids so that ElementUI understands them
+      formatData(data) {
+        let formId = this.$route.params.formId;
+        let that = this;
+        this.originalFormData = _.omit(data, 'process_instance_form');
+        _.forEach(this.originalFormData, (value, key) => {
+          // @fixme: shouldn't we get an array here?
+          // make sure that we convert the lists into only ids
+          // since el-select only needs ids to populate selected items
+          if (typeof value === 'object' && value !== null) {
+            that.originalFormData[key] = _.map(value, 'id');
+          }
         });
+        // make sure the id correspond to the actual form id
+        // since we recieve a process id in response.id
+        this.originalFormData.id = formId;
       },
 
       async onSave() {
         this.isSaving = true;
-        await this.saveForm(this.$refs.tabs.form);
-        // reset the fields states
-        // so that we get a pristine form with the new values
-        this.resetFieldsState();
-        // reaffect the changes to our cache
-        Object.assign(this.originalFormData, this.$refs.tabs.form);
-        this.isSaving = false;
-        this.notifySuccess({
-          message: this.trans('components.notice.changes_saved')
-        });
+        try {
+          let response = await this.saveForm(this.$refs.tabs.form);
+          this.formatData(response);
+          // reset the fields states
+          // so that we get a pristine form with the new values
+          this.resetFieldsState();
+          this.isSaving = false;
+          this.notifySuccess({
+            message: this.trans('components.notice.changes_saved')
+          });
+        } catch({ response }) {
+          if (response.status === HttpStatusCodes.FORBIDDEN) {
+            await this.showMainLoading();
+            this.discardChanges();
+            // remove ownership on form
+            await this.unclaimForm(this.$route.params.formId);
+            this.isSaving = false;
+            await this.hideMainLoading();
+          }
+        }
       },
 
       setupStage() {
@@ -281,18 +321,7 @@
         let that = this;
         let formId = this.$route.params.formId;
         let response = await this.loadProcessInstanceForm(formId);
-        this.originalFormData = _.omit(response, 'process_instance_form');
-        _.forEach(this.originalFormData, function(value, key) {
-          // @todo: shouldn't we get an array here?
-          // make sure that we convert the lists into only ids
-          // since el-select only needs ids to populate selected items
-          if (typeof value === 'object' && value !== null) {
-            that.originalFormData[key] = _.map(value, 'id');
-          }
-        });
-        // make sure the id correspond to the actual form id
-        // since we recieve a process id in response.id
-        this.originalFormData.id = formId;
+        this.formatData(response);
       },
 
       async fetch() {
@@ -331,6 +360,7 @@
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
         EventBus.$off('Store:languageUpdate', this.fetch);
+        EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
           this.isClaiming = false;
