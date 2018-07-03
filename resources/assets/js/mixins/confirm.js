@@ -70,8 +70,8 @@ export default {
   confirmLoseChanges() {
     return new Promise((resolve, reject) => {
       this._confirm({
-        title: this.trans('components.notice.type.warning'),
-        message: this.trans('components.notice.message.lose_changes'),
+        title: this.trans('components.notice.title.pending_changes'),
+        message: this.trans('components.notice.message.pending_changes'),
         action: 'discard',
         confirmButtonClass: 'el-button--danger',
         thenCallback: resolve,

@@ -1,9 +1,9 @@
 <template>
   <div class="el-input-other-wrap">
-    <el-checkbox v-model="checked" @change="onCheckboxChange">
+    <el-checkbox v-model="checked" :value="isChecked" @change="onCheckboxChange">
       {{ trans('entities.form.other') }}
     </el-checkbox>
-    <el-input-wrap ref="input" :disabled="!checked" v-bind="$attrs" @input.native="updateValue($event.target.value)">
+    <el-input-wrap ref="input" :disabled="!isChecked" v-bind="$attrs" :value="value" @input.native="updateValue($event.target.value)">
       <slot></slot>
     </el-input-wrap>
   </div>
@@ -20,12 +20,18 @@
     components: { ElInputWrap },
 
     props: {
+      isChecked: Boolean,
       value: String
     },
 
-    data() {
-      return {
-        checked: false
+    computed: {
+      checked: {
+        get() {
+          return this.isChecked;
+        },
+        set(val) {
+          this.$emit('update:isChecked', val);
+        }
       }
     },
 
@@ -37,7 +43,7 @@
 
       onCheckboxChange(checked) {
         // update parent property
-        this.$emit('update:isChecked', checked);
+        // this.$emit('update:isChecked', checked);
         if (checked) {
           this.$nextTick(() => {
             let inputEl = this.$refs.input.$el.querySelector('input');
@@ -45,6 +51,10 @@
             let el = inputEl || textareaEl;
             el.focus();
           });
+        } else {
+          // empty the input so that we send null
+          // when the checkbox is unchecked
+          this.$emit('input', null);
         }
       }
     }

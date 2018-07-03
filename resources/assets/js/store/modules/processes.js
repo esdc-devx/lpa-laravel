@@ -82,6 +82,7 @@ export default {
 
     async save({ commit }, form) {
       let response = await ProcessAPI.save(form);
+      commit('setViewingFormInfo', response.data.data.process_instance_form);
       return response.data.data;
     },
 
