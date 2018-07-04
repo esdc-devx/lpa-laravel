@@ -1,7 +1,7 @@
 import { mapActions } from 'vuex';
 
-import Constants from '../../constants.js';
-import EventBus from '../../event-bus.js';
+import Constants from '@/constants.js';
+import EventBus from '@/event-bus.js';
 
 export default {
   data() {

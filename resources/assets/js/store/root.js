@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import { Validator } from 'vee-validate';
-import axios from '../axios/interceptor';
+import axios from '@axios/interceptor';
 import * as types from './mutations-types';
-import Config from '../config';
+import Config from '@/config';
 
 export const state = {
   language: Config.DEFAULT_LANG,

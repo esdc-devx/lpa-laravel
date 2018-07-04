@@ -386,10 +386,10 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
-  @import '../../../sass/abstracts/functions';
-  @import '../../../sass/abstracts/mixins/helpers';
-  @import '../../../sass/base/helpers';
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/functions';
+  @import '~@sass/abstracts/mixins/helpers';
+  @import '~@sass/base/helpers';
 
   .project-process-form {
     height: calc(100% - 20px);

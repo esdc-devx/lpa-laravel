@@ -7,7 +7,7 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
   export default {
     name: 'not-found',

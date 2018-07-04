@@ -1,5 +1,5 @@
-import axios from '../axios/interceptor';
-import Config from '../config';
+import axios from '@axios/interceptor';
+import Config from '@/config';
 
 export default {
   logout() {

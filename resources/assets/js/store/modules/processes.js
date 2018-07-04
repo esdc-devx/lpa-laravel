@@ -1,4 +1,4 @@
-import ProcessAPI from '../../api/processes';
+import ProcessAPI from '@api/processes';
 
 export default {
   namespaced: true,

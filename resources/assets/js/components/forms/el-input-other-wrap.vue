@@ -62,7 +62,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   .el-input-other-wrap {
     display: flex;

@@ -37,7 +37,7 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import InfoBox from './info-box.vue';
+  import InfoBox from '@components/info-box.vue';
 
   let namespace = 'projects';
 
@@ -120,9 +120,9 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
-  @import '../../sass/abstracts/functions';
-  @import '../../sass/abstracts/mixins/helpers';
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/functions';
+  @import '~@sass/abstracts/mixins/helpers';
 
   .project-info {
     .info-box {

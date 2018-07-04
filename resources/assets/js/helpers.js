@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import store from './store/';
+import store from '@/store/';
 
-import Config from './config.js';
+import Config from '@/config.js';
 
 const helpers = {
   throttleAction: _.throttle(callback => {

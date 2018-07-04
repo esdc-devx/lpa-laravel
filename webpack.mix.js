@@ -1,4 +1,5 @@
 let mix = require('laravel-mix');
+const path = require('path');
 
 /*
  |--------------------------------------------------------------------------
@@ -14,7 +15,21 @@ let mix = require('laravel-mix');
 mix.js('resources/assets/js/login.js', 'public/js')
    .js('resources/assets/js/app.js', 'public/js')
    .sass('resources/assets/sass/app.scss', 'public/css')
-   .sourceMaps();
+   .sourceMaps()
+   .webpackConfig({
+      resolve: {
+        alias: {
+          '@': path.resolve('resources/assets/js'),
+          '@sass': path.resolve('resources/assets/sass'),
+          '@components': path.resolve('resources/assets/js/components'),
+          '@axios': path.resolve('resources/assets/js/axios'),
+          '@mixins': path.resolve('resources/assets/js/mixins'),
+          '@api': path.resolve('resources/assets/js/api'),
+          '@views': path.resolve('resources/assets/js/views'),
+        },
+        extensions: ['.vue', '.js', '.scss']
+      }
+    });
 
 // This fixes HMR not compiling the assets and reloading the browser
 // with laravel-mix@^2.0

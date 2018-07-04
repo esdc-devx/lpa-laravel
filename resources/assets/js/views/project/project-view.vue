@@ -34,12 +34,12 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
-  import HttpStatusCodes from '../../axios/http-status-codes';
+  import HttpStatusCodes from '@axios/http-status-codes';
 
-  import ProcessCurrentBar from '../../components/process-current-bar.vue';
-  import ProjectInfo from '../../components/project-info.vue';
+  import ProcessCurrentBar from '@components/process-current-bar.vue';
+  import ProjectInfo from '@components/project-info.vue';
 
   let namespace = 'projects';
 
@@ -155,8 +155,8 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
-  @import '../../../sass/abstracts/mixins/helpers';
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/mixins/helpers';
 
   .project-view {
     margin: 0 auto;

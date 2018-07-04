@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import _ from 'lodash';
-import '../locale';
+import '@/locale';
 
 export default {
   _confirm({

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import axios from '../axios/interceptor';
+import axios from '@axios/interceptor';
 
 export default {
   getProjects() {
