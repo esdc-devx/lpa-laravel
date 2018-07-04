@@ -20,7 +20,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
-  import MenuUtils from '../../mixins/menu/utils.js';
+  import MenuUtils from '@mixins/menu/utils.js';
 
   export default {
     name: 'admin-bar',
@@ -80,7 +80,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   $admin-bar-height: 45px;
   $admin-bar-fill: $--color-danger;

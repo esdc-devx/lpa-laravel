@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import Config from '../config';
-import Notify from '../mixins/notify';
-import '../locale';
+import Config from '@/config';
+import Notify from '@mixins/notify';
+import '@/locale';
 
 let defaultLang = Config.DEFAULT_LANG;
 

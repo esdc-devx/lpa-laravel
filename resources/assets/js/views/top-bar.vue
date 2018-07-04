@@ -35,11 +35,11 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '../event-bus';
-  import Config from '../config.js';
-  import MenuUtils from '../mixins/menu/utils.js';
+  import EventBus from '@/event-bus';
+  import Config from '@/config.js';
+  import MenuUtils from '@mixins/menu/utils.js';
 
-  import HttpStatusCodes from '../axios/http-status-codes';
+  import HttpStatusCodes from '@axios/http-status-codes';
 
   export default {
     name: 'top-bar',
@@ -167,7 +167,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   $top-bar-height: 50px;
   $top-bar-fill: #201e2c;

@@ -154,7 +154,8 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+@import '~@sass/abstracts/vars';
+
   .project-edit {
     margin: 0 auto;
     h2 {

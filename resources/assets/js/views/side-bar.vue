@@ -24,8 +24,8 @@
 <script>
   import { mapGetters } from 'vuex';
 
-  import Config from '../config.js';
-  import MenuUtils from '../mixins/menu/utils.js';
+  import Config from '@/config.js';
+  import MenuUtils from '@mixins/menu/utils.js';
 
   export default {
     name: 'side-bar',
@@ -98,7 +98,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   $side-bar-width: 300px;
   $side-bar-collapsed-width: 64px;

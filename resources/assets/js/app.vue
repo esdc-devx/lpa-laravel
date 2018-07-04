@@ -31,13 +31,13 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from './event-bus';
+  import EventBus from '@/event-bus';
 
-  import TopBar from './views/top-bar.vue';
-  import AdminBar from './views/admin/admin-bar.vue';
-  import SideBar from './views/side-bar.vue';
-  import Breadcrumb from './views/breadcrumb.vue';
-  import MainContent from './views/main-content.vue';
+  import TopBar from '@views/top-bar.vue';
+  import AdminBar from '@views/admin/admin-bar.vue';
+  import SideBar from '@views/side-bar.vue';
+  import Breadcrumb from '@views/breadcrumb.vue';
+  import MainContent from '@views/main-content.vue';
 
   export default {
     name: 'app',
@@ -65,7 +65,7 @@
 </script>
 
 <style lang="scss">
-  @import '../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
   [v-cloak] {
     display: none;
   }

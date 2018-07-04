@@ -62,9 +62,9 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
-  import TableUtils from '../../mixins/table/utils.js';
+  import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
 
@@ -152,7 +152,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
   .project-list {
     .el-table__row {
       cursor: pointer;

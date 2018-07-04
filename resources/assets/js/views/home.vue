@@ -22,7 +22,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
-  import EventBus from '../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
   export default {
     name: 'home',
@@ -41,7 +41,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   .home {
     // since there is no breadcrumbs bar on the home page,

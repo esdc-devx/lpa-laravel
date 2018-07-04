@@ -149,8 +149,8 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
-  @import '../../sass/base/helpers';
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/base/helpers';
 
   .breadcrumb {
     background-color: $--color-white;

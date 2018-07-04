@@ -77,10 +77,10 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '../../event-bus.js';
-  import FormError from '../../components/forms/error.vue';
-  import FormUtils from '../../mixins/form/utils.js';
-  import PageUtils from '../../mixins/page/utils.js';
+  import EventBus from '@/event-bus.js';
+  import FormError from '@components/forms/error.vue';
+  import FormUtils from '@mixins/form/utils.js';
+  import PageUtils from '@mixins/page/utils.js';
 
   let namespace = 'users';
 

@@ -163,7 +163,7 @@
 <script>
   import { mapActions } from 'vuex';
 
-  import EventBus from '../../../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
   import ElInputWrap from '../el-input-wrap';
   import ElInputOtherWrap from '../el-input-other-wrap';

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Vue from 'vue';
-import Constants from './constants';
+import Constants from '@/constants';
 
 Vue.filter('LPANumFilter', function (id) {
   return _.padStart(id, Constants.LPA_NUM_PAD, 0);

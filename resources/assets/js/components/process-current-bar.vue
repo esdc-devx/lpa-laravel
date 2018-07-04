@@ -35,8 +35,8 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
-  @import '../../sass/abstracts/functions';
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/functions';
 
   // https://codepen.io/fret2buzz/pen/zEyGwV
   $arrow-width: 10px;

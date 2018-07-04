@@ -74,10 +74,10 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
-  import FormUtils from '../../mixins/form/utils.js';
-  import PageUtils from '../../mixins/page/utils.js';
-  import HttpStatusCodes from '../../axios/http-status-codes';
+  import EventBus from '@/event-bus.js';
+  import FormUtils from '@mixins/form/utils.js';
+  import PageUtils from '@mixins/page/utils.js';
+  import HttpStatusCodes from '@axios/http-status-codes';
 
   let namespace = 'users';
 
