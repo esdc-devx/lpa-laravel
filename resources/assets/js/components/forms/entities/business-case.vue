@@ -22,6 +22,7 @@
             :disabled="isInfoLoading"
             element-loading-spinner="el-icon-loading"
             name="request_sources"
+            :data-vv-as="trans('forms.business_case.label.request_sources')"
             value-key="name"
             v-validate="'required'"
             :class="{ 'is-error': verrors.has('request_sources') }"
@@ -36,6 +37,7 @@
           <form-error name="request_sources"></form-error>
         </div>
         <el-input-other-wrap
+          :data-vv-as="trans('entities.form.other')"
           name="request_source_other"
           v-model="form.request_source_other"
           v-validate="{ rules: { required: this.isRequestSourceOther} }"
@@ -59,6 +61,7 @@
         </span>
         <el-input-wrap
           v-model="form.business_issue"
+          :data-vv-as="trans('forms.business_case.label.business_issue')"
           name="business_issue"
           v-validate="'required'"
           maxlength="1250"
@@ -84,6 +87,7 @@
         </span>
         <el-input-wrap
           v-model="form.learning_response_strategy"
+          :data-vv-as="trans('forms.business_case.label.learning_response_strategy')"
           name="learning_response_strategy"
           v-validate="'required'"
           maxlength="2500"
@@ -110,6 +114,7 @@
             v-loading="isInfoLoading"
             :disabled="isInfoLoading"
             element-loading-spinner="el-icon-loading"
+            :data-vv-as="trans('forms.business_case.label.potential_solution_types')"
             name="potential_solution_types"
             :class="{ 'is-error': verrors.has('potential_solution_types') }"
             valueKey="name"
@@ -125,6 +130,7 @@
           <form-error name="potential_solution_types"></form-error>
         </div>
         <el-input-other-wrap
+          :data-vv-as="trans('entities.form.other')"
           name="potential_solution_type_other"
           v-model="form.potential_solution_type_other"
           :isChecked.sync="isPotentialSolutionTypesOther"
@@ -151,6 +157,7 @@
             v-loading="isInfoLoading"
             :disabled="isInfoLoading"
             element-loading-spinner="el-icon-loading"
+            :data-vv-as="trans('forms.business_case.label.government_priorities')"
             name="government_priorities"
             :class="{ 'is-error': verrors.has('government_priorities') }"
             valueKey="name"
@@ -180,6 +187,7 @@
         </span>
         <el-radio-group
           v-model="form.is_required_training"
+          :data-vv-as="trans('forms.business_case.label.is_required_training')"
           name="is_required_training"
           v-validate="'required'">
             <el-radio-button :label="0">{{ trans('base.actions.yes') }}</el-radio-button>
