@@ -12,7 +12,7 @@ export default {
     catchCallback
   }) {
     let type = 'warning';
-    title = title || Vue.prototype.trans('components.notice[' + type + ']');
+    title = title || Vue.prototype.trans('components.notice.type[' + type + ']');
     Vue.prototype
       .$confirm(
         message,

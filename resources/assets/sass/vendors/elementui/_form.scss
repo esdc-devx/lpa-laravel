@@ -22,3 +22,12 @@
 .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after {
   border-color: $--color-white;
 }
+
+// make error border availlable not only on form-items like ElementUI does,
+// but on anything that has .is-error .el-{control}__inner
+form .is-error .el-input__inner,
+form .is-error .el-input__inner:focus,
+form .is-error .el-textarea__inner,
+form .is-error .el-textarea__inner:focus {
+  border-color: $--color-danger;
+}

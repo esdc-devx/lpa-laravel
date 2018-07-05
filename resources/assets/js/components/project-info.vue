@@ -90,7 +90,7 @@
           try {
             await this.deleteProject(this.project.id);
             this.notifySuccess({
-              message: this.trans('components.notice.deleted', { name: this.project.name })
+              message: this.trans('components.notice.message.deleted', { name: this.project.name })
             });
             this.$router.push(`/${this.language}/projects`);
           } catch(e) {
