@@ -49,7 +49,8 @@
                 type="border-card"
                 tabPosition="left"
                 :value.sync="activeIndex"
-                :formData="originalFormData">
+                :formData="originalFormData"
+                :errorTabs="errorTabs">
               </component>
             </el-form>
           </el-main>
@@ -72,10 +73,9 @@
                 </el-button>
               </div>
               <div class="form-footer-actions" v-if="hasRole('owner') || hasRole('admin')">
-                <el-button :disabled="!isFormDirty" size="mini" @click="onCancel">{{ trans('base.actions.cancel') }}</el-button>
-                <el-button :disabled="!isFormDirty" :loading="isSaving" size="mini" @click="onSave">{{ trans('base.actions.save') }}</el-button>
-                <!-- @todo: lpa-5280 -->
-                <!-- <el-button size="mini">Submit</el-button> -->
+                <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
+                <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
+                <el-button :disabled="!isFormDirty" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -88,16 +88,16 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
-  import HttpStatusCodes from '../../axios/http-status-codes';
+  import HttpStatusCodes from '@axios/http-status-codes';
 
-  import InfoBox from '../../components/info-box.vue';
+  import InfoBox from '@components/info-box.vue';
 
-  import FormUtils from '../../mixins/form/utils';
+  import FormUtils from '@mixins/form/utils';
 
   // Forms
-  import BusinessCase from '../../components/forms/entities/business-case';
+  import BusinessCase from '@components/forms/entities/business-case';
 
   let namespace = 'projects';
 
@@ -116,8 +116,11 @@
 
     data() {
       return {
+        options: {
+          hasTabsToValidate: true
+        },
         originalFormData: {},
-        activeIndex: 0,
+        activeIndex: '0',
         tabsLength: 0,
         claiming: false,
         currentFormComponent: '',
@@ -212,7 +215,8 @@
         canClaimForm: 'processes/canClaimForm',
         canClaimForm: 'processes/canClaimForm',
         canUnclaimForm: 'processes/canUnclaimForm',
-        saveForm: 'processes/save',
+        saveForm: 'processes/saveForm',
+        submitForm: 'processes/submitForm'
       }),
 
       prevTabIndex() {
@@ -248,7 +252,7 @@
 
         if (formWasDirty) {
           this.notifyInfo({
-            message: this.trans('components.notice.changes_discarded')
+            message: this.trans('components.notice.message.changes_discarded')
           });
         }
       },
@@ -260,7 +264,6 @@
         let that = this;
         this.originalFormData = _.omit(data, 'process_instance_form');
         _.forEach(this.originalFormData, (value, key) => {
-          // @fixme: shouldn't we get an array here?
           // make sure that we convert the lists into only ids
           // since el-select only needs ids to populate selected items
           if (typeof value === 'object' && value !== null) {
@@ -282,7 +285,7 @@
           this.resetFieldsState();
           this.isSaving = false;
           this.notifySuccess({
-            message: this.trans('components.notice.changes_saved')
+            message: this.trans('components.notice.message.changes_saved')
           });
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {
@@ -293,6 +296,30 @@
             this.isSaving = false;
             await this.hideMainLoading();
           }
+        }
+      },
+
+      onSubmit() {
+        this.submit(this.triggerSubmitForm);
+      },
+
+      async triggerSubmitForm() {
+        try {
+          await this.submitForm(this.$refs.tabs.form);
+          this.isSubmitting = false;
+          this.notifySuccess({
+            message: this.trans('components.notice.changes_saved')
+          });
+        } catch({ response }) {
+          if (response.status === HttpStatusCodes.FORBIDDEN) {
+            this.notifyWarning({
+              message: response.data.errors
+            });
+            this.isSubmitting = false;
+            return;
+          }
+          this.errors = response.data.errors;
+          this.focusOnError();
         }
       },
 
@@ -415,6 +442,16 @@
         &.is-active span:after {
           background-color: $--color-primary;
         }
+        &.is-active span.is-error, &.is-active span.is-error:hover {
+          color: $--color-danger;
+          &:after {
+            background-color: $--color-danger;
+          }
+        }
+        span {
+          transition: $--all-transition;
+          display: block;
+        }
         span:after {
           content: '';
           position: absolute;
@@ -429,9 +466,15 @@
           display: inline-block;
         }
         span.is-error {
-          color: $--color-danger;
+          color: mix($--color-white, $--color-danger, 40%);
           &:after {
-            background-color: $--color-danger;
+            background-color: mix($--color-white, $--color-danger, 40%);
+          }
+          &:hover {
+            color: mix($--color-white, $--color-danger, 20%);
+            &:after {
+              background-color: mix($--color-white, $--color-danger, 20%);
+            }
           }
         }
       }
@@ -452,6 +495,7 @@
       }
     }
     .form-wrap {
+      min-height: 400px;
       header, footer {
         padding: 0 30px;
         &:nth-child(2) {

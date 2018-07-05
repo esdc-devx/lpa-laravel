@@ -11,7 +11,7 @@
           v-validate="'required'"
           auto-complete="off">
         </el-input>
-        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+        <form-error name="name"></form-error>
       </el-form-item>
       <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
         <el-select
@@ -30,11 +30,11 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
+        <form-error name="organizationalUnit"></form-error>
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
         <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
@@ -95,13 +95,13 @@
         try {
           let project = await this.createProject(this.form);
           this.$store.commit(`${namespace}/setViewing`, project);
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.created', { name: this.form.name })
+            message: this.trans('components.notice.message.created', { name: this.form.name })
           });
           this.jumpToCreatedProject();
         } catch({ response }) {
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.manageBackendErrors(response.data.errors);
         }
       },
@@ -150,6 +150,7 @@
 
 <style lang="scss">
   @import '~@sass/abstracts/vars';
+
   .project-create {
     margin: 0 auto;
     h2 {

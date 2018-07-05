@@ -54,7 +54,7 @@
         } else {
           // empty the input so that we send null
           // when the checkbox is unchecked
-          this.$emit('input', null);
+          this.$emit('input', '');
         }
       }
     }
