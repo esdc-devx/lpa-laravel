@@ -1,74 +1,77 @@
 <template>
   <div class="user-edit content">
-    <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
+    <el-card shadow="never">
+      <span slot="header">
+        <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
+      </span>
 
-    <el-form label-width="30%" :disabled="isFormDisabled">
+      <el-form label-position="top" :disabled="isFormDisabled">
+        <el-form-item :label="trans('entities.user.username')" for="username">
+          <el-input name="username" v-model="form.user.username" disabled></el-input>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.user.username')" for="username">
-        <el-input name="username" v-model="form.user.username" disabled></el-input>
-      </el-form-item>
+        <el-form-item :label="trans('entities.general.name')" for="name">
+          <el-input name="name" v-model="form.user.name" disabled></el-input>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.general.name')" for="name">
-        <el-input name="name" v-model="form.user.name" disabled></el-input>
-      </el-form-item>
+        <el-form-item :label="trans('entities.user.email')" for="email">
+          <el-input name="email" v-model="form.user.email" disabled></el-input>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.user.email')" for="email">
-        <el-input name="email" v-model="form.user.email" disabled></el-input>
-      </el-form-item>
+        <el-form-item :label="trans('entities.general.created')" for="created_at">
+          <el-input name="created_at" v-model="form.user.created_at" disabled></el-input>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.general.created')" for="created_at">
-        <el-input name="created_at" v-model="form.user.created_at" disabled></el-input>
-      </el-form-item>
+        <el-form-item :label="trans('entities.general.updated')" for="updated_at">
+          <el-input name="updated_at" v-model="form.user.updated_at" disabled></el-input>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.general.updated')" for="updated_at">
-        <el-input name="updated_at" v-model="form.user.updated_at" disabled></el-input>
-      </el-form-item>
+        <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
+          <el-select
+            id="organizationalUnits"
+            name="organizationalUnits"
+            :data-vv-as="$tc('entities.general.organizational_units', 2)"
+            v-loading="isUserInfoLoading"
+            element-loading-spinner="el-icon-loading"
+            v-validate="''"
+            v-model="form.user.organizational_units"
+            valueKey="name"
+            multiple>
+            <el-option
+              v-for="item in organizationalUnits"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
-        <el-select
-          id="organizationalUnits"
-          name="organizationalUnits"
-          :data-vv-as="$tc('entities.general.organizational_units', 2)"
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
-          v-validate="''"
-          v-model="form.user.organizational_units"
-          valueKey="name"
-          multiple>
-          <el-option
-            v-for="item in organizationalUnits"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
+        <el-form-item :label="trans('entities.user.roles')" for="roles">
+          <el-select
+            id="roles"
+            name="roles"
+            :data-vv-as="trans('entities.user.roles')"
+            v-loading="isUserInfoLoading"
+            element-loading-spinner="el-icon-loading"
+            v-validate="''"
+            v-model="form.user.roles"
+            valueKey="name"
+            multiple>
+            <el-option
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.user.roles')" for="roles">
-        <el-select
-          id="roles"
-          name="roles"
-          :data-vv-as="trans('entities.user.roles')"
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
-          v-validate="''"
-          v-model="form.user.roles"
-          valueKey="name"
-          multiple>
-          <el-option
-            v-for="item in roles"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
-        <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
-      </el-form-item>
-    </el-form>
+        <el-form-item>
+          <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
+          <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -190,17 +193,26 @@
 </script>
 
 <style lang="scss">
+  @import '../../../sass/abstracts/vars';
+
   .user-edit {
     margin: 0 auto;
     h2 {
-      text-align: center;
+      margin: 0;
+      display: inline-block;
     }
 
     .el-form {
-      width: 800px;
-      margin: 0 auto;
-      .el-select {
-        width: 75%;
+      .el-form-item:last-of-type {
+        float: right;
+      }
+      label {
+        padding: 0;
+        font-weight: bold;
+        color: $--color-primary;
+      }
+      .el-autocomplete, .el-select {
+        width: 100%;
       }
     }
   }

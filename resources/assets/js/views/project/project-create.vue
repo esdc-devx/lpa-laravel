@@ -1,43 +1,48 @@
 <template>
   <div class="project-create content">
-    <h2>{{ trans('pages.project_create.title') }}</h2>
-    <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
-      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
-        <el-input
-          id="name"
-          name="name"
-          :data-vv-as="trans('entities.general.name')"
-          v-model="form.name"
-          v-validate="'required'"
-          auto-complete="off">
-        </el-input>
-        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
-      </el-form-item>
-      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
-        <el-select
-          id="organizationalUnit"
-          name="organizationalUnit"
-          :data-vv-as="$tc('entities.general.organizational_units')"
-          v-loading="isProjectInfoLoading"
-          element-loading-spinner="el-icon-loading"
-          v-validate="'required'"
-          v-model="form.organizational_unit"
-          valueKey="name">
-          <el-option
-            v-for="item in organizationalUnits"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-        <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
-      </el-form-item>
+    <el-card shadow="never">
+      <span slot="header">
+        <h2><i class="el-icon-lpa-projects"></i>{{ trans('pages.project_create.title') }}</h2>
+      </span>
 
-      <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
-        <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects`)">{{ trans('base.actions.cancel') }}</el-button>
-      </el-form-item>
-    </el-form>
+      <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
+        <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+          <el-input
+            id="name"
+            name="name"
+            :data-vv-as="trans('entities.general.name')"
+            v-model="form.name"
+            v-validate="'required'"
+            auto-complete="off">
+          </el-input>
+          <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+        </el-form-item>
+        <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
+          <el-select
+            id="organizationalUnit"
+            name="organizationalUnit"
+            :data-vv-as="$tc('entities.general.organizational_units')"
+            v-loading="isProjectInfoLoading"
+            element-loading-spinner="el-icon-loading"
+            v-validate="'required'"
+            v-model="form.organizational_unit"
+            valueKey="name">
+            <el-option
+              v-for="item in organizationalUnits"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+          <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
+        </el-form-item>
+
+        <el-form-item class="form-footer">
+          <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects`)">{{ trans('base.actions.cancel') }}</el-button>
+          <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -146,17 +151,36 @@
 
 <style lang="scss">
   @import '../../../sass/abstracts/vars';
+  @import '../../../sass/abstracts/mixins/helpers';
+
   .project-create {
     margin: 0 auto;
     h2 {
-      text-align: center;
+      position: relative;
+      margin: 0;
+      padding-left: 34px;
+      display: inline-block;
+      i {
+        @include svg(projects, $--color-primary);
+        width: 24px;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
 
     .el-form {
-      width: 800px;
-      margin: 0 auto;
+      .el-form-item:last-of-type {
+        float: right;
+      }
+      label {
+        padding: 0;
+        font-weight: bold;
+        color: $--color-primary;
+      }
       .el-select {
-        width: 75%;
+        width: 100%;
       }
     }
   }

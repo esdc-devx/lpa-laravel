@@ -120,7 +120,6 @@
 
 <style lang="scss">
   @import '../../sass/abstracts/vars';
-  @import '../../sass/abstracts/functions';
   @import '../../sass/abstracts/mixins/helpers';
 
   .project-info {

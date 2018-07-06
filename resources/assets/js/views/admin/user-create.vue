@@ -1,76 +1,81 @@
 <template>
   <div class="user-create content">
-    <h2>{{ trans('base.navigation.admin_user_create') }}</h2>
-    <el-form :model="form" ref="form" label-width="30%" @submit.native.prevent :disabled="isFormDisabled">
-      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
-        <el-autocomplete
-          id="name"
-          name="name"
-          :data-vv-as="trans('entities.general.name')"
-          ref="name"
-          popper-class="name-autocomplete"
-          v-validate="nameRules"
-          v-model="form.name"
-          :fetch-suggestions="querySearchAsync"
-          :trigger-on-focus="false"
-          valueKey="name"
-          @select="handleSelect">
-          <template slot-scope="props">
-            <div class="autocomplete-popper-inner-wrap" :title="props.item.name">
-              <div class="value">{{ props.item.name }}</div>
-              <span class="link">{{ props.item.email }}</span>
-            </div>
-          </template>
-        </el-autocomplete>
-        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
-      </el-form-item>
+    <el-card shadow="never">
+      <span slot="header">
+        <h2>{{ trans('base.navigation.admin_user_create') }}</h2>
+      </span>
 
-      <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
-        <el-select
-          id="organizationalUnits"
-          name="organizationalUnits"
-          :data-vv-as="$tc('entities.general.organizational_units', 2)"
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
-          v-model="form.organizational_units"
-          v-validate="''"
-          valueKey="name"
-          multiple>
-          <el-option
-            v-for="item in organizationalUnits"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
+      <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
+        <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+          <el-autocomplete
+            id="name"
+            name="name"
+            :data-vv-as="trans('entities.general.name')"
+            ref="name"
+            popper-class="name-autocomplete"
+            v-validate="nameRules"
+            v-model="form.name"
+            :fetch-suggestions="querySearchAsync"
+            :trigger-on-focus="false"
+            valueKey="name"
+            @select="handleSelect">
+            <template slot-scope="props">
+              <div class="autocomplete-popper-inner-wrap" :title="props.item.name">
+                <div class="value">{{ props.item.name }}</div>
+                <span class="link">{{ props.item.email }}</span>
+              </div>
+            </template>
+          </el-autocomplete>
+          <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+        </el-form-item>
 
-      <el-form-item :label="trans('entities.user.roles')" for="roles" prop="roles">
-        <el-select
-          id="roles"
-          name="roles"
-          :data-vv-as="trans('entities.user.roles')"
-          v-loading="isUserInfoLoading"
-          element-loading-spinner="el-icon-loading"
-          :disabled="roles.length <= 1"
-          v-model="form.roles"
-          v-validate="''"
-          valueKey="name"
-          multiple>
-          <el-option
-            v-for="item in roles"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id">
-          </el-option>
-        </el-select>
-      </el-form-item>
+        <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
+          <el-select
+            id="organizationalUnits"
+            name="organizationalUnits"
+            :data-vv-as="$tc('entities.general.organizational_units', 2)"
+            v-loading="isUserInfoLoading"
+            element-loading-spinner="el-icon-loading"
+            v-model="form.organizational_units"
+            v-validate="''"
+            valueKey="name"
+            multiple>
+            <el-option
+              v-for="item in organizationalUnits"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
 
-      <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
-        <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
-      </el-form-item>
-    </el-form>
+        <el-form-item :label="trans('entities.user.roles')" for="roles" prop="roles">
+          <el-select
+            id="roles"
+            name="roles"
+            :data-vv-as="trans('entities.user.roles')"
+            v-loading="isUserInfoLoading"
+            element-loading-spinner="el-icon-loading"
+            :disabled="roles.length <= 1"
+            v-model="form.roles"
+            v-validate="''"
+            valueKey="name"
+            multiple>
+            <el-option
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item class="form-footer">
+          <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
+          <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        </el-form-item>
+      </el-form>
+    </el-card>
   </div>
 </template>
 
@@ -215,17 +220,26 @@
 </script>
 
 <style lang="scss">
+  @import '../../../sass/abstracts/vars';
+
   .user-create {
     margin: 0 auto;
     h2 {
-      text-align: center;
+      margin: 0;
+      display: inline-block;
     }
 
     .el-form {
-      width: 800px;
-      margin: 0 auto;
-      .el-select {
-        width: 75%;
+      .el-form-item:last-of-type {
+        float: right;
+      }
+      label {
+        padding: 0;
+        font-weight: bold;
+        color: $--color-primary;
+      }
+      .el-autocomplete, .el-select {
+        width: 100%;
       }
     }
   }
