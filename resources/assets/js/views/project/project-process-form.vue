@@ -49,7 +49,7 @@
                 type="border-card"
                 tabPosition="left"
                 :value.sync="activeIndex"
-                :formData="originalFormData"
+                :formData="formData"
                 :errorTabs="errorTabs">
               </component>
             </el-form>
@@ -75,7 +75,7 @@
               <div class="form-footer-actions" v-if="hasRole('owner') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!isFormDirty" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="isFormEmpty" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -120,6 +120,7 @@
           hasTabsToValidate: true
         },
         originalFormData: {},
+        formData: {},
         activeIndex: '0',
         tabsLength: 0,
         claiming: false,
@@ -190,8 +191,13 @@
       isPrevDisabled() {
         return parseInt(this.activeIndex, 10) === 0;
       },
+
       isNextDisabled() {
         return parseInt(this.activeIndex, 10) === this.tabsLength;
+      },
+
+      isFormEmpty() {
+        return !_.chain(this.formData).omit('id').values().compact().flatten().value().length;
       }
     },
 
@@ -273,6 +279,7 @@
         // make sure the id correspond to the actual form id
         // since we recieve a process id in response.id
         this.originalFormData.id = formId;
+        this.formData = Object.assign({}, this.originalFormData);
       },
 
       async onSave() {
@@ -300,7 +307,9 @@
       },
 
       onSubmit() {
-        this.submit(this.triggerSubmitForm);
+        this.confirmSubmitForm().then(() => {
+          this.submit(this.triggerSubmitForm)
+        }).catch(() => false);
       },
 
       async triggerSubmitForm() {
@@ -308,7 +317,7 @@
           await this.submitForm(this.$refs.tabs.form);
           this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.changes_saved')
+            message: this.trans('components.notice.message.form_submitted')
           });
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {
@@ -318,8 +327,11 @@
             this.isSubmitting = false;
             return;
           }
-          this.errors = response.data.errors;
-          this.focusOnError();
+          this.manageBackendErrors(response.data.errors);
+          this.notifyError({
+            message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
+          });
+          this.isSubmitting = false;
         }
       },
 

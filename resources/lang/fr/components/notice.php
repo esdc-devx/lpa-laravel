@@ -10,6 +10,7 @@ return [
     'title'   => [
         'delete_project'  => 'Supprimer le projet',
         'pending_changes' => 'Changements en attente',
+        'submit_form'     => 'Soumettre le formulaire',
     ],
     'message' => [
         'created'            => '<b>:name</b> a été créé.',
@@ -18,6 +19,8 @@ return [
         'started'            => '<b>:name</b> a été démarré.',
         'changes_saved'      => 'Les changements ont été sauvegardés.',
         'changes_discarded'  => 'Les changements ont été supprimés.',
+        'form_submitted'     => 'Le formulaire a été soumis.',
+        'submit_form'        => 'Voulez-vous soumettre le formulaire?',
         'language_toggle'    => 'Changer la langue réinitialisera les filtres du tableau. Voulez-vous poursuivre?',
         'delete_project'     => 'Vous vous apprêtez à supprimer le projet intitulé «&nbsp;<b>:name</b>&nbsp;» (<b>No.&nbsp;APA&nbsp;:&nbsp;:id</b>) ainsi que toutes ses informations associées. Voulez-vous poursuivre?',
         'deleted_project'    => 'La suppression a échoué car le projet a déjà été supprimé.',

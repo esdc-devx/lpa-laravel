@@ -78,5 +78,18 @@ export default {
         catchCallback: reject
       });
     });
+  },
+
+  confirmSubmitForm() {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title: this.trans('components.notice.title.submit_form'),
+        message: this.trans('components.notice.message.submit_form'),
+        action: 'submit',
+        confirmButtonClass: 'el-button--warning',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
   }
 };
