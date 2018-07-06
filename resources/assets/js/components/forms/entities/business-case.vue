@@ -232,7 +232,7 @@
         potentialSolutionTypesServer: [],
         isPotentialSolutionTypesOther: false,
         governmentPrioritiesServer: [],
-        form: []
+        form: this.formData
       }
     },
 

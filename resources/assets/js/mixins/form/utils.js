@@ -62,9 +62,11 @@ export default {
         if (result) {
           // all is good, proceed
           if (_.isFunction(callback)) {
+            // no need to set isSubmitting to false as there will be a call to the backend afterwards
             callback();
+          } else {
+            this.isSubmitting = false;
           }
-          this.isSubmitting = false;
           return;
         }
 
