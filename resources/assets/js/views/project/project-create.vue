@@ -54,6 +54,8 @@
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
 
+  import ElInputWrap from '../../components/forms/el-input-wrap';
+
   let namespace = 'projects';
 
   export default {
@@ -63,7 +65,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { FormError },
+    components: { ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({

@@ -49,6 +49,9 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
+
+  import ElInputWrap from '../../components/forms/el-input-wrap';
+
   import FormError from '@components/forms/error.vue';
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
@@ -62,7 +65,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { FormError },
+    components: { ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({
