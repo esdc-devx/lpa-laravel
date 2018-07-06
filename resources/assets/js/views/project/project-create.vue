@@ -6,18 +6,23 @@
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
-        <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
-          <el-input
-            id="name"
+        <el-form-item-wrap
+          :label="trans('entities.general.name')"
+          prop="name"
+          required>
+          <el-input-wrap
             name="name"
             :data-vv-as="trans('entities.general.name')"
             v-model="form.name"
+            maxlength="175"
             v-validate="'required'"
             auto-complete="off">
-          </el-input>
-          <form-error name="name"></form-error>
-        </el-form-item>
-        <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizational_units">
+          </el-input-wrap>
+        </el-form-item-wrap>
+        <el-form-item-wrap
+          :label="$tc('entities.general.organizational_units')"
+          prop="organizationalUnit"
+          required>
           <el-select
             id="organizationalUnit"
             name="organizationalUnit"
@@ -35,7 +40,7 @@
             </el-option>
           </el-select>
           <form-error name="organizationalUnit"></form-error>
-        </el-form-item>
+        </el-form-item-wrap>
 
         <el-form-item class="form-footer">
           <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects`)">{{ trans('base.actions.cancel') }}</el-button>
@@ -54,7 +59,8 @@
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
 
-  import ElInputWrap from '../../components/forms/el-input-wrap';
+  import ElFormItemWrap from '@components/forms/el-form-item-wrap';
+  import ElInputWrap from '@components/forms/el-input-wrap';
 
   let namespace = 'projects';
 
@@ -65,7 +71,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElInputWrap, FormError },
+    components: { ElFormItemWrap, ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({
