@@ -25,10 +25,6 @@
       label: String,
       prop: String,
       classes: Array,
-      errors: {
-        type: Object | Boolean,
-        default: false
-      },
       required: {
         type: Boolean,
         default: undefined
