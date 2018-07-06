@@ -26,7 +26,7 @@ export default {
   },
 
   watch: {
-    'verrors.items': function(val) {
+    'verrors.items.length': function(val) {
       // this allows to reflect error styling on tabs
       // when the errors are added/removed
       if (this.options.hasTabsToValidate) {

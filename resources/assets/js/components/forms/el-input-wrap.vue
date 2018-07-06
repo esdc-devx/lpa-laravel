@@ -27,10 +27,7 @@
     inject: ['$validator'],
 
     props: {
-      maxlength: {
-        type: String,
-        default: null
-      },
+      maxlength: String,
       value: String
     },
 
