@@ -4,13 +4,13 @@
 
     <el-form label-width="30%" :disabled="isFormDisabled">
       <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
-        <el-input
-          id="name"
+        <el-input-wrap
           name="name"
           :data-vv-as="trans('entities.general.name')"
           v-model="form.project.name"
-          v-validate="'required'">
-        </el-input>
+          maxlength="175"
+          required>
+        </el-input-wrap>
         <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
       </el-form-item>
 
@@ -45,6 +45,9 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '../../event-bus.js';
+
+  import ElInputWrap from '../../components/forms/el-input-wrap';
+
   import FormError from '../../components/forms/error.vue';
   import FormUtils from '../../mixins/form/utils.js';
   import PageUtils from '../../mixins/page/utils.js';
@@ -56,7 +59,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { FormError },
+    components: { ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({
