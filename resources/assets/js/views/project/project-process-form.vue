@@ -75,7 +75,7 @@
               <div class="form-footer-actions" v-if="hasRole('owner') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="isFormEmpty" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="isFormEmpty || !isClaiming" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -123,7 +123,6 @@
         formData: {},
         activeIndex: '0',
         tabsLength: 0,
-        claiming: false,
         currentFormComponent: '',
         rights: {
           canEdit: false,
@@ -254,7 +253,10 @@
         }
         // reset the fields states
         // so that we get a pristine form
-        this.resetFieldsState();
+        // but wait until dom is refreshed before resetting the fields state
+        this.$nextTick(() => {
+          this.resetFieldsState();
+        });
 
         if (formWasDirty) {
           this.notifyInfo({
