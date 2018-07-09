@@ -11,7 +11,7 @@
           v-model="form.project.name"
           v-validate="'required'">
         </el-input>
-        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+        <form-error name="name"></form-error>
       </el-form-item>
 
       <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizationalUnit">
@@ -31,11 +31,11 @@
             :value="item.id">
           </el-option>
         </el-select>
-        <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
+        <form-error name="organizationalUnit"></form-error>
       </el-form-item>
 
       <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
+        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects/${form.project.id}`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
@@ -44,10 +44,10 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
-  import FormError from '../../components/forms/error.vue';
-  import FormUtils from '../../mixins/form/utils.js';
-  import PageUtils from '../../mixins/page/utils.js';
+  import EventBus from '@/event-bus.js';
+  import FormError from '@components/forms/error.vue';
+  import FormUtils from '@mixins/form/utils.js';
+  import PageUtils from '@mixins/page/utils.js';
 
   let namespace = 'projects';
 
@@ -94,13 +94,13 @@
             name: this.form.project.name,
             organizational_unit: this.form.project.organizational_unit
           });
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.updated', { name: this.form.project.name })
+            message: this.trans('components.notice.message.updated', { name: this.form.project.name })
           });
           this.go(`/${this.language}/projects/${this.form.project.id}`);
         } catch({ response }) {
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.manageBackendErrors(response.data.errors);
         }
       },
@@ -154,7 +154,8 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
+
   .project-edit {
     margin: 0 auto;
     h2 {

@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import _ from 'lodash';
-import '../locale';
+import '@/locale';
 
 export default {
   _confirm({
@@ -12,7 +12,7 @@ export default {
     catchCallback
   }) {
     let type = 'warning';
-    title = title || Vue.prototype.trans('components.notice[' + type + ']');
+    title = title || Vue.prototype.trans('components.notice.type[' + type + ']');
     Vue.prototype
       .$confirm(
         message,
@@ -74,6 +74,19 @@ export default {
         message: this.trans('components.notice.message.pending_changes'),
         action: 'discard',
         confirmButtonClass: 'el-button--danger',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
+  },
+
+  confirmSubmitForm() {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title: this.trans('components.notice.title.submit_form'),
+        message: this.trans('components.notice.message.submit_form'),
+        action: 'submit',
+        confirmButtonClass: 'el-button--warning',
         thenCallback: resolve,
         catchCallback: reject
       });

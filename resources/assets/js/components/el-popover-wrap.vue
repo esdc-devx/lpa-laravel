@@ -6,12 +6,12 @@
     trigger="hover">
       <span slot="reference"><i class="el-icon-lpa-popover"></i></span>
       <p v-if="description">
-        <b>{{ trans('components.popover.description.title') }}</b>
+        <b>{{ trans('entities.general.description') }}</b>
         <br>
         <span v-html="description"></span>
       </p>
       <p v-if="help">
-        <b>{{ trans('components.popover.help.title') }}</b>
+        <b>{{ trans('entities.general.help') }}</b>
         <br>
         <span v-html="help"></span>
       </p>
@@ -38,7 +38,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   .el-popover-wrap {
     text-align: left;

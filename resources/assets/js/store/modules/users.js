@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import LoadStatus from '../load-status-constants';
-import UserAPI from '../../api/users.js';
+import UserAPI from '@api/users.js';
 
 export default {
   namespaced: true,

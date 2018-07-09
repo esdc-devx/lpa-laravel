@@ -22,7 +22,7 @@
             </div>
           </template>
         </el-autocomplete>
-        <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+        <form-error name="name"></form-error>
       </el-form-item>
 
       <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
@@ -67,7 +67,7 @@
       </el-form-item>
 
       <el-form-item class="form-footer">
-        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
+        <el-button :disabled="isFormPristine || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.create') }}</el-button>
         <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
@@ -77,10 +77,10 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '../../event-bus.js';
-  import FormError from '../../components/forms/error.vue';
-  import FormUtils from '../../mixins/form/utils.js';
-  import PageUtils from '../../mixins/page/utils.js';
+  import EventBus from '@/event-bus.js';
+  import FormError from '@components/forms/error.vue';
+  import FormUtils from '@mixins/form/utils.js';
+  import PageUtils from '@mixins/page/utils.js';
 
   let namespace = 'users';
 
@@ -160,13 +160,13 @@
       async create() {
         try {
           await this.createUser(_.omit(this.form, 'name'));
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.created', { name: this.form.name })
+            message: this.trans('components.notice.message.created', { name: this.form.name })
           });
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.manageBackendErrors(response.data.errors);
         }
       },

@@ -43,7 +43,6 @@
 
       onCheckboxChange(checked) {
         // update parent property
-        // this.$emit('update:isChecked', checked);
         if (checked) {
           this.$nextTick(() => {
             let inputEl = this.$refs.input.$el.querySelector('input');
@@ -62,7 +61,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   .el-input-other-wrap {
     display: flex;

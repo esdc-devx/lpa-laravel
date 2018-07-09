@@ -49,7 +49,8 @@
                 type="border-card"
                 tabPosition="left"
                 :value.sync="activeIndex"
-                :formData="originalFormData">
+                :formData="formData"
+                :errorTabs="errorTabs">
               </component>
             </el-form>
           </el-main>
@@ -72,10 +73,9 @@
                 </el-button>
               </div>
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
-                <el-button :disabled="!isFormDirty" size="mini" @click="onCancel">{{ trans('base.actions.cancel') }}</el-button>
-                <el-button :disabled="!isFormDirty" :loading="isSaving" size="mini" @click="onSave">{{ trans('base.actions.save') }}</el-button>
-                <!-- @todo: lpa-5280 -->
-                <!-- <el-button size="mini">Submit</el-button> -->
+                <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
+                <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
+                <el-button :disabled="isFormEmpty || !isClaiming" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -88,16 +88,16 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
+  import EventBus from '@/event-bus.js';
 
-  import HttpStatusCodes from '../../axios/http-status-codes';
+  import HttpStatusCodes from '@axios/http-status-codes';
 
-  import InfoBox from '../../components/info-box.vue';
+  import InfoBox from '@components/info-box.vue';
 
-  import FormUtils from '../../mixins/form/utils';
+  import FormUtils from '@mixins/form/utils';
 
   // Forms
-  import BusinessCase from '../../components/forms/entities/business-case';
+  import BusinessCase from '@components/forms/entities/business-case';
 
   let namespace = 'projects';
 
@@ -116,10 +116,13 @@
 
     data() {
       return {
+        options: {
+          hasTabsToValidate: true
+        },
         originalFormData: {},
-        activeIndex: 0,
+        formData: {},
+        activeIndex: '0',
         tabsLength: 0,
-        claiming: false,
         currentFormComponent: '',
         rights: {
           canEdit: false,
@@ -187,8 +190,13 @@
       isPrevDisabled() {
         return parseInt(this.activeIndex, 10) === 0;
       },
+
       isNextDisabled() {
         return parseInt(this.activeIndex, 10) === this.tabsLength;
+      },
+
+      isFormEmpty() {
+        return !_.chain(this.formData).omit('id').values().compact().flatten().value().length;
       }
     },
 
@@ -212,7 +220,8 @@
         canClaimForm: 'processes/canClaimForm',
         canClaimForm: 'processes/canClaimForm',
         canUnclaimForm: 'processes/canUnclaimForm',
-        saveForm: 'processes/save',
+        saveForm: 'processes/saveForm',
+        submitForm: 'processes/submitForm'
       }),
 
       prevTabIndex() {
@@ -244,11 +253,14 @@
         }
         // reset the fields states
         // so that we get a pristine form
-        this.resetFieldsState();
+        // but wait until dom is refreshed before resetting the fields state
+        this.$nextTick(() => {
+          this.resetFieldsState();
+        });
 
         if (formWasDirty) {
           this.notifyInfo({
-            message: this.trans('components.notice.changes_discarded')
+            message: this.trans('components.notice.message.changes_discarded')
           });
         }
       },
@@ -260,7 +272,6 @@
         let that = this;
         this.originalFormData = _.omit(data, 'process_instance_form');
         _.forEach(this.originalFormData, (value, key) => {
-          // @fixme: shouldn't we get an array here?
           // make sure that we convert the lists into only ids
           // since el-select only needs ids to populate selected items
           if (typeof value === 'object' && value !== null) {
@@ -270,6 +281,7 @@
         // make sure the id correspond to the actual form id
         // since we recieve a process id in response.id
         this.originalFormData.id = formId;
+        this.formData = Object.assign({}, this.originalFormData);
       },
 
       async onSave() {
@@ -280,9 +292,12 @@
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
+          // make sure to not keep the current errors
+          // so that validated childrens gets a pristine state as well
+          this.resetErrors();
           this.isSaving = false;
           this.notifySuccess({
-            message: this.trans('components.notice.changes_saved')
+            message: this.trans('components.notice.message.changes_saved')
           });
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {
@@ -293,6 +308,38 @@
             this.isSaving = false;
             await this.hideMainLoading();
           }
+        }
+      },
+
+      onSubmit() {
+        this.confirmSubmitForm().then(() => {
+          this.submit(this.triggerSubmitForm)
+        }).catch(() => false);
+      },
+
+      async triggerSubmitForm() {
+        try {
+          await this.submitForm(this.$refs.tabs.form);
+          // reset the fields states
+          // so that we get a pristine form with the new values
+          this.resetFieldsState();
+          this.isSubmitting = false;
+          this.notifySuccess({
+            message: this.trans('components.notice.message.form_submitted')
+          });
+        } catch({ response }) {
+          if (response.status === HttpStatusCodes.FORBIDDEN) {
+            this.notifyWarning({
+              message: response.data.errors
+            });
+            this.isSubmitting = false;
+            return;
+          }
+          this.manageBackendErrors(response.data.errors);
+          this.notifyError({
+            message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
+          });
+          this.isSubmitting = false;
         }
       },
 
@@ -386,10 +433,10 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
-  @import '../../../sass/abstracts/functions';
-  @import '../../../sass/abstracts/mixins/helpers';
-  @import '../../../sass/base/helpers';
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/functions';
+  @import '~@sass/abstracts/mixins/helpers';
+  @import '~@sass/base/helpers';
 
   .project-process-form {
     height: calc(100% - 20px);
@@ -415,6 +462,16 @@
         &.is-active span:after {
           background-color: $--color-primary;
         }
+        &.is-active span.is-error, &.is-active span.is-error:hover {
+          color: $--color-danger;
+          &:after {
+            background-color: $--color-danger;
+          }
+        }
+        span {
+          transition: $--all-transition;
+          display: block;
+        }
         span:after {
           content: '';
           position: absolute;
@@ -429,9 +486,15 @@
           display: inline-block;
         }
         span.is-error {
-          color: $--color-danger;
+          color: mix($--color-white, $--color-danger, 40%);
           &:after {
-            background-color: $--color-danger;
+            background-color: mix($--color-white, $--color-danger, 40%);
+          }
+          &:hover {
+            color: mix($--color-white, $--color-danger, 20%);
+            &:after {
+              background-color: mix($--color-white, $--color-danger, 20%);
+            }
           }
         }
       }
@@ -452,6 +515,7 @@
       }
     }
     .form-wrap {
+      min-height: 400px;
       header, footer {
         padding: 0 30px;
         &:nth-child(2) {
@@ -520,6 +584,13 @@
         .is-required .instruction {
           // align under label, make room under asterisk
           margin-left: 14px;
+        }
+
+        .el-tab-pane h2 {
+          border-bottom: 1px solid;
+          margin-top: 0;
+          text-transform: uppercase;
+          font-size: 1.3em;
         }
       }
       .form-header, .form-footer {

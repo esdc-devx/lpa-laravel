@@ -10,4 +10,6 @@ return [
     'updated'              => 'Modifié',
     'status'               => 'État',
     'na'                   => 'Sans objet',
+    'description'          => 'Description',
+    'help'                 => 'Aide',
 ];

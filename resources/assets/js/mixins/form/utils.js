@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import Vue from 'vue';
 
 export default {
   computed: {
@@ -14,10 +13,28 @@ export default {
 
   data() {
     return {
+      // this controls whether or not to handle validation on tab-panels
+      options: {
+        hasTabsToValidate: false
+      },
+      errorTabs: [],
       swipeTransitionDuration: 500,
       isSaving: false,
+      isSubmitting: false,
       isFormDisabled: false
     };
+  },
+
+  watch: {
+    'verrors.items.length': function(val) {
+      // this allows to reflect error styling on tabs
+      // when the errors are added/removed
+      if (this.options.hasTabsToValidate) {
+        this.$nextTick(() => {
+          this.checkInvalidTabs();
+        });
+      }
+    }
   },
 
   beforeRouteLeave(to, from, next) {
@@ -38,19 +55,65 @@ export default {
     },
 
     submit(callback) {
-      this.isSaving = true;
+      this.isSubmitting = true;
       // clear the error messages right away
       this.verrors.clear();
       this.$validator.validateAll().then(result => {
         if (result) {
+          // all is good, proceed
           if (_.isFunction(callback)) {
+            // no need to set isSubmitting to false as there will be a call to the backend afterwards
             callback();
+          } else {
+            this.isSubmitting = false;
           }
           return;
         }
-        this.isSaving = false;
+
+        // there are errors
+        if (this.options.hasTabsToValidate) {
+          this.$nextTick(() => {
+            this.checkInvalidTabs();
+          });
+          this.notifyError({
+            message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
+          });
+        }
+
+        this.isSubmitting = false;
         this.focusOnError();
       });
+    },
+
+    checkInvalidTabs() {
+      if (document.querySelector("form .el-tabs__nav") !== null) {
+        const tabs = document.querySelectorAll("form .el-tab-pane");
+        tabs.forEach((tab) => {
+          this.checkTabHasErrors(tab);
+        });
+      }
+    },
+
+    checkTabHasErrors(tab) {
+      // make sure to wait until errors are transitioning to leave
+      // this is only valid when user edit the form directly, without submitting
+      _.delay(() => {
+        const tabName = tab.getAttribute("data-name");
+        // make sure there is no error present in the form
+        // and that no errors are currently being removed from the page
+        if (tab.querySelector(".el-form-item__error") !== null) {
+          if (!this.errorTabs.includes(tabName)) {
+            this.errorTabs.push(tabName);
+          }
+          return true;
+        } else {
+          const index = this.errorTabs.indexOf(tabName);
+          if (index !== -1) {
+            this.errorTabs.splice(index, 1);
+          }
+          return false;
+        }
+      }, 400);
     },
 
     manageBackendErrors(errors) {

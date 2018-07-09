@@ -10,4 +10,6 @@ return [
     'updated'              => 'Modified',
     'status'               => 'Status',
     'na'                   => 'Not Applicable',
+    'description'          => 'Description',
+    'help'                 => 'Help',
 ];

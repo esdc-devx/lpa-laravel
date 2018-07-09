@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import axios from '../axios/interceptor';
+import axios from '@axios/interceptor';
 
 export default {
   start(nameKey, entityId) {
@@ -26,8 +26,12 @@ export default {
     return axios.put(`process-instance-forms/${formId}/unclaim`);
   },
 
-  save(form) {
+  saveForm(form) {
     return axios.put(`process-instance-forms/${form.id}/edit`, form);
+  },
+
+  submitForm(form) {
+    return axios.put(`process-instance-forms/${form.id}/submit`, form);
   },
 
   canEditForm(formId) {

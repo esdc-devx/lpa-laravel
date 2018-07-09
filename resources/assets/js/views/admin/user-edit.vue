@@ -65,7 +65,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSaving" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
+        <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
       </el-form-item>
     </el-form>
@@ -74,10 +74,10 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '../../event-bus.js';
-  import FormUtils from '../../mixins/form/utils.js';
-  import PageUtils from '../../mixins/page/utils.js';
-  import HttpStatusCodes from '../../axios/http-status-codes';
+  import EventBus from '@/event-bus.js';
+  import FormUtils from '@mixins/form/utils.js';
+  import PageUtils from '@mixins/page/utils.js';
+  import HttpStatusCodes from '@axios/http-status-codes';
 
   let namespace = 'users';
 
@@ -128,9 +128,9 @@
             organizational_units: this.form.user.organizational_units,
             roles: this.form.user.roles
           });
-          this.isSaving = false;
+          this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.updated', { name: this.form.user.name })
+            message: this.trans('components.notice.message.updated', { name: this.form.user.name })
           });
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
@@ -138,7 +138,7 @@
             this.notifyWarning({
               message: response.data.errors
             });
-            this.isSaving = false;
+            this.isSubmitting = false;
             return;
           }
           this.errors = response.data.errors;

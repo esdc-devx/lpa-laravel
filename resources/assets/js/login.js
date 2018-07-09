@@ -13,16 +13,16 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
-import Logger from './plugins/logger';
-import Notify from './mixins/notify';
-import './locale';
+import Logger from '@/plugins/logger';
+import Notify from '@mixins/notify';
+import '@/locale';
 
-import Config from './config';
+import Config from '@/config';
 
-import FormError from './components/forms/error';
-import FormUtils from './mixins/form/utils';
+import FormError from '@components/forms/error';
+import FormUtils from '@mixins/form/utils';
 
-import HttpStatusCodes from './axios/http-status-codes';
+import HttpStatusCodes from '@axios/http-status-codes';
 
 const elementUILocale = Config.DEFAULT_LANG === 'en' ? elementUILocaleEN : elementUILocaleFR;
 Vue.use(ElementUI, { locale: elementUILocale });
@@ -99,7 +99,7 @@ new Vue({
           });
           return;
         }
-        this.isSaving = false;
+        this.isSubmitting = false;
         this.manageBackendErrors(response.data.errors);
       }
     },
