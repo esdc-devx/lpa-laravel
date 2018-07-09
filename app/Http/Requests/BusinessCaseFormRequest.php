@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Project\Project;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BusinessCaseFormRequest extends FormRequest
