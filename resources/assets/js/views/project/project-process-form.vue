@@ -32,7 +32,7 @@
               <i class="el-icon-lpa-form"></i>
               {{ viewingFormInfo.definition.name }}
               <el-switch
-                v-if="hasRole('owner') || hasRole('admin')"
+                v-if="hasRole('process-contributor') || hasRole('admin')"
                 :disabled="!rights.canClaim && !rights.canUnclaim"
                 class="claim"
                 active-color="#13ce66"
@@ -71,7 +71,7 @@
                     {{ trans('base.pagination.next') }}<i class="el-icon-arrow-right el-icon-right"></i>
                 </el-button>
               </div>
-              <div class="form-footer-actions" v-if="hasRole('owner') || hasRole('admin')">
+              <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" size="mini" @click="onCancel">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" size="mini" @click="onSave">{{ trans('base.actions.save') }}</el-button>
                 <!-- @todo: lpa-5280 -->

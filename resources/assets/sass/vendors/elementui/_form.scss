@@ -18,3 +18,7 @@
 .el-radio-button__orig-radio:disabled:checked + .el-radio-button__inner {
   color: $--color-white;
 }
+// fixes the color of the checkmark in a disabled checked checkbox
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after {
+  border-color: $--color-white;
+}
