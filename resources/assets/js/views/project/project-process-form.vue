@@ -315,6 +315,9 @@
       async triggerSubmitForm() {
         try {
           await this.submitForm(this.$refs.tabs.form);
+          // reset the fields states
+          // so that we get a pristine form with the new values
+          this.resetFieldsState();
           this.isSubmitting = false;
           this.notifySuccess({
             message: this.trans('components.notice.message.form_submitted')
