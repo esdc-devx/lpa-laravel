@@ -292,6 +292,9 @@
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
+          // make sure to not keep the current errors
+          // so that validated childrens gets a pristine state as well
+          this.resetErrors();
           this.isSaving = false;
           this.notifySuccess({
             message: this.trans('components.notice.message.changes_saved')

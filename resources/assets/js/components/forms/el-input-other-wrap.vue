@@ -43,7 +43,6 @@
 
       onCheckboxChange(checked) {
         // update parent property
-        // this.$emit('update:isChecked', checked);
         if (checked) {
           this.$nextTick(() => {
             let inputEl = this.$refs.input.$el.querySelector('input');
@@ -54,7 +53,7 @@
         } else {
           // empty the input so that we send null
           // when the checkbox is unchecked
-          this.$emit('input', '');
+          this.$emit('input', null);
         }
       }
     }

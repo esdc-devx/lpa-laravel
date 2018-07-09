@@ -6,13 +6,13 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.business_drivers') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.label.request_sources')"
+        :label="trans('forms.business_case.request_sources.label')"
         prop="request_sources"
         :classes="['has-other']"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('components.popover.description.request_sources')">
+            :description="trans('forms.business_case.request_sources.description')">
           </el-popover-wrap>
         </span>
         <div class="wrap-with-errors">
@@ -22,7 +22,7 @@
             :disabled="isInfoLoading"
             element-loading-spinner="el-icon-loading"
             name="request_sources"
-            :data-vv-as="trans('forms.business_case.label.request_sources')"
+            :data-vv-as="trans('forms.business_case.request_sources.label')"
             value-key="name"
             v-validate="{ rules: { required: !this.isRequestSourceOther} }"
             :class="{ 'is-error': verrors.has('request_sources') }"
@@ -47,21 +47,21 @@
       </el-form-item-wrap>
 
       <el-form-item-wrap
-        :label="trans('forms.business_case.label.business_issue')"
+        :label="trans('forms.business_case.business_issue.label')"
         prop="business_issue"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('components.popover.description.business_issue')"
-            :help="trans('components.popover.help.business_issue')">
+            :description="trans('forms.business_case.business_issue.description')"
+            :help="trans('forms.business_case.business_issue.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.instruction.business_issue') }}
+            {{ trans('forms.business_case.business_issue.instruction') }}
           </span>
         </span>
         <el-input-wrap
           v-model="form.business_issue"
-          :data-vv-as="trans('forms.business_case.label.business_issue')"
+          :data-vv-as="trans('forms.business_case.business_issue.label')"
           name="business_issue"
           v-validate="'required'"
           maxlength="1250"
@@ -75,20 +75,20 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.proposal') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.label.learning_response_strategy')"
+        :label="trans('forms.business_case.learning_response_strategy.label')"
         prop="learning_response_strategy"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('components.popover.description.learning_response_strategy')">
+            :description="trans('forms.business_case.learning_response_strategy.description')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.instruction.learning_response_strategy') }}
+            {{ trans('forms.business_case.learning_response_strategy.instruction') }}
           </span>
         </span>
         <el-input-wrap
           v-model="form.learning_response_strategy"
-          :data-vv-as="trans('forms.business_case.label.learning_response_strategy')"
+          :data-vv-as="trans('forms.business_case.learning_response_strategy.label')"
           name="learning_response_strategy"
           v-validate="'required'"
           maxlength="2500"
@@ -96,17 +96,17 @@
         </el-input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.label.potential_solution_types')"
+        :label="trans('forms.business_case.potential_solution_types.label')"
         prop="potential_solution_types"
         :classes="['has-other']"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('components.popover.description.potential_solution_types')"
-            :help="trans('components.popover.help.potential_solution_types')">
+            :description="trans('forms.business_case.potential_solution_types.description')"
+            :help="trans('forms.business_case.potential_solution_types.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.instruction.potential_solution_types') }}
+            {{ trans('forms.business_case.potential_solution_types.instruction') }}
           </span>
         </span>
         <div class="wrap-with-errors">
@@ -115,7 +115,7 @@
             v-loading="isInfoLoading"
             :disabled="isInfoLoading"
             element-loading-spinner="el-icon-loading"
-            :data-vv-as="trans('forms.business_case.label.potential_solution_types')"
+            :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
             name="potential_solution_types"
             :class="{ 'is-error': verrors.has('potential_solution_types') }"
             valueKey="name"
@@ -141,15 +141,15 @@
         </el-input-other-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.label.government_priorities')"
+        :label="trans('forms.business_case.government_priorities.label')"
         prop="government_priorities"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('components.popover.description.government_priorities')">
+            :description="trans('forms.business_case.government_priorities.description')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.instruction.government_priorities') }}
+            {{ trans('forms.business_case.government_priorities.instruction') }}
           </span>
         </span>
         <div class="wrap-with-errors">
@@ -158,7 +158,7 @@
             v-loading="isInfoLoading"
             :disabled="isInfoLoading"
             element-loading-spinner="el-icon-loading"
-            :data-vv-as="trans('forms.business_case.label.government_priorities')"
+            :data-vv-as="trans('forms.business_case.government_priorities.label')"
             name="government_priorities"
             :class="{ 'is-error': verrors.has('government_priorities') }"
             valueKey="name"
@@ -175,20 +175,20 @@
         </div>
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.label.is_required_training')"
+        :label="trans('forms.business_case.is_required_training.label')"
         prop="is_required_training"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('components.popover.description.is_required_training')">
+            :description="trans('forms.business_case.is_required_training.description')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.instruction.is_required_training') }}
+            {{ trans('forms.business_case.is_required_training.instruction') }}
           </span>
         </span>
         <el-radio-group
           v-model="form.is_required_training"
-          :data-vv-as="trans('forms.business_case.label.is_required_training')"
+          :data-vv-as="trans('forms.business_case.is_required_training.label')"
           name="is_required_training"
           v-validate="'required'">
             <el-radio-button :label="0">{{ trans('base.actions.yes') }}</el-radio-button>
