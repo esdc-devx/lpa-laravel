@@ -30,15 +30,15 @@ export default {
     return axios.put(`process-instance-forms/${form.id}/edit`, form);
   },
 
-  canEditForm(id) {
-    return axios.get(`authorization/process-instance-form/edit/${id}`);
+  canEditForm(formId) {
+    return axios.get(`authorization/process-instance-form/edit/${formId}`);
   },
 
-  canClaimForm(id) {
-    return axios.get(`authorization/process-instance-form/claim/${id}`);
+  canClaimForm(formId) {
+    return axios.get(`authorization/process-instance-form/claim/${formId}`);
   },
 
-  canUnclaimForm(id) {
-    return axios.get(`authorization/process-instance-form/unclaim/${id}`);
+  canUnclaimForm(formId) {
+    return axios.get(`authorization/process-instance-form/unclaim/${formId}`);
   },
 };
