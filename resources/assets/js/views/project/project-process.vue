@@ -191,10 +191,10 @@
 
       async fetch() {
         try {
-          this.showMainLoading();
+          await this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
-          this.hideMainLoading();
+          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
@@ -208,10 +208,13 @@
       next();
     },
 
+    created() {
+      this.fetch();
+    },
+
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.fetch);
-      this.fetch();
     }
   };
 </script>

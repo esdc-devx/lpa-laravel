@@ -13,7 +13,7 @@ class BusinessCase extends BaseModel
 
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
-        'processInstanceForm', 'processInstanceForm.definition', 'processInstanceForm.currentEditor',
+        'processInstanceForm', 'processInstanceForm.definition', 'processInstanceForm.organizationalUnit', 'processInstanceForm.currentEditor',
         'requestSources', 'potentialSolutionTypes', 'governmentPriorities'
     ];
 
@@ -35,6 +35,42 @@ class BusinessCase extends BaseModel
     public function governmentPriorities()
     {
         return $this->belongsToMany(GovernmentPriority::class);
+    }
+
+    public function saveFormData(array $data)
+    {
+        if (isset($data['request_sources'])) {
+            $this->requestSources()->sync($data['request_sources']);
+        }
+
+        if (isset($data['potential_solution_types'])) {
+            $this->potentialSolutionTypes()->sync($data['potential_solution_types']);
+        }
+
+        if (isset($data['government_priorities'])) {
+            $this->governmentPriorities()->sync($data['government_priorities']);
+        }
+
+        $this->request_source_other = $data['request_source_other'] ?? null;
+        $this->business_issue = $data['business_issue'] ?? null;
+        $this->learning_response_strategy = $data['learning_response_strategy'] ?? null;
+        $this->potential_solution_type_other = $data['potential_solution_type_other'] ?? null;
+        $this->is_required_training = $data['is_required_training'] ?? null;
+        $this->save();
+
+        // Update process instance form audit and timestamps.
+        $this->processInstanceForm->updateAudit();
+
+        // Update process instance audit and timestamps.
+        $processInstance = $this->processInstanceForm->step->processInstance->updateAudit();
+
+        // Update entity audit and timestamps.
+        $entity = entity($processInstance->entity_type)
+            ->find($processInstance->entity_id)
+            ->updateAudit();
+
+        // Return model with all of its updated relationships.
+        return $this->load($this->relationships);
     }
 
     // @note: Move to a re-usable trait?

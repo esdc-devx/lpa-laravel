@@ -6,16 +6,22 @@ export default {
   state: {
     definitions: [],
     viewing: {
-      definition: {},
+      definition: {
+        name: ''
+      },
       state: {},
       created_by: {},
-      updated_by: {}
+      updated_by: {},
+      steps: {}
     },
-    viewingForm: {
-      process_instance_form: {
-        definition: {},
-        state: {}
-      }
+    viewingForm: {},
+    viewingFormInfo: {
+      state: {},
+      organizational_unit: {},
+      definition: {
+        name: ''
+      },
+      current_editor: {}
     }
   },
 
@@ -30,6 +36,10 @@ export default {
 
     viewingForm(state) {
       return state.viewingForm;
+    },
+
+    viewingFormInfo(state) {
+      return state.viewingFormInfo;
     }
   },
 
@@ -49,13 +59,47 @@ export default {
     async loadInstanceForm({ commit }, formId) {
       let response = await ProcessAPI.getInstanceForm(formId);
       commit('setViewingForm', response.data.data);
+      commit('setViewingFormInfo', response.data.data.process_instance_form);
       return response.data.data;
     },
 
     async start({ commit }, { nameKey, entityId }) {
       let response = await ProcessAPI.start(nameKey, entityId);
       return response.data.data;
-    }
+    },
+
+    async claimForm({ commit }, formId) {
+      let response = await ProcessAPI.claimForm(formId);
+      commit('setCurrentEditor', response.data.data.current_editor);
+      return response.data.data;
+    },
+
+    async unclaimForm({ commit }, formId) {
+      let response = await ProcessAPI.unclaimForm(formId);
+      commit('setCurrentEditor', response.data.data.current_editor);
+      return response.data.data;
+    },
+
+    async save({ commit }, form) {
+      let response = await ProcessAPI.save(form);
+      commit('setViewingFormInfo', response.data.data.process_instance_form);
+      return response.data.data;
+    },
+
+    async canEditForm({ commit }, formId) {
+      let response = await ProcessAPI.canEditForm(formId);
+      return response.data.data.allowed;
+    },
+
+    async canClaimForm({ commit }, formId) {
+      let response = await ProcessAPI.canClaimForm(formId);
+      return response.data.data.allowed;
+    },
+
+    async canUnclaimForm({ commit }, formId) {
+      let response = await ProcessAPI.canUnclaimForm(formId);
+      return response.data.data.allowed;
+    },
   },
 
   mutations: {
@@ -70,9 +114,16 @@ export default {
     },
 
     setViewingForm(state, viewingForm) {
-      // set to default in case there is no process yet
-      viewingForm = viewingForm || state.viewingForm;
       state.viewingForm = viewingForm;
+    },
+
+    setViewingFormInfo(state, viewingFormInfo) {
+      viewingFormInfo = viewingFormInfo || state.viewingFormInfo;
+      state.viewingFormInfo = viewingFormInfo;
+    },
+
+    setCurrentEditor(state, currentEditor) {
+      state.viewingFormInfo.current_editor = currentEditor;
     }
   }
 };

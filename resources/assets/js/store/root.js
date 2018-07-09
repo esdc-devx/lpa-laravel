@@ -7,10 +7,12 @@ import Config from '../config';
 export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
+  shouldConfirmBeforeLanguageChange: false,
   shouldConfirmBeforeLeaving: false,
   isAdminBarShown: false,
   isAppLoading: false,
-  isMainLoading: false
+  isMainLoading: false,
+  mainLoadingCount: 0
 };
 
 export const getters = {
@@ -32,6 +34,14 @@ export const getters = {
 
   isMainLoading(state) {
     return state.isMainLoading;
+  },
+
+  mainLoadingCount(state) {
+    return state.mainLoadingCount;
+  },
+
+  shouldConfirmBeforeLanguageChange(state) {
+    return state.shouldConfirmBeforeLanguageChange;
   },
 
   shouldConfirmBeforeLeaving(state) {
@@ -70,15 +80,36 @@ export const actions = {
     commit(types.TOGGLE_APP_LOADING, false);
   },
 
-  showMainLoading({ commit }, context) {
+  // This is how it goes when we show a main loading.
+  // For example:
+  // user toggles language, showMainLoadingCount = 1
+  // sends an event that language is toggling,
+  // components show main loading and fetch data, showMainLoadingCount = 2
+  // route is transitioned, language is set and hideMainLoading is called, showMainLoadingCount = 1
+  // component fetch is done, showMainLoadingCount = 0 => hideMainLoading
+  showMainLoading({ commit, state }, context) {
+    // grab the actual mainLoadingCount value and increase it
+    let count = state.mainLoadingCount + 1;
+    commit(types.MAIN_LOADING_COUNT, count);
     commit(types.TOGGLE_MAIN_LOADING, true);
   },
 
   hideMainLoading({ commit }, context) {
-    commit(types.TOGGLE_MAIN_LOADING, false);
+    // grab the actual mainLoadingCount value and decrease it
+    let count = state.mainLoadingCount - 1;
+    commit(types.MAIN_LOADING_COUNT, count);
+    if (state.mainLoadingCount === 0) {
+      // only hide the main loading if the count is equal to 0
+      // meaning that we hit the last showMainLoading call
+      commit(types.TOGGLE_MAIN_LOADING, false);
+    }
   },
 
-  shouldConfirmBeforeLeaving({ commit }, context) {
+  confirmBeforeLanguageChange({ commit }, context) {
+    commit(types.SHOULD_CONFIRM_BEFORE_LANGUAGE_CHANGE, context);
+  },
+
+  confirmBeforeLeaving({ commit }, context) {
     commit(types.SHOULD_CONFIRM_BEFORE_LEAVING, context);
   }
 };
@@ -121,6 +152,14 @@ export const mutations = {
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {
     state.isMainLoading = isShown;
+  },
+
+  [types.MAIN_LOADING_COUNT](state, count) {
+    state.mainLoadingCount = count;
+  },
+
+  [types.SHOULD_CONFIRM_BEFORE_LANGUAGE_CHANGE](state, val) {
+    state.shouldConfirmBeforeLanguageChange = val;
   },
 
   [types.SHOULD_CONFIRM_BEFORE_LEAVING](state, val) {

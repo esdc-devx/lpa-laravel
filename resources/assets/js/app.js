@@ -73,7 +73,10 @@ setLanguage()
         fieldsBagName: 'vfields',
         dictionary: {
           fr: veeLocaleFR
-        }
+        },
+        // Gives us the ability to inject validation in child components
+        // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
+        inject: false
       });
 
       new Vue({

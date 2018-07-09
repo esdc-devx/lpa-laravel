@@ -101,7 +101,9 @@ function proceed(to, from, next) {
 function setLanguage(to) {
   let lang = to.params.lang;
   if (lang && lang !== store.getters.language) {
-    store.dispatch('setLanguage', lang);
+    store.dispatch('setLanguage', lang).then(() => {
+      store.dispatch('hideMainLoading');
+    });
   }
 }
 
@@ -240,7 +242,7 @@ const routes = [
     name: 'project-process-form',
     component: ProjectProcessForm,
     meta: {
-      title: () => `${store.getters['processes/viewingForm'].process_instance_form.definition.name}`,
+      title: () => `${store.getters['processes/viewingFormInfo'].definition.name}`,
       breadcrumbs: () => 'projects/project-view/project-process/project-process-form'
     }
   },

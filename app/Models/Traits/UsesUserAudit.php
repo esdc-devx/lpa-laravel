@@ -18,4 +18,14 @@ trait UsesUserAudit
     {
         return $this->belongsTo(User::class, 'updated_by')->withTrashed();
     }
+
+    public function updateAudit()
+    {
+        // Update updatedBy and ensure that timestamp is updated.
+        $this->updatedBy()->associate(auth()->user());
+        $this->save();
+        $this->touch();
+
+        return $this;
+    }
 }

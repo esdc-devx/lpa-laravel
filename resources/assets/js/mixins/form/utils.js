@@ -39,7 +39,8 @@ export default {
 
     submit(callback) {
       this.isSaving = true;
-      this.resetErrors();
+      // clear the error messages right away
+      this.verrors.clear();
       this.$validator.validateAll().then(result => {
         if (result) {
           if (_.isFunction(callback)) {
@@ -83,6 +84,14 @@ export default {
     resetErrors() {
       this.$nextTick(() => {
         this.verrors.clear();
+      });
+    },
+
+    resetFieldsState() {
+      this.$nextTick(() => {
+        _.forEach(this.$validator.fields.items, field => {
+          field.reset();
+        });
       });
     }
   }

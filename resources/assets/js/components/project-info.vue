@@ -80,33 +80,34 @@
       },
 
       deleteProjectConfirm() {
-        this.confirmDelete(
-          this.trans('components.notice.title.delete_project'),
-          this.trans('components.notice.message.delete_project', {
+        this.confirmDelete({
+          title: this.trans('components.notice.title.delete_project'),
+          message: this.trans('components.notice.message.delete_project', {
             name: this.project.name,
             id: this.$options.filters.LPANumFilter(this.project.id)
-          }),
-          async () => {
-            try {
-              await this.deleteProject(this.project.id);
-              this.notifySuccess(this.trans('components.notice.deleted', { name: this.project.name }));
-              this.$router.push(`/${this.language}/projects`);
-            } catch(e) {
-              this.$alert(
-                this.trans('components.notice.message.deleted_project'),
-                this.trans('components.notice.type.error'),
-                {
-                  type: 'error',
-                  showClose: false,
-                  confirmButtonText: this.trans('base.actions.ok'),
-                  callback: action => {
-                    this.$router.push(`/${this.language}/projects`);
-                  }
+          })
+        }).then(async () => {
+          try {
+            await this.deleteProject(this.project.id);
+            this.notifySuccess({
+              message: this.trans('components.notice.deleted', { name: this.project.name })
+            });
+            this.$router.push(`/${this.language}/projects`);
+          } catch(e) {
+            this.$alert(
+              this.trans('components.notice.message.deleted_project'),
+              this.trans('components.notice.type.error'),
+              {
+                type: 'error',
+                showClose: false,
+                confirmButtonText: this.trans('base.actions.ok'),
+                callback: action => {
+                  this.$router.push(`/${this.language}/projects`);
                 }
-              );
-            }
+              }
+            );
           }
-        );
+        }).catch(() => false);
       }
     },
 

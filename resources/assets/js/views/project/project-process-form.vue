@@ -5,20 +5,20 @@
         <info-box>
           <dl>
             <dt>{{ trans('entities.form.status') }}</dt>
-            <dd>{{ processInstanceForm.state.name }}</dd>
+            <dd>{{ viewingFormInfo.state.name }}</dd>
+          </dl>
+          <dl>
+            <dt>{{ $tc('entities.general.assigned_organizational_units') }}</dt>
+            <dd>{{ viewingFormInfo.organizational_unit.name }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.form.current_editor') }}</dt>
-            <dd>{{ processInstanceForm.current_editor ? processInstanceForm.current_editor.name : trans('entities.general.na') }}</dd>
-          </dl>
-          <dl>
-            <dt>{{ $tc('entities.general.organizational_units') }}</dt>
-            <dd>Org Unit</dd>
+            <dd>{{ viewingFormInfo.current_editor ? viewingFormInfo.current_editor.name : trans('entities.general.na') }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ processInstanceForm.updated_by ? processInstanceForm.updated_by.name : trans('entities.general.na') }}</dd>
-            <dd>{{ processInstanceForm.updated_at }}</dd>
+            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_by.name : trans('entities.general.na') }}</dd>
+            <dd>{{ viewingFormInfo.updated_at }}</dd>
           </dl>
         </info-box>
       </el-col>
@@ -27,17 +27,29 @@
       <el-col>
         <el-container class="form-wrap" direction="vertical">
           <div class="form-header">
-            <el-header>{{ trans('entities.form.form_index') }}</el-header>
-            <el-header class="form-header-details"><i class="el-icon-lpa-form"></i>{{ viewingForm.process_instance_form.definition.name }}</el-header>
+            <el-header></el-header>
+            <el-header class="form-header-details">
+              <i class="el-icon-lpa-form"></i>
+              {{ viewingFormInfo.definition.name }}
+              <el-switch
+                v-if="hasRole('process-contributor') || hasRole('admin')"
+                :disabled="!rights.canClaim && !rights.canUnclaim"
+                class="claim"
+                active-color="#13ce66"
+                v-model="isClaiming"
+                :inactive-text="trans('entities.form.claim')">
+              </el-switch>
+            </el-header>
           </div>
           <el-main>
-            <el-form label-position="top" @submit.native.prevent>
+            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming">
               <component
                 :is="formComponent"
                 ref="tabs"
                 type="border-card"
                 tabPosition="left"
-                :value.sync="activeIndex">
+                :value.sync="activeIndex"
+                :formData="originalFormData">
               </component>
             </el-form>
           </el-main>
@@ -59,11 +71,11 @@
                     {{ trans('base.pagination.next') }}<i class="el-icon-arrow-right el-icon-right"></i>
                 </el-button>
               </div>
-              <div class="form-footer-actions">
+              <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
+                <el-button :disabled="!isFormDirty" size="mini" @click="onCancel">{{ trans('base.actions.cancel') }}</el-button>
+                <el-button :disabled="!isFormDirty" :loading="isSaving" size="mini" @click="onSave">{{ trans('base.actions.save') }}</el-button>
                 <!-- @todo: lpa-5280 -->
-                <!-- <el-button size="mini">Cancel</el-button>
-                <el-button size="mini">Save</el-button>
-                <el-button size="mini">Submit</el-button> -->
+                <!-- <el-button size="mini">Submit</el-button> -->
               </div>
             </el-footer>
           </div>
@@ -82,6 +94,9 @@
 
   import InfoBox from '../../components/info-box.vue';
 
+  import FormUtils from '../../mixins/form/utils';
+
+  // Forms
   import BusinessCase from '../../components/forms/entities/business-case';
 
   let namespace = 'projects';
@@ -91,20 +106,79 @@
 
     components: { InfoBox, BusinessCase },
 
+    // Gives us the ability to inject validation in child components
+    // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
+    $_veeValidate: {
+      validator: 'new'
+    },
+
+    mixins: [ FormUtils ],
+
     data() {
       return {
+        originalFormData: {},
         activeIndex: 0,
         tabsLength: 0,
-        currentFormComponent: ''
+        claiming: false,
+        currentFormComponent: '',
+        rights: {
+          canEdit: false,
+          canClaim: false,
+          canUnclaim: false
+        }
       }
     },
 
     computed: {
       ...mapGetters({
         language: 'language',
+        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
+        hasRole: 'users/hasRole',
+        isCurrentEditor: 'users/isCurrentEditor',
         viewingProcess: 'processes/viewing',
-        viewingForm: 'processes/viewingForm'
+        viewingForm: 'processes/viewingForm',
+        viewingFormInfo: 'processes/viewingFormInfo'
       }),
+
+      isClaiming: {
+        get() {
+          if (this.viewingFormInfo.current_editor) {
+            return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
+          }
+          return false;
+        },
+        // update the value server side
+        async set(val) {
+          if (val) {
+            await this.showMainLoading();
+            try {
+              await this.claimForm(this.$route.params.formId);
+              await this.hideMainLoading();
+            } catch({ response }) {
+              if (response.status === HttpStatusCodes.FORBIDDEN) {
+                this.discardChanges();
+                // reload the process_instance_form data since we are unsynced
+                await this.triggerLoadProcessInstanceForm();
+                await this.hideMainLoading();
+              }
+            }
+          } else if (this.shouldConfirmBeforeLeaving) {
+            this.confirmLoseChanges()
+              .then(async () => {
+                await this.showMainLoading();
+                this.discardChanges();
+                await this.unclaimForm(this.$route.params.formId);
+                await this.hideMainLoading();
+              }).catch(async () => {
+                return false;
+              });
+          } else {
+            await this.showMainLoading();
+            await this.unclaimForm(this.$route.params.formId);
+            await this.hideMainLoading();
+          }
+        }
+      },
 
       formComponent() {
         return this.currentFormComponent;
@@ -115,10 +189,12 @@
       },
       isNextDisabled() {
         return parseInt(this.activeIndex, 10) === this.tabsLength;
-      },
+      }
+    },
 
-      processInstanceForm() {
-        return this.viewingForm.process_instance_form;
+    watch: {
+      isFormDirty: function () {
+        this.confirmBeforeLeaving(this.isFormDirty);
       }
     },
 
@@ -126,9 +202,17 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadProject: 'projects/loadProject',
+        confirmBeforeLeaving: 'confirmBeforeLeaving',
+        loadProject: `${namespace}/loadProject`,
         loadProcessInstance: 'processes/loadInstance',
-        loadProcessInstanceForm: 'processes/loadInstanceForm'
+        loadProcessInstanceForm: 'processes/loadInstanceForm',
+        claimForm: 'processes/claimForm',
+        unclaimForm: 'processes/unclaimForm',
+        canEditForm: 'processes/canEditForm',
+        canClaimForm: 'processes/canClaimForm',
+        canClaimForm: 'processes/canClaimForm',
+        canUnclaimForm: 'processes/canUnclaimForm',
+        saveForm: 'processes/save',
       }),
 
       prevTabIndex() {
@@ -143,6 +227,73 @@
         index = index !== this.tabsLength ? ++index : index;
         // cast to string since el-tabs value prop requires a string to work
         this.activeIndex = `${index}`;
+      },
+
+      onCancel() {
+        this.confirmLoseChanges()
+          .then(() => {
+            this.discardChanges();
+          }).catch(() => false);
+      },
+
+      discardChanges() {
+        let formWasDirty = this.isFormDirty;
+        // set the form data back to original state
+        for (const key in this.originalFormData) {
+          this.$set(this.$refs.tabs.form, key, this.originalFormData[key]);
+        }
+        // reset the fields states
+        // so that we get a pristine form
+        this.resetFieldsState();
+
+        if (formWasDirty) {
+          this.notifyInfo({
+            message: this.trans('components.notice.changes_discarded')
+          });
+        }
+      },
+
+      // Used in order to remove unnecessary props from response
+      // and convert arrays into only ids so that ElementUI understands them
+      formatData(data) {
+        let formId = this.$route.params.formId;
+        let that = this;
+        this.originalFormData = _.omit(data, 'process_instance_form');
+        _.forEach(this.originalFormData, (value, key) => {
+          // @fixme: shouldn't we get an array here?
+          // make sure that we convert the lists into only ids
+          // since el-select only needs ids to populate selected items
+          if (typeof value === 'object' && value !== null) {
+            that.originalFormData[key] = _.map(value, 'id');
+          }
+        });
+        // make sure the id correspond to the actual form id
+        // since we recieve a process id in response.id
+        this.originalFormData.id = formId;
+      },
+
+      async onSave() {
+        this.isSaving = true;
+        try {
+          let response = await this.saveForm(this.$refs.tabs.form);
+          this.formatData(response);
+          // reset the fields states
+          // so that we get a pristine form with the new values
+          this.resetFieldsState();
+          this.isSaving = false;
+          this.notifySuccess({
+            message: this.trans('components.notice.changes_saved')
+          });
+        } catch({ response }) {
+          if (response.status === HttpStatusCodes.FORBIDDEN) {
+            await this.showMainLoading();
+            this.discardChanges();
+            // remove ownership on form
+            await this.unclaimForm(this.$route.params.formId);
+            this.isSaving = false;
+            await this.hideMainLoading();
+          }
+        }
       },
 
       setupStage() {
@@ -167,37 +318,68 @@
       },
 
       async triggerLoadProcessInstanceForm() {
+        let that = this;
         let formId = this.$route.params.formId;
-        await this.loadProcessInstanceForm(formId);
-
+        let response = await this.loadProcessInstanceForm(formId);
+        this.formatData(response);
       },
 
       async fetch() {
         try {
-          this.showMainLoading();
+          await this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
-          // @todo: replace component by dynamic name_key
-          this.currentFormComponent = 'business-case';
+          this.currentFormComponent = this.viewingFormInfo.definition.name_key;
           this.setupStage();
-          this.hideMainLoading();
+          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
+      },
+
+      beforeLogout(callback) {
+        this.confirmLoseChanges().then(async () => {
+          await this.showMainLoading();
+          await this.unclaimForm(this.$route.params.formId);
+          await this.hideMainLoading();
+          callback();
+        }).catch(() => false);
       }
     },
 
     beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.fetch);
-      next();
+      if (this.shouldConfirmBeforeLeaving) {
+        this.confirmLoseChanges().then(async () => {
+          await this.showMainLoading();
+          await this.unclaimForm(this.$route.params.formId);
+          await this.hideMainLoading();
+          next();
+        }).catch(() => false);
+      } else {
+        // Destroy any events we might be listening
+        // so that they do not get called while being on another page
+        EventBus.$off('Store:languageUpdate', this.fetch);
+        EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
+        // if user is currently claiming, remove claim
+        if (this.isClaiming) {
+          this.isClaiming = false;
+        }
+        next();
+      }
+    },
+
+    async created() {
+      let formId = this.$route.params.formId;
+      this.rights.canEdit = await this.canEditForm(formId);
+      this.rights.canClaim = await this.canClaimForm(formId);
+      this.rights.canUnclaim = await this.canUnclaimForm(formId);
     },
 
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.fetch);
+      EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
       this.fetch();
     }
   };
@@ -281,9 +463,18 @@
         box-shadow: $box-shadow-base-bottom;
         &.form-header-details {
           justify-content: flex-start;
+          font-size: 16px;
+          font-weight: 500;
           i {
             margin-right: 5px;
             @include svg(form, $--color-white);
+          }
+          .claim {
+            justify-content: flex-end;
+            flex: 1;
+            .el-switch__label {
+              color: $--color-white;
+            }
           }
         }
       }
@@ -313,6 +504,22 @@
               flex: 1;
             }
           }
+        }
+
+        label {
+          color: $--color-primary;
+          font-weight: 500;
+          line-height: 10px;
+        }
+        .instruction {
+          font-style: italic;
+          display: block;
+          line-height: normal;
+          color: $--color-text-regular;
+        }
+        .is-required .instruction {
+          // align under label, make room under asterisk
+          margin-left: 14px;
         }
       }
       .form-header, .form-footer {

@@ -84,6 +84,8 @@
   export default {
     name: 'user-edit',
 
+    inject: ['$validator'],
+
     mixins: [ FormUtils, PageUtils ],
 
     computed: {
@@ -127,11 +129,15 @@
             roles: this.form.user.roles
           });
           this.isSaving = false;
-          this.notifySuccess(this.trans('components.notice.updated', { name: this.form.user.name }));
+          this.notifySuccess({
+            message: this.trans('components.notice.updated', { name: this.form.user.name })
+          });
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {
-            this.notifyWarning(response.data.errors);
+            this.notifyWarning({
+              message: response.data.errors
+            });
             this.isSaving = false;
             return;
           }

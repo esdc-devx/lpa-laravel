@@ -21,7 +21,7 @@ export default {
 
   methods: {
     ...mapActions([
-      'shouldConfirmBeforeLeaving'
+      'confirmBeforeLanguageChange'
     ]),
 
     // handle click on sortable and filterable columns
@@ -47,7 +47,7 @@ export default {
       let filter = _.values(filters)[0];
       if (filter.length) {
         // let the store know that it should make the user confirm before leaving the page
-        this.shouldConfirmBeforeLeaving(true);
+        this.confirmBeforeLanguageChange(true);
         // apply filter
         this.filters[_.keys(filters)[0]] = _.values(filters)[0];
       } else {
@@ -88,7 +88,7 @@ export default {
       )
       .then(() => {
         // reset the confirmation flag
-        this.shouldConfirmBeforeLeaving(false);
+        this.confirmBeforeLanguageChange(false);
         // reset the sorting and filtering
         this.filters = {};
         this.customFilters = [];

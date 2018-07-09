@@ -3,7 +3,7 @@ import _ from 'lodash';
 import '../locale';
 
 export default {
-  _notify(message = '', type = 'info', autoClose = true) {
+  _notify({ message = '', type = 'info', autoClose = true }) {
     Vue.prototype.$notify({
       title: Vue.prototype.trans("components.notice.type[" + type + "]"),
       message,
@@ -14,19 +14,35 @@ export default {
     });
   },
 
-  notifySuccess(message, autoClose = true) {
-    this._notify(message, 'success', autoClose);
+  notifySuccess({ message, autoClose = true }) {
+    this._notify({
+      message,
+      type: 'success',
+      autoClose
+    });
   },
 
-  notifyInfo(message, autoClose = true) {
-    this._notify(message, 'info', autoClose);
+  notifyInfo({ message, autoClose = true }) {
+    this._notify({
+      message,
+      type: 'info',
+      autoClose
+    });
   },
 
-  notifyWarning(message, autoClose = true) {
-    this._notify(message, 'warning', autoClose);
+  notifyWarning({ message, autoClose = true }) {
+    this._notify({
+      message,
+      type: 'warning',
+      autoClose
+    });
   },
 
-  notifyError(message, autoClose = false) {
-    this._notify(message, 'error', autoClose);
+  notifyError({ message, autoClose = false }) {
+    this._notify({
+      message,
+      type: 'error',
+      autoClose
+    });
   }
 };

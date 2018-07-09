@@ -53,6 +53,7 @@
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current',
         hasRole: 'users/hasRole',
+        shouldConfirmBeforeLanguageChange: 'shouldConfirmBeforeLanguageChange',
         shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
       })
     },
@@ -88,10 +89,19 @@
     methods: {
       ...mapActions({
         showAppLoading: 'showAppLoading',
+        showMainLoading: 'showMainLoading',
         logout: 'users/logout'
       }),
 
-      async onLogout() {
+      onLogout() {
+        if (this.shouldConfirmBeforeLeaving) {
+          EventBus.$emit('TopBar:beforeLogout', this.doLogout);
+        } else {
+          this.doLogout();
+        }
+      },
+
+      async doLogout() {
         this.showAppLoading();
         // try-catch here since the logout uses another instance of axios
         // which doesn't have the interceptors
@@ -110,14 +120,18 @@
       },
 
       setLanguage() {
-        if (this.shouldConfirmBeforeLeaving) {
+        if (this.shouldConfirmBeforeLanguageChange) {
           EventBus.$emit('TopBar:beforeLanguageUpdate', this.doSetLanguage);
         } else {
           this.doSetLanguage();
         }
       },
 
-      doSetLanguage() {
+      async doSetLanguage() {
+        // @todo: we probably should hide the app entirely
+        // to avoid seeing bouncing texts
+        // @note: hideMainLoading is called when the language is set in router
+        await this.showMainLoading();
         this.$helpers.throttleAction(() => {
           let storeLang = this.$store.getters.language;
           let newLang = this.getSwitchedLang(storeLang);

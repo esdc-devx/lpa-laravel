@@ -87,18 +87,19 @@
 
       triggerStartProcess(processName, processNameKey) {
         // confirm the intention to start a process first
-        this.confirmStart(
-          this.trans('entities.process.start'),
-          this.trans('components.notice.message.start_process', {
+        this.confirmStart({
+          title: this.trans('entities.process.start'),
+          message: this.trans('components.notice.message.start_process', {
             process_name: processName
-          }),
-          async () => {
-            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
-            this.notifySuccess(this.trans('components.notice.started', { name: processName }));
-            let projectId = this.$route.params.projectId;
-            this.$router.push(`${projectId}/process/${response.process_instance.id}`);
-          }
-        );
+          })
+        }).then(async () => {
+          let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
+          this.notifySuccess({
+            message: this.trans('components.notice.started', { name: processName })
+          });
+          let projectId = this.$route.params.projectId;
+          this.$router.push(`${projectId}/process/${response.process_instance.id}`);
+        }).catch(() => false);
       },
 
       async getProcessDefinitionPermissions() {
@@ -115,7 +116,7 @@
       },
 
       async fetch() {
-        this.showMainLoading();
+        await this.showMainLoading();
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProject(projectId);
@@ -123,7 +124,7 @@
           EventBus.$emit('App:ready');
           this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
-          this.hideMainLoading();
+          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
