@@ -4,7 +4,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('business_drivers') }">
         {{ trans('forms.business_case.tabs.business_drivers') }}
       </span>
-
+      <h2>{{ trans('forms.business_case.tabs.business_drivers') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.label.request_sources')"
         prop="request_sources"
@@ -24,7 +24,7 @@
             name="request_sources"
             :data-vv-as="trans('forms.business_case.label.request_sources')"
             value-key="name"
-            v-validate="'required'"
+            v-validate="{ rules: { required: !this.isRequestSourceOther} }"
             :class="{ 'is-error': verrors.has('request_sources') }"
             multiple>
             <el-option
@@ -73,6 +73,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('proposal') }">
         {{ trans('forms.business_case.tabs.proposal') }}
       </span>
+      <h2>{{ trans('forms.business_case.tabs.proposal') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.label.learning_response_strategy')"
         prop="learning_response_strategy"
@@ -118,7 +119,7 @@
             name="potential_solution_types"
             :class="{ 'is-error': verrors.has('potential_solution_types') }"
             valueKey="name"
-            v-validate="'required'"
+            v-validate="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
             multiple>
             <el-option
               v-for="item in potentialSolutionTypesServer"

@@ -582,6 +582,13 @@
           // align under label, make room under asterisk
           margin-left: 14px;
         }
+
+        .el-tab-pane h2 {
+          border-bottom: 1px solid;
+          margin-top: 0;
+          text-transform: uppercase;
+          font-size: 1.3em;
+        }
       }
       .form-header, .form-footer {
         z-index: $--index-top;
