@@ -211,11 +211,6 @@
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
-
-        // make the checkboxes react
-        // based on the value of its correcponding field
-        this.isRequestSourceOther = !!this.form.request_source_other;
-        this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
@@ -225,11 +220,17 @@
       EventBus.$off('Store:languageUpdate', this.fetchLists);
     },
 
-    created() {
-      this.fetchLists();
+    async created() {
+      await this.showMainLoading();
+      await this.fetchLists();
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = Object.assign({}, this.formData);
+      // make the checkboxes react
+      // based on the value of its correcponding field
+      this.isRequestSourceOther = !!this.form.request_source_other;
+      this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+      await this.hideMainLoading();
     },
 
     mounted() {
