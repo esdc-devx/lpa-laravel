@@ -265,7 +265,7 @@
 
     async created() {
       await this.showMainLoading();
-      await this.fetchLists();
+      this.fetchLists();
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = Object.assign({}, this.formData);
