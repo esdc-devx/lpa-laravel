@@ -26,7 +26,7 @@
               </div>
             </template>
           </el-autocomplete>
-          <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+          <form-error name="name"></form-error>
         </el-form-item>
 
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
@@ -226,7 +226,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   .user-create {
     margin: 0 auto;

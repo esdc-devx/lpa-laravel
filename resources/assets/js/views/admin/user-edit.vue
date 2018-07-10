@@ -199,7 +199,7 @@
 </script>
 
 <style lang="scss">
-  @import '../../../sass/abstracts/vars';
+  @import '~@sass/abstracts/vars';
 
   .user-edit {
     margin: 0 auto;

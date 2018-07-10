@@ -14,7 +14,7 @@
             v-model="form.project.name"
             v-validate="'required'">
           </el-input>
-          <form-error v-for="error in verrors.collect('name')" :key="error.id">{{ error }}</form-error>
+          <form-error name="name"></form-error>
         </el-form-item>
 
         <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizationalUnit">
@@ -34,7 +34,7 @@
               :value="item.id">
             </el-option>
           </el-select>
-          <form-error v-for="error in verrors.collect('organizationalUnit')" :key="error.id">{{ error }}</form-error>
+          <form-error name="organizationalUnit"></form-error>
         </el-form-item>
 
         <el-form-item>
