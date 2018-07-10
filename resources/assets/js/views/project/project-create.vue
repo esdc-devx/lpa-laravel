@@ -11,6 +11,7 @@
           prop="name"
           required>
           <el-input-wrap
+            id="name"
             name="name"
             :data-vv-as="trans('entities.general.name')"
             v-model="form.name"
