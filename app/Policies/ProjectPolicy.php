@@ -68,15 +68,14 @@ class ProjectPolicy
      * @return mixed
      */
     public function delete(User $user, Project $project) {
-        if ($user->isAdmin()) {
-            // @todo: Ensure that project has no child learning products.
-            // @todo: Add logic to cancel current process if any.
-            return true;
-        }
-
         // Ensure that project has no running processes.
         if ($project->currentProcess) {
             return false;
+        }
+
+        if ($user->isAdmin()) {
+            // @todo: Ensure that project has no child learning products.
+            return true;
         }
 
         // Ensure that user is part of the project's organizational unit and that project is still new.
