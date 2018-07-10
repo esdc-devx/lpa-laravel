@@ -33,7 +33,7 @@ class ProjectFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'                => 'required|unique:projects,name,' . $this->project,
+            'name'                => 'required|max:100|unique:projects,name,' . $this->project,
             'organizational_unit' => 'required|exists:organizational_units,id|in:' . $this->validOrganizationalUnitChoices(),
         ];
     }
