@@ -160,6 +160,8 @@
     .el-breadcrumb {
       padding: 20px 30px;
       font-size: 18px;
+      // this fixes a bug when we have multiple lines in the breadcrumb
+      line-height: inherit;
 
       .el-breadcrumb__item:not(:last-child) .el-breadcrumb__inner {
         @extend .fake-link;
