@@ -16,7 +16,7 @@ return [
         'created'            => '<b>:name</b> has been created.',
         'updated'            => '<b>:name</b> has been updated.',
         'deleted'            => '<b>:name</b> has been deleted.',
-        'started'            => '<b>:name</b> has been started.',
+        'process_started'    => 'The <b>:name</b> process is started.',
         'changes_saved'      => 'The changes have been saved.',
         'changes_discarded'  => 'The changes have been discarded.',
         'form_submitted'     => 'The form has been submitted.',

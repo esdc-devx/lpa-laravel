@@ -16,7 +16,7 @@ return [
         'created'            => '<b>:name</b> a été créé.',
         'updated'            => '<b>:name</b> a été mis-à-jour.',
         'deleted'            => '<b>:name</b> a été supprimé.',
-        'started'            => '<b>:name</b> a été démarré.',
+        'process_started'    => 'Le processus <b>:name</b> est démarré.',
         'changes_saved'      => 'Les changements ont été sauvegardés.',
         'changes_discarded'  => 'Les changements ont été supprimés.',
         'form_submitted'     => 'Le formulaire a été soumis.',
