@@ -67,6 +67,7 @@
         display: flex;
         background-color: $--color-white;
         border: 1px solid $--border-color-lighter;
+        border-right: 0;
         &:before, &:after {
           content: '';
         }

@@ -15,6 +15,11 @@
 
 <style lang="scss">
   .info-box {
+    h2 {
+      margin-right: 20px;
+      flex: 1;
+      line-height: 1;
+    }
     .el-card__body {
       display: flex;
       flex-flow: wrap;

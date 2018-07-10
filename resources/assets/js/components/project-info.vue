@@ -126,7 +126,8 @@
   .project-info {
     .info-box {
       h2 {
-        margin: 0;
+        margin-top: 0;
+        margin-bottom: 0;
         display: inline-block;
       }
       dl {
@@ -136,7 +137,7 @@
         }
       }
 
-      .el-card__header div {
+      .el-card__header > div {
         display: flex;
         justify-content: space-between;
 
