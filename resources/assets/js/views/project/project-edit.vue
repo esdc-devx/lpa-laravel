@@ -57,7 +57,6 @@
 
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElInputWrap from '@components/forms/el-input-wrap';
-
   import FormError from '@components/forms/error.vue';
 
   import FormUtils from '@mixins/form/utils.js';
