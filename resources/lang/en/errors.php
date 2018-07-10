@@ -3,7 +3,7 @@
 return [
     'general'          => 'General exception. Please contact your administrator.',
     'not_found'        => 'Not Found',
-    'forbidden'        => 'Access denied',
+    'forbidden'        => 'Insufficient privileges.',
     'bad_request'      => 'Bad request. Please refresh your page.',
     'server_error'     => 'Server error. Please refresh your page.',
     'error_edit_admin' => 'Cannot edit admin account.',
