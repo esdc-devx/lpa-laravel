@@ -3,7 +3,7 @@ import store from '@/store/';
 
 import Config from '@/config.js';
 
-const helpers = {
+export const helpers = {
   throttleAction: _.throttle(callback => {
     callback();
   }, Config.THROTTLE_WAIT_TIME),

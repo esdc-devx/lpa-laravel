@@ -1,4 +1,5 @@
 import ProjectsAPI from '@api/projects';
+import { helpers } from '@/helpers.js';
 
 export default {
   namespaced: true,
@@ -96,7 +97,7 @@ export default {
     },
 
     setOrganizationalUnits(state, organizationalUnits) {
-      state.organizationalUnits = organizationalUnits;
+      state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
     }
   }
 };
