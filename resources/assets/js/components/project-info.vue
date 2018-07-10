@@ -90,12 +90,12 @@
           try {
             await this.deleteProject(this.project.id);
             this.notifySuccess({
-              message: this.trans('components.notice.message.deleted', { name: this.project.name })
+              message: this.trans('components.notice.message.project_deleted')
             });
             this.$router.push(`/${this.language}/projects`);
           } catch(e) {
             this.$alert(
-              this.trans('components.notice.message.deleted_project'),
+              this.trans('components.notice.message.already_deleted_project'),
               this.trans('components.notice.type.error'),
               {
                 type: 'error',
@@ -149,6 +149,17 @@
             &:hover, &:focus {
               i.el-icon-lpa-delete {
                 @include svg(delete, $--color-white);
+              }
+            }
+            &:disabled {
+              &.el-button--danger {
+                background-color: $--color-danger-lighter;
+                i.el-icon-lpa-delete {
+                  @include svg(delete, $--color-danger-light);
+                }
+              }
+              i.el-icon-lpa-edit {
+                @include svg(edit, $--color-text-placeholder);
               }
             }
             i {
