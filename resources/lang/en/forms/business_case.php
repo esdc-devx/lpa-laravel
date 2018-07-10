@@ -7,7 +7,7 @@ return [
     ],
     'business_issue' => [
         'label'       => 'Business Issues',
-        'instruction' => 'Please describe the performance gaps or buisness issues addressed by this project.',
+        'instruction' => 'Please describe the performance gaps or business issues addressed by this project.',
         'description' => 'The business issues motivating this project.',
         'help'        => 'What are the business issues, problems or performance gaps that the School is trying to solve?',
     ],
