@@ -21,7 +21,7 @@ class CreateBusinessCasesTable extends Migration
             $table->text('business_issue')->nullable();
             // Proposal fields.
             $table->text('learning_response_strategy')->nullable();
-            $table->string('potential_solution_type_other')->nullable();
+            $table->text('potential_solution_type_other')->nullable();
             $table->boolean('is_required_training')->nullable();
             // Foreign keys.
             $table->referenceOn('process_instance_form_id', 'process_instance_forms');
