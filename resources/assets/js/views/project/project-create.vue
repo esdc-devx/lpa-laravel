@@ -52,6 +52,8 @@
 
   import ElInputWrap from '../../components/forms/el-input-wrap';
 
+  import ElInputWrap from '../../components/forms/el-input-wrap';
+
   let namespace = 'projects';
 
   export default {
