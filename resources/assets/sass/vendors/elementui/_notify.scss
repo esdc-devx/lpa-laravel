@@ -8,5 +8,10 @@
   .el-notification__content {
     text-align: left !important;
   }
+
+  // Fixes on IE11 the spacing between the icon and the text when there is a long text
+  .el-notification__icon {
+    display: inline-table !important;
+  }
 }
 
