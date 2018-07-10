@@ -15,6 +15,8 @@ return [
     'message' => [
         'created'                 => '<b>:name</b> a été créé.',
         'updated'                 => '<b>:name</b> a été mis-à-jour.',
+        'project_updated'         => 'Projet mis-à-jour.',
+        'user_updated'            => 'Le profil de l\'utilisateur a été mis à jour.',
         'deleted'                 => '<b>:name</b> a été supprimé.',
         'project_deleted'         => 'Projet supprimé.',
         'process_started'         => 'Le processus <b>:name</b> est démarré.',

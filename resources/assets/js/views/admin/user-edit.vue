@@ -133,7 +133,7 @@
           });
           this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.message.updated', { name: this.form.user.name })
+            message: this.trans('components.notice.message.user_updated')
           });
           this.go(`/${this.language}/admin/users`);
         } catch({ response }) {

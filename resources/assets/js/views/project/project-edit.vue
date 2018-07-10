@@ -109,7 +109,7 @@
           });
           this.isSubmitting = false;
           this.notifySuccess({
-            message: this.trans('components.notice.message.updated', { name: this.form.project.name })
+            message: this.trans('components.notice.message.project_updated')
           });
           this.go(`/${this.language}/projects/${this.form.project.id}`);
         } catch({ response }) {
