@@ -72,7 +72,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElInputWrap, FormError },
+    components: { ElFormItemWrap, ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({
