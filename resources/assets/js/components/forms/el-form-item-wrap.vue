@@ -2,7 +2,7 @@
   <el-form-item
     v-if="label || $slots.label"
     :for="labelFor"
-    :class="[classes, { 'is-required': required }]">
+    :class="[classes, { 'is-required': required, 'is-error': verrors.collect(labelFor).length }]">
       <slot name="label">
         <span slot="label">
           {{ label }}
@@ -27,7 +27,7 @@
       classes: Array,
       required: {
         type: Boolean,
-        default: undefined
+        default: false
       },
       for: String
     },

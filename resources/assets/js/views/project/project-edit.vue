@@ -3,20 +3,24 @@
     <h2>{{ trans('pages.project_edit.title') }}</h2>
 
     <el-form label-width="30%" :disabled="isFormDisabled">
-      <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+      <el-form-item-wrap
+        :label="trans('entities.general.name')"
+        prop="name"
+        required>
         <el-input-wrap
           name="name"
           :data-vv-as="trans('entities.general.name')"
           v-model="form.project.name"
           maxlength="175"
           v-validate="'required'">
-        </el-input>
-        <form-error name="name"></form-error>
-      </el-form-item>
+        </el-input-wrap>
+      </el-form-item-wrap>
 
-      <el-form-item :label="$tc('entities.general.organizational_units')" for="organizationalUnit" :class="['is-required', {'is-error': verrors.collect('organizationalUnit').length }]" prop="organizationalUnit">
+      <el-form-item
+        :label="$tc('entities.general.organizational_units')"
+        prop="organizationalUnit"
+        required>
         <el-select
-          id="organizationalUnit"
           name="organizationalUnit"
           :data-vv-as="$tc('entities.general.organizational_units')"
           v-loading="isProjectInfoLoading"
@@ -46,6 +50,7 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
+  import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElInputWrap from '@components/forms/el-input-wrap';
   import FormError from '@components/forms/error.vue';
 
@@ -61,7 +66,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElInputWrap, FormError },
+    components: { ElFormItemWrap, ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({
