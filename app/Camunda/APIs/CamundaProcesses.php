@@ -121,7 +121,8 @@ class CamundaProcesses extends CamundaBaseAPI
      */
     public function getInstance(string $id)
     {
-        return $this->client->get('history/process-instance', ['processInstanceId' => $id]);
+        // When calling the history API, Camunda response is an array, so we return the first process instance object.
+        return collect($this->client->get('history/process-instance', ['processInstanceId' => $id]))->first();
     }
 
     /**

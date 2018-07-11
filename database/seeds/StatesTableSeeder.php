@@ -47,12 +47,12 @@ class StatesTableSeeder extends Seeder
             ],
             'process-instance' => [
                 [
-                    'name_key' => 'running',
+                    'name_key' => 'active',
                     'name_en'  => 'Running',
                     'name_fr'  => 'En cours'
                 ],
                 [
-                    'name_key' => 'cancelled',
+                    'name_key' => 'suspended',
                     'name_en'  => 'Cancelled',
                     'name_fr'  => 'Annulé'
                 ],
@@ -60,6 +60,16 @@ class StatesTableSeeder extends Seeder
                     'name_key' => 'completed',
                     'name_en'  => 'Completed',
                     'name_fr'  => 'Complété'
+                ],
+                [
+                    'name_key' => 'externally-terminated',
+                    'name_en'  => 'Terminated',
+                    'name_fr'  => 'Terminé'
+                ],
+                [
+                    'name_key' => 'internally-terminated',
+                    'name_en'  => 'Terminated',
+                    'name_fr'  => 'Terminé'
                 ],
             ],
             'process-step' => [

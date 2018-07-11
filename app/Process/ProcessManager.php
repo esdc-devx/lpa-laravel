@@ -46,7 +46,6 @@ class ProcessManager {
         // Generate a random string used as a token for webservice authentication calls from Camunda.
         $authToken = str_random(24);
         $entityType = $entity::getEntityType();
-        $processState = State::getByKey('process-instance.running')->first();
         $user = auth()->user();
 
         // Start process in Camunda.
@@ -66,23 +65,26 @@ class ProcessManager {
 
         try {
             // Create process instance.
-            $this->processInstance = ProcessInstance::create([
+            $this->processInstance = new ProcessInstance([
                 'entity_type'                => $entityType,
                 'entity_id'                  => $entity->id,
                 'entity_previous_state_id'   => $entity->state_id,
                 'process_definition_id'      => $processDefinition->id,
                 'engine_process_instance_id' => $engineProcessInstanceId,
                 'engine_auth_token'          => $authToken,
-                'state_id'                   => $processState->id,
                 'created_by'                 => $user->id,
                 'updated_by'                 => $user->id,
             ]);
 
-            // Resolve all process states (entity, steps, and forms) from Camunda.
+            // Resolve all process states (entity, process instance, steps, and forms) from Camunda.
             $this->resolveStates();
 
             // Resolve all process tasks from Camunda.
             $this->resolveTasks();
+
+            // Update process instance state.
+            $this->processInstance->state()->associate($this->processStates['process-instance']);
+            $this->processInstance->save();
 
             // Create process instance steps entries from process definition.
             foreach ($processDefinition['steps'] as $step) {
@@ -132,23 +134,81 @@ class ProcessManager {
         return $this;
     }
 
+    /**
+     * Return current process instance being loaded.
+     *
+     * @return ProcessInstance
+     */
     public function getProcessInstance()
     {
         return $this->processInstance;
     }
 
+    /**
+     * Load a process instance to work with.
+     *
+     * @param  mixed $processInstance
+     * @return $this
+     */
     public function load($processInstance)
     {
         // Load process instance from id.
         if (is_numeric($processInstance)) {
-            $processInstance = ProcessInstance::findOrFail($processInstance);
+            $processInstance = ProcessInstance::withProcessDetails()->findOrFail($processInstance);
         }
         // Load process instance from engine process instance id.
         elseif (is_string($processInstance)) {
-            $processInstance = ProcessInstance::where('engine_process_instance_id', $processInstance)->firstOrFail();
+            $processInstance = ProcessInstance::where('engine_process_instance_id', $processInstance)->withProcessDetails()->firstOrFail();
         }
 
         $this->processInstance = $processInstance;
+
+        return $this;
+    }
+
+    /**
+     * Update all process instance states and tasks from Camunda process data.
+     *
+     * @return $this
+     */
+    public function updateProcessInstance()
+    {
+        if (is_null($this->processInstance)) {
+            throw new \Exception('Cannot resolve process states, you must first load a process.');
+        }
+
+        // Resolve states and tasks from Camunda.
+        $this->resolveStates();
+        $this->resolveTasks();
+
+        // Update process instance state.
+        $this->processInstance->state()->associate($this->processStates['process-instance']);
+        $this->processInstance->save();
+
+        // Update entity state.
+        $entity = entity($this->processInstance->entity_type)->findOrFail($this->processInstance->entity_id);
+        $entity->state()->associate($this->processStates['entity']);
+        $entity->save();
+
+        // Update process instance steps state.
+        foreach ($this->processInstance->steps as $step) {
+            $step->state()->associate($this->processStates["step-{$step->definition->name_key}"]);
+            $step->save();
+
+            // Update process instance forms state, task and candidate organizational unit.
+            foreach ($step->forms as $form) {
+                $formNameKey = $form->definition->name_key;
+                $form->state()->associate($this->processStates["form-$formNameKey"]);
+                if (isset($this->processTasks[$formNameKey])) {
+                    $form->organizationalUnit()->associate($this->processTasks[$formNameKey]->organizationalUnit);
+                    $form->engine_task_id = $this->processTasks[$formNameKey]->id;
+                } else {
+                    $form->engine_task_id = null;
+                }
+                $form->timestamps = false;
+                $form->save();
+            }
+        }
 
         return $this;
     }
@@ -192,6 +252,13 @@ class ProcessManager {
             }
             $this->processStates[$state] = $states[$key];
         });
+
+        // Resolve and format process instance state from Camunda.
+        $processInstanceState = $this->camunda->processes()->getInstance($this->processInstance->engine_process_instance_id)->state;
+        $processInstanceState = strtolower(str_replace('_', '-', $processInstanceState));
+
+        // Map Camunda process instance state to its state model instance.
+        $this->processStates['process-instance'] = $states["process-instance.$processInstanceState"];
 
         return $this;
     }

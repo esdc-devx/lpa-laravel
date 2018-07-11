@@ -3,6 +3,7 @@
 namespace App\Models\Process;
 
 use App\Events\ProcessInstanceFormClaimed;
+use App\Events\ProcessInstanceFormSubmitted;
 use App\Events\ProcessInstanceFormUnclaimed;
 use App\Models\BaseModel;
 use App\Models\OrganizationalUnit;
@@ -42,6 +43,26 @@ class ProcessInstanceForm extends BaseModel
     }
 
     /**
+     * Update current form editor.
+     *
+     * @param  mixed $user
+     * @return $this
+     */
+    public function updateCurrentEditor($user)
+    {
+        if (is_null($user)) {
+            $this->currentEditor()->dissociate();
+        } else {
+            $this->currentEditor()->associate($user);
+        }
+
+        $this->timestamps = false;
+        $this->save();
+
+        return $this;
+    }
+
+    /**
      * Assign user to be able to edit the form.
      *
      * @param  User $user
@@ -50,8 +71,7 @@ class ProcessInstanceForm extends BaseModel
     public function claim(User $user = null)
     {
         $user = $user ?? auth()->user();
-        $this->currentEditor()->associate($user);
-        $this->save(['timestamps' => false]);
+        $this->updateCurrentEditor($user);
 
         // Dispatch event for CamundaEventSubscriber to respond for.
         event(new ProcessInstanceFormClaimed($user, $this));
@@ -66,12 +86,29 @@ class ProcessInstanceForm extends BaseModel
      */
     public function unclaim()
     {
-        $this->currentEditor()->dissociate();
-        $this->save(['timestamps' => false]);
+        // Remove current editor.
+        $this->updateCurrentEditor(null);
 
         // Dispatch event for CamundaEventSubscriber to respond for.
         event(new ProcessInstanceFormUnclaimed($this));
 
         return $this;
     }
+
+    /**
+     * Submit form.
+     *
+     * @return $this
+     */
+    public function submit()
+    {
+        // Remove current editor.
+        $this->updateCurrentEditor(null);
+
+        // Dispatch event for CamundaEventSubscriber to respond for.
+        event(new ProcessInstanceFormSubmitted($this));
+
+        return $this;
+    }
+
 }

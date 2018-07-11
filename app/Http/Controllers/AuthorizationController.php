@@ -91,4 +91,16 @@ class AuthorizationController extends APIController
             'allowed' => auth()->user()->can('edit', $processInstanceForm)
         ]);
     }
+
+    /**
+     * Authorize process instance form submit action.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function submitProcessInstanceForm(ProcessInstanceForm $processInstanceForm)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('submit', $processInstanceForm)
+        ]);
+    }
 }
