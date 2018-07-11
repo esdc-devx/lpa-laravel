@@ -6,7 +6,7 @@
 
 // make sure the select tags do not overflow
 .el-select__tags-text {
-  max-width: 140px;
+  max-width: 115px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
