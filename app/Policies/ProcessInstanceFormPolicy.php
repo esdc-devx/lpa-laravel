@@ -106,4 +106,48 @@ class ProcessInstanceFormPolicy
 
         return true;
     }
+
+    /**
+     * Determine whether the user can submit the form.
+     *
+     * @param  User $user
+     * @param  ProcessInstanceForm $model
+     * @return boolean
+     */
+    public function submit(User $user, ProcessInstanceForm $processInstanceForm)
+    {
+        // Ensure that current form state is valid.
+        if (! in_array($processInstanceForm->state->name_key, ['unlocked', 'rejected'])) {
+            return false;
+        }
+
+        $processInstanceForm->load('currentEditor');
+
+        // Ensure the form is claimed.
+        if (is_null($processInstanceForm->currentEditor)) {
+            return false;
+        }
+
+        // Ensure current editor is the same as the user making the request.
+        if (! $processInstanceForm->currentEditor->is($user)) {
+            return false;
+        }
+
+        // Admin users can edit the form from this point.
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Ensure that user have the right roles.
+        if (! $user->hasRole('process-contributor')) {
+            return false;
+        }
+
+        // Ensure that user is part of candidate editor organizational unit.
+        if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -75,8 +75,14 @@ class ProcessInstanceFormController extends APIController
      */
     public function submit(ProcessInstanceFormRequest $request, $processInstanceFormData)
     {
+        // Save form data.
+        $processInstanceFormData->saveFormData($request->all());
+
+        // Submit form.
+        $processInstanceFormData->processInstanceForm->submit();
+
         return $this->respond(
-            $processInstanceFormData->saveFormData($request->all())
+            $processInstanceFormData
         );
     }
 }

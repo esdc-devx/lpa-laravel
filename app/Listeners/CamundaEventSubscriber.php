@@ -67,8 +67,10 @@ class CamundaEventSubscriber
      */
     public function onProcessInstanceFormClaim($event)
     {
-        // Claim task associated to process form instance.
-        $this->camunda->tasks()->claim($event->processInstanceForm->engine_task_id, $event->user);
+        // Claim task associated with process instance form.
+        if ($event->processInstanceForm->engine_task_id) {
+            $this->camunda->tasks()->claim($event->processInstanceForm->engine_task_id, $event->user);
+        }
     }
 
     /**
@@ -76,8 +78,20 @@ class CamundaEventSubscriber
      */
     public function onProcessInstanceFormUnclaim($event)
     {
-        // Unclaim task associated to process form instance.
-        $this->camunda->tasks()->unclaim($event->processInstanceForm->engine_task_id);
+        // Unclaim task associated with process instance form.
+        if ($event->processInstanceForm->engine_task_id) {
+            $this->camunda->tasks()->unclaim($event->processInstanceForm->engine_task_id);
+        }
+    }
+
+    public function onProcessInstanceFormSubmit($event)
+    {
+        // Complete task associated with process instance form.
+        //@todo: Add some logic to pass in some variables back to Camunda when submitting a form assessment.
+        $this->camunda->tasks()->complete($event->processInstanceForm->engine_task_id);
+
+        // Update process instance variables and tasks.
+        \Process::load($event->processInstanceForm->step->processInstance)->updateProcessInstance();
     }
 
     /**
@@ -134,6 +148,11 @@ class CamundaEventSubscriber
         $events->listen(
             'App\Events\ProcessInstanceFormUnclaimed',
             'App\Listeners\CamundaEventSubscriber@onProcessInstanceFormUnclaim'
+        );
+
+        $events->listen(
+            'App\Events\ProcessInstanceFormSubmitted',
+            'App\Listeners\CamundaEventSubscriber@onProcessInstanceFormSubmit'
         );
     }
 

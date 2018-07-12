@@ -75,7 +75,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="isFormEmpty || !isClaiming" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaiming)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -94,6 +94,7 @@
 
   import InfoBox from '@components/info-box.vue';
 
+  import PageUtils from '@mixins/page/utils.js';
   import FormUtils from '@mixins/form/utils';
 
   // Forms
@@ -112,7 +113,7 @@
       validator: 'new'
     },
 
-    mixins: [ FormUtils ],
+    mixins: [ PageUtils, FormUtils ],
 
     data() {
       return {
@@ -127,8 +128,10 @@
         rights: {
           canEdit: false,
           canClaim: false,
-          canUnclaim: false
-        }
+          canUnclaim: false,
+          canSubmit: false
+        },
+        isFormSubmitted: false
       }
     },
 
@@ -145,7 +148,11 @@
 
       isClaiming: {
         get() {
-          if (this.viewingFormInfo.current_editor) {
+          // @todo: create loaded flags so that we know when the data has been loaded
+          if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
+            this.canSubmitForm(this.$route.params.formId).then(allowed => {
+              this.rights.canSubmit = allowed;
+            });
             return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
           }
           return false;
@@ -220,6 +227,7 @@
         canClaimForm: 'processes/canClaimForm',
         canClaimForm: 'processes/canClaimForm',
         canUnclaimForm: 'processes/canUnclaimForm',
+        canSubmitForm: 'processes/canSubmitForm',
         saveForm: 'processes/saveForm',
         submitForm: 'processes/submitForm'
       }),
@@ -313,7 +321,7 @@
 
       onSubmit() {
         this.confirmSubmitForm().then(() => {
-          this.submit(this.triggerSubmitForm)
+          this.submit(this.triggerSubmitForm);
         }).catch(() => false);
       },
 
@@ -327,6 +335,10 @@
           this.notifySuccess({
             message: this.trans('components.notice.message.form_submitted')
           });
+          this.isFormSubmitted = true;
+          let projectId = this.$route.params.projectId;
+          let processId = this.$route.params.processId;
+          this.go(`/${this.language}/projects/${projectId}/process/${processId}`);
         } catch({ response }) {
           if (response.status === HttpStatusCodes.FORBIDDEN) {
             this.notifyWarning({
@@ -396,10 +408,16 @@
     },
 
     beforeRouteLeave(to, from, next) {
-      if (this.shouldConfirmBeforeLeaving) {
+      if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
         this.confirmLoseChanges().then(async () => {
           await this.showMainLoading();
-          await this.unclaimForm(this.$route.params.formId);
+          if (!this.isFormSubmitted) {
+            try {
+              await this.unclaimForm(this.$route.params.formId);
+            } catch(e) {
+              await this.hideMainLoading();
+            }
+          }
           await this.hideMainLoading();
           next();
         }).catch(() => false);

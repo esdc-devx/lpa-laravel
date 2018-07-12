@@ -233,7 +233,18 @@
         potentialSolutionTypesServer: [],
         isPotentialSolutionTypesOther: false,
         governmentPrioritiesServer: [],
-        form: this.formData
+        innerFormData: this.formData
+      }
+    },
+
+    computed: {
+      form: {
+        get() {
+          return this.innerFormData;
+        },
+        set(data) {
+          this.$emit('update:formData', data);
+        }
       }
     },
 

@@ -2,10 +2,10 @@
 
 namespace App\Camunda\APIs;
 
-use App\Models\Process\ProcessInstance;
-use App\Models\User\User;
 use App\Camunda\Exceptions\GeneralException;
 use App\Camunda\Exceptions\ProcessEngineException;
+use App\Models\Process\ProcessInstance;
+use App\Models\User\User;
 
 class CamundaTasks extends CamundaBaseAPI
 {
@@ -99,8 +99,28 @@ class CamundaTasks extends CamundaBaseAPI
         ]);
     }
 
+    /**
+     * Get task candidate groups and users.
+     *
+     * @param  string $id
+     * @return void
+     */
     public function getCandidates(string $id)
     {
         return $this->client->get("task/$id/identity-links");
+    }
+
+    /**
+     * Complete task.
+     *
+     * @param  string $id
+     * @param  array $variables
+     * @return void
+     */
+    public function complete(string $id, array $variables = null)
+    {
+        return $this->client->post("task/$id/complete", [
+            'variables' => $variables
+        ]);
     }
 }

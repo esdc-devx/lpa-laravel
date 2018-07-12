@@ -34,7 +34,10 @@ class ProcessInstanceFormRequest extends FormRequest
     {
         $this->resolveFormRequestClass();
 
-        return $this->user()->can('edit', $this->processInstanceFormData->processInstanceForm);
+        // Get last segment of request url (either edit or submit).
+        $action = collect($this->segments())->last();
+
+        return $this->user()->can($action, $this->processInstanceFormData->processInstanceForm);
     }
 
     /**
