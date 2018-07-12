@@ -99,11 +99,6 @@
 
   // IE10+
   @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-    .el-main {
-      // fixes a layout bug for IE11
-      overflow: visible;
-    }
-
     .body-wrap {
       .content-wrap {
         overflow-x: hidden;
