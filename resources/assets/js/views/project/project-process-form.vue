@@ -148,7 +148,8 @@
 
       isClaiming: {
         get() {
-          if (this.viewingFormInfo.current_editor) {
+          // @todo: create loaded flags so that we know when the data has been loaded
+          if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
             this.canSubmitForm(this.$route.params.formId).then(allowed => {
               this.rights.canSubmit = allowed;
             });
