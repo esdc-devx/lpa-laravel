@@ -438,6 +438,7 @@
       this.rights.canEdit = await this.canEditForm(formId);
       this.rights.canClaim = await this.canClaimForm(formId);
       this.rights.canUnclaim = await this.canUnclaimForm(formId);
+      this.rights.canSubmit = await this.canSubmitForm(formId);
     },
 
     mounted() {
