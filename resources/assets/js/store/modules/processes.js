@@ -106,6 +106,11 @@ export default {
       let response = await ProcessAPI.canUnclaimForm(formId);
       return response.data.data.allowed;
     },
+
+    async canSubmitForm({ commit }, formId) {
+      let response = await ProcessAPI.canSubmitForm(formId);
+      return response.data.data.allowed;
+    }
   },
 
   mutations: {
