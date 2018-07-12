@@ -159,6 +159,7 @@
         },
         // update the value server side
         async set(val) {
+          // claiming
           if (val) {
             await this.showMainLoading();
             try {
@@ -172,6 +173,7 @@
                 await this.hideMainLoading();
               }
             }
+          // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
               .then(async () => {
@@ -264,6 +266,7 @@
         // but wait until dom is refreshed before resetting the fields state
         this.$nextTick(() => {
           this.resetFieldsState();
+          this.resetErrors();
         });
 
         if (formWasDirty) {
@@ -411,6 +414,7 @@
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
         this.confirmLoseChanges().then(async () => {
           await this.showMainLoading();
+          this.discardChanges();
           if (!this.isFormSubmitted) {
             try {
               await this.unclaimForm(this.$route.params.formId);
