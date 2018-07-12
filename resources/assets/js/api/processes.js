@@ -45,4 +45,8 @@ export default {
   canUnclaimForm(formId) {
     return axios.get(`authorization/process-instance-form/unclaim/${formId}`);
   },
+
+  canSubmitForm(formId) {
+    return axios.get(`authorization/process-instance-form/submit/${formId}`);
+  }
 };
