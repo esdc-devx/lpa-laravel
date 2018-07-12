@@ -30,7 +30,7 @@ return [
             </ul>',
     ],
     'learning_response_strategy' => [
-        'label'       => 'Learning Response Strategy',
+        'label'       => 'Learning Response Strategy (LRS)',
         'instruction' => 'Please provide a high-level overview of your project and how it addresses the gaps and issues described above.',
         'description' => 'The proposed Learning Response Strategy (LRS) description.',
     ],
