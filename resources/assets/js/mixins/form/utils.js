@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 const swipeTransitionDuration = 500;
 const errorSlideOutTransitionDuration = 400;
+let errorNotif;
 
 export default {
   computed: {
@@ -77,7 +78,10 @@ export default {
           this.$nextTick(() => {
             this.checkInvalidTabs();
           });
-          this.notifyError({
+          if (errorNotif) {
+            errorNotif.close();
+          }
+          errorNotif = this.notifyError({
             message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
           });
         }
