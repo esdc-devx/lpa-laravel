@@ -75,7 +75,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!rights.canSubmit || isFormEmpty || !isClaiming" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaiming)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -149,7 +149,9 @@
       isClaiming: {
         get() {
           if (this.viewingFormInfo.current_editor) {
-            this.rights.canSubmit = this.canSubmitForm(this.$route.params.formId);
+            this.canSubmitForm(this.$route.params.formId).then(allowed => {
+              this.rights.canSubmit = allowed;
+            });
             return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
           }
           return false;
@@ -438,7 +440,6 @@
       this.rights.canEdit = await this.canEditForm(formId);
       this.rights.canClaim = await this.canClaimForm(formId);
       this.rights.canUnclaim = await this.canUnclaimForm(formId);
-      this.rights.canSubmit = await this.canSubmitForm(formId);
     },
 
     mounted() {
