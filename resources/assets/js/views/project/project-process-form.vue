@@ -149,6 +149,7 @@
       isClaiming: {
         get() {
           if (this.viewingFormInfo.current_editor) {
+            this.rights.canSubmit = this.canSubmitForm(this.$route.params.formId);
             return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
           }
           return false;
@@ -158,7 +159,9 @@
           if (val) {
             await this.showMainLoading();
             try {
-              await this.claimForm(this.$route.params.formId);
+              let formId = this.$route.params.formId;
+              this.rights.canSubmit = await this.canSubmitForm(formId);
+              await this.claimForm(formId);
               await this.hideMainLoading();
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
@@ -435,7 +438,6 @@
       this.rights.canEdit = await this.canEditForm(formId);
       this.rights.canClaim = await this.canClaimForm(formId);
       this.rights.canUnclaim = await this.canUnclaimForm(formId);
-      this.rights.canSubmit = await this.canSubmitForm(formId);
     },
 
     mounted() {
