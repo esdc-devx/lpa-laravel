@@ -161,9 +161,7 @@
           if (val) {
             await this.showMainLoading();
             try {
-              let formId = this.$route.params.formId;
-              this.rights.canSubmit = await this.canSubmitForm(formId);
-              await this.claimForm(formId);
+              await this.claimForm(this.$route.params.formId);
               await this.hideMainLoading();
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
