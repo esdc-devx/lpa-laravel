@@ -93,12 +93,14 @@
             process_name: processName
           })
         }).then(async () => {
+          this.showMainLoading();
           let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
           this.notifySuccess({
             message: this.trans('components.notice.message.process_started', { name: processName })
           });
           let projectId = this.$route.params.projectId;
           this.$router.push(`${projectId}/process/${response.process_instance.id}`);
+          this.hideMainLoading();
         }).catch(() => false);
       },
 
