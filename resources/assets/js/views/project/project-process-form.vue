@@ -148,7 +148,8 @@
 
       isClaiming: {
         get() {
-          if (this.viewingFormInfo.current_editor) {
+          // @todo: create loaded flags so that we know when the data has been loaded
+          if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
             this.canSubmitForm(this.$route.params.formId).then(allowed => {
               this.rights.canSubmit = allowed;
             });
@@ -161,9 +162,7 @@
           if (val) {
             await this.showMainLoading();
             try {
-              let formId = this.$route.params.formId;
-              this.rights.canSubmit = await this.canSubmitForm(formId);
-              await this.claimForm(formId);
+              await this.claimForm(this.$route.params.formId);
               await this.hideMainLoading();
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
