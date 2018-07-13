@@ -101,21 +101,16 @@
       },
 
       async update() {
-        try {
-          await this.updateProject({
-            id: this.form.project.id,
-            name: this.form.project.name,
-            organizational_unit: this.form.project.organizational_unit
-          });
-          this.isSubmitting = false;
-          this.notifySuccess({
-            message: this.trans('components.notice.message.project_updated')
-          });
-          this.go(`/${this.language}/projects/${this.form.project.id}`);
-        } catch({ response }) {
-          this.isSubmitting = false;
-          this.manageBackendErrors(response.data.errors);
-        }
+        await this.updateProject({
+          id: this.form.project.id,
+          name: this.form.project.name,
+          organizational_unit: this.form.project.organizational_unit
+        });
+        this.isSubmitting = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.message.project_updated')
+        });
+        this.go(`/${this.language}/projects/${this.form.project.id}`);
       },
 
       async triggerLoadProjectEditInfo() {

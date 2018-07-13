@@ -163,17 +163,12 @@
       },
 
       async create() {
-        try {
-          await this.createUser(_.omit(this.form, 'name'));
-          this.isSubmitting = false;
-          this.notifySuccess({
-            message: this.trans('components.notice.message.created', { name: this.form.name })
-          });
-          this.go(`/${this.language}/admin/users`);
-        } catch({ response }) {
-          this.isSubmitting = false;
-          this.manageBackendErrors(response.data.errors);
-        }
+        await this.createUser(_.omit(this.form, 'name'));
+        this.isSubmitting = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.message.created', { name: this.form.name })
+        });
+        this.go(`/${this.language}/admin/users`);
       },
 
       manageBackendErrors(errors) {

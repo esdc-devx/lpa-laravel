@@ -329,33 +329,18 @@
       },
 
       async triggerSubmitForm() {
-        try {
-          await this.submitForm(this.$refs.tabs.form);
-          // reset the fields states
-          // so that we get a pristine form with the new values
-          this.resetFieldsState();
-          this.isSubmitting = false;
-          this.notifySuccess({
-            message: this.trans('components.notice.message.form_submitted')
-          });
-          this.isFormSubmitted = true;
-          let projectId = this.$route.params.projectId;
-          let processId = this.$route.params.processId;
-          this.go(`/${this.language}/projects/${projectId}/process/${processId}`);
-        } catch({ response }) {
-          if (response.status === HttpStatusCodes.FORBIDDEN) {
-            this.notifyWarning({
-              message: response.data.errors
-            });
-            this.isSubmitting = false;
-            return;
-          }
-          this.manageBackendErrors(response.data.errors);
-          this.notifyError({
-            message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
-          });
-          this.isSubmitting = false;
-        }
+        await this.submitForm(this.$refs.tabs.form);
+        // reset the fields states
+        // so that we get a pristine form with the new values
+        this.resetFieldsState();
+        this.isSubmitting = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.message.form_submitted')
+        });
+        this.isFormSubmitted = true;
+        let projectId = this.$route.params.projectId;
+        let processId = this.$route.params.processId;
+        this.go(`/${this.language}/projects/${projectId}/process/${processId}`);
       },
 
       setupStage() {

@@ -1,11 +1,9 @@
 <template>
-  <div class="input-errors">
-    <transition name="el-zoom-in-top">
-      <span class="el-form-item__error" v-for="error in verrors.collect(name)" :key="error.id">
-        {{ error }}
-      </span>
-    </transition>
-  </div>
+  <transition-group name="el-zoom-in-top" class="input-errors" tag="div">
+    <span class="el-form-item__error" v-for="(error, index) in verrors.collect(name)" :key="index">
+      {{ error }}
+    </span>
+  </transition-group>
 </template>
 
 <script>

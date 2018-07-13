@@ -106,18 +106,13 @@
       },
 
       async create() {
-        try {
-          let project = await this.createProject(this.form);
-          this.$store.commit(`${namespace}/setViewing`, project);
-          this.isSubmitting = false;
-          this.notifySuccess({
-            message: this.trans('components.notice.message.created', { name: this.form.name })
-          });
-          this.jumpToCreatedProject();
-        } catch({ response }) {
-          this.isSubmitting = false;
-          this.manageBackendErrors(response.data.errors);
-        }
+        let project = await this.createProject(this.form);
+        this.$store.commit(`${namespace}/setViewing`, project);
+        this.isSubmitting = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.message.created', { name: this.form.name })
+        });
+        this.jumpToCreatedProject();
       },
 
       // Navigation
