@@ -26,7 +26,7 @@ return [
         'description' => 'The list of potential solution types to solve the Business issue.',
         'help'        => '
             <ul>
-                <li><span>COTS</span>: Third party material that requires purchase. E.g.: Skillsofts.</li>
+                <li><span>COTS</span>: Third party material that requires purchase. E.g.: Skillsoft.</li>
             </ul>',
     ],
     'learning_response_strategy' => [

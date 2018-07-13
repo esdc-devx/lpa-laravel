@@ -26,7 +26,7 @@ return [
         'description' => 'La liste des types de solutions potentielles pour résoudre le problème opérationnel.',
         'help'        => '
             <ul>
-                <li><span>Solution commerciale</span> : matériel d\'un tiers exigeant un achat, par exemple, Skillsofts.</li>
+                <li><span>Solution commerciale</span> : matériel d\'un tiers exigeant un achat, par exemple, Skillsoft.</li>
             </ul>',
     ],
     'learning_response_strategy' => [
