@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import HttpStatusCodes from "@axios/http-status-codes";
+
 const swipeTransitionDuration = 500;
 const errorSlideOutTransitionDuration = 400;
 let errorNotif;
@@ -66,7 +68,7 @@ export default {
           // all is good, proceed
           if (_.isFunction(callback)) {
             // no need to set isSubmitting to false as there will be a call to the backend afterwards
-            callback();
+            this.handleCallback(callback);
           } else {
             this.isSubmitting = false;
           }
@@ -89,6 +91,20 @@ export default {
         this.isSubmitting = false;
         this.focusOnError();
       });
+    },
+
+    async handleCallback(callback) {
+      try {
+        await callback();
+      } catch({ response }) {
+        if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
+          this.manageBackendErrors(response.data.errors);
+          this.notifyError({
+            message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
+          });
+        }
+        this.isSubmitting = false;
+      }
     },
 
     checkInvalidTabs() {

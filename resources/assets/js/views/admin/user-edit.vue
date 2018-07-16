@@ -125,28 +125,16 @@
       },
 
       async update() {
-        try {
-          await this.updateUser({
-            id: this.form.user.id,
-            organizational_units: this.form.user.organizational_units,
-            roles: this.form.user.roles
-          });
-          this.isSubmitting = false;
-          this.notifySuccess({
-            message: this.trans('components.notice.message.user_updated')
-          });
-          this.go(`/${this.language}/admin/users`);
-        } catch({ response }) {
-          if (response.status === HttpStatusCodes.FORBIDDEN) {
-            this.notifyWarning({
-              message: response.data.errors
-            });
-            this.isSubmitting = false;
-            return;
-          }
-          this.errors = response.data.errors;
-          this.focusOnError();
-        }
+        await this.updateUser({
+          id: this.form.user.id,
+          organizational_units: this.form.user.organizational_units,
+          roles: this.form.user.roles
+        });
+        this.isSubmitting = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.message.user_updated')
+        });
+        this.go(`/${this.language}/admin/users`);
       },
 
       async triggerLoadUserInfo() {
