@@ -4,6 +4,8 @@ return [
     'tabs' => [
         'business_drivers' => 'Business Drivers',
         'proposal'         => 'Proposal',
+        'timeframe'        => 'Timeframe',
+        'audience'         => 'Audience',
     ],
     'business_issue' => [
         'label'       => 'Business Issues',
@@ -38,5 +40,24 @@ return [
         'label'       => 'Required Training / Part of Certification',
         'instruction' => 'Please indicate whether the Learning Products included in this project are considered as "required training" (under any policy) and/or part of a certification?',
         'description' => 'An indicator of whether or not the Learning Products included in the project are considered as "required training" or "part of a certification."',
+    ],
+    'timeframe' => [
+        'label'       => 'Anticipated Timeframe',
+        'description' => 'The project\'s anticipated timeframe.',
+        'help'        => 'Targeted timeframe until the launch of last included products.',
+    ],
+    'timeframe_rationale' => [
+        'label'       => 'Anticipated Timeframe Rationale',
+        'instruction' => 'Please explain the above anticipated timeframe.',
+        'description' => 'The rationale for the project\'s anticipated timeframe.',
+    ],
+    'communities' => [
+        'label'       => 'Communities',
+        'instruction' => 'Please select all options that apply.',
+        'description' => 'The list of target communities and sub-communities.',
+    ],
+    'expected_annual_participant_number' => [
+        'label'       => 'Expected number of participants (per year)',
+        'description' => 'An estimate of the number of participants per year.',
     ],
 ];

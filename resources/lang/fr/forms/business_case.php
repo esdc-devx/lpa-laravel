@@ -4,6 +4,8 @@ return [
     'tabs' => [
         'business_drivers' => 'Incitatifs administratifs',
         'proposal'         => 'Proposition',
+        'timeframe'        => 'Échéancier',
+        'audience'         => 'Public cible',
     ],
     'business_issue' => [
         'label'       => 'Problèmes opérationnels',
@@ -38,5 +40,24 @@ return [
         'label'       => 'Formation obligatiore / Fait partie des exigences d\'une attestation',
         'instruction' => 'Veuillez indiquer si les produits d’apprentissage inclus dans le projet sont considérés comme étant une formation « obligatoire » (en vertu d’une politique) ou « faisant partie des exigences d\'une attestation ».',
         'description' => 'Indique si les produits d’apprentissage inclus dans le projet sont considérés comme étant une formation « obligatoire » ou « faisant partie des exigences d\'une attestation ».',
+    ],
+    'timeframe' => [
+        'label'       => 'Calendrier prévu',
+        'description' => 'Le calendrier prévu du projet.',
+        'help'        => 'Le calendrier cible jusqu’au lancement des derniers produits inclus.',
+    ],
+    'timeframe_rationale' => [
+        'label'       => 'Justification du calendrier prévu',
+        'instruction' => 'Veuillez expliquer le calendrier prévu ci-dessus.',
+        'description' => 'La justification du calendrier prévu du projet.',
+    ],
+    'communities' => [
+        'label'       => 'Communautés',
+        'instruction' => 'Veuillez sélectionner tous les choix applicables.',
+        'description' => 'La liste des communautés et sous-communautés visées.',
+    ],
+    'expected_annual_participant_number' => [
+        'label'       => 'Nombre prévu de participants (par année)',
+        'description' => 'Une estimation du nombre de participants par année.',
     ],
 ];
