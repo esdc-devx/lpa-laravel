@@ -254,5 +254,6 @@ return [
         'potential-solution-type' => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'project' => App\Models\Project\Project::class,
         'request-source' => App\Models\Project\BusinessCase\RequestSource::class,
+        'timeframe' => App\Models\Project\BusinessCase\Timeframe::class,
     ],
 ];

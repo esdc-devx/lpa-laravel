@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             PotentialSolutionTypeTableSeeder::class,
             GovernmentPriorityTableSeeder::class,
             CommunitiesTableSeeder::class,
+            TimeframeTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

@@ -23,8 +23,14 @@ class CreateBusinessCasesTable extends Migration
             $table->text('learning_response_strategy')->nullable();
             $table->text('potential_solution_type_other')->nullable();
             $table->boolean('is_required_training')->nullable();
+            // Timeframe fields.
+            $table->unsignedInteger('timeframe_id')->nullable();
+            $table->text('timeframe_rationale')->nullable();
+            // Audience fields.
+            $table->unsignedInteger('expected_annual_participant_number')->nullable();
             // Foreign keys.
             $table->referenceOn('process_instance_form_id', 'process_instance_forms');
+            $table->referenceOn('timeframe_id', 'timeframes');
         });
     }
 
