@@ -97,15 +97,7 @@ export default {
       try {
         await callback();
       } catch({ response }) {
-        if (response.status === HttpStatusCodes.FORBIDDEN) {
-          this.notifyWarning({
-            message: response.data.errors
-          });
-        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError({
-            message: this.trans('errors.server_error')
-          });
-        } else if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
+        if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
           this.manageBackendErrors(response.data.errors);
           this.notifyError({
             message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
