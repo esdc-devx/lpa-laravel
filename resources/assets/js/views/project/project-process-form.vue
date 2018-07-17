@@ -42,7 +42,7 @@
             </el-header>
           </div>
           <el-main>
-            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming">
+            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming" :class="{'is-disabled': !isClaiming}">
               <component
                 :is="formComponent"
                 ref="tabs"
@@ -283,10 +283,12 @@
         let that = this;
         this.originalFormData = _.omit(data, 'process_instance_form');
         _.forEach(this.originalFormData, (value, key) => {
-          // make sure that we convert the lists into only ids
+          // make sure that we convert the lists/object into only ids
           // since el-select only needs ids to populate selected items
-          if (typeof value === 'object' && value !== null) {
+          if (_.isArray(value) && value !== null) {
             that.originalFormData[key] = _.map(value, 'id');
+          } else if (_.isObject(value) && value !== null) {
+            that.originalFormData[key] = _.get(value, 'id');
           }
         });
         // make sure the id correspond to the actual form id

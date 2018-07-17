@@ -45,7 +45,6 @@
           maxlength="100">
         </el-input-other-wrap>
       </el-form-item-wrap>
-
       <el-form-item-wrap
         :label="trans('forms.business_case.business_issue.label')"
         prop="business_issue"
@@ -69,6 +68,7 @@
         </el-input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
+
     <el-tab-pane data-name="proposal">
       <span slot="label" :class="{'is-error': errorTabs.includes('proposal') }">
         {{ trans('forms.business_case.tabs.proposal') }}
@@ -197,6 +197,112 @@
         <form-error name="is_required_training"></form-error>
       </el-form-item-wrap>
     </el-tab-pane>
+
+    <el-tab-pane data-name="timeframe">
+      <span slot="label" :class="{'is-error': errorTabs.includes('timeframe') }">
+        {{ trans('forms.business_case.tabs.timeframe') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.timeframe') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.timeframe.label')"
+        prop="timeframe"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.timeframe.description')"
+            :help="trans('forms.business_case.timeframe.help')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select
+            v-model="form.timeframe"
+            v-loading="isInfoLoading"
+            :disabled="isInfoLoading"
+            element-loading-spinner="el-icon-loading"
+            name="timeframe"
+            :data-vv-as="trans('forms.business_case.timeframe.label')"
+            value-key="name"
+            v-validate="{ rules: { required: !this.isRequestSourceOther} }"
+            :class="{ 'is-error': verrors.has('timeframe') }">
+            <el-option
+              v-for="item in timeframeServer"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id">
+            </el-option>
+          </el-select>
+          <form-error name="timeframe"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.timeframe_rationale.label')"
+        prop="timeframe_rationale"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.timeframe_rationale.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.timeframe_rationale.instruction') }}
+          </span>
+        </span>
+        <el-input-wrap
+          v-model="form.timeframe_rationale"
+          :data-vv-as="trans('forms.business_case.timeframe_rationale.label')"
+          name="timeframe_rationale"
+          v-validate="'required'"
+          maxlength="1250"
+          type="textarea">
+        </el-input-wrap>
+      </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="audience">
+      <span slot="label" :class="{'is-error': errorTabs.includes('audience') }">
+        {{ trans('forms.business_case.tabs.audience') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.audience') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.communities.label')"
+        prop="communities"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.communities.description')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-tree-wrap
+            name="communities"
+            v-model="form.communities"
+            :data-vv-as="trans('forms.business_case.communities.label')"
+            :data="communitiesServer"
+            labelKey="name"
+            v-validate="'required'">
+          </el-tree-wrap>
+          <form-error name="communities"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.expected_annual_participant_number.label')"
+        prop="expected_annual_participant_number"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.expected_annual_participant_number.description')">
+          </el-popover-wrap>
+        </span>
+        <el-input-number
+          name="expected_annual_participant_number"
+          :data-vv-as="trans('forms.business_case.expected_annual_participant_number.label')"
+          v-model="form.expected_annual_participant_number"
+          v-validate="'required'"
+          :min="1"
+          :max="500000">
+        </el-input-number>
+        <form-error name="expected_annual_participant_number"></form-error>
+      </el-form-item-wrap>
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -210,11 +316,12 @@
   import ElInputWrap from '../el-input-wrap';
   import ElInputOtherWrap from '../el-input-other-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
+  import ElTreeWrap from '../el-tree-wrap';
 
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap, ElTreeWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -233,6 +340,8 @@
         potentialSolutionTypesServer: [],
         isPotentialSolutionTypesOther: false,
         governmentPrioritiesServer: [],
+        timeframeServer: [],
+        communitiesServer: [],
         innerFormData: this.formData
       }
     },
@@ -262,10 +371,12 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority');
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community');
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
+        this.timeframeServer = response.data.data['timeframe'];
+        this.communitiesServer = response.data.data['community'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
