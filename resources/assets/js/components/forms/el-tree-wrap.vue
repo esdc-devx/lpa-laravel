@@ -54,7 +54,9 @@
 <style lang="scss">
   // 2018-07-17 @note: this fixes a bug that is currently under investigation on ElementUI's github page:
   //        https://github.com/ElemeFE/element/issues/11827
-  [aria-disabled] {
+  // @note: a class "is-disabled" has been added manually to the form
+  // in order to be able to target the treeitems when its disabled
+  .el-form.is-disabled [role="treeitem"] {
     pointer-events: none;
   }
 </style>

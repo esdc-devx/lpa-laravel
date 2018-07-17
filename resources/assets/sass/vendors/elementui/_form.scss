@@ -22,6 +22,9 @@
 .el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after {
   border-color: $--color-white;
 }
+.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner:before {
+  background: #fff;
+}
 
 // make error border availlable not only on form-items like ElementUI does,
 // but on anything that has .is-error .el-{control}__inner

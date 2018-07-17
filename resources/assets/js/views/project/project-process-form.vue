@@ -42,7 +42,7 @@
             </el-header>
           </div>
           <el-main>
-            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming">
+            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming" :class="{'is-disabled': !isClaiming}">
               <component
                 :is="formComponent"
                 ref="tabs"

@@ -206,7 +206,6 @@
       <el-form-item-wrap
         :label="trans('forms.business_case.timeframe.label')"
         prop="timeframe"
-        :classes="['has-other']"
         required>
         <span slot="label-addons">
           <el-popover-wrap
@@ -266,7 +265,6 @@
       <el-form-item-wrap
         :label="trans('forms.business_case.communities.label')"
         prop="communities"
-        :classes="['has-other']"
         required>
         <span slot="label-addons">
           <el-popover-wrap
