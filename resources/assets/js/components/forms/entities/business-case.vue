@@ -224,9 +224,7 @@
             :data-vv-as="trans('forms.business_case.timeframe.label')"
             value-key="name"
             v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :class="{ 'is-error': verrors.has('timeframe') }"
-            multiple>
-            <!-- @fixme: should get from timeframeServer -->
+            :class="{ 'is-error': verrors.has('timeframe') }">
             <el-option
               v-for="item in timeframeServer"
               :key="item.id"
@@ -276,13 +274,14 @@
           </el-popover-wrap>
         </span>
         <div class="wrap-with-errors">
-          <el-tree
+          <el-tree-wrap
             name="communities"
-            :data="form.communities"
-            show-checkbox
-            v-validate="'required'"
-            node-key="id">
-          </el-tree>
+            v-model="form.communities"
+            :data-vv-as="trans('forms.business_case.communities.label')"
+            :data="communitiesServer"
+            labelKey="name"
+            v-validate="'required'">
+          </el-tree-wrap>
           <form-error name="communities"></form-error>
         </div>
       </el-form-item-wrap>
@@ -297,7 +296,9 @@
         </span>
         <el-input-number
           name="expected_annual_participant_number"
+          :data-vv-as="trans('forms.business_case.expected_annual_participant_number.label')"
           v-model="form.expected_annual_participant_number"
+          v-validate="'required'"
           :min="1"
           :max="500000">
         </el-input-number>
@@ -317,11 +318,12 @@
   import ElInputWrap from '../el-input-wrap';
   import ElInputOtherWrap from '../el-input-other-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
+  import ElTreeWrap from '../el-tree-wrap';
 
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap, ElTreeWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -341,6 +343,7 @@
         isPotentialSolutionTypesOther: false,
         governmentPrioritiesServer: [],
         timeframeServer: [],
+        communitiesServer: [],
         innerFormData: this.formData
       }
     },
@@ -370,11 +373,12 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe');
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community');
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
         this.timeframeServer = response.data.data['timeframe'];
+        this.communitiesServer = response.data.data['community'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
