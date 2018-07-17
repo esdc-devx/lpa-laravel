@@ -28,10 +28,10 @@ class TimeframeTableSeeder extends Seeder
     }
 
     /**
-         * Run the database seeds.
-         *
-         * @return void
-         */
+     * Run the database seeds.
+     *
+     * @return void
+     */
     public function run()
     {
         // Truncate previous tables.
