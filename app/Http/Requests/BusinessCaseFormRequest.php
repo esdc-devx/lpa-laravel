@@ -34,7 +34,7 @@ class BusinessCaseFormRequest extends FormRequest
                 'potential_solution_types' => 'required_without:potential_solution_type_other|array',
                 'potential_solution_type_other' => 'nullable|string|max:1250',
                 'is_required_training' => 'required|boolean',
-                'timeframe' => 'required',
+                'timeframe_id' => 'required',
                 'timeframe_rationale' => 'required|string|max:1250',
                 'communities' => 'required|array',
                 'expected_annual_participant_number' => 'required|integer|between:1,500000',

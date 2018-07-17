@@ -279,7 +279,6 @@
       // Used in order to remove unnecessary props from response
       // and convert arrays into only ids so that ElementUI understands them
       formatData(data) {
-        let formId = this.$route.params.formId;
         let that = this;
         this.originalFormData = _.omit(data, 'process_instance_form');
         _.forEach(this.originalFormData, (value, key) => {
@@ -291,16 +290,26 @@
             that.originalFormData[key] = _.get(value, 'id');
           }
         });
-        // make sure the id correspond to the actual form id
-        // since we recieve a process id in response.id
-        this.originalFormData.id = formId;
+
         this.formData = Object.assign({}, this.originalFormData);
+      },
+
+      formatDataIds(data) {
+        _.forEach(data, (value, key) => {
+          if (data.hasOwnProperty(key + '_id')) {
+            data[key + '_id'] = value;
+            delete data[key];
+          }
+        });
       },
 
       async onSave() {
         this.isSaving = true;
         try {
-          let response = await this.saveForm(this.$refs.tabs.form);
+          let newData = Object.assign({}, this.$refs.tabs.form);
+          this.formatDataIds(newData);
+          let formId = this.$route.params.formId;
+          let response = await this.saveForm({ formId, form: newData });
           this.formatData(response);
           // reset the fields states
           // so that we get a pristine form with the new values
@@ -331,7 +340,10 @@
       },
 
       async triggerSubmitForm() {
-        await this.submitForm(this.$refs.tabs.form);
+        let newData = Object.assign({}, this.$refs.tabs.form);
+        this.formatDataIds(newData);
+        let formId = this.$route.params.formId;
+        await this.submitForm({ formId, form: newData });
         // reset the fields states
         // so that we get a pristine form with the new values
         this.resetFieldsState();

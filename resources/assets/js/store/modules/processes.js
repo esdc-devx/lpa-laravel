@@ -80,14 +80,14 @@ export default {
       return response.data.data;
     },
 
-    async saveForm({ commit }, form) {
-      let response = await ProcessAPI.saveForm(form);
+    async saveForm({ commit }, { formId, form }) {
+      let response = await ProcessAPI.saveForm(formId, form);
       commit('setViewingFormInfo', response.data.data.process_instance_form);
       return response.data.data;
     },
 
-    async submitForm({ commit }, form) {
-      let response = await ProcessAPI.submitForm(form);
+    async submitForm({ commit }, { formId, form }) {
+      let response = await ProcessAPI.submitForm(formId, form);
       commit('setViewingFormInfo', response.data.data.process_instance_form);
       return response.data.data;
     },

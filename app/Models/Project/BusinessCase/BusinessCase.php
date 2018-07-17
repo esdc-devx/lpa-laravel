@@ -8,7 +8,7 @@ use App\Models\Process\ProcessInstanceForm;
 
 class BusinessCase extends BaseModel
 {
-    protected $hidden = ['process_instance_form_id', 'timeframe_id'];
+    protected $hidden = ['process_instance_form_id'];
 
     public $timestamps = false;
 
@@ -50,31 +50,19 @@ class BusinessCase extends BaseModel
 
     public function saveFormData(array $data)
     {
-        if (isset($data['request_sources'])) {
-            $this->requestSources()->sync($data['request_sources']);
-        }
+        $this->requestSources()->sync($data['request_sources']);
+        unset($data['request_sources']);
 
-        if (isset($data['potential_solution_types'])) {
-            $this->potentialSolutionTypes()->sync($data['potential_solution_types']);
-        }
+        $this->potentialSolutionTypes()->sync($data['potential_solution_types']);
+        unset($data['potential_solution_types']);
 
-        if (isset($data['government_priorities'])) {
-            $this->governmentPriorities()->sync($data['government_priorities']);
-        }
+        $this->governmentPriorities()->sync($data['government_priorities']);
+        unset($data['government_priorities']);
 
-        if (isset($data['communities'])) {
-            $this->communities()->sync($data['communities']);
-        }
+        $this->communities()->sync($data['communities']);
+        unset($data['communities']);
 
-        $this->request_source_other = $data['request_source_other'] ?? null;
-        $this->business_issue = $data['business_issue'] ?? null;
-        $this->learning_response_strategy = $data['learning_response_strategy'] ?? null;
-        $this->potential_solution_type_other = $data['potential_solution_type_other'] ?? null;
-        $this->is_required_training = $data['is_required_training'] ?? null;
-        $this->timeframe_id = $data['timeframe'] ?? null;
-        $this->timeframe_rationale = $data['timeframe_rationale'] ?? null;
-        $this->expected_annual_participant_number = $data['expected_annual_participant_number'] ?? null;
-        $this->save();
+        $this->update($data);
 
         // Update process instance form audit and timestamps.
         $this->processInstanceForm->updateAudit();
