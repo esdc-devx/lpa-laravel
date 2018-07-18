@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             CommunitiesTableSeeder::class,
             TimeframeTableSeeder::class,
             DepartmentalBenefitTypeTableSeeder::class,
+            LearnersBenefitTypeTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

@@ -34,6 +34,7 @@ class CreateDepartmentalBenefitsTable extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('business_case_departmental_benefit');
         Schema::dropIfExists('departmental_benefits');
     }
 }

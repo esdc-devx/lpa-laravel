@@ -16,6 +16,7 @@ class BusinessCase extends BaseModel
     public $relationships = [
         'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'timeframe', 'communities',
         'departmentalBenefits', 'departmentalBenefits.departmentalBenefitType',
+        'learnersBenefits', 'learnersBenefits.learnersBenefitType',
     ];
 
     public function processInstanceForm()
@@ -53,6 +54,11 @@ class BusinessCase extends BaseModel
         return $this->belongsToMany(DepartmentalBenefit::class);
     }
 
+    public function learnersBenefits()
+    {
+        return $this->belongsToMany(LearnersBenefit::class);
+    }
+
     public function saveFormData(array $data)
     {
         $this->syncRelationships($data, [
@@ -64,6 +70,7 @@ class BusinessCase extends BaseModel
 
         $this->syncRelatedModels($data, [
             'departmentalBenefits',
+            'learnersBenefits',
         ]);
 
         // Update properties on business case.

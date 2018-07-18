@@ -42,6 +42,10 @@ class BusinessCaseFormRequest extends FormRequest
                 'departmental_benefits.*.departmental_benefit_type_id' => 'required_without:departmental_benefits.*.departmental_benefit_type_other|integer',
                 'departmental_benefits.*.departmental_benefit_type_other' => 'nullable|string|max:100',
                 'departmental_benefits.*.rationale' => 'required|string|max:1250',
+                'learners_benefits' => 'required|array|min:1',
+                'learners_benefits.*.learners_benefit_type_id' => 'required_without:learners_benefits.*.learners_benefit_type_other|integer',
+                'learners_benefits.*.learners_benefit_type_other' => 'nullable|string|max:100',
+                'learners_benefits.*.rationale' => 'required|string|max:1250',
             ];
         }
 
