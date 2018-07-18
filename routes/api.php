@@ -32,8 +32,8 @@ Route::middleware('auth:api')->group(function () {
 
     // Process instance form routes.
     Route::get('process-instance-forms/{processInstanceFormData}', 'ProcessInstanceFormController@show')->name('process-instance-forms.show');
-    Route::put('process-instance-forms/{id}/claim', 'ProcessInstanceFormController@claim')->name('process-instance-forms.claim');
-    Route::put('process-instance-forms/{id}/unclaim', 'ProcessInstanceFormController@unclaim')->name('process-instance-forms.unclaim');
+    Route::put('process-instance-forms/{processInstanceForm}/claim', 'ProcessInstanceFormController@claim')->name('process-instance-forms.claim');
+    Route::put('process-instance-forms/{processInstanceForm}/unclaim', 'ProcessInstanceFormController@unclaim')->name('process-instance-forms.unclaim');
     Route::put('process-instance-forms/{processInstanceFormData}/edit', 'ProcessInstanceFormController@edit')->name('process-instance-forms.edit');
     Route::put('process-instance-forms/{processInstanceFormData}/submit', 'ProcessInstanceFormController@submit')->name('process-instance-forms.submit');
 

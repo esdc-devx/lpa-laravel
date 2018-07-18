@@ -42,6 +42,14 @@ class ProcessInstanceForm extends BaseModel
         return $this->belongsTo(ProcessInstanceStep::class, 'process_instance_step_id');
     }
 
+    public function formData()
+    {
+        // Dynamically resolve and load form data class based on form definition.
+        // (i.e. BusinessCase, BusinessCaseAssessment, ArchitecturePlan, etc.)
+        $entity = entity($this->definition->name_key);
+        return $this->hasOne(get_class($entity))->with($entity->relationships);
+    }
+
     /**
      * Update current form editor.
      *
@@ -91,6 +99,31 @@ class ProcessInstanceForm extends BaseModel
 
         // Dispatch event for CamundaEventSubscriber to respond for.
         event(new ProcessInstanceFormUnclaimed($this));
+
+        return $this;
+    }
+
+    /**
+     * Save form data changes and update all audit informations.
+     *
+     * @param  array $data
+     * @return $this
+     */
+    public function saveForm($data)
+    {
+        // Update form data class.
+        $this->formData->saveFormData($data);
+
+        // Update process instance form audit and timestamps.
+        $this->updateAudit();
+
+        // Update process instance audit and timestamps.
+        $processInstance = $this->step->processInstance->updateAudit();
+
+        // Update entity audit and timestamps.
+        entity($processInstance->entity_type)
+            ->find($processInstance->entity_id)
+            ->updateAudit();
 
         return $this;
     }

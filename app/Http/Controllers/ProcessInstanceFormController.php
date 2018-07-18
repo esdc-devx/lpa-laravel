@@ -10,24 +10,22 @@ class ProcessInstanceFormController extends APIController
     /**
      * Retrieve a process instance form.
      *
-     * @param  App\Models\BaseModel $processInstanceFormData
+     * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
      */
-    public function show($processInstanceFormData)
+    public function show(ProcessInstanceForm $processInstanceForm)
     {
-        return $this->respond($processInstanceFormData);
+        return $this->respond($processInstanceForm);
     }
 
     /**
      * Set current user as the process instance form editor.
      *
-     * @param  int $id
+     * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
      */
-    public function claim($id)
+    public function claim(ProcessInstanceForm $processInstanceForm)
     {
-        $processInstanceForm = ProcessInstanceForm::findOrFail($id);
-
         $this->authorize('claim', $processInstanceForm);
 
         return $this->respond(
@@ -38,13 +36,11 @@ class ProcessInstanceFormController extends APIController
     /**
      * Remove current process instance form editor.
      *
-     * @param  int $id
+     * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
      */
-    public function unclaim($id)
+    public function unclaim(ProcessInstanceForm $processInstanceForm)
     {
-        $processInstanceForm = ProcessInstanceForm::findOrFail($id);
-
         $this->authorize('unclaim', $processInstanceForm);
 
         return $this->respond(
@@ -56,33 +52,29 @@ class ProcessInstanceFormController extends APIController
      * Edit process instance form data.
      *
      * @param  ProcessInstanceFormRequest $request
-     * @param  App\Models\BaseModel $processInstanceFormData
+     * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
      */
-    public function edit(ProcessInstanceFormRequest $request, $processInstanceFormData)
+    public function edit(ProcessInstanceFormRequest $request, ProcessInstanceForm $processInstanceForm)
     {
+        // Save form data.
         return $this->respond(
-            $processInstanceFormData->saveFormData($request->all())
+            $processInstanceForm->saveForm($request->all())
         );
     }
 
     /**
-     * Submit process instance form data.
+     * Submit process instance form.
      *
      * @param  ProcessInstanceFormRequest $request
-     * @param  App\Models\BaseModel $processInstanceFormData
+     * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
      */
-    public function submit(ProcessInstanceFormRequest $request, $processInstanceFormData)
+    public function submit(ProcessInstanceFormRequest $request, ProcessInstanceForm $processInstanceForm)
     {
-        // Save form data.
-        $processInstanceFormData->saveFormData($request->all());
-
-        // Submit form.
-        $processInstanceFormData->processInstanceForm->submit();
-
+        // Save form data and then submit form.
         return $this->respond(
-            $processInstanceFormData
+            $processInstanceForm->saveForm($request->all())->submit()
         );
     }
 }

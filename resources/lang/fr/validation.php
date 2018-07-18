@@ -92,6 +92,10 @@ return [
             'unique'    => 'L\'utilisateur existe déjà.',
             'not-found' => 'L\'utilisateur n\'existe pas dans l\'Active Directory.'
         ],
+        //@note: To be reviewed.
+        'departmental_benefits' => [
+            'required' => 'Il doit y avoir au moins un avantage pour le ministère.'
+        ],
     ],
 
     /*
@@ -106,7 +110,11 @@ return [
      */
 
     'attributes' => [
-        'organizational_unit' => 'unité organisationnelle'
+        'organizational_unit' => 'Unité organisationnelle',
+        //@note: To be reviewed.
+        'departmental_benefits.*.rationale' => 'Justification',
+        'departmental_benefits.*.departmental_benefit_type_id' => 'Type d\'avantage pour le ministère',
+        'departmental_benefits.*.departmental_benefit_type_other' => 'Autre',
     ],
 
 ];
