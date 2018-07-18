@@ -2,10 +2,12 @@
 
 return [
     'tabs' => [
-        'business_drivers' => 'Incitatifs administratifs',
-        'proposal'         => 'Proposition',
-        'timeframe'        => 'Échéancier',
-        'audience'         => 'Public cible',
+        'business_drivers'      => 'Incitatifs administratifs',
+        'proposal'              => 'Proposition',
+        'timeframe'             => 'Échéancier',
+        'audience'              => 'Public cible',
+        'departemental_benefit' => 'Avantages pour le ministère',
+        'learners_benefit'      => 'Avantages pour l\'apprenant',
     ],
     'business_issue' => [
         'label'       => 'Problèmes opérationnels',
@@ -59,5 +61,21 @@ return [
     'expected_annual_participant_number' => [
         'label'       => 'Nombre prévu de participants (par année)',
         'description' => 'Une estimation du nombre de participants par année.',
+    ],
+    'departemental_benefit_type' => [
+        'label'       => 'Type',
+        'description' => 'Le type d’avantage pour le ministère.',
+    ],
+    'departemental_benefit_rationale' => [
+        'label'       => 'Justification',
+        'description' => 'La justification de l’avantage pour le ministère.',
+    ],
+    'learners_benefit_type' => [
+        'label'       => 'Type',
+        'description' => 'Le type d’avantage pour l’apprenant.',
+    ],
+    'learners_benefit_rationale' => [
+        'label'       => 'Justification',
+        'description' => 'La justification de l’avantage pour l’apprenant.',
     ],
 ];

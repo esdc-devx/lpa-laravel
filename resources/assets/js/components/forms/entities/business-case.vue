@@ -303,6 +303,16 @@
         <form-error name="expected_annual_participant_number"></form-error>
       </el-form-item-wrap>
     </el-tab-pane>
+
+    <el-tab-pane data-name="departemental_benefit">
+      <span slot="label" :class="{'is-error': errorTabs.includes('departemental_benefit') }">
+        {{ trans('forms.business_case.tabs.departemental_benefit') }}
+      </span>
+
+      <!-- @fixme: replace data with correct one -->
+      <form-section-group :data="[{ id: 1 }, { id: 2 }]" entity="departemental-benefit"></form-section-group>
+
+    </el-tab-pane>
   </el-tabs>
 </template>
 
@@ -315,13 +325,14 @@
   import ElFormItemWrap from '../el-form-item-wrap';
   import ElInputWrap from '../el-input-wrap';
   import ElInputOtherWrap from '../el-input-other-wrap';
-  import ElPopoverWrap from '../../el-popover-wrap';
+  import FormSectionGroup from '../form-section-group';
   import ElTreeWrap from '../el-tree-wrap';
+  import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap, ElTreeWrap },
+    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

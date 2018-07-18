@@ -124,7 +124,7 @@
         formData: {},
         activeIndex: '0',
         tabsLength: 0,
-        currentFormComponent: '',
+        formComponent: '',
         rights: {
           canEdit: false,
           canClaim: false,
@@ -192,9 +192,7 @@
         }
       },
 
-      formComponent() {
-        return this.currentFormComponent;
-      },
+
 
       isPrevDisabled() {
         return parseInt(this.activeIndex, 10) === 0;
@@ -391,7 +389,7 @@
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
-          this.currentFormComponent = this.viewingFormInfo.definition.name_key;
+          this.formComponent = this.viewingFormInfo.definition.name_key;
           this.setupStage();
           await this.hideMainLoading();
         } catch(e) {
