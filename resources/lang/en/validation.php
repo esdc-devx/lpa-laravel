@@ -99,6 +99,12 @@ return [
         'learners_benefits' => [
             'required' => 'There needs to be at least one learners benefit.'
         ],
+        'maintenance_fund_rationale' => [
+            'required_unless' => 'You need to specify a rationale if you have some maintenance fund.',
+        ],
+        'salary_fund_rationale' => [
+            'required_unless' => 'You need to specify a rationale if you have some salary fund.',
+        ],
     ],
 
     /*

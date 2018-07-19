@@ -28,9 +28,20 @@ class CreateBusinessCasesTable extends Migration
             $table->text('timeframe_rationale')->nullable();
             // Audience fields.
             $table->unsignedInteger('expected_annual_participant_number')->nullable();
+            // Cost fields.
+            $table->string('cost_center')->nullable();
+            $table->unsignedInteger('maintenance_fund_id')->nullable();
+            $table->text('maintenance_fund_rationale')->nullable();
+            $table->unsignedInteger('salary_fund_id')->nullable();
+            $table->text('salary_fund_rationale')->nullable();
+            // Internal Resources fields.
+            $table->text('internal_resource_other')->nullable();
+
             // Foreign keys.
             $table->referenceOn('process_instance_form_id', 'process_instance_forms');
             $table->referenceOn('timeframe_id', 'timeframes');
+            $table->referenceOn('maintenance_fund_id', 'maintenance_funds');
+            $table->referenceOn('salary_fund_id', 'salary_funds');
         });
     }
 

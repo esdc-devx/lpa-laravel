@@ -26,6 +26,9 @@ class DatabaseSeeder extends Seeder
             TimeframeTableSeeder::class,
             DepartmentalBenefitTypeTableSeeder::class,
             LearnersBenefitTypeTableSeeder::class,
+            MaintenanceFundTableSeeder::class,
+            SalaryFundTableSeeder::class,
+            InternalResourceTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
