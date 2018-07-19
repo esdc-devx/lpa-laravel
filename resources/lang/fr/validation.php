@@ -100,6 +100,12 @@ return [
         'learners_benefits' => [
             'required' => 'Il doit y avoir au moins un avantage pour les apprenants.'
         ],
+        'maintenance_fund_rationale' => [
+            'required_unless' => 'Vous devez inclure une justification si vous avez des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
+        ],
+        'salary_fund_rationale' => [
+            'required_unless' => 'Vous devez inclure une justification si vous avez des fonds salariaux supplémentaires requis.',
+        ],
     ],
 
     /*
