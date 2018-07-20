@@ -6,7 +6,7 @@ return [
         'proposal'              => 'Proposition',
         'timeframe'             => 'Échéancier',
         'audience'              => 'Public cible',
-        'departemental_benefit' => 'Avantages pour le ministère',
+        'departmental_benefit'  => 'Avantages pour le ministère',
         'learners_benefit'      => 'Avantages pour l\'apprenant',
     ],
     'business_issue' => [
@@ -62,11 +62,11 @@ return [
         'label'       => 'Nombre prévu de participants (par année)',
         'description' => 'Une estimation du nombre de participants par année.',
     ],
-    'departemental_benefit_type' => [
+    'departmental_benefit_type' => [
         'label'       => 'Type',
         'description' => 'Le type d’avantage pour le ministère.',
     ],
-    'departemental_benefit_rationale' => [
+    'departmental_benefit_rationale' => [
         'label'       => 'Justification',
         'description' => 'La justification de l’avantage pour le ministère.',
     ],

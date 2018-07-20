@@ -36,7 +36,7 @@
     },
 
     methods: {
-      updateValue: function (value) {
+      updateValue(value) {
         // update parent data so that we can still v-model on the parent
         this.$emit('input', value);
       },

@@ -304,14 +304,20 @@
       </el-form-item-wrap>
     </el-tab-pane>
 
-    <el-tab-pane data-name="departemental_benefit">
-      <span slot="label" :class="{'is-error': errorTabs.includes('departemental_benefit') }">
-        {{ trans('forms.business_case.tabs.departemental_benefit') }}
+    <el-tab-pane data-name="departmental_benefit">
+      <span slot="label" :class="{'is-error': errorTabs.includes('departmental_benefit') }">
+        {{ trans('forms.business_case.tabs.departmental_benefit') }}
       </span>
 
-      <!-- @fixme: replace data with correct one -->
-      <form-section-group :data="[{ id: 1 }, { id: 2 }]" entity="departemental-benefit"></form-section-group>
-
+      <form-section-group
+        v-model="form.departmental_benefits"
+        entity="departmental-benefit"
+        :data="{
+          departmentalBenefitTypeServer
+        }"
+        :min="1"
+        :isLoading="isInfoLoading"
+      />
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -351,6 +357,7 @@
         potentialSolutionTypesServer: [],
         isPotentialSolutionTypesOther: false,
         governmentPrioritiesServer: [],
+        departmentalBenefitTypeServer: [],
         timeframeServer: [],
         communitiesServer: [],
         innerFormData: this.formData
@@ -368,11 +375,24 @@
       }
     },
 
+    watch: {
+      'form.expected_annual_participant_number': {
+        immediate: true,
+        handler(value) {
+          // this handle the fact that we receive null from the server
+          // and that the component converts null to 0,
+          // which produces a form dirty: null !== 0
+          value = value === null ? undefined : value;
+          this.form.expected_annual_participant_number = value;
+        }
+      }
+    },
+
     methods: {
-      ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading'
-      }),
+      ...mapActions([
+        'showMainLoading',
+        'hideMainLoading'
+      ]),
 
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
@@ -382,12 +402,13 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community');
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type');
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
         this.timeframeServer = response.data.data['timeframe'];
         this.communitiesServer = response.data.data['community'];
+        this.departmentalBenefitTypeServer = response.data.data['departmental-benefit-type'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
@@ -402,9 +423,9 @@
       this.fetchLists();
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
-      this.form = Object.assign({}, this.formData);
+      this.form = _.cloneDeep(this.formData);
       // make the checkboxes react
-      // based on the value of its correcponding field
+      // based on the value of its corresponding field
       this.isRequestSourceOther = !!this.form.request_source_other;
       this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
       await this.hideMainLoading();
