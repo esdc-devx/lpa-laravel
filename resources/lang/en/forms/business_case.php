@@ -6,7 +6,7 @@ return [
         'proposal'              => 'Proposal',
         'timeframe'             => 'Timeframe',
         'audience'              => 'Audience',
-        'departemental_benefit' => 'Departemental Benefit',
+        'departmental_benefit'  => 'Departmental Benefit',
         'learners_benefit'      => 'Learners Benefit',
     ],
     'business_issue' => [
@@ -62,11 +62,11 @@ return [
         'label'       => 'Expected number of participants (per year)',
         'description' => 'An estimate of the number of participants per year.',
     ],
-    'departemental_benefit_type' => [
+    'departmental_benefit_type' => [
         'label'       => 'Type',
         'description' => 'The Departmental Benefit type.',
     ],
-    'departemental_benefit_rationale' => [
+    'departmental_benefit_rationale' => [
         'label'       => 'Rationale',
         'description' => 'The Departmental Benefit rationale.',
     ],

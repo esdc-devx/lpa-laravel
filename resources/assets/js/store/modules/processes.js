@@ -58,9 +58,9 @@ export default {
 
     async loadInstanceForm({ commit }, formId) {
       let response = await ProcessAPI.getInstanceForm(formId);
-      commit('setViewingForm', response.data.data);
-      commit('setViewingFormInfo', response.data.data.process_instance_form);
-      return response.data.data;
+      commit('setViewingForm', _.omit(response.data.data, 'form_data'));
+      commit('setViewingFormInfo', response.data.data);
+      return response.data.data.form_data;
     },
 
     async start({ commit }, { nameKey, entityId }) {
@@ -82,14 +82,14 @@ export default {
 
     async saveForm({ commit }, { formId, form }) {
       let response = await ProcessAPI.saveForm(formId, form);
-      commit('setViewingFormInfo', response.data.data.process_instance_form);
-      return response.data.data;
+      commit('setViewingFormInfo', response.data.data);
+      return response.data.data.form_data;
     },
 
     async submitForm({ commit }, { formId, form }) {
       let response = await ProcessAPI.submitForm(formId, form);
-      commit('setViewingFormInfo', response.data.data.process_instance_form);
-      return response.data.data;
+      commit('setViewingFormInfo', response.data.data);
+      return response.data.data.form_data;
     },
 
     async canEditForm({ commit }, formId) {

@@ -192,8 +192,6 @@
         }
       },
 
-
-
       isPrevDisabled() {
         return parseInt(this.activeIndex, 10) === 0;
       },
@@ -278,25 +276,58 @@
       // and convert arrays into only ids so that ElementUI understands them
       formatData(data) {
         let that = this;
-        this.originalFormData = _.omit(data, 'process_instance_form');
+        // deep copy so that we don't alter the store's data
+        this.originalFormData = _.cloneDeep(data);
         _.forEach(this.originalFormData, (value, key) => {
           // make sure that we convert the lists/object into only ids
           // since el-select only needs ids to populate selected items
-          if (_.isArray(value) && value !== null) {
+
+          // if collection
+          if (_.isArray(value) && _.isObject(value[0])) {
+            _.forEach(value, (subVal, subKey) => {
+              _.forIn(subVal, (subSubVal, subSubkey) => {
+                if (_.isObject(subSubVal)) {
+                  that.originalFormData[key][subKey][subSubkey] = _.get(subSubVal, 'id');
+                }
+              });
+            });
+          // if is array and not collection
+          } else if (_.isArray(value) && !_.isObject(value[0])) {
             that.originalFormData[key] = _.map(value, 'id');
-          } else if (_.isObject(value) && value !== null) {
+          // if not collection, but object
+          } else if (!_.isArray(value) && _.isObject(value)) {
             that.originalFormData[key] = _.get(value, 'id');
           }
         });
 
-        this.formData = Object.assign({}, this.originalFormData);
+        // deep copy the object here so that we don't alter the
+        this.formData = _.cloneDeep(this.originalFormData);
       },
 
       formatDataIds(data) {
         _.forEach(data, (value, key) => {
-          if (data.hasOwnProperty(key + '_id')) {
-            data[key + '_id'] = value;
-            delete data[key];
+          // if isCollection
+          if (_.isArray(value) && _.isObject(value[0])) {
+            _.forEach(value, item => {
+              _.forIn(item, (val, subKey) => {
+                if (item.hasOwnProperty(subKey + '_id')) {
+                  item[subKey + '_id'] = val;
+                  delete item[subKey];
+                }
+              });
+            });
+          } else if (_.isArray(value)) {
+            _.forEach(value, (val, key) => {
+              if (value.hasOwnProperty(key + '_id')) {
+                value[key + '_id'] = val;
+                delete value[key];
+              }
+            });
+          } else {
+            if (data.hasOwnProperty(key + '_id')) {
+              data[key + '_id'] = value;
+              delete data[key];
+            }
           }
         });
       },
@@ -304,7 +335,7 @@
       async onSave() {
         this.isSaving = true;
         try {
-          let newData = Object.assign({}, this.$refs.tabs.form);
+          let newData = _.cloneDeep(this.$refs.tabs.form);
           this.formatDataIds(newData);
           let formId = this.$route.params.formId;
           let response = await this.saveForm({ formId, form: newData });
@@ -338,7 +369,7 @@
       },
 
       async triggerSubmitForm() {
-        let newData = Object.assign({}, this.$refs.tabs.form);
+        let newData = _.cloneDeep(this.$refs.tabs.form);
         this.formatDataIds(newData);
         let formId = this.$route.params.formId;
         await this.submitForm({ formId, form: newData });

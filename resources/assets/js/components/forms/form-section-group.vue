@@ -1,7 +1,7 @@
 <template>
   <div class="form-section-group">
     <h2>
-      {{ trans('forms.business_case.tabs.departemental_benefit') }}
+      {{ trans('forms.business_case.tabs.departmental_benefit') }}
       <div class="header-controls">
         <el-button type="text" size="mini" @click="expandAll = true">Expand All</el-button>
         <el-button type="text" size="mini" @click="expandAll = false">Collapse All</el-button>
@@ -10,44 +10,59 @@
     <el-collapse :value="activePanels">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
-          {{ trans('forms.business_case.tabs.departemental_benefit') }} {{ index + 1 }}
-          <el-button type="text" class="remove-group" @click.stop="removeGroup(index, item)">Remove Instructor<i class="el-icon-error"></i></el-button>
+          {{ trans('forms.business_case.tabs.departmental_benefit') }} {{ index + 1 }}
+          <el-button v-if="groups.length > 1" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
         </template>
-        <component :is="entity" class="form-item-group"></component>
+        <component ref="component" :is="entity" :data="data" class="form-item-group" :index="index" :value.sync="item" :isLoading="isLoading"></component>
       </el-collapse-item>
     </el-collapse>
-    <el-button class="add-group" @click="addGroup()">Add</el-button>
+    <el-button class="add-group" type="primary" icon="el-icon-plus" @click="addGroup()"></el-button>
   </div>
 </template>
 
 <script>
-  import DepartementalBenefit from './entities/departemental-benefit';
+  import DepartmentalBenefit from './entities/departmental-benefit';
 
   export default {
     name: 'form-section-group',
 
-    inheritAttrs: false,
-
-    components: { DepartementalBenefit },
+    components: { DepartmentalBenefit },
 
     props: {
-      entity: String,
-      data: {
-        type: Array,
+      entity: {
+        type: String,
         required: true
-      }
+      },
+      data: {
+        type: Object,
+        required: true
+      },
+      min: {
+        type: Number,
+        default: 0
+      },
+      isLoading: {
+        type: Boolean,
+        required: true
+      },
+      value: Array
     },
 
     computed: {
       activePanels() {
-        return this.expandAll ? _.map(this.groups, 'id') : [];
+        let panels = [];
+        let length = this.expandAll ? this.groups.length : 0;
+        for (let i = 0; i < length; i++) {
+          panels.push(i + 1);
+        }
+        return panels;
       }
     },
 
     data() {
       return {
-        expandAll: false,
-        groups: this.data
+        expandAll: true,
+        groups: this.value
       };
     },
 
@@ -57,9 +72,25 @@
       },
 
       addGroup() {
-        this.groups.push({
-          id: null
-        });
+        // add another group, later based on the defaults
+        this.groups.push({});
+        this.$nextTick(() => {
+          let groupsLength = this.groups.length - 1;
+          let defaults = this.$refs.component[groupsLength].defaults;
+          if (_.isUndefined(defaults)) {
+            this.$log.error(`Entity '${this.entity}' should have a 'defaults' attribute in its data.`);
+            return;
+          }
+          for (const key in defaults) {
+            this.$set(this.groups[groupsLength], key, defaults[key]);
+          }
+        })
+      }
+    },
+    created() {
+      // if min is set and there is no groups, addGroup
+      if (!_.isUndefined(this.$props.min) && !this.groups.length) {
+        this.addGroup();
       }
     }
   };
@@ -109,16 +140,14 @@
       &:hover {
         background-color: mix($--color-primary, $--background-color-base, 5%);
       }
-      i.el-collapse-item__arrow, button.remove-group {
+      i.el-collapse-item__arrow {
         line-height: 30px;
       }
       button.remove-group {
-        padding: 0;
-        border: 0;
-        margin-right: 10px;
-        font-size: 100%;
+        // margin-right: 10px;
+        height: 100%;
         i {
-          margin-left: 5px;
+          // margin-left: 5px;
         }
       }
     }
