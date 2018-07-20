@@ -29,6 +29,9 @@ class DatabaseSeeder extends Seeder
             MaintenanceFundTableSeeder::class,
             SalaryFundTableSeeder::class,
             InternalResourceTableSeeder::class,
+            RiskTypeTableSeeder::class,
+            RiskImpactLevelTableSeeder::class,
+            RiskProbabilityLevelTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }

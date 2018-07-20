@@ -53,6 +53,13 @@ class BusinessCaseFormRequest extends FormRequest
                 'salary_fund_rationale'                                   => 'required_unless:salary_fund_id,1|string|nullable|max:1250',
                 'internal_resources'                                      => 'required_without:internal_resource_other|array',
                 'internal_resource_other'                                 => 'nullable|string|max:1250',
+                'risks'                                                   => 'required|array|min:1',
+                'risks.*.risk_type_id'                                    => 'required_without:risks.*.risk_type_other|integer',
+                'risks.*.risk_type_other'                                 => 'nullable|string|max:100',
+                'risks.*.risk_impact_level_id'                            => 'required|integer',
+                'risks.*.risk_probability_level_id'                       => 'required|integer',
+                'risks.*.rationale'                                       => 'required|string|max:1250',
+                'comment'                                                 => 'nullable|string|max:2500',
             ];
         }
 

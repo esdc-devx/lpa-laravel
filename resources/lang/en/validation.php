@@ -105,6 +105,9 @@ return [
         'salary_fund_rationale' => [
             'required_unless' => 'You need to specify a rationale if you have some salary fund.',
         ],
+        'risks' => [
+            'required' => 'There needs to be at least one risk.',
+        ],
     ],
 
     /*

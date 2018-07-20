@@ -36,6 +36,8 @@ class CreateBusinessCasesTable extends Migration
             $table->text('salary_fund_rationale')->nullable();
             // Internal Resources fields.
             $table->text('internal_resource_other')->nullable();
+            // Comment field.
+            $table->text('comment')->nullable();
 
             // Foreign keys.
             $table->referenceOn('process_instance_form_id', 'process_instance_forms');

@@ -106,6 +106,9 @@ return [
         'salary_fund_rationale' => [
             'required_unless' => 'Vous devez inclure une justification si vous avez des fonds salariaux supplémentaires requis.',
         ],
+        'risks' => [
+            'required' => 'Il doit y avoir au moins un risque.',
+        ],
     ],
 
     /*
