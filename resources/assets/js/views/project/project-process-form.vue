@@ -381,9 +381,7 @@
           message: this.trans('components.notice.message.form_submitted')
         });
         this.isFormSubmitted = true;
-        let projectId = this.$route.params.projectId;
-        let processId = this.$route.params.processId;
-        this.go(`/${this.language}/projects/${projectId}/process/${processId}`);
+        this.goToParentPage();
       },
 
       setupStage() {

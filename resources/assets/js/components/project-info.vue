@@ -39,12 +39,16 @@
 
   import InfoBox from '@components/info-box.vue';
 
+  import PageUtils from '@mixins/page/utils.js';
+
   let namespace = 'projects';
 
   export default {
     name: 'project-info',
 
     components: { InfoBox },
+
+    mixins: [ PageUtils ],
 
     props: [ 'project' ],
 
@@ -92,7 +96,7 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.project_deleted')
             });
-            this.$router.push(`/${this.language}/projects`);
+            this.goToParentPage();
           } catch(e) {
             this.$alert(
               this.trans('components.notice.message.already_deleted_project'),
@@ -102,7 +106,7 @@
                 showClose: false,
                 confirmButtonText: this.trans('base.actions.ok'),
                 callback: action => {
-                  this.$router.push(`/${this.language}/projects`);
+                  this.goToParentPage();
                 }
               }
             );

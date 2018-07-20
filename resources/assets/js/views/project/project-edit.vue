@@ -43,7 +43,7 @@
         </el-form-item-wrap>
 
         <el-form-item>
-          <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects/${form.project.id}`)">{{ trans('base.actions.cancel') }}</el-button>
+          <el-button :disabled="isFormDisabled" @click="goToParentPage()">{{ trans('base.actions.cancel') }}</el-button>
           <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         </el-form-item>
       </el-form>
@@ -110,7 +110,7 @@
         this.notifySuccess({
           message: this.trans('components.notice.message.project_updated')
         });
-        this.go(`/${this.language}/projects/${this.form.project.id}`);
+        this.goToParentPage();
       },
 
       async triggerLoadProjectEditInfo() {
