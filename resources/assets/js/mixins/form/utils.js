@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import EventBus from '@/event-bus.js';
+
 import HttpStatusCodes from "@axios/http-status-codes";
 
 const swipeTransitionDuration = 500;
@@ -8,7 +10,9 @@ let errorNotif;
 export default {
   computed: {
     isFormDirty() {
-      return Object.keys(this.vfields).some(key => this.vfields[key].dirty);
+      let formHasErrors = Object.keys(this.vfields).some(key => this.vfields[key].dirty);
+
+      return formHasErrors || this.fieldsAddedOrRemoved;
     },
 
     isFormPristine() {
@@ -22,6 +26,7 @@ export default {
       options: {
         hasTabsToValidate: false
       },
+      fieldsAddedOrRemoved: false,
       errorTabs: [],
       isSaving: false,
       isSubmitting: false,
@@ -171,6 +176,18 @@ export default {
           field.reset();
         });
       });
+    },
+
+    onFieldAddedRemoved(isAddedRemoved) {
+      this.fieldsAddedOrRemoved = !_.isUndefined(isAddedRemoved) ? isAddedRemoved : true;
     }
+  },
+
+  beforeDestroy() {
+    EventBus.$off('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
+  },
+
+  mounted() {
+    EventBus.$on('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
   }
 };

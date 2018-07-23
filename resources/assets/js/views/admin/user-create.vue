@@ -30,44 +30,27 @@
         </el-form-item>
 
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
-          <el-select
-            id="organizationalUnits"
+          <el-select-wrap
+            v-model="form.organizational_units"
+            :isLoading="isUserInfoLoading"
             name="organizationalUnits"
             :data-vv-as="$tc('entities.general.organizational_units', 2)"
-            v-loading="isUserInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            v-model="form.organizational_units"
             v-validate="''"
-            valueKey="name"
-            multiple>
-            <el-option
-              v-for="item in organizationalUnits"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="organizationalUnits"
+            multiple
+          />
         </el-form-item>
 
         <el-form-item :label="trans('entities.user.roles')" for="roles" prop="roles">
-          <el-select
-            id="roles"
+          <el-select-wrap
+            v-model="form.roles"
+            :isLoading="isUserInfoLoading"
             name="roles"
             :data-vv-as="trans('entities.user.roles')"
-            v-loading="isUserInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            :disabled="roles.length <= 1"
-            v-model="form.roles"
             v-validate="''"
-            valueKey="name"
-            multiple>
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="roles"
+            multiple
+          />
         </el-form-item>
 
         <el-form-item class="form-footer">
@@ -83,6 +66,8 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import EventBus from '@/event-bus.js';
+
+  import ElSelectWrap from '@components/forms/el-select-wrap';
   import FormError from '@components/forms/error.vue';
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
@@ -96,7 +81,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { FormError },
+    components: { FormError, ElSelectWrap },
 
     computed: {
       ...mapGetters({

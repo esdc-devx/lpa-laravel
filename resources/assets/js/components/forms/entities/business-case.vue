@@ -16,24 +16,15 @@
           </el-popover-wrap>
         </span>
         <div class="wrap-with-errors">
-          <el-select
+          <el-select-wrap
             v-model="form.request_sources"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
+            :isLoading="isInfoLoading"
             name="request_sources"
             :data-vv-as="trans('forms.business_case.request_sources.label')"
-            value-key="name"
             v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :class="{ 'is-error': verrors.has('request_sources') }"
-            multiple>
-            <el-option
-              v-for="item in requestSourceServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="requestSourceServer"
+            multiple
+          />
           <form-error name="request_sources"></form-error>
         </div>
         <el-input-other-wrap
@@ -110,24 +101,15 @@
           </span>
         </span>
         <div class="wrap-with-errors">
-          <el-select
+          <el-select-wrap
             v-model="form.potential_solution_types"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
+            :isLoading="isInfoLoading"
             name="potential_solution_types"
-            :class="{ 'is-error': verrors.has('potential_solution_types') }"
-            valueKey="name"
+            :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
             v-validate="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
-            multiple>
-            <el-option
-              v-for="item in potentialSolutionTypesServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="potentialSolutionTypesServer"
+            multiple
+          />
           <form-error name="potential_solution_types"></form-error>
         </div>
         <el-input-other-wrap
@@ -153,24 +135,15 @@
           </span>
         </span>
         <div class="wrap-with-errors">
-          <el-select
+          <el-select-wrap
             v-model="form.government_priorities"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            :data-vv-as="trans('forms.business_case.government_priorities.label')"
+            :isLoading="isInfoLoading"
             name="government_priorities"
-            :class="{ 'is-error': verrors.has('government_priorities') }"
-            valueKey="name"
+            :data-vv-as="trans('forms.business_case.government_priorities.label')"
             v-validate="'required'"
-            multiple>
-            <el-option
-              v-for="item in governmentPrioritiesServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="governmentPrioritiesServer"
+            multiple
+          />
           <form-error name="government_priorities"></form-error>
         </div>
       </el-form-item-wrap>
@@ -205,7 +178,7 @@
       <h2>{{ trans('forms.business_case.tabs.timeframe') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.timeframe.label')"
-        prop="timeframe"
+        prop="timeframe_id"
         required>
         <span slot="label-addons">
           <el-popover-wrap
@@ -214,24 +187,15 @@
           </el-popover-wrap>
         </span>
         <div class="wrap-with-errors">
-          <el-select
-            v-model="form.timeframe"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            name="timeframe"
+          <el-select-wrap
+            v-model="form.timeframe_id"
+            :isLoading="isInfoLoading"
+            name="timeframe_id"
             :data-vv-as="trans('forms.business_case.timeframe.label')"
-            value-key="name"
-            v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :class="{ 'is-error': verrors.has('timeframe') }">
-            <el-option
-              v-for="item in timeframeServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-          <form-error name="timeframe"></form-error>
+            v-validate="'required'"
+            :options="timeframeServer"
+          />
+          <form-error name="timeframe_id"></form-error>
         </div>
       </el-form-item-wrap>
       <el-form-item-wrap
@@ -308,12 +272,26 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('departmental_benefit') }">
         {{ trans('forms.business_case.tabs.departmental_benefit') }}
       </span>
-
       <form-section-group
         v-model="form.departmental_benefits"
         entity="departmental-benefit"
         :data="{
           departmentalBenefitTypeServer
+        }"
+        :min="1"
+        :isLoading="isInfoLoading"
+      />
+    </el-tab-pane>
+
+    <el-tab-pane data-name="learners_benefit">
+      <span slot="label" :class="{'is-error': errorTabs.includes('learnersBenefit') }">
+        {{ trans('forms.business_case.tabs.learners_benefit') }}
+      </span>
+      <form-section-group
+        v-model="form.learners_benefits"
+        entity="learners-benefit"
+        :data="{
+          learnersBenefitTypeServer
         }"
         :min="1"
         :isLoading="isInfoLoading"
@@ -329,6 +307,7 @@
   import FormError from '../error.vue';
 
   import ElFormItemWrap from '../el-form-item-wrap';
+  import ElSelectWrap from '../el-select-wrap';
   import ElInputWrap from '../el-input-wrap';
   import ElInputOtherWrap from '../el-input-other-wrap';
   import FormSectionGroup from '../form-section-group';
@@ -338,7 +317,7 @@
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElInputOtherWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -358,16 +337,16 @@
         isPotentialSolutionTypesOther: false,
         governmentPrioritiesServer: [],
         departmentalBenefitTypeServer: [],
+        learnersBenefitTypeServer: [],
         timeframeServer: [],
-        communitiesServer: [],
-        innerFormData: this.formData
+        communitiesServer: []
       }
     },
 
     computed: {
       form: {
         get() {
-          return this.innerFormData;
+          return this.formData;
         },
         set(data) {
           this.$emit('update:formData', data);
@@ -394,6 +373,19 @@
         'hideMainLoading'
       ]),
 
+      formatData() {
+        // make sure that the dropdowns only have the ids
+        this.form.request_sources = _.map(this.form.request_sources, 'id');
+        this.form.timeframe_id = _.get(this.form.timeframe, 'id');
+        delete this.form.timeframe;
+        this.form.communities = _.map(this.form.communities, 'id');
+        this.form.government_priorities = _.map(this.form.government_priorities, 'id');
+        this.form.potential_solution_types = _.map(this.form.potential_solution_types, 'id');
+
+        this.isRequestSourceOther = !!this.form.request_source_other;
+        this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+      },
+
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
@@ -402,13 +394,14 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type');
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type');
         this.requestSourceServer = response.data.data['request-source'];
         this.governmentPrioritiesServer = response.data.data['government-priority'];
         this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
         this.timeframeServer = response.data.data['timeframe'];
         this.communitiesServer = response.data.data['community'];
         this.departmentalBenefitTypeServer = response.data.data['departmental-benefit-type'];
+        this.learnersBenefitTypeServer = response.data.data['learners-benefit-type'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
@@ -416,6 +409,7 @@
 
     beforeDestroy() {
       EventBus.$off('Store:languageUpdate', this.fetchLists);
+      EventBus.$off('FormEntity:formDataUpdate', this.formatData);
     },
 
     async created() {
@@ -424,15 +418,13 @@
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = _.cloneDeep(this.formData);
-      // make the checkboxes react
-      // based on the value of its corresponding field
-      this.isRequestSourceOther = !!this.form.request_source_other;
-      this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+      this.formatData();
       await this.hideMainLoading();
     },
 
     mounted() {
       EventBus.$on('Store:languageUpdate', this.fetchLists);
+      EventBus.$on('FormEntity:formDataUpdate', this.formatData);
     }
   };
 </script>

@@ -252,11 +252,13 @@
       },
 
       discardChanges() {
+        let that = this;
         let formWasDirty = this.isFormDirty;
-        // set the form data back to original state
-        for (const key in this.originalFormData) {
-          this.$set(this.$refs.tabs.form, key, this.originalFormData[key]);
-        }
+
+        this.formData = _.cloneDeep(this.originalFormData);
+
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+
         // reset the fields states
         // so that we get a pristine form
         // but wait until dom is refreshed before resetting the fields state
@@ -270,76 +272,28 @@
             message: this.trans('components.notice.message.changes_discarded')
           });
         }
+
+        // wait until data has been synced through components
+        this.$nextTick(() => {
+          EventBus.$emit('FormEntity:formDataUpdate');
+        });
       },
 
-      // Used in order to remove unnecessary props from response
-      // and convert arrays into only ids so that ElementUI understands them
-      formatData(data) {
-        let that = this;
+      storeOriginalFormData(data) {
         // deep copy so that we don't alter the store's data
         this.originalFormData = _.cloneDeep(data);
-        _.forEach(this.originalFormData, (value, key) => {
-          // make sure that we convert the lists/object into only ids
-          // since el-select only needs ids to populate selected items
-
-          // if collection
-          if (_.isArray(value) && _.isObject(value[0])) {
-            _.forEach(value, (subVal, subKey) => {
-              _.forIn(subVal, (subSubVal, subSubkey) => {
-                if (_.isObject(subSubVal)) {
-                  that.originalFormData[key][subKey][subSubkey] = _.get(subSubVal, 'id');
-                }
-              });
-            });
-          // if is array and not collection
-          } else if (_.isArray(value) && !_.isObject(value[0])) {
-            that.originalFormData[key] = _.map(value, 'id');
-          // if not collection, but object
-          } else if (!_.isArray(value) && _.isObject(value)) {
-            that.originalFormData[key] = _.get(value, 'id');
-          }
-        });
-
         // deep copy the object here so that we don't alter the
         this.formData = _.cloneDeep(this.originalFormData);
-      },
-
-      formatDataIds(data) {
-        _.forEach(data, (value, key) => {
-          // if isCollection
-          if (_.isArray(value) && _.isObject(value[0])) {
-            _.forEach(value, item => {
-              _.forIn(item, (val, subKey) => {
-                if (item.hasOwnProperty(subKey + '_id')) {
-                  item[subKey + '_id'] = val;
-                  delete item[subKey];
-                }
-              });
-            });
-          } else if (_.isArray(value)) {
-            _.forEach(value, (val, key) => {
-              if (value.hasOwnProperty(key + '_id')) {
-                value[key + '_id'] = val;
-                delete value[key];
-              }
-            });
-          } else {
-            if (data.hasOwnProperty(key + '_id')) {
-              data[key + '_id'] = value;
-              delete data[key];
-            }
-          }
-        });
       },
 
       async onSave() {
         this.isSaving = true;
         try {
-          let newData = _.cloneDeep(this.$refs.tabs.form);
-          this.formatDataIds(newData);
+          let newData = _.cloneDeep(this.formData);
           let formId = this.$route.params.formId;
           let response = await this.saveForm({ formId, form: newData });
-          this.formatData(response);
+          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+          this.storeOriginalFormData(response);
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -369,10 +323,10 @@
       },
 
       async triggerSubmitForm() {
-        let newData = _.cloneDeep(this.$refs.tabs.form);
-        this.formatDataIds(newData);
+        let newData = _.cloneDeep(this.formData);
         let formId = this.$route.params.formId;
         await this.submitForm({ formId, form: newData });
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
         // reset the fields states
         // so that we get a pristine form with the new values
         this.resetFieldsState();
@@ -409,7 +363,7 @@
         let that = this;
         let formId = this.$route.params.formId;
         let response = await this.loadProcessInstanceForm(formId);
-        this.formatData(response);
+        this.storeOriginalFormData(response);
       },
 
       async fetch() {

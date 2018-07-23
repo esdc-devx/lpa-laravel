@@ -1,47 +1,47 @@
 <template>
-  <div class="departmental-benefit">
+  <div class="learners-benefit">
     <el-form-item-wrap
-      :label="trans('forms.business_case.departmental_benefit_type.label')"
-      :prop="`${fieldNamePrefix}.departmental_benefit_type_id`"
+      :label="trans('forms.business_case.learners_benefit_type.label')"
+      :prop="`${fieldNamePrefix}.learners_benefit_type_id`"
       :classes="['has-other']"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.business_case.departmental_benefit_type.description')">
+          :description="trans('forms.business_case.learners_benefit_type.description')">
         </el-popover-wrap>
       </span>
       <div class="wrap-with-errors">
         <el-select-wrap
-          v-model="form.departmental_benefit_type_id"
+          v-model="form.learners_benefit_type_id"
           :isLoading="isLoading"
-          :name="`${fieldNamePrefix}.departmental_benefit_type_id`"
-          :data-vv-as="trans('forms.business_case.departmental_benefit_type.label')"
-          v-validate="{ rules: { required: !this.isDepartmentalBenefitTypeOther} }"
-          :options="data.departmentalBenefitTypeServer"
+          :name="`${fieldNamePrefix}.learners_benefit_type_id`"
+          :data-vv-as="trans('forms.business_case.learners_benefit_type.label')"
+          v-validate="{ rules: { required: !this.isLearnersBenefitTypeOther} }"
+          :options="data.learnersBenefitTypeServer"
         />
-        <form-error :name="`${fieldNamePrefix}.departmental_benefit_type_id`"></form-error>
+        <form-error :name="`${fieldNamePrefix}.learners_benefit_type_id`"></form-error>
       </div>
       <el-input-other-wrap
         :data-vv-as="trans('entities.form.other')"
-        :name="`${fieldNamePrefix}.departmental_benefit_type_other`"
-        v-model="form.departmental_benefit_type_other"
-        v-validate="{ rules: { required: this.isDepartmentalBenefitTypeOther} }"
-        :isChecked.sync="isDepartmentalBenefitTypeOther"
+        :name="'learners_benefit_type_other_' + index"
+        v-model="form.learners_benefit_type_other"
+        v-validate="{ rules: { required: this.isLearnersBenefitTypeOther} }"
+        :isChecked.sync="isLearnersBenefitTypeOther"
         maxlength="100">
       </el-input-other-wrap>
     </el-form-item-wrap>
     <el-form-item-wrap
-      :label="trans('forms.business_case.departmental_benefit_rationale.label')"
+      :label="trans('forms.business_case.learners_benefit_rationale.label')"
       :prop="`${fieldNamePrefix}.rationale`"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.business_case.departmental_benefit_rationale.description')">
+          :description="trans('forms.business_case.learners_benefit_rationale.description')">
         </el-popover-wrap>
       </span>
       <el-input-wrap
         v-model="form.rationale"
-        :data-vv-as="trans('forms.business_case.departmental_benefit_rationale.label')"
+        :data-vv-as="trans('forms.business_case.learners_benefit_rationale.label')"
         :name="`${fieldNamePrefix}.rationale`"
         v-validate="'required'"
         maxlength="1250"
@@ -63,7 +63,7 @@
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
-    name: 'departmental-benefit',
+    name: 'learners-benefit',
 
     components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap },
 
@@ -89,7 +89,7 @@
 
     computed: {
       fieldNamePrefix() {
-        return 'departmental_benefits.' + this.index;
+        return 'learners_benefits.' + this.index;
       },
       form: {
         get() {
@@ -104,7 +104,7 @@
     watch: {
       form: function() {
         // make the checkbox react when the form data changes
-        this.isDepartmentalBenefitTypeOther = !!this.form.departmental_benefit_type_other;
+        this.isLearnersBenefitTypeOther = !!this.form.learners_benefit_type_other;
       }
     },
 
@@ -113,18 +113,18 @@
         // this is used when adding a group
         // so that we know what properties to be aware of when adding a group
         defaults: {
-          departmental_benefit_type_id: null,
-          departmental_benefit_type_other: null,
+          learners_benefit_type_id: null,
+          learners_benefit_type_other: null,
           rationale: null
         },
-        isDepartmentalBenefitTypeOther: false
+        isLearnersBenefitTypeOther: false
       };
     },
 
     mounted() {
       // make the checkbox react
       // based on the value of its corresponding field
-      this.isDepartmentalBenefitTypeOther = !!this.form.departmental_benefit_type_other;
+      this.isLearnersBenefitTypeOther = !!this.form.learners_benefit_type_other;
     }
   };
 </script>

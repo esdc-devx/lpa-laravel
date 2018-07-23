@@ -1,7 +1,7 @@
 <template>
   <div class="form-section-group">
     <h2>
-      {{ trans('forms.business_case.tabs.departmental_benefit') }}
+      {{ trans('forms.business_case.tabs["'+ entity.replace('-', '_') +'"]') }}
       <div class="header-controls">
         <el-button type="text" size="mini" @click="expandAll = true">Expand All</el-button>
         <el-button type="text" size="mini" @click="expandAll = false">Collapse All</el-button>
@@ -10,10 +10,10 @@
     <el-collapse :value="activePanels">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
-          {{ trans('forms.business_case.tabs.departmental_benefit') }} {{ index + 1 }}
+          {{ trans('forms.business_case.tabs["'+ entity.replace('-', '_') +'"]') }} {{ index + 1 }}
           <el-button v-if="groups.length > 1" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
         </template>
-        <component ref="component" :is="entity" :data="data" class="form-item-group" :index="index" :value.sync="item" :isLoading="isLoading"></component>
+        <component ref="component" :is="entity" :data="data" class="form-item-group" :index="index" :value="item" :isLoading="isLoading"></component>
       </el-collapse-item>
     </el-collapse>
     <el-button class="add-group" type="primary" icon="el-icon-plus" @click="addGroup()"></el-button>
@@ -21,12 +21,15 @@
 </template>
 
 <script>
+  import EventBus from '@/event-bus.js';
+
   import DepartmentalBenefit from './entities/departmental-benefit';
+  import LearnersBenefit from './entities/learners-benefit';
 
   export default {
     name: 'form-section-group',
 
-    components: { DepartmentalBenefit },
+    components: { DepartmentalBenefit, LearnersBenefit },
 
     props: {
       entity: {
@@ -56,24 +59,51 @@
           panels.push(i + 1);
         }
         return panels;
+      },
+
+      groups: {
+        get() {
+          return this.value;
+        },
+        set(val) {
+          this.$emit('update:value', val);
+        }
       }
     },
 
     data() {
       return {
-        expandAll: true,
-        groups: this.value
+        expandAll: true
       };
     },
 
     methods: {
+      /**
+       * This function makes sure that when we have for example: { prop, prop_id, ...}
+       * that we assign the value of prop to prop_id and remove prop
+       * so that we don't send it to the server.
+       * Make sure to also deep set the values so that they are all reactives.
+      */
+      formatGroups() {
+        let that = this;
+        _.forEach(this.groups, (group, key) => {
+          _.forIn(group, (value, subKey) => {
+            if (group.hasOwnProperty(subKey + '_id')) {
+              that.$set(group, subKey + '_id', _.get(value, 'id'));
+              delete group[subKey];
+            }
+          });
+        });
+        this.$emit('update:value', this.groups);
+      },
+
       removeGroup(index, item) {
         this.groups.splice(index, 1);
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
       },
 
       addGroup() {
         // add another group, later based on the defaults
-        this.groups.push({});
         this.$nextTick(() => {
           let groupsLength = this.groups.length - 1;
           let defaults = this.$refs.component[groupsLength].defaults;
@@ -81,17 +111,29 @@
             this.$log.error(`Entity '${this.entity}' should have a 'defaults' attribute in its data.`);
             return;
           }
-          for (const key in defaults) {
-            this.$set(this.groups[groupsLength], key, defaults[key]);
-          }
-        })
+          this.groups.push(defaults);
+          // for (const key in defaults) {
+          //   this.$set(this.groups[groupsLength], key, defaults[key]);
+          // }
+        });
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
       }
     },
+
+    beforeDestroy() {
+      EventBus.$off('FormEntity:formDataUpdate', this.formatGroups);
+    },
+
     created() {
+      this.formatGroups();
       // if min is set and there is no groups, addGroup
       if (!_.isUndefined(this.$props.min) && !this.groups.length) {
         this.addGroup();
       }
+    },
+
+    mounted() {
+      EventBus.$on('FormEntity:formDataUpdate', this.formatGroups);
     }
   };
 </script>
@@ -106,6 +148,7 @@
       }
       .el-button.remove-group {
         float: right;
+        border-radius: 0;
       }
     }
 
