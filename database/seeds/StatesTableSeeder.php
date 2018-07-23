@@ -53,8 +53,8 @@ class StatesTableSeeder extends Seeder
                 ],
                 [
                     'name_key' => 'suspended',
-                    'name_en'  => 'Cancelled',
-                    'name_fr'  => 'Annulé'
+                    'name_en'  => 'Suspended',
+                    'name_fr'  => 'Suspendu'
                 ],
                 [
                     'name_key' => 'completed',
@@ -63,13 +63,13 @@ class StatesTableSeeder extends Seeder
                 ],
                 [
                     'name_key' => 'externally-terminated',
-                    'name_en'  => 'Terminated',
-                    'name_fr'  => 'Terminé'
+                    'name_en'  => 'Cancelled',
+                    'name_fr'  => 'Annulé'
                 ],
                 [
                     'name_key' => 'internally-terminated',
-                    'name_en'  => 'Terminated',
-                    'name_fr'  => 'Terminé'
+                    'name_en'  => 'Cancelled',
+                    'name_fr'  => 'Annulé'
                 ],
             ],
             'process-step' => [
