@@ -187,11 +187,7 @@
         line-height: 30px;
       }
       button.remove-group {
-        // margin-right: 10px;
         height: 100%;
-        i {
-          // margin-left: 5px;
-        }
       }
     }
 
