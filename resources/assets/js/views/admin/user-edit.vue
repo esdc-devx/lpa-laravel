@@ -42,7 +42,7 @@
           <el-select-wrap
             v-model="form.user.roles"
             :isLoading="isUserInfoLoading"
-            name="organizationalUnits"
+            name="roles"
             :data-vv-as="trans('entities.user.roles')"
             v-validate="''"
             :options="roles"
