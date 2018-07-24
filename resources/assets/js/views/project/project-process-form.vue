@@ -252,7 +252,6 @@
       },
 
       discardChanges() {
-        let that = this;
         let formWasDirty = this.isFormDirty;
 
         this.formData = _.cloneDeep(this.originalFormData);
