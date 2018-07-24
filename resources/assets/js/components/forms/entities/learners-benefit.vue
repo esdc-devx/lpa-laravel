@@ -17,7 +17,7 @@
           :name="`${fieldNamePrefix}.learners_benefit_type_id`"
           :data-vv-as="trans('forms.business_case.learners_benefit_type.label')"
           v-validate="{ rules: { required: !this.isLearnersBenefitTypeOther} }"
-          :options="data.learnersBenefitTypeServer"
+          :options="data.learnersBenefitTypeList"
         />
         <form-error :name="`${fieldNamePrefix}.learners_benefit_type_id`"></form-error>
       </div>

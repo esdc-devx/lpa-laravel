@@ -22,7 +22,7 @@
             name="request_sources"
             :data-vv-as="trans('forms.business_case.request_sources.label')"
             v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :options="requestSourceServer"
+            :options="requestSourceList"
             multiple
           />
           <form-error name="request_sources"></form-error>
@@ -107,7 +107,7 @@
             name="potential_solution_types"
             :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
             v-validate="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
-            :options="potentialSolutionTypesServer"
+            :options="potentialSolutionTypesList"
             multiple
           />
           <form-error name="potential_solution_types"></form-error>
@@ -141,7 +141,7 @@
             name="government_priorities"
             :data-vv-as="trans('forms.business_case.government_priorities.label')"
             v-validate="'required'"
-            :options="governmentPrioritiesServer"
+            :options="governmentPrioritiesList"
             multiple
           />
           <form-error name="government_priorities"></form-error>
@@ -193,7 +193,7 @@
             name="timeframe_id"
             :data-vv-as="trans('forms.business_case.timeframe.label')"
             v-validate="'required'"
-            :options="timeframeServer"
+            :options="timeframeList"
           />
           <form-error name="timeframe_id"></form-error>
         </div>
@@ -240,7 +240,7 @@
             name="communities"
             v-model="form.communities"
             :data-vv-as="trans('forms.business_case.communities.label')"
-            :data="communitiesServer"
+            :data="communitiesList"
             labelKey="name"
             v-validate="'required'">
           </el-tree-wrap>
@@ -276,7 +276,7 @@
         v-model="form.departmental_benefits"
         entity="departmental-benefit"
         :data="{
-          departmentalBenefitTypeServer
+          departmentalBenefitTypeList
         }"
         :min="1"
         :isLoading="isInfoLoading"
@@ -291,7 +291,7 @@
         v-model="form.learners_benefits"
         entity="learners-benefit"
         :data="{
-          learnersBenefitTypeServer
+          learnersBenefitTypeList
         }"
         :min="1"
         :isLoading="isInfoLoading"
@@ -331,15 +331,15 @@
     data() {
       return {
         isInfoLoading: true,
-        requestSourceServer: [],
+        requestSourceList: [],
         isRequestSourceOther: false,
-        potentialSolutionTypesServer: [],
+        potentialSolutionTypesList: [],
         isPotentialSolutionTypesOther: false,
-        governmentPrioritiesServer: [],
-        departmentalBenefitTypeServer: [],
-        learnersBenefitTypeServer: [],
-        timeframeServer: [],
-        communitiesServer: []
+        governmentPrioritiesList: [],
+        departmentalBenefitTypeList: [],
+        learnersBenefitTypeList: [],
+        timeframeList: [],
+        communitiesList: []
       }
     },
 
@@ -358,7 +358,7 @@
       'form.expected_annual_participant_number': {
         immediate: true,
         handler(value) {
-          // this handle the fact that we receive null from the server
+          // this handle the fact that we receive null from the List
           // and that the component converts null to 0,
           // which produces a form dirty: null !== 0
           value = value === null ? undefined : value;
@@ -395,13 +395,13 @@
         await this.showMainLoading();
         this.isInfoLoading = true;
         let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type');
-        this.requestSourceServer = response.data.data['request-source'];
-        this.governmentPrioritiesServer = response.data.data['government-priority'];
-        this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
-        this.timeframeServer = response.data.data['timeframe'];
-        this.communitiesServer = response.data.data['community'];
-        this.departmentalBenefitTypeServer = response.data.data['departmental-benefit-type'];
-        this.learnersBenefitTypeServer = response.data.data['learners-benefit-type'];
+        this.requestSourceList = response.data.data['request-source'];
+        this.governmentPrioritiesList = response.data.data['government-priority'];
+        this.potentialSolutionTypesList = response.data.data['potential-solution-type'];
+        this.timeframeList = response.data.data['timeframe'];
+        this.communitiesList = response.data.data['community'];
+        this.departmentalBenefitTypeList = response.data.data['departmental-benefit-type'];
+        this.learnersBenefitTypeList = response.data.data['learners-benefit-type'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }

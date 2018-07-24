@@ -17,7 +17,7 @@
           :name="`${fieldNamePrefix}.departmental_benefit_type_id`"
           :data-vv-as="trans('forms.business_case.departmental_benefit_type.label')"
           v-validate="{ rules: { required: !this.isDepartmentalBenefitTypeOther} }"
-          :options="data.departmentalBenefitTypeServer"
+          :options="data.departmentalBenefitTypeList"
         />
         <form-error :name="`${fieldNamePrefix}.departmental_benefit_type_id`"></form-error>
       </div>
