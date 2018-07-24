@@ -125,7 +125,7 @@
 
         if (!_.isUndefined(this.$props.min)) {
           // add the ammount of groups provided
-          for (let i = 0; i < this.$props.min - 1; i++) {
+          for (let i = 0; i < this.$props.min; i++) {
             this.addGroup();
           }
         }
