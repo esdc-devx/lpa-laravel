@@ -117,6 +117,7 @@
 
     data() {
       return {
+        formId: null,
         options: {
           hasTabsToValidate: true
         },
@@ -150,7 +151,7 @@
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
           if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            this.canSubmitForm(this.$route.params.formId).then(allowed => {
+            this.canSubmitForm(this.formId).then(allowed => {
               this.rights.canSubmit = allowed;
             });
             return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
@@ -163,7 +164,7 @@
           if (val) {
             await this.showMainLoading();
             try {
-              await this.claimForm(this.$route.params.formId);
+              await this.claimForm(this.formId);
               await this.hideMainLoading();
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
@@ -179,14 +180,14 @@
               .then(async () => {
                 await this.showMainLoading();
                 this.discardChanges();
-                await this.unclaimForm(this.$route.params.formId);
+                await this.unclaimForm(this.formId);
                 await this.hideMainLoading();
               }).catch(async () => {
                 return false;
               });
           } else {
             await this.showMainLoading();
-            await this.unclaimForm(this.$route.params.formId);
+            await this.unclaimForm(this.formId);
             await this.hideMainLoading();
           }
         }
@@ -287,8 +288,7 @@
         this.isSaving = true;
         try {
           let newData = _.cloneDeep(this.formData);
-          let formId = this.$route.params.formId;
-          let response = await this.saveForm({ formId, form: newData });
+          let response = await this.saveForm({ formId: this.formId, form: newData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           this.storeOriginalFormData(response);
           // reset the fields states
@@ -306,7 +306,7 @@
             await this.showMainLoading();
             this.discardChanges();
             // remove ownership on form
-            await this.unclaimForm(this.$route.params.formId);
+            await this.unclaimForm(this.formId);
             this.isSaving = false;
             await this.hideMainLoading();
           }
@@ -321,8 +321,7 @@
 
       async triggerSubmitForm() {
         let newData = _.cloneDeep(this.formData);
-        let formId = this.$route.params.formId;
-        await this.submitForm({ formId, form: newData });
+        await this.submitForm({ formId: this.formId, form: newData });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
         // reset the fields states
         // so that we get a pristine form with the new values
@@ -357,8 +356,7 @@
       },
 
       async triggerLoadProcessInstanceForm() {
-        let formId = this.$route.params.formId;
-        let response = await this.loadProcessInstanceForm(formId);
+        let response = await this.loadProcessInstanceForm(this.formId);
         this.storeOriginalFormData(response);
         this.formData = _.cloneDeep(this.originalFormData);
       },
@@ -380,7 +378,7 @@
       beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
           await this.showMainLoading();
-          await this.unclaimForm(this.$route.params.formId);
+          await this.unclaimForm(this.formId);
           await this.hideMainLoading();
           callback();
         }).catch(() => false);
@@ -394,7 +392,7 @@
           this.discardChanges();
           if (!this.isFormSubmitted) {
             try {
-              await this.unclaimForm(this.$route.params.formId);
+              await this.unclaimForm(this.formId);
             } catch(e) {
               await this.hideMainLoading();
             }
@@ -415,10 +413,12 @@
     },
 
     async created() {
-      let formId = this.$route.params.formId;
-      this.rights.canEdit = await this.canEditForm(formId);
-      this.rights.canClaim = await this.canClaimForm(formId);
-      this.rights.canUnclaim = await this.canUnclaimForm(formId);
+      // store the reference to the current form id
+      this.formId = this.$route.params.formId;
+
+      this.rights.canEdit = await this.canEditForm(this.formId);
+      this.rights.canClaim = await this.canClaimForm(this.formId);
+      this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
     },
 
     mounted() {
