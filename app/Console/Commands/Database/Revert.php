@@ -12,7 +12,7 @@ class Revert extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'db:revert';
+    protected $signature = 'db:revert {--yes}';
 
     /**
      * The console command description.
@@ -39,23 +39,22 @@ class Revert extends BaseCommand
     public function handle()
     {
         // Drop all database tables.
-        if (!$this->confirm('You are about to drop all database tables, do you wish to continue?')) {
-            return false;
+        if ($this->option('yes') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
+            $this->line('Dropping all database tables...');
+            Schema::dropAllTables();
+            $this->info('Tables dropped successfully.');
+
+            // Call migrate command to recreate all database tables.
+            $this->newline('Migrating database...');
+            $this->call('migrate');
+
+            // Call db:seed command to populate data.
+            $this->newline('Seeding database...');
+            $this->call('db:seed');
+            $this->info('Database seeded successfully.');
+
+            // Done.
+            $this->success('Database was reverted successfully.');
         }
-        $this->line('Dropping all database tables...');
-        Schema::dropAllTables();
-        $this->info('Tables dropped successfully.');
-
-        // Call migrate command to recreate all database tables.
-        $this->newline('Migrating database...');
-        $this->call('migrate');
-
-        // Call db:seed command to populate data.
-        $this->newline('Seeding database...');
-        $this->call('db:seed');
-        $this->info('Database seeded successfully.');
-
-        // Done.
-        $this->success('Database was reverted successfully.');
     }
 }
