@@ -102,9 +102,8 @@
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
       },
 
-      addMandatoryGroup() {
-        // if min is set and there is no groups, add a group
-        if (!_.isUndefined(this.$props.min) && !this.groups.length) {
+      addFirstGroup() {
+        if (!this.groups.length) {
           // push a new group now so that the component can render it
           // and we can access to its defaults
           this.groups.push({});
@@ -123,6 +122,12 @@
       },
 
       addGroup() {
+        // this makes sure that when there are no groups from the start,
+        // that we can still add a dummy group and refer to its defaults later on
+        if (!this.groups.length) {
+          this.addFirstGroup();
+          return;
+        }
         // add another group, later based on the defaults
         this.$nextTick(() => {
           let groupsLength = this.groups.length - 1;
@@ -138,17 +143,22 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('FormEntity:formDataUpdate', _.flow(this.formatGroups, this.addMandatoryGroup));
+      EventBus.$off('FormEntity:formDataUpdate', _.flow(this.formatGroups, this.addFirstGroup));
     },
 
     created() {
       this.formatGroups();
 
-      this.addMandatoryGroup();
+      if (!_.isUndefined(this.$props.min)) {
+        // add the ammount of groups provided
+        for (let i = 0; i < this.$props.min - 1; i++) {
+          this.addGroup();
+        }
+      }
     },
 
     mounted() {
-      EventBus.$on('FormEntity:formDataUpdate', _.flow(this.formatGroups, this.addMandatoryGroup));
+      EventBus.$on('FormEntity:formDataUpdate', _.flow(this.formatGroups, this.addFirstGroup));
     }
   };
 </script>
