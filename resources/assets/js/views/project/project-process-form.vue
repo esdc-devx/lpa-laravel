@@ -358,7 +358,6 @@
       },
 
       async triggerLoadProcessInstanceForm() {
-        let that = this;
         let formId = this.$route.params.formId;
         let response = await this.loadProcessInstanceForm(formId);
         this.storeOriginalFormData(response);
