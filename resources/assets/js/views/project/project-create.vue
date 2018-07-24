@@ -80,7 +80,7 @@
         isProjectInfoLoading: false,
         form: {
           name: '',
-          organizational_unit: []
+          organizational_unit: undefined
         }
       }
     },
