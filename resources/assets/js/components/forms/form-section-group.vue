@@ -89,14 +89,12 @@
         _.forEach(this.groups, (group, key) => {
           _.forIn(group, (value, subKey) => {
             if (group.hasOwnProperty(subKey + '_id')) {
-              // handle multiple lists
-              if (_.isArray(group[subKey + '_id'])) {
-                that.$set(group, subKey + '_id', _.map(value, 'id'));
-              } else {
-                // single value list
-                that.$set(group, subKey + '_id', _.get(value, 'id'));
-              }
+              // single value list
+              that.$set(group, subKey + '_id', _.get(value, 'id'));
               delete group[subKey];
+            } else if (_.isArray(group[subKey])) {
+              // handle multiple value lists
+              that.$set(group, subKey + '_id', _.map(value, 'id'));
             }
           });
         });
