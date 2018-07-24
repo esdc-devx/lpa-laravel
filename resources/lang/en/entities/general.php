@@ -12,4 +12,6 @@ return [
     'na'                   => 'Not Applicable',
     'description'          => 'Description',
     'help'                 => 'Help',
+    'expand_all'           => 'Expand All',
+    'collapse_all'         => 'Collapse All',
 ];
