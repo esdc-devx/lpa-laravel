@@ -12,4 +12,6 @@ return [
     'na'                   => 'Sans objet',
     'description'          => 'Description',
     'help'                 => 'Aide',
+    'expand_all'           => 'Développer tout',
+    'collapse_all'         => 'Réduire tout',
 ];

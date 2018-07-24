@@ -6,20 +6,24 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProcessInstanceFormRequest extends FormRequest
 {
-    protected $processInstanceFormData;
+    protected $processInstanceForm;
     protected $formRequestClass;
     protected $namespace = '\App\Http\Requests';
 
     /**
-     * Resolve form request class for based on process instance form data class.
+     * Resolve form request class based on process instance form data class.
      *
      * @return void
      */
     protected function resolveFormRequestClass()
     {
-        $this->processInstanceFormData = request()->route('processInstanceFormData');
-        $baseClassName = class_basename($this->processInstanceFormData);
-        $formRequestClass = "{$this->namespace}\\{$baseClassName}FormRequest";
+        $this->processInstanceForm = $this->route('processInstanceFormData');
+
+        // Get form data class (i.e. BusinessCase, BusinessCaseAssessment, ArchitecturePlan, etc.).
+        $formDataClass = class_basename($this->processInstanceForm->formData()->getRelated());
+
+        // Resolve form request class according to form data class. (i.e. BusinessCaseFormRequest, ArchitecturePlanFormRequest, etc.).
+        $formRequestClass = "{$this->namespace}\\{$formDataClass}FormRequest";
         if (class_exists($formRequestClass)) {
             $this->formRequestClass = resolve($formRequestClass);
         }
@@ -37,7 +41,7 @@ class ProcessInstanceFormRequest extends FormRequest
         // Get last segment of request url (either edit or submit).
         $action = collect($this->segments())->last();
 
-        return $this->user()->can($action, $this->processInstanceFormData->processInstanceForm);
+        return $this->user()->can($action, $this->processInstanceForm);
     }
 
     /**

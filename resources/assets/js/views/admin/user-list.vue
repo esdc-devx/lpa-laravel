@@ -1,7 +1,7 @@
 <template>
   <div class="content user-list">
     <div class="controls">
-      <el-button @click="$router.push('users/create')">{{ trans('pages.user_list.create_user') }}</el-button>
+      <el-button @click="goToPage('admin-user-create')">{{ trans('pages.user_list.create_user') }}</el-button>
     </div>
     <el-table
       :default-sort="{prop: 'id', order: 'ascending'}"
@@ -75,10 +75,14 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
+  import PageUtils from '@mixins/page/utils.js';
+
   let namespace = 'users';
 
   export default {
     name: 'admin-user-list',
+
+    mixins: [ PageUtils ],
 
     computed: {
       ...mapGetters({

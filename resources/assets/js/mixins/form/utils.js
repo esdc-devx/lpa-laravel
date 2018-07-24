@@ -1,15 +1,18 @@
 import _ from 'lodash';
 
+import EventBus from '@/event-bus.js';
+
 import HttpStatusCodes from "@axios/http-status-codes";
 
 const swipeTransitionDuration = 500;
-const errorSlideOutTransitionDuration = 400;
 let errorNotif;
 
 export default {
   computed: {
     isFormDirty() {
-      return Object.keys(this.vfields).some(key => this.vfields[key].dirty);
+      let formHasErrors = Object.keys(this.vfields).some(key => this.vfields[key].dirty);
+
+      return formHasErrors || this.fieldsAddedOrRemoved;
     },
 
     isFormPristine() {
@@ -23,6 +26,7 @@ export default {
       options: {
         hasTabsToValidate: false
       },
+      fieldsAddedOrRemoved: false,
       errorTabs: [],
       isSaving: false,
       isSubmitting: false,
@@ -117,25 +121,22 @@ export default {
     },
 
     checkTabHasErrors(tab) {
-      // make sure to wait until errors are transitioning to leave
-      // this is only valid when user edit the form directly, without submitting
-      _.delay(() => {
-        const tabName = tab.getAttribute("data-name");
-        // make sure there is no error present in the form
-        // and that no errors are currently being removed from the page
-        if (tab.querySelector(".el-form-item__error") !== null) {
-          if (!this.errorTabs.includes(tabName)) {
-            this.errorTabs.push(tabName);
-          }
-          return true;
-        } else {
-          const index = this.errorTabs.indexOf(tabName);
-          if (index !== -1) {
-            this.errorTabs.splice(index, 1);
-          }
-          return false;
+      const tabName = tab.getAttribute("data-name");
+      let tabErrors = tab.querySelector('.el-form-item__error');
+      // make sure there is no error present in the form
+      // and that no errors are currently being removed from the page
+      if (tabErrors !== null && tab.querySelector('.el-zoom-in-top-leave-active') === null) {
+        if (!this.errorTabs.includes(tabName)) {
+          this.errorTabs.push(tabName);
         }
-      }, errorSlideOutTransitionDuration);
+        return true;
+      } else {
+        const index = this.errorTabs.indexOf(tabName);
+        if (index !== -1) {
+          this.errorTabs.splice(index, 1);
+        }
+        return false;
+      }
     },
 
     manageBackendErrors(errors) {
@@ -175,6 +176,18 @@ export default {
           field.reset();
         });
       });
+    },
+
+    onFieldAddedRemoved(isAddedRemoved) {
+      this.fieldsAddedOrRemoved = !_.isUndefined(isAddedRemoved) ? isAddedRemoved : true;
     }
+  },
+
+  beforeDestroy() {
+    EventBus.$off('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
+  },
+
+  mounted() {
+    EventBus.$on('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
   }
 };

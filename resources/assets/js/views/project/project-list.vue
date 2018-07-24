@@ -1,7 +1,7 @@
 <template>
   <div class="project-list content">
     <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-      <el-button @click="$router.push('projects/create')">{{ trans('pages.project_list.create_project') }}</el-button>
+      <el-button @click="goToPage('project-create')">{{ trans('pages.project_list.create_project') }}</el-button>
     </div>
 
     <data-tables
@@ -64,6 +64,7 @@
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
+  import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
@@ -71,7 +72,7 @@
   export default {
     name: 'project-list',
 
-    mixins: [ TableUtils ],
+    mixins: [ PageUtils, TableUtils ],
 
     data() {
       return {

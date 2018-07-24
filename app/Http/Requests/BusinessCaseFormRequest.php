@@ -34,10 +34,18 @@ class BusinessCaseFormRequest extends FormRequest
                 'potential_solution_types' => 'required_without:potential_solution_type_other|array',
                 'potential_solution_type_other' => 'nullable|string|max:1250',
                 'is_required_training' => 'required|boolean',
-                'timeframe' => 'required',
+                'timeframe_id' => 'required',
                 'timeframe_rationale' => 'required|string|max:1250',
                 'communities' => 'required|array',
                 'expected_annual_participant_number' => 'required|integer|between:1,500000',
+                'departmental_benefits' => 'required|array|min:1',
+                'departmental_benefits.*.departmental_benefit_type_id' => 'required_without:departmental_benefits.*.departmental_benefit_type_other|integer',
+                'departmental_benefits.*.departmental_benefit_type_other' => 'nullable|string|max:100',
+                'departmental_benefits.*.rationale' => 'required|string|max:1250',
+                'learners_benefits' => 'required|array|min:1',
+                'learners_benefits.*.learners_benefit_type_id' => 'required_without:learners_benefits.*.learners_benefit_type_other|integer',
+                'learners_benefits.*.learners_benefit_type_other' => 'nullable|string|max:100',
+                'learners_benefits.*.rationale' => 'required|string|max:1250',
             ];
         }
 

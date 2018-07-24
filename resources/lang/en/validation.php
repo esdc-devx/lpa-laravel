@@ -92,6 +92,13 @@ return [
             'unique' => 'User already exists.',
             'not-found' => 'User could not be found in Active Directory.'
         ],
+        //@note: To be reviewed.
+        'departmental_benefits' => [
+            'required' => 'There needs to be at least one departmental benefit.'
+        ],
+        'learners_benefits' => [
+            'required' => 'There needs to be at least one learners benefit.'
+        ],
     ],
 
     /*
@@ -105,6 +112,14 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        //@note: To be reviewed.
+        'departmental_benefits.*.rationale' => 'Rationale',
+        'departmental_benefits.*.departmental_benefit_type_id' => 'Type',
+        'departmental_benefits.*.departmental_benefit_type_other' => 'Other',
+        'learners_benefits.*.rationale' => 'Rationale',
+        'learners_benefits.*.learners_benefit_type_id' => 'Type',
+        'learners_benefits.*.learners_benefit_type_other' => 'Other',
+    ],
 
 ];

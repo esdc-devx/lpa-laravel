@@ -250,6 +250,8 @@ return [
     'entity_types' => [
         'business-case' => App\Models\Project\BusinessCase\BusinessCase::class,
         'community' => App\Models\Community::class,
+        'departmental-benefit-type' => App\Models\Project\BusinessCase\DepartmentalBenefitType::class,
+        'learners-benefit-type' => App\Models\Project\BusinessCase\LearnersBenefitType::class,
         'government-priority' => App\Models\Project\BusinessCase\GovernmentPriority::class,
         'potential-solution-type' => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'project' => App\Models\Project\Project::class,

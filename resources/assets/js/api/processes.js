@@ -26,12 +26,12 @@ export default {
     return axios.put(`process-instance-forms/${formId}/unclaim`);
   },
 
-  saveForm(form) {
-    return axios.put(`process-instance-forms/${form.id}/edit`, form);
+  saveForm(formId, form) {
+    return axios.put(`process-instance-forms/${formId}/edit`, form);
   },
 
-  submitForm(form) {
-    return axios.put(`process-instance-forms/${form.id}/submit`, form);
+  submitForm(formId, form) {
+    return axios.put(`process-instance-forms/${formId}/submit`, form);
   },
 
   canEditForm(formId) {

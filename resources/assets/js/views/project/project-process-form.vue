@@ -117,6 +117,7 @@
 
     data() {
       return {
+        formId: null,
         options: {
           hasTabsToValidate: true
         },
@@ -124,7 +125,7 @@
         formData: {},
         activeIndex: '0',
         tabsLength: 0,
-        currentFormComponent: '',
+        formComponent: '',
         rights: {
           canEdit: false,
           canClaim: false,
@@ -150,7 +151,7 @@
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
           if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            this.canSubmitForm(this.$route.params.formId).then(allowed => {
+            this.canSubmitForm(this.formId).then(allowed => {
               this.rights.canSubmit = allowed;
             });
             return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
@@ -163,7 +164,7 @@
           if (val) {
             await this.showMainLoading();
             try {
-              await this.claimForm(this.$route.params.formId);
+              await this.claimForm(this.formId);
               await this.hideMainLoading();
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
@@ -179,21 +180,17 @@
               .then(async () => {
                 await this.showMainLoading();
                 this.discardChanges();
-                await this.unclaimForm(this.$route.params.formId);
+                await this.unclaimForm(this.formId);
                 await this.hideMainLoading();
               }).catch(async () => {
                 return false;
               });
           } else {
             await this.showMainLoading();
-            await this.unclaimForm(this.$route.params.formId);
+            await this.unclaimForm(this.formId);
             await this.hideMainLoading();
           }
         }
-      },
-
-      formComponent() {
-        return this.currentFormComponent;
       },
 
       isPrevDisabled() {
@@ -257,10 +254,11 @@
 
       discardChanges() {
         let formWasDirty = this.isFormDirty;
-        // set the form data back to original state
-        for (const key in this.originalFormData) {
-          this.$set(this.$refs.tabs.form, key, this.originalFormData[key]);
-        }
+
+        this.formData = _.cloneDeep(this.originalFormData);
+
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+
         // reset the fields states
         // so that we get a pristine form
         // but wait until dom is refreshed before resetting the fields state
@@ -274,34 +272,25 @@
             message: this.trans('components.notice.message.changes_discarded')
           });
         }
+
+        // wait until data has been synced through components
+        this.$nextTick(() => {
+          EventBus.$emit('FormEntity:formDataUpdate');
+        });
       },
 
-      // Used in order to remove unnecessary props from response
-      // and convert arrays into only ids so that ElementUI understands them
-      formatData(data) {
-        let formId = this.$route.params.formId;
-        let that = this;
-        this.originalFormData = _.omit(data, 'process_instance_form');
-        _.forEach(this.originalFormData, (value, key) => {
-          // make sure that we convert the lists/object into only ids
-          // since el-select only needs ids to populate selected items
-          if (_.isArray(value) && value !== null) {
-            that.originalFormData[key] = _.map(value, 'id');
-          } else if (_.isObject(value) && value !== null) {
-            that.originalFormData[key] = _.get(value, 'id');
-          }
-        });
-        // make sure the id correspond to the actual form id
-        // since we recieve a process id in response.id
-        this.originalFormData.id = formId;
-        this.formData = Object.assign({}, this.originalFormData);
+      storeOriginalFormData(data) {
+        // deep copy so that we don't alter the store's data
+        this.originalFormData = _.cloneDeep(data);
       },
 
       async onSave() {
         this.isSaving = true;
         try {
-          let response = await this.saveForm(this.$refs.tabs.form);
-          this.formatData(response);
+          let newData = _.cloneDeep(this.formData);
+          let response = await this.saveForm({ formId: this.formId, form: newData });
+          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+          this.storeOriginalFormData(response);
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -317,7 +306,7 @@
             await this.showMainLoading();
             this.discardChanges();
             // remove ownership on form
-            await this.unclaimForm(this.$route.params.formId);
+            await this.unclaimForm(this.formId);
             this.isSaving = false;
             await this.hideMainLoading();
           }
@@ -331,7 +320,9 @@
       },
 
       async triggerSubmitForm() {
-        await this.submitForm(this.$refs.tabs.form);
+        let newData = _.cloneDeep(this.formData);
+        await this.submitForm({ formId: this.formId, form: newData });
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
         // reset the fields states
         // so that we get a pristine form with the new values
         this.resetFieldsState();
@@ -340,9 +331,7 @@
           message: this.trans('components.notice.message.form_submitted')
         });
         this.isFormSubmitted = true;
-        let projectId = this.$route.params.projectId;
-        let processId = this.$route.params.processId;
-        this.go(`/${this.language}/projects/${projectId}/process/${processId}`);
+        this.goToParentPage();
       },
 
       setupStage() {
@@ -367,10 +356,9 @@
       },
 
       async triggerLoadProcessInstanceForm() {
-        let that = this;
-        let formId = this.$route.params.formId;
-        let response = await this.loadProcessInstanceForm(formId);
-        this.formatData(response);
+        let response = await this.loadProcessInstanceForm(this.formId);
+        this.storeOriginalFormData(response);
+        this.formData = _.cloneDeep(this.originalFormData);
       },
 
       async fetch() {
@@ -379,7 +367,7 @@
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
-          this.currentFormComponent = this.viewingFormInfo.definition.name_key;
+          this.formComponent = this.viewingFormInfo.definition.name_key;
           this.setupStage();
           await this.hideMainLoading();
         } catch(e) {
@@ -390,7 +378,7 @@
       beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
           await this.showMainLoading();
-          await this.unclaimForm(this.$route.params.formId);
+          await this.unclaimForm(this.formId);
           await this.hideMainLoading();
           callback();
         }).catch(() => false);
@@ -404,7 +392,7 @@
           this.discardChanges();
           if (!this.isFormSubmitted) {
             try {
-              await this.unclaimForm(this.$route.params.formId);
+              await this.unclaimForm(this.formId);
             } catch(e) {
               await this.hideMainLoading();
             }
@@ -415,7 +403,6 @@
       } else {
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
-        EventBus.$off('Store:languageUpdate', this.fetch);
         EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
@@ -426,15 +413,16 @@
     },
 
     async created() {
-      let formId = this.$route.params.formId;
-      this.rights.canEdit = await this.canEditForm(formId);
-      this.rights.canClaim = await this.canClaimForm(formId);
-      this.rights.canUnclaim = await this.canUnclaimForm(formId);
+      // store the reference to the current form id
+      this.formId = this.$route.params.formId;
+
+      this.rights.canEdit = await this.canEditForm(this.formId);
+      this.rights.canClaim = await this.canClaimForm(this.formId);
+      this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
     },
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.fetch);
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
       this.fetch();
     }
