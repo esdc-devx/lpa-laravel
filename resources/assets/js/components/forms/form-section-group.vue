@@ -3,8 +3,8 @@
     <h2>
       {{ trans('forms.business_case.tabs["'+ entity.replace('-', '_') +'"]') }}
       <div class="header-controls">
-        <el-button type="text" size="mini" @click="expandAll = true">Expand All</el-button>
-        <el-button type="text" size="mini" @click="expandAll = false">Collapse All</el-button>
+        <el-button type="text" size="mini" @click="expandAll = true">{{ trans('entities.general.expand_all') }}</el-button>
+        <el-button type="text" size="mini" @click="expandAll = false">{{ trans('entities.general.collapse_all') }}</el-button>
       </div>
     </h2>
     <el-collapse :value="activePanels">
