@@ -282,8 +282,6 @@
       storeOriginalFormData(data) {
         // deep copy so that we don't alter the store's data
         this.originalFormData = _.cloneDeep(data);
-        // deep copy the object here so that we don't alter the
-        this.formData = _.cloneDeep(this.originalFormData);
       },
 
       async onSave() {
@@ -294,10 +292,6 @@
           let response = await this.saveForm({ formId, form: newData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           this.storeOriginalFormData(response);
-          // wait until data has been synced through components
-          this.$nextTick(() => {
-            EventBus.$emit('FormEntity:formDataUpdate');
-          });
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -331,10 +325,6 @@
         let formId = this.$route.params.formId;
         await this.submitForm({ formId, form: newData });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-        // wait until data has been synced through components
-        this.$nextTick(() => {
-          EventBus.$emit('FormEntity:formDataUpdate');
-        });
         // reset the fields states
         // so that we get a pristine form with the new values
         this.resetFieldsState();
@@ -372,6 +362,7 @@
         let formId = this.$route.params.formId;
         let response = await this.loadProcessInstanceForm(formId);
         this.storeOriginalFormData(response);
+        this.formData = _.cloneDeep(this.originalFormData);
       },
 
       async fetch() {

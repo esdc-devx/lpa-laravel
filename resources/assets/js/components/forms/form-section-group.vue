@@ -102,33 +102,10 @@
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
       },
 
-      addFirstGroup() {
-        if (!this.groups.length) {
-          // push a new group now so that the component can render it
-          // and we can access to its defaults
-          this.groups.push({});
-          this.$nextTick(() => {
-            let groupsLength = this.groups.length - 1;
-            let defaults = this.$refs.component[groupsLength].defaults;
-            if (_.isUndefined(defaults)) {
-              this.$log.error(`Entity '${this.entity}' should have a 'defaults' attribute in its data.`);
-              return;
-            }
-            for (const key in defaults) {
-              this.$set(this.groups[groupsLength], key, defaults[key]);
-            }
-          });
-        }
-      },
-
       addGroup() {
-        // this makes sure that when there are no groups from the start,
-        // that we can still add a dummy group and refer to its defaults later on
-        if (!this.groups.length) {
-          this.addFirstGroup();
-          return;
-        }
-        // add another group, later based on the defaults
+        // push a new group now so that the component can render it
+        // and we can access to its defaults
+        this.groups.push({});
         this.$nextTick(() => {
           let groupsLength = this.groups.length - 1;
           let defaults = this.$refs.component[groupsLength].defaults;
@@ -136,29 +113,35 @@
             this.$log.error(`Entity '${this.entity}' should have a 'defaults' attribute in its data.`);
             return;
           }
-          this.groups.push(defaults);
+          for (const key in defaults) {
+            this.$set(this.groups[groupsLength], key, defaults[key]);
+          }
         });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
-      }
-    },
+      },
 
-    beforeDestroy() {
-      EventBus.$off('FormEntity:formDataUpdate', _.flow(this.formatGroups, this.addFirstGroup));
-    },
+      prepareGroups() {
+        this.formatGroups();
 
-    created() {
-      this.formatGroups();
-
-      if (!_.isUndefined(this.$props.min)) {
-        // add the ammount of groups provided
-        for (let i = 0; i < this.$props.min - 1; i++) {
-          this.addGroup();
+        if (!_.isUndefined(this.$props.min)) {
+          // add the ammount of groups provided
+          for (let i = 0; i < this.$props.min - 1; i++) {
+            this.addGroup();
+          }
         }
       }
     },
 
+    beforeDestroy() {
+      EventBus.$off('FormEntity:formDataUpdate', this.prepareGroups);
+    },
+
+    created() {
+      this.prepareGroups();
+    },
+
     mounted() {
-      EventBus.$on('FormEntity:formDataUpdate', _.flow(this.formatGroups, this.addFirstGroup));
+      EventBus.$on('FormEntity:formDataUpdate', this.prepareGroups);
     }
   };
 </script>
