@@ -89,7 +89,13 @@
         _.forEach(this.groups, (group, key) => {
           _.forIn(group, (value, subKey) => {
             if (group.hasOwnProperty(subKey + '_id')) {
-              that.$set(group, subKey + '_id', _.get(value, 'id'));
+              // handle multiple lists
+              if (_.isArray(group[subKey + '_id'])) {
+                that.$set(group, subKey + '_id', _.map(value, 'id'));
+              } else {
+                // single value list
+                that.$set(group, subKey + '_id', _.get(value, 'id'));
+              }
               delete group[subKey];
             }
           });
@@ -125,7 +131,7 @@
       prepareGroups() {
         this.formatGroups();
 
-        if (!_.isUndefined(this.$props.min)) {
+        if (!_.isUndefined(this.$props.min) && !this.groups.length) {
           // add the ammount of groups provided
           for (let i = 0; i < this.$props.min; i++) {
             this.addGroup(true);
