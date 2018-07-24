@@ -1,6 +1,5 @@
 <template>
   <el-select
-    remote
     v-bind="$attrs"
     v-loading="isLoading"
     :value="value"

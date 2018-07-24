@@ -405,7 +405,6 @@
       } else {
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
-        EventBus.$off('Store:languageUpdate', this.fetch);
         EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
@@ -424,7 +423,6 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.fetch);
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
       this.fetch();
     }
