@@ -102,7 +102,7 @@
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
       },
 
-      addGroup() {
+      addGroup(isPreparing) {
         // push a new group now so that the component can render it
         // and we can access to its defaults
         this.groups.push({});
@@ -117,7 +117,9 @@
             this.$set(this.groups[groupsLength], key, defaults[key]);
           }
         });
-        EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
+        if (!isPreparing) {
+          EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
+        }
       },
 
       prepareGroups() {
@@ -126,7 +128,7 @@
         if (!_.isUndefined(this.$props.min)) {
           // add the ammount of groups provided
           for (let i = 0; i < this.$props.min; i++) {
-            this.addGroup();
+            this.addGroup(true);
           }
         }
       }
