@@ -375,6 +375,7 @@
 
       formatData() {
         // make sure that the dropdowns only have the ids
+        this.isInfoLoading = true;
         this.form.request_sources = _.map(this.form.request_sources, 'id');
         this.form.timeframe_id = _.get(this.form.timeframe, 'id');
         delete this.form.timeframe;
@@ -384,6 +385,7 @@
 
         this.isRequestSourceOther = !!this.form.request_source_other;
         this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+        this.isInfoLoading = false;
       },
 
       // used in order to sync the tab index with the parent

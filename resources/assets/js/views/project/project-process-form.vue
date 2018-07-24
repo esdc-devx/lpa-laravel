@@ -294,6 +294,10 @@
           let response = await this.saveForm({ formId, form: newData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           this.storeOriginalFormData(response);
+          // wait until data has been synced through components
+          this.$nextTick(() => {
+            EventBus.$emit('FormEntity:formDataUpdate');
+          });
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -327,6 +331,10 @@
         let formId = this.$route.params.formId;
         await this.submitForm({ formId, form: newData });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+        // wait until data has been synced through components
+        this.$nextTick(() => {
+          EventBus.$emit('FormEntity:formDataUpdate');
+        });
         // reset the fields states
         // so that we get a pristine form with the new values
         this.resetFieldsState();
