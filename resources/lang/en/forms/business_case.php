@@ -8,6 +8,8 @@ return [
         'audience'              => 'Audience',
         'departmental_benefit'  => 'Departmental Benefit',
         'learners_benefit'      => 'Learners Benefit',
+        'costs'                 => 'Costs',
+        'internal_resources'    => 'Internal Resources',
     ],
     'business_issue' => [
         'label'       => 'Business Issues',
@@ -77,5 +79,49 @@ return [
     'learners_benefit_rationale' => [
         'label'       => 'Rationale',
         'description' => 'The Learner Benefit rationale.',
+    ],
+    'cost_center' => [
+        'label'       => 'Cost Center',
+        'instruction' => 'Please provide your Cost Centre.',
+        'description' => 'The project cost centre.',
+        'hint'        => 'Ex: Q12345',
+    ],
+    'general_ledger_account' => [
+        'label'       => 'General Ledger (GL) Account',
+        'instruction' => 'Please provide your General Ledger account.',
+        'description' => 'The project general ledger account.',
+        'hint'        => 'Ex: 12345',
+    ],
+    'maintenance_fund' => [
+        'label'       => 'Estimated Addtional Operations and Maintenance (O&M) Funds Required',
+        'description' => 'The estimated additional Operation and Maintenance funds required.',
+        'help'        => 'Also known as "Non-salary related funds".',
+    ],
+    'maintenance_fund_rationale' => [
+        'label'       => 'Addtional Operations and Maintenance (O&M) Funds Rationale',
+        'instruction' => 'Please provide a description and rationale for the additional Operations and Maintenance funds.',
+        'description' => 'The additional Operations and Maintenance funds description and rationale.',
+    ],
+    'salary_fund' => [
+        'label'       => 'Estimated Addtional Salary Funds Required',
+        'description' => 'The estimated additional Salary funds required.',
+    ],
+    'salary_fund_rationale' => [
+        'label'       => 'Addtional Salary Funds Rationale',
+        'instruction' => 'Please provide a description and rationale for the Salary funds.',
+        'description' => 'The additional Salary funds description and rationale.',
+    ],
+    'internal_resources' => [
+        'label'       => 'Required Internal Resources',
+        'instruction' => 'Please select all options that apply.',
+        'description' => 'A list of the departemental resources that will be required for this project.',
+        'help'        => '
+            <ul>
+                <li><span>Faculty</span>: This team works on the onboarding and management of faculty members. E.g.: Instructors.</li>
+                <li><span>A/V</span>: This team prepares rooms for course, events, etc.</li>
+                <li><span>NOP</span>: This team helps planning national operations such as course offerings or events.</li>
+            </ul>
+
+        '
     ],
 ];

@@ -8,6 +8,8 @@ import ElementUI from 'element-ui';
 import elementUILocaleEN from 'element-ui/lib/locale/lang/en';
 import elementUILocaleFR from 'element-ui/lib/locale/lang/fr';
 
+import VueTheMask from 'vue-the-mask';
+
 import DataTables from 'vue-data-tables'
 
 import { sync } from 'vuex-router-sync';
@@ -25,6 +27,8 @@ import { setLanguage, loadLanguages } from '@/locale';
 
 import App from '@/app.vue';
 import Config from '@/config';
+
+Vue.use(VueTheMask);
 
 Vue.use(DataTables);
 
