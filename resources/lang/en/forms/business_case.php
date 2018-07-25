@@ -2,10 +2,14 @@
 
 return [
     'tabs' => [
-        'business_drivers' => 'Business Drivers',
-        'proposal'         => 'Proposal',
-        'timeframe'        => 'Timeframe',
-        'audience'         => 'Audience',
+        'business_drivers'      => 'Business Drivers',
+        'proposal'              => 'Proposal',
+        'timeframe'             => 'Timeframe',
+        'audience'              => 'Audience',
+        'departmental_benefit'  => 'Departmental Benefit',
+        'learners_benefit'      => 'Learners Benefit',
+        'costs'                 => 'Costs',
+        'internal_resources'    => 'Internal Resources',
     ],
     'business_issue' => [
         'label'       => 'Business Issues',
@@ -59,5 +63,59 @@ return [
     'expected_annual_participant_number' => [
         'label'       => 'Expected number of participants (per year)',
         'description' => 'An estimate of the number of participants per year.',
+    ],
+    'departmental_benefit_type' => [
+        'label'       => 'Type',
+        'description' => 'The Departmental Benefit type.',
+    ],
+    'departmental_benefit_rationale' => [
+        'label'       => 'Rationale',
+        'description' => 'The Departmental Benefit rationale.',
+    ],
+    'learners_benefit_type' => [
+        'label'       => 'Type',
+        'description' => 'The Learner Benefit type.',
+    ],
+    'learners_benefit_rationale' => [
+        'label'       => 'Rationale',
+        'description' => 'The Learner Benefit rationale.',
+    ],
+    'cost_center' => [
+        'label'       => 'Cost Center',
+        'instruction' => 'Please provide your Cost Centre.',
+        'description' => 'The project cost centre.',
+        'hint'        => 'Ex: Q12345',
+    ],
+    'maintenance_fund' => [
+        'label'       => 'Estimated Additional Operations and Maintenance (O&M) Funds Required',
+        'description' => 'The estimated additional Operation and Maintenance funds required.',
+        'help'        => 'Also known as "Non-salary related funds".',
+    ],
+    'maintenance_fund_rationale' => [
+        'label'       => 'Additional Operations and Maintenance (O&M) Funds Rationale',
+        'instruction' => 'Please provide a description and rationale for the additional Operations and Maintenance funds.',
+        'description' => 'The additional Operations and Maintenance funds description and rationale.',
+    ],
+    'salary_fund' => [
+        'label'       => 'Estimated Additional Salary Funds Required',
+        'description' => 'The estimated additional Salary funds required.',
+    ],
+    'salary_fund_rationale' => [
+        'label'       => 'Additional Salary Funds Rationale',
+        'instruction' => 'Please provide a description and rationale for the Salary funds.',
+        'description' => 'The additional Salary funds description and rationale.',
+    ],
+    'internal_resources' => [
+        'label'       => 'Required Internal Resources',
+        'instruction' => 'Please select all options that apply.',
+        'description' => 'A list of the departemental resources that will be required for this project.',
+        'help'        => '
+            <ul>
+                <li><span>Faculty</span>: This team works on the onboarding and management of faculty members. E.g.: Instructors.</li>
+                <li><span>A/V</span>: This team prepares rooms for course, events, etc.</li>
+                <li><span>NOP</span>: This team helps planning national operations such as course offerings or events.</li>
+            </ul>
+
+        '
     ],
 ];

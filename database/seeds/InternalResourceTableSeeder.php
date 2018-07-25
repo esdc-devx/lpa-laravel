@@ -46,7 +46,7 @@ class InternalResourceTableSeeder extends Seeder
             ],
             [
                 'name_en' => 'National Operations Planning (NOP)',
-                'name_fr' => 'Organisation nationale de planification de la capacité (ONPC)',
+                'name_fr' => 'Planification des opérations nationales (PON)',
             ],
             [
                 'name_en' => 'Partnerships',

@@ -16,7 +16,7 @@ class Revert extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'camunda:revert';
+    protected $signature = 'camunda:revert {--yes}';
 
     /**
      * The console command description.
@@ -77,19 +77,18 @@ class Revert extends BaseCommand
     public function handle()
     {
         // Drop all database tables.
-        if (!$this->confirm('You are about to drop all database tables, do you wish to continue?')) {
-            return false;
+        if ($this->option('yes') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
+            $this->line('Dropping all database tables...');
+            $this->executeScript('drop/mysql_engine_7.8.0.sql');
+            $this->executeScript('drop/mysql_identity_7.8.0.sql');
+            $this->info('All tables dropped.');
+
+            // Revert database from sql dump file.
+            $this->newline('Reverting database...');
+            $this->executeScript('revert/camunda_revert.sql');
+            $this->info('Database reverted.');
+
+            $this->success('Camunda database was reverted successfully.');
         }
-        $this->line('Dropping all database tables...');
-        $this->executeScript('drop/mysql_engine_7.8.0.sql');
-        $this->executeScript('drop/mysql_identity_7.8.0.sql');
-        $this->info('All tables dropped.');
-
-        // Revert database from sql dump file.
-        $this->newline('Reverting database...');
-        $this->executeScript('revert/camunda_revert.sql');
-        $this->info('Database reverted.');
-
-        $this->success('Camunda database was reverted successfully.');
     }
 }

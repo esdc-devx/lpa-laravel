@@ -23,27 +23,19 @@
           :label="$tc('entities.general.organizational_units')"
           prop="organizationalUnit"
           required>
-          <el-select
-            id="organizationalUnit"
+          <el-select-wrap
+            v-model="form.organizational_unit"
+            :isLoading="isProjectInfoLoading"
             name="organizationalUnit"
             :data-vv-as="$tc('entities.general.organizational_units')"
-            v-loading="isProjectInfoLoading"
-            element-loading-spinner="el-icon-loading"
             v-validate="'required'"
-            v-model="form.project.organizational_unit"
-            valueKey="name">
-            <el-option
-              v-for="item in organizationalUnits"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="organizationalUnits"
+          />
           <form-error name="organizationalUnit"></form-error>
         </el-form-item-wrap>
 
         <el-form-item>
-          <el-button :disabled="isFormDisabled" @click="go(`/${language}/projects/${form.project.id}`)">{{ trans('base.actions.cancel') }}</el-button>
+          <el-button :disabled="isFormDisabled" @click="goToParentPage()">{{ trans('base.actions.cancel') }}</el-button>
           <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         </el-form-item>
       </el-form>
@@ -56,6 +48,7 @@
   import EventBus from '@/event-bus.js';
 
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
+  import ElSelectWrap from '@components/forms/el-select-wrap';
   import ElInputWrap from '@components/forms/el-input-wrap';
   import FormError from '@components/forms/error.vue';
 
@@ -71,7 +64,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElFormItemWrap, ElInputWrap, FormError },
+    components: { ElFormItemWrap, ElSelectWrap, ElInputWrap, FormError },
 
     computed: {
       ...mapGetters({
@@ -110,7 +103,7 @@
         this.notifySuccess({
           message: this.trans('components.notice.message.project_updated')
         });
-        this.go(`/${this.language}/projects/${this.form.project.id}`);
+        this.goToParentPage();
       },
 
       async triggerLoadProjectEditInfo() {

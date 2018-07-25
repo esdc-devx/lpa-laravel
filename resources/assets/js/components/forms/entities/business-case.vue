@@ -16,24 +16,15 @@
           </el-popover-wrap>
         </span>
         <div class="wrap-with-errors">
-          <el-select
+          <el-select-wrap
             v-model="form.request_sources"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
+            :isLoading="isInfoLoading"
             name="request_sources"
             :data-vv-as="trans('forms.business_case.request_sources.label')"
-            value-key="name"
             v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :class="{ 'is-error': verrors.has('request_sources') }"
-            multiple>
-            <el-option
-              v-for="item in requestSourceServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="requestSourceList"
+            multiple
+          />
           <form-error name="request_sources"></form-error>
         </div>
         <el-input-other-wrap
@@ -110,24 +101,15 @@
           </span>
         </span>
         <div class="wrap-with-errors">
-          <el-select
+          <el-select-wrap
             v-model="form.potential_solution_types"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
+            :isLoading="isInfoLoading"
             name="potential_solution_types"
-            :class="{ 'is-error': verrors.has('potential_solution_types') }"
-            valueKey="name"
+            :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
             v-validate="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
-            multiple>
-            <el-option
-              v-for="item in potentialSolutionTypesServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="potentialSolutionTypesList"
+            multiple
+          />
           <form-error name="potential_solution_types"></form-error>
         </div>
         <el-input-other-wrap
@@ -153,24 +135,15 @@
           </span>
         </span>
         <div class="wrap-with-errors">
-          <el-select
+          <el-select-wrap
             v-model="form.government_priorities"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            :data-vv-as="trans('forms.business_case.government_priorities.label')"
+            :isLoading="isInfoLoading"
             name="government_priorities"
-            :class="{ 'is-error': verrors.has('government_priorities') }"
-            valueKey="name"
+            :data-vv-as="trans('forms.business_case.government_priorities.label')"
             v-validate="'required'"
-            multiple>
-            <el-option
-              v-for="item in governmentPrioritiesServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="governmentPrioritiesList"
+            multiple
+          />
           <form-error name="government_priorities"></form-error>
         </div>
       </el-form-item-wrap>
@@ -205,7 +178,7 @@
       <h2>{{ trans('forms.business_case.tabs.timeframe') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.timeframe.label')"
-        prop="timeframe"
+        prop="timeframe_id"
         required>
         <span slot="label-addons">
           <el-popover-wrap
@@ -214,24 +187,15 @@
           </el-popover-wrap>
         </span>
         <div class="wrap-with-errors">
-          <el-select
-            v-model="form.timeframe"
-            v-loading="isInfoLoading"
-            :disabled="isInfoLoading"
-            element-loading-spinner="el-icon-loading"
-            name="timeframe"
+          <el-select-wrap
+            v-model="form.timeframe_id"
+            :isLoading="isInfoLoading"
+            name="timeframe_id"
             :data-vv-as="trans('forms.business_case.timeframe.label')"
-            value-key="name"
-            v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :class="{ 'is-error': verrors.has('timeframe') }">
-            <el-option
-              v-for="item in timeframeServer"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
-          <form-error name="timeframe"></form-error>
+            v-validate="'required'"
+            :options="timeframeList"
+          />
+          <form-error name="timeframe_id"></form-error>
         </div>
       </el-form-item-wrap>
       <el-form-item-wrap
@@ -276,7 +240,7 @@
             name="communities"
             v-model="form.communities"
             :data-vv-as="trans('forms.business_case.communities.label')"
-            :data="communitiesServer"
+            :data="communitiesList"
             labelKey="name"
             v-validate="'required'">
           </el-tree-wrap>
@@ -296,11 +260,189 @@
           name="expected_annual_participant_number"
           :data-vv-as="trans('forms.business_case.expected_annual_participant_number.label')"
           v-model="form.expected_annual_participant_number"
-          v-validate="'required'"
+          v-mask="'######'"
+          v-validate="{ required: true, numeric: true, regex: /[0-9]{1,6}/ }"
           :min="1"
           :max="500000">
         </el-input-number>
         <form-error name="expected_annual_participant_number"></form-error>
+      </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="departmental_benefit">
+      <span slot="label" :class="{'is-error': errorTabs.includes('departmental_benefit') }">
+        {{ trans('forms.business_case.tabs.departmental_benefit') }}
+      </span>
+      <form-section-group
+        v-model="form.departmental_benefits"
+        entity="departmental-benefit"
+        :data="{
+          departmentalBenefitTypeList
+        }"
+        :min="1"
+        :isLoading="isInfoLoading"
+      />
+    </el-tab-pane>
+
+    <el-tab-pane data-name="learners_benefit">
+      <span slot="label" :class="{'is-error': errorTabs.includes('learners_benefit') }">
+        {{ trans('forms.business_case.tabs.learners_benefit') }}
+      </span>
+      <form-section-group
+        v-model="form.learners_benefits"
+        entity="learners-benefit"
+        :data="{
+          learnersBenefitTypeList
+        }"
+        :min="1"
+        :isLoading="isInfoLoading"
+      />
+    </el-tab-pane>
+
+    <el-tab-pane data-name="costs">
+      <span slot="label" :class="{'is-error': errorTabs.includes('costs') }">
+        {{ trans('forms.business_case.tabs.costs') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.costs') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.cost_center.label')"
+        prop="cost_center"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.cost_center.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.cost_center.instruction') }}
+          </span>
+        </span>
+        <el-input-wrap
+          v-model="form.cost_center"
+          :data-vv-as="trans('forms.business_case.cost_center.label')"
+          name="cost_center"
+          :placeholder="trans('forms.business_case.cost_center.hint')"
+          v-mask="'A#####'"
+          v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }">
+        </el-input-wrap>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.maintenance_fund.label')"
+        prop="maintenance_fund"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.maintenance_fund.description')"
+            :help="trans('forms.business_case.maintenance_fund.help')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.maintenance_fund_id"
+            :isLoading="isInfoLoading"
+            name="maintenance_fund_id"
+            :data-vv-as="trans('forms.business_case.maintenance_fund.label')"
+            v-validate="'required'"
+            :options="maintenanceFundList"
+          />
+          <form-error name="maintenance_fund_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.maintenance_fund_rationale.label')"
+        prop="maintenance_fund_rationale"
+        :required="form.maintenance_fund_id > 1">
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.maintenance_fund_rationale.description')">
+          </el-popover-wrap>
+        </span>
+        <el-input-wrap
+          v-model="form.maintenance_fund_rationale"
+          :data-vv-as="trans('forms.business_case.maintenance_fund_rationale.label')"
+          name="maintenance_fund_rationale"
+          v-validate="{ required: form.maintenance_fund_id > 1 }"
+          maxlength="1250"
+          type="textarea">
+        </el-input-wrap>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.salary_fund.label')"
+        prop="salary_fund"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.salary_fund.description')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.salary_fund_id"
+            :isLoading="isInfoLoading"
+            name="salary_fund_id"
+            :data-vv-as="trans('forms.business_case.salary_fund.label')"
+            v-validate="'required'"
+            :options="salaryFundList"
+          />
+          <form-error name="salary_fund_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.salary_fund_rationale.label')"
+        prop="salary_fund_rationale"
+        :required="form.salary_fund_id > 1">
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.salary_fund_rationale.description')">
+          </el-popover-wrap>
+        </span>
+        <el-input-wrap
+          v-model="form.salary_fund_rationale"
+          :data-vv-as="trans('forms.business_case.salary_fund_rationale.label')"
+          name="salary_fund_rationale"
+          v-validate="{ required: form.salary_fund_id > 1 }"
+          maxlength="1250"
+          type="textarea">
+        </el-input-wrap>
+      </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="internal_resources">
+      <span slot="label" :class="{'is-error': errorTabs.includes('internal_resources') }">
+        {{ trans('forms.business_case.tabs.internal_resources') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.internal_resources') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.internal_resources.label')"
+        prop="internal_resources"
+        :classes="['has-other']"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.internal_resources.description')"
+            :help="trans('forms.business_case.internal_resources.help')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.internal_resources"
+            :isLoading="isInfoLoading"
+            name="internal_resources"
+            :data-vv-as="trans('forms.business_case.internal_resources.label')"
+            v-validate="{ rules: { required: !this.isInternalResourceOther} }"
+            :options="internalResourceList"
+            multiple
+          />
+          <form-error name="internal_resources"></form-error>
+        </div>
+        <el-input-other-wrap
+          :data-vv-as="trans('entities.form.other')"
+          name="internal_resource_other"
+          v-model="form.internal_resource_other"
+          v-validate="{ rules: { required: this.isInternalResourceOther} }"
+          :isChecked.sync="isInternalResourceOther"
+          maxlength="1250"
+          type="textarea">
+        </el-input-other-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -313,15 +455,17 @@
   import FormError from '../error.vue';
 
   import ElFormItemWrap from '../el-form-item-wrap';
+  import ElSelectWrap from '../el-select-wrap';
   import ElInputWrap from '../el-input-wrap';
   import ElInputOtherWrap from '../el-input-other-wrap';
-  import ElPopoverWrap from '../../el-popover-wrap';
+  import FormSectionGroup from '../form-section-group';
   import ElTreeWrap from '../el-tree-wrap';
+  import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap, ElTreeWrap },
+    components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElInputOtherWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -335,21 +479,26 @@
     data() {
       return {
         isInfoLoading: true,
-        requestSourceServer: [],
+        requestSourceList: [],
         isRequestSourceOther: false,
-        potentialSolutionTypesServer: [],
+        potentialSolutionTypesList: [],
         isPotentialSolutionTypesOther: false,
-        governmentPrioritiesServer: [],
-        timeframeServer: [],
-        communitiesServer: [],
-        innerFormData: this.formData
+        governmentPrioritiesList: [],
+        departmentalBenefitTypeList: [],
+        learnersBenefitTypeList: [],
+        timeframeList: [],
+        communitiesList: [],
+        maintenanceFundList: [],
+        salaryFundList: [],
+        internalResourceList: [],
+        isInternalResourceOther: false
       }
     },
 
     computed: {
       form: {
         get() {
-          return this.innerFormData;
+          return this.formData;
         },
         set(data) {
           this.$emit('update:formData', data);
@@ -357,11 +506,45 @@
       }
     },
 
+    watch: {
+      'form.expected_annual_participant_number': {
+        immediate: true,
+        handler(value) {
+          // this handle the fact that we receive null from the server
+          // and that the component converts null to 0,
+          // which produces a form dirty: null !== 0
+          value = value === null ? undefined : value;
+          this.form.expected_annual_participant_number = value;
+        }
+      }
+    },
+
     methods: {
-      ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading'
-      }),
+      ...mapActions([
+        'showMainLoading',
+        'hideMainLoading'
+      ]),
+
+      formatData() {
+        // make sure that the dropdowns only have the ids
+        this.isInfoLoading = true;
+        this.form.request_sources = _.map(this.form.request_sources, 'id');
+        this.form.timeframe_id = _.get(this.form.timeframe, 'id');
+        delete this.form.timeframe;
+        this.form.maintenance_fund_id = _.get(this.form.maintenance_fund, 'id');
+        delete this.form.maintenance_fund;
+        this.form.salary_fund_id = _.get(this.form.salary_fund, 'id');
+        delete this.form.salary_fund;
+        this.form.communities = _.map(this.form.communities, 'id');
+        this.form.government_priorities = _.map(this.form.government_priorities, 'id');
+        this.form.potential_solution_types = _.map(this.form.potential_solution_types, 'id');
+        this.form.internal_resources = _.map(this.form.internal_resources, 'id');
+
+        this.isRequestSourceOther = !!this.form.request_source_other;
+        this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+        this.isInternalResourceOther = !!this.form.internal_resource_other;
+        this.isInfoLoading = false;
+      },
 
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
@@ -371,12 +554,17 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community');
-        this.requestSourceServer = response.data.data['request-source'];
-        this.governmentPrioritiesServer = response.data.data['government-priority'];
-        this.potentialSolutionTypesServer = response.data.data['potential-solution-type'];
-        this.timeframeServer = response.data.data['timeframe'];
-        this.communitiesServer = response.data.data['community'];
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource');
+        this.requestSourceList = response.data.data['request-source'];
+        this.governmentPrioritiesList = response.data.data['government-priority'];
+        this.potentialSolutionTypesList = response.data.data['potential-solution-type'];
+        this.timeframeList = response.data.data['timeframe'];
+        this.communitiesList = response.data.data['community'];
+        this.departmentalBenefitTypeList = response.data.data['departmental-benefit-type'];
+        this.learnersBenefitTypeList = response.data.data['learners-benefit-type'];
+        this.maintenanceFundList = response.data.data['maintenance-fund'];
+        this.salaryFundList = response.data.data['salary-fund'];
+        this.internalResourceList = response.data.data['internal-resource'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
@@ -384,6 +572,7 @@
 
     beforeDestroy() {
       EventBus.$off('Store:languageUpdate', this.fetchLists);
+      EventBus.$off('FormEntity:formDataUpdate', this.formatData);
     },
 
     async created() {
@@ -391,16 +580,14 @@
       this.fetchLists();
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
-      this.form = Object.assign({}, this.formData);
-      // make the checkboxes react
-      // based on the value of its correcponding field
-      this.isRequestSourceOther = !!this.form.request_source_other;
-      this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+      this.form = _.cloneDeep(this.formData);
+      this.formatData();
       await this.hideMainLoading();
     },
 
     mounted() {
       EventBus.$on('Store:languageUpdate', this.fetchLists);
+      EventBus.$on('FormEntity:formDataUpdate', this.formatData);
     }
   };
 </script>

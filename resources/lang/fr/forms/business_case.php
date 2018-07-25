@@ -2,10 +2,14 @@
 
 return [
     'tabs' => [
-        'business_drivers' => 'Incitatifs administratifs',
-        'proposal'         => 'Proposition',
-        'timeframe'        => 'Échéancier',
-        'audience'         => 'Public cible',
+        'business_drivers'      => 'Incitatifs administratifs',
+        'proposal'              => 'Proposition',
+        'timeframe'             => 'Échéancier',
+        'audience'              => 'Public cible',
+        'departmental_benefit'  => 'Avantages pour le ministère',
+        'learners_benefit'      => 'Avantages pour l\'apprenant',
+        'costs'                 => 'Coûts',
+        'internal_resources'    => 'Ressources internes',
     ],
     'business_issue' => [
         'label'       => 'Problèmes opérationnels',
@@ -59,5 +63,59 @@ return [
     'expected_annual_participant_number' => [
         'label'       => 'Nombre prévu de participants (par année)',
         'description' => 'Une estimation du nombre de participants par année.',
+    ],
+    'departmental_benefit_type' => [
+        'label'       => 'Type',
+        'description' => 'Le type d’avantage pour le ministère.',
+    ],
+    'departmental_benefit_rationale' => [
+        'label'       => 'Justification',
+        'description' => 'La justification de l’avantage pour le ministère.',
+    ],
+    'learners_benefit_type' => [
+        'label'       => 'Type',
+        'description' => 'Le type d’avantage pour l’apprenant.',
+    ],
+    'learners_benefit_rationale' => [
+        'label'       => 'Justification',
+        'description' => 'La justification de l’avantage pour l’apprenant.',
+    ],
+    'cost_center' => [
+        'label'       => 'Centre de coûts',
+        'instruction' => 'Veuillez fournir votre centre de coûts.',
+        'description' => 'Le centre de coûts du projet.',
+        'hint'        => 'Ex: Q12345',
+    ],
+    'maintenance_fund' => [
+        'label'       => 'Estimation des fonds supplémentaires requis pour le fonctionnement et l\'entretien (F et E)',
+        'description' => 'L’estimation des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
+        'help'        => 'Également appelé « fonds non salariaux ».',
+    ],
+    'maintenance_fund_rationale' => [
+        'label'       => 'Justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien (F et E)',
+        'instruction' => 'Veuillez fournir une description et une justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
+        'description' => 'La description et la justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
+    ],
+    'salary_fund' => [
+        'label'       => 'Estimation des fonds salariaux supplémentaires requis',
+        'description' => 'L’estimation des fonds salariaux supplémentaires requis.',
+    ],
+    'salary_fund_rationale' => [
+        'label'       => 'Justification des fonds salariaux supplémentaires',
+        'instruction' => 'Veuillez fournir une description et une justification des fonds salariaux supplémentaires.',
+        'description' => 'La description et la justification des fonds salariaux supplémentaires requis.',
+    ],
+    'internal_resources' => [
+        'label'       => 'Ressources internes requises',
+        'instruction' => 'Veuillez sélectionner tous les choix applicables.',
+        'description' => 'Une liste des ressources ministérielles qui seront requises pour ce projet.',
+        'help'        => '
+            <ul>
+                <li><span>Corps professoral</span> : Cette équipe travaille à l’intégration et à la gestion de ses membres. P. ex. : formateurs.</li>
+                <li><span>A/V</span> : Cette équipe prépare les salles pour les cours, événements, etc.</li>
+                <li><span>PON</span> : Cette équipe aide à planifier les opérations au niveau national tel que les offres de cours ou les événements.</li>
+            </ul>
+
+        '
     ],
 ];

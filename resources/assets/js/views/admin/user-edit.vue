@@ -27,47 +27,31 @@
         </el-form-item>
 
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
-          <el-select
-            id="organizationalUnits"
+          <el-select-wrap
+            v-model="form.user.organizational_units"
+            :isLoading="isUserInfoLoading"
             name="organizationalUnits"
             :data-vv-as="$tc('entities.general.organizational_units', 2)"
-            v-loading="isUserInfoLoading"
-            element-loading-spinner="el-icon-loading"
             v-validate="''"
-            v-model="form.user.organizational_units"
-            valueKey="name"
-            multiple>
-            <el-option
-              v-for="item in organizationalUnits"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="organizationalUnits"
+            multiple
+          />
         </el-form-item>
 
         <el-form-item :label="trans('entities.user.roles')" for="roles">
-          <el-select
-            id="roles"
+          <el-select-wrap
+            v-model="form.user.roles"
+            :isLoading="isUserInfoLoading"
             name="roles"
             :data-vv-as="trans('entities.user.roles')"
-            v-loading="isUserInfoLoading"
-            element-loading-spinner="el-icon-loading"
             v-validate="''"
-            v-model="form.user.roles"
-            valueKey="name"
-            multiple>
-            <el-option
-              v-for="item in roles"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
-          </el-select>
+            :options="roles"
+            multiple
+          />
         </el-form-item>
 
         <el-form-item>
-          <el-button :disabled="isFormDisabled" @click="go(`/${language}/admin/users`)">{{ trans('base.actions.cancel') }}</el-button>
+          <el-button :disabled="isFormDisabled" @click="goToParentPage()">{{ trans('base.actions.cancel') }}</el-button>
           <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         </el-form-item>
       </el-form>
@@ -77,7 +61,11 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
+
   import EventBus from '@/event-bus.js';
+
+  import ElSelectWrap from '@components/forms/el-select-wrap';
+
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
   import HttpStatusCodes from '@axios/http-status-codes';
@@ -90,6 +78,8 @@
     inject: ['$validator'],
 
     mixins: [ FormUtils, PageUtils ],
+
+    components: { ElSelectWrap },
 
     computed: {
       ...mapGetters({
@@ -134,7 +124,7 @@
         this.notifySuccess({
           message: this.trans('components.notice.message.user_updated')
         });
-        this.go(`/${this.language}/admin/users`);
+        this.goToParentPage();
       },
 
       async triggerLoadUserInfo() {
