@@ -87,21 +87,21 @@ return [
         'hint'        => 'Ex: Q12345',
     ],
     'maintenance_fund' => [
-        'label'       => 'Estimated Addtional Operations and Maintenance (O&M) Funds Required',
+        'label'       => 'Estimated Additional Operations and Maintenance (O&M) Funds Required',
         'description' => 'The estimated additional Operation and Maintenance funds required.',
         'help'        => 'Also known as "Non-salary related funds".',
     ],
     'maintenance_fund_rationale' => [
-        'label'       => 'Addtional Operations and Maintenance (O&M) Funds Rationale',
+        'label'       => 'Additional Operations and Maintenance (O&M) Funds Rationale',
         'instruction' => 'Please provide a description and rationale for the additional Operations and Maintenance funds.',
         'description' => 'The additional Operations and Maintenance funds description and rationale.',
     ],
     'salary_fund' => [
-        'label'       => 'Estimated Addtional Salary Funds Required',
+        'label'       => 'Estimated Additional Salary Funds Required',
         'description' => 'The estimated additional Salary funds required.',
     ],
     'salary_fund_rationale' => [
-        'label'       => 'Addtional Salary Funds Rationale',
+        'label'       => 'Additional Salary Funds Rationale',
         'instruction' => 'Please provide a description and rationale for the Salary funds.',
         'description' => 'The additional Salary funds description and rationale.',
     ],
