@@ -253,9 +253,12 @@ return [
         'departmental-benefit-type' => App\Models\Project\BusinessCase\DepartmentalBenefitType::class,
         'learners-benefit-type' => App\Models\Project\BusinessCase\LearnersBenefitType::class,
         'government-priority' => App\Models\Project\BusinessCase\GovernmentPriority::class,
+        'internal-resource' => App\Models\Project\BusinessCase\InternalResource::class,
+        'maintenance-fund' => App\Models\Project\BusinessCase\MaintenanceFund::class,
         'potential-solution-type' => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'project' => App\Models\Project\Project::class,
         'request-source' => App\Models\Project\BusinessCase\RequestSource::class,
+        'salary-fund' => App\Models\Project\BusinessCase\SalaryFund::class,
         'timeframe' => App\Models\Project\BusinessCase\Timeframe::class,
     ],
 ];

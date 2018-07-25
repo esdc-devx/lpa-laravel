@@ -17,6 +17,7 @@ class BusinessCase extends BaseModel
         'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'timeframe', 'communities',
         'departmentalBenefits', 'departmentalBenefits.departmentalBenefitType',
         'learnersBenefits', 'learnersBenefits.learnersBenefitType',
+        'maintenanceFund', 'salaryFund', 'internalResources',
     ];
 
     public function processInstanceForm()
@@ -59,6 +60,21 @@ class BusinessCase extends BaseModel
         return $this->belongsToMany(LearnersBenefit::class);
     }
 
+    public function maintenanceFund()
+    {
+        return $this->belongsTo(MaintenanceFund::class);
+    }
+
+    public function salaryFund()
+    {
+        return $this->belongsTo(SalaryFund::class);
+    }
+
+    public function internalResources()
+    {
+        return $this->belongsToMany(InternalResource::class);
+    }
+
     public function saveFormData(array $data)
     {
         $this->syncRelationships($data, [
@@ -66,6 +82,7 @@ class BusinessCase extends BaseModel
             'potentialSolutionTypes',
             'governmentPriorities',
             'communities',
+            'internalResources',
         ]);
 
         $this->syncRelatedModels($data, [

@@ -260,7 +260,8 @@
           name="expected_annual_participant_number"
           :data-vv-as="trans('forms.business_case.expected_annual_participant_number.label')"
           v-model="form.expected_annual_participant_number"
-          v-validate="'required'"
+          v-mask="'######'"
+          v-validate="{ required: true, numeric: true, regex: /[0-9]{1,6}/ }"
           :min="1"
           :max="500000">
         </el-input-number>
@@ -284,7 +285,7 @@
     </el-tab-pane>
 
     <el-tab-pane data-name="learners_benefit">
-      <span slot="label" :class="{'is-error': errorTabs.includes('learnersBenefit') }">
+      <span slot="label" :class="{'is-error': errorTabs.includes('learners_benefit') }">
         {{ trans('forms.business_case.tabs.learners_benefit') }}
       </span>
       <form-section-group
@@ -296,6 +297,153 @@
         :min="1"
         :isLoading="isInfoLoading"
       />
+    </el-tab-pane>
+
+    <el-tab-pane data-name="costs">
+      <span slot="label" :class="{'is-error': errorTabs.includes('costs') }">
+        {{ trans('forms.business_case.tabs.costs') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.costs') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.cost_center.label')"
+        prop="cost_center"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.cost_center.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.cost_center.instruction') }}
+          </span>
+        </span>
+        <el-input-wrap
+          v-model="form.cost_center"
+          :data-vv-as="trans('forms.business_case.cost_center.label')"
+          name="cost_center"
+          :placeholder="trans('forms.business_case.cost_center.hint')"
+          v-mask="'A#####'"
+          v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }">
+        </el-input-wrap>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.maintenance_fund.label')"
+        prop="maintenance_fund"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.maintenance_fund.description')"
+            :help="trans('forms.business_case.maintenance_fund.help')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.maintenance_fund_id"
+            :isLoading="isInfoLoading"
+            name="maintenance_fund_id"
+            :data-vv-as="trans('forms.business_case.maintenance_fund.label')"
+            v-validate="'required'"
+            :options="maintenanceFundList"
+          />
+          <form-error name="maintenance_fund_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.maintenance_fund_rationale.label')"
+        prop="maintenance_fund_rationale"
+        :required="form.maintenance_fund_id > 1">
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.maintenance_fund_rationale.description')">
+          </el-popover-wrap>
+        </span>
+        <el-input-wrap
+          v-model="form.maintenance_fund_rationale"
+          :data-vv-as="trans('forms.business_case.maintenance_fund_rationale.label')"
+          name="maintenance_fund_rationale"
+          v-validate="{ required: form.maintenance_fund_id > 1 }"
+          maxlength="1250"
+          type="textarea">
+        </el-input-wrap>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.salary_fund.label')"
+        prop="salary_fund"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.salary_fund.description')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.salary_fund_id"
+            :isLoading="isInfoLoading"
+            name="salary_fund_id"
+            :data-vv-as="trans('forms.business_case.salary_fund.label')"
+            v-validate="'required'"
+            :options="salaryFundList"
+          />
+          <form-error name="salary_fund_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.salary_fund_rationale.label')"
+        prop="salary_fund_rationale"
+        :required="form.salary_fund_id > 1">
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.salary_fund_rationale.description')">
+          </el-popover-wrap>
+        </span>
+        <el-input-wrap
+          v-model="form.salary_fund_rationale"
+          :data-vv-as="trans('forms.business_case.salary_fund_rationale.label')"
+          name="salary_fund_rationale"
+          v-validate="{ required: form.salary_fund_id > 1 }"
+          maxlength="1250"
+          type="textarea">
+        </el-input-wrap>
+      </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="internal_resources">
+      <span slot="label" :class="{'is-error': errorTabs.includes('internal_resources') }">
+        {{ trans('forms.business_case.tabs.internal_resources') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.internal_resources') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.internal_resources.label')"
+        prop="internal_resources"
+        :classes="['has-other']"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.internal_resources.description')"
+            :help="trans('forms.business_case.internal_resources.help')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.internal_resources"
+            :isLoading="isInfoLoading"
+            name="internal_resources"
+            :data-vv-as="trans('forms.business_case.internal_resources.label')"
+            v-validate="{ rules: { required: !this.isInternalResourceOther} }"
+            :options="internalResourceList"
+            multiple
+          />
+          <form-error name="internal_resources"></form-error>
+        </div>
+        <el-input-other-wrap
+          :data-vv-as="trans('entities.form.other')"
+          name="internal_resource_other"
+          v-model="form.internal_resource_other"
+          v-validate="{ rules: { required: this.isInternalResourceOther} }"
+          :isChecked.sync="isInternalResourceOther"
+          maxlength="1250"
+          type="textarea">
+        </el-input-other-wrap>
+      </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
 </template>
@@ -339,7 +487,11 @@
         departmentalBenefitTypeList: [],
         learnersBenefitTypeList: [],
         timeframeList: [],
-        communitiesList: []
+        communitiesList: [],
+        maintenanceFundList: [],
+        salaryFundList: [],
+        internalResourceList: [],
+        isInternalResourceOther: false
       }
     },
 
@@ -379,12 +531,18 @@
         this.form.request_sources = _.map(this.form.request_sources, 'id');
         this.form.timeframe_id = _.get(this.form.timeframe, 'id');
         delete this.form.timeframe;
+        this.form.maintenance_fund_id = _.get(this.form.maintenance_fund, 'id');
+        delete this.form.maintenance_fund;
+        this.form.salary_fund_id = _.get(this.form.salary_fund, 'id');
+        delete this.form.salary_fund;
         this.form.communities = _.map(this.form.communities, 'id');
         this.form.government_priorities = _.map(this.form.government_priorities, 'id');
         this.form.potential_solution_types = _.map(this.form.potential_solution_types, 'id');
+        this.form.internal_resources = _.map(this.form.internal_resources, 'id');
 
         this.isRequestSourceOther = !!this.form.request_source_other;
         this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+        this.isInternalResourceOther = !!this.form.internal_resource_other;
         this.isInfoLoading = false;
       },
 
@@ -396,7 +554,7 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type');
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource');
         this.requestSourceList = response.data.data['request-source'];
         this.governmentPrioritiesList = response.data.data['government-priority'];
         this.potentialSolutionTypesList = response.data.data['potential-solution-type'];
@@ -404,6 +562,9 @@
         this.communitiesList = response.data.data['community'];
         this.departmentalBenefitTypeList = response.data.data['departmental-benefit-type'];
         this.learnersBenefitTypeList = response.data.data['learners-benefit-type'];
+        this.maintenanceFundList = response.data.data['maintenance-fund'];
+        this.salaryFundList = response.data.data['salary-fund'];
+        this.internalResourceList = response.data.data['internal-resource'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
