@@ -9,6 +9,7 @@
         "adldap2/adldap2-laravel": "^3.0",
         "atayahmet/laravel-nestable": "^0.8.7",
         "fideloper/proxy": "~3.3",
+        "itsgoingd/clockwork": "^2.2",
         "laravel/framework": "5.5.*",
         "laravel/passport": "^4.0",
         "laravel/tinker": "~1.0"
