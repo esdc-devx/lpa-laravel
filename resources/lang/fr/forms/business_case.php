@@ -86,12 +86,6 @@ return [
         'description' => 'Le centre de coûts du projet.',
         'hint'        => 'Ex: Q12345',
     ],
-    'general_ledger_account' => [
-        'label'       => 'Compte du grand livre général',
-        'instruction' => 'Veuillez fournir votre compte du grand livre général.',
-        'description' => 'Le compte du grand livre général du projet.',
-        'hint'        => 'Ex: 12345',
-    ],
     'maintenance_fund' => [
         'label'       => 'Estimation des fonds supplémentaires requis pour le fonctionnement et l\'entretien (F et E)',
         'description' => 'L’estimation des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',

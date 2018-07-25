@@ -326,30 +326,6 @@
         </el-input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.general_ledger_account.label')"
-        prop="general_ledger_account"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.general_ledger_account.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.general_ledger_account.instruction') }}
-          </span>
-        </span>
-        <el-input-number
-          v-model="form.general_ledger_account"
-          :data-vv-as="trans('forms.business_case.general_ledger_account.label')"
-          name="general_ledger_account"
-          :placeholder="trans('forms.business_case.general_ledger_account.hint')"
-          v-mask="'#####'"
-          v-validate="{ required: true, numeric: true, regex: /[0-9]{1,5}/ }"
-          :min="0"
-          :max="99999">
-        </el-input-number>
-        <form-error name="general_ledger_account"></form-error>
-      </el-form-item-wrap>
-      <el-form-item-wrap
         :label="trans('forms.business_case.maintenance_fund.label')"
         prop="maintenance_fund"
         required>
@@ -557,6 +533,8 @@
         delete this.form.timeframe;
         this.form.maintenance_fund_id = _.get(this.form.maintenance_fund, 'id');
         delete this.form.maintenance_fund;
+        this.form.salary_fund_id = _.get(this.form.salary_fund, 'id');
+        delete this.form.salary_fund;
         this.form.communities = _.map(this.form.communities, 'id');
         this.form.government_priorities = _.map(this.form.government_priorities, 'id');
         this.form.potential_solution_types = _.map(this.form.potential_solution_types, 'id');

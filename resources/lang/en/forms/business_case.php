@@ -86,12 +86,6 @@ return [
         'description' => 'The project cost centre.',
         'hint'        => 'Ex: Q12345',
     ],
-    'general_ledger_account' => [
-        'label'       => 'General Ledger (GL) Account',
-        'instruction' => 'Please provide your General Ledger account.',
-        'description' => 'The project general ledger account.',
-        'hint'        => 'Ex: 12345',
-    ],
     'maintenance_fund' => [
         'label'       => 'Estimated Addtional Operations and Maintenance (O&M) Funds Required',
         'description' => 'The estimated additional Operation and Maintenance funds required.',
