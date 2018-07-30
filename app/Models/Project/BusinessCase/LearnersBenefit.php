@@ -7,6 +7,9 @@ use App\Models\BaseModel;
 class LearnersBenefit extends BaseModel
 {
     protected $hidden = ['pivot'];
+    protected $fillable = [
+        'learners_benefit_type_id', 'learners_benefit_type_other', 'rationale',
+    ];
 
     public $timestamps = false;
 

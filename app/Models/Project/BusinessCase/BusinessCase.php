@@ -10,12 +10,20 @@ class BusinessCase extends BaseModel
 {
     protected $hidden = ['process_instance_form_id'];
 
+    protected $fillable = [
+        'process_instance_form_id', 'request_source_other', 'business_issue', 'is_required_training', 'learning_response_strategy',
+        'potential_solution_type_other', 'expected_annual_participant_number', 'timeframe_id', 'timeframe_rationale',
+        'maintenance_fund_id', 'salary_fund_id', 'comment',
+    ];
+
     public $timestamps = false;
 
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
-        'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'timeframe', 'communities',
-        'departmentalBenefits', 'learnersBenefits', 'maintenanceFund', 'salaryFund', 'internalResources', 'risks',
+        // Multiple choice lists.
+        'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'communities', 'internalResources',
+        // Complex data.
+        'departmentalBenefits', 'learnersBenefits', 'risks',
     ];
 
     public function processInstanceForm()
@@ -51,14 +59,12 @@ class BusinessCase extends BaseModel
 
     public function departmentalBenefits()
     {
-        return $this->belongsToMany(DepartmentalBenefit::class)
-            ->with('departmentalBenefitType');
+        return $this->belongsToMany(DepartmentalBenefit::class);
     }
 
     public function learnersBenefits()
     {
-        return $this->belongsToMany(LearnersBenefit::class)
-            ->with('learnersBenefitType');
+        return $this->belongsToMany(LearnersBenefit::class);
     }
 
     public function maintenanceFund()
@@ -78,8 +84,7 @@ class BusinessCase extends BaseModel
 
     public function risks()
     {
-        return $this->belongsToMany(Risk::class)
-            ->with(['riskType', 'riskImpactLevel', 'riskProbabilityLevel']);
+        return $this->belongsToMany(Risk::class);
     }
 
     public function saveFormData(array $data)
@@ -104,6 +109,7 @@ class BusinessCase extends BaseModel
         $this->update($data);
 
         // Return model with all of its updated relationships.
-        return $this->load($this->relationships);
+        // and format list output to only return ids.
+        return $this->load($this->relationships)->formatListsOutput();
     }
 }

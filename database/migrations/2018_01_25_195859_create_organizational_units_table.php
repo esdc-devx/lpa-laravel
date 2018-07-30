@@ -14,10 +14,7 @@ class CreateOrganizationalUnitsTable extends Migration
     public function up()
     {
         Schema::create('organizational_units', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name_key')->unique();
-            $table->string('name_en');
-            $table->string('name_fr');
+            $table->listable();
             $table->boolean('owner');
             $table->string('email');
             $table->unsignedInteger('director')->nullable();
