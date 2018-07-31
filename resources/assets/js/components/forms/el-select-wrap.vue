@@ -2,15 +2,15 @@
   <el-select
     v-bind="$attrs"
     v-loading="isLoading"
-    :value="value"
-    :disabled="isLoading"
     element-loading-spinner="el-icon-loading"
+    :value="value"
+    :disabled="disabled || isLoading"
     :name="name"
     value-key="name"
     :class="{ 'is-error': verrors.has(name) }"
     @change="updateValue">
     <el-option
-      v-for="item in options"
+      v-for="item in innerOptions"
       :key="item.id"
       :label="item.name"
       :value="item.id">
@@ -42,7 +42,20 @@
         type: Boolean,
         default: false
       },
+      disabled: {
+        type: Boolean,
+        default: false
+      },
+      sorted: Boolean,
       value: Array | Number
+    },
+
+    computed: {
+      innerOptions() {
+        return this.sorted ?
+               this.options.sort((a, b) => this.$helpers.localeSort(a, b, 'name')) :
+               this.options;
+      }
     },
 
     methods: {

@@ -10,6 +10,8 @@ return [
         'learners_benefit'      => 'Avantages pour l\'apprenant',
         'costs'                 => 'Coûts',
         'internal_resources'    => 'Ressources internes',
+        'risks'                 => 'Risques',
+        'comment'               => 'Commentaires',
     ],
     'business_issue' => [
         'label'       => 'Problèmes opérationnels',
@@ -117,5 +119,26 @@ return [
             </ul>
 
         '
+    ],
+    'risk_type' => [
+        'label'       => 'Risque',
+        'description' => 'Une description de tout risque, enjeu ou contrainte connus touchant le projet.',
+    ],
+    'risk_impact_level' => [
+        'label'       => 'Impact',
+        'description' => 'Une évaluation de l’impact sur le projet si le risque devait se concrétiser.',
+    ],
+    'risk_probability_level' => [
+        'label'       => 'Probabilité',
+        'description' => 'Une évaluation de la probabilité que le risque se concrétise.',
+    ],
+    'risk_rationale' => [
+        'label'       => 'Justification',
+        'instruction' => 'Veuillez indiquer pourquoi il s\'agit d\'un risque.',
+        'description' => 'Une description de la justification du risque.',
+    ],
+    'comment' => [
+        'label'       => 'Commentaires généraux',
+        'description' => 'Tout autre renseignement pertinent relatif à l’analyse de rentabilisation.',
     ],
 ];

@@ -15,26 +15,22 @@
             :description="trans('forms.business_case.request_sources.description')">
           </el-popover-wrap>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.request_sources"
-            :isLoading="isInfoLoading"
-            name="request_sources"
-            :data-vv-as="trans('forms.business_case.request_sources.label')"
-            v-validate="{ rules: { required: !this.isRequestSourceOther} }"
-            :options="requestSourceList"
-            multiple
-          />
-          <form-error name="request_sources"></form-error>
-        </div>
-        <el-input-other-wrap
-          :data-vv-as="trans('entities.form.other')"
-          name="request_source_other"
-          v-model="form.request_source_other"
-          v-validate="{ rules: { required: this.isRequestSourceOther} }"
+        <el-select-other-wrap
+          :modelSelect.sync="form.request_sources"
+          :isLoading="isInfoLoading"
+          nameSelect="request_sources"
+          :dataVVas="trans('forms.business_case.request_sources.label')"
+          :validateSelect="{ rules: { required: !this.isRequestSourceOther} }"
+          :options="requestSourceList"
+          multiple
+          sorted
+
+          nameOther="request_source_other"
+          :modelOther.sync="form.request_source_other"
+          :validateOther="{ rules: { required: this.isRequestSourceOther} }"
           :isChecked.sync="isRequestSourceOther"
-          maxlength="100">
-        </el-input-other-wrap>
+          maxlength="100"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.business_issue.label')"
@@ -100,27 +96,23 @@
             {{ trans('forms.business_case.potential_solution_types.instruction') }}
           </span>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.potential_solution_types"
-            :isLoading="isInfoLoading"
-            name="potential_solution_types"
-            :data-vv-as="trans('forms.business_case.potential_solution_types.label')"
-            v-validate="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
-            :options="potentialSolutionTypesList"
-            multiple
-          />
-          <form-error name="potential_solution_types"></form-error>
-        </div>
-        <el-input-other-wrap
-          :data-vv-as="trans('entities.form.other')"
-          name="potential_solution_type_other"
-          v-model="form.potential_solution_type_other"
+        <el-select-other-wrap
+          :modelSelect.sync="form.potential_solution_types"
+          :isLoading="isInfoLoading"
+          nameSelect="potential_solution_types"
+          :dataVVas="trans('forms.business_case.potential_solution_types.label')"
+          :validateSelect="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
+          :options="potentialSolutionTypesList"
+          multiple
+          sorted
+
+          nameOther="potential_solution_type_other"
+          :modelOther.sync="form.potential_solution_type_other"
+          :validateOther="{ rules: { required: this.isPotentialSolutionTypesOther } }"
           :isChecked.sync="isPotentialSolutionTypesOther"
-          v-validate="{ rules: { required: this.isPotentialSolutionTypesOther} }"
           maxlength="1250"
-          type="textarea">
-        </el-input-other-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.government_priorities.label')"
@@ -422,27 +414,141 @@
             :help="trans('forms.business_case.internal_resources.help')">
           </el-popover-wrap>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.internal_resources"
-            :isLoading="isInfoLoading"
-            name="internal_resources"
-            :data-vv-as="trans('forms.business_case.internal_resources.label')"
-            v-validate="{ rules: { required: !this.isInternalResourceOther} }"
-            :options="internalResourceList"
-            multiple
-          />
-          <form-error name="internal_resources"></form-error>
-        </div>
-        <el-input-other-wrap
-          :data-vv-as="trans('entities.form.other')"
-          name="internal_resource_other"
-          v-model="form.internal_resource_other"
-          v-validate="{ rules: { required: this.isInternalResourceOther} }"
+        <el-select-other-wrap
+          :modelSelect.sync="form.internal_resources"
+          :isLoading="isInfoLoading"
+          nameSelect="internal_resources"
+          :dataVVas="trans('forms.business_case.internal_resources.label')"
+          :validateSelect="{ rules: { required: !this.isInternalResourceOther } }"
+          :options="internalResourceList"
+          multiple
+          sorted
+
+          nameOther="internal_resource_other"
+          :modelOther.sync="form.potential_solution_type_other"
+          :validateOther="{ rules: { required: this.isInternalResourceOther } }"
           :isChecked.sync="isInternalResourceOther"
           maxlength="1250"
+          type="textarea"
+        />
+      </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="risks">
+      <span slot="label" :class="{'is-error': errorTabs.includes('risks') }">
+        {{ trans('forms.business_case.tabs.risks') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.risks') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.risk_type.label')"
+        prop="risk_type_id"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.risk_type.description')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.risk_type_id"
+            :isLoading="isInfoLoading"
+            name="risk_type_id"
+            :data-vv-as="trans('forms.business_case.risk_type.label')"
+            v-validate="'required'"
+            :options="riskTypeList"
+            multiple
+          />
+          <form-error name="risk_type_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.risk_impact_level.label')"
+        prop="risk_impact_level_id"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.risk_impact_level.description')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.risk_impact_level_id"
+            :isLoading="isInfoLoading"
+            name="risk_impact_level_id"
+            :data-vv-as="trans('forms.business_case.risk_impact_level.label')"
+            v-validate="'required'"
+            :options="impactLevelList"
+            multiple
+          />
+          <form-error name="risk_impact_level_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.risk_probability_level.label')"
+        prop="risk_probability_level_id"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.risk_probability_level.description')">
+          </el-popover-wrap>
+        </span>
+        <div class="wrap-with-errors">
+          <el-select-wrap
+            v-model="form.risk_probability_level_id"
+            :isLoading="isInfoLoading"
+            name="risk_probability_level"
+            :data-vv-as="trans('forms.business_case.risk_probability_level.label')"
+            v-validate="'required'"
+            :options="probabilityLevelList"
+            multiple
+          />
+          <form-error name="risk_probability_level_id"></form-error>
+        </div>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.risk_rationale.label')"
+        prop="rationale"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.risk_rationale.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.risk_rationale.instruction') }}
+          </span>
+        </span>
+        <el-input-wrap
+          v-model="form.rationale"
+          :data-vv-as="trans('forms.business_case.risk_rationale.label')"
+          name="rationale"
+          v-validate="'required'"
+          maxlength="1250"
           type="textarea">
-        </el-input-other-wrap>
+        </el-input-wrap>
+      </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="comment">
+      <span slot="label" :class="{'is-error': errorTabs.includes('comment') }">
+        {{ trans('forms.business_case.tabs.comment') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.comment') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.comment.label')"
+        prop="comment">
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.comment.description')">
+          </el-popover-wrap>
+        </span>
+        <el-input-wrap
+          v-model="form.comment"
+          :data-vv-as="trans('forms.business_case.comment.label')"
+          name="comment"
+          v-validate="''"
+          maxlength="2500"
+          type="textarea">
+        </el-input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -455,9 +561,9 @@
   import FormError from '../error.vue';
 
   import ElFormItemWrap from '../el-form-item-wrap';
+  import ElSelectOtherWrap from '../el-select-other-wrap';
   import ElSelectWrap from '../el-select-wrap';
   import ElInputWrap from '../el-input-wrap';
-  import ElInputOtherWrap from '../el-input-other-wrap';
   import FormSectionGroup from '../form-section-group';
   import ElTreeWrap from '../el-tree-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
@@ -465,7 +571,7 @@
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElInputOtherWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, ElInputWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -491,7 +597,10 @@
         maintenanceFundList: [],
         salaryFundList: [],
         internalResourceList: [],
-        isInternalResourceOther: false
+        isInternalResourceOther: false,
+        riskTypeList: [],
+        impactLevelList: [],
+        probabilityLevelList: []
       }
     },
 
@@ -539,6 +648,9 @@
         this.form.government_priorities = _.map(this.form.government_priorities, 'id');
         this.form.potential_solution_types = _.map(this.form.potential_solution_types, 'id');
         this.form.internal_resources = _.map(this.form.internal_resources, 'id');
+        this.form.description = _.map(this.form.description, 'id');
+        this.form.impact_level = _.map(this.form.impact_level, 'id');
+        this.form.probability_level = _.map(this.form.probability_level, 'id');
 
         this.isRequestSourceOther = !!this.form.request_source_other;
         this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
@@ -554,7 +666,7 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource');
+        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource&include[]=risk-type&include[]=risk-impact-level&include[]=risk-probability-level');
         this.requestSourceList = response.data.data['request-source'];
         this.governmentPrioritiesList = response.data.data['government-priority'];
         this.potentialSolutionTypesList = response.data.data['potential-solution-type'];
@@ -565,6 +677,9 @@
         this.maintenanceFundList = response.data.data['maintenance-fund'];
         this.salaryFundList = response.data.data['salary-fund'];
         this.internalResourceList = response.data.data['internal-resource'];
+        this.riskTypeList = response.data.data['risk-type'];
+        this.impactLevelList = response.data.data['risk-impact-level'];
+        this.probabilityLevelList = response.data.data['risk-probability-level'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }

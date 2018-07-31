@@ -10,25 +10,21 @@
           :description="trans('forms.business_case.departmental_benefit_type.description')">
         </el-popover-wrap>
       </span>
-      <div class="wrap-with-errors">
-        <el-select-wrap
-          v-model="form.departmental_benefit_type_id"
-          :isLoading="isLoading"
-          :name="`${fieldNamePrefix}.departmental_benefit_type_id`"
-          :data-vv-as="trans('forms.business_case.departmental_benefit_type.label')"
-          v-validate="{ rules: { required: !this.isDepartmentalBenefitTypeOther} }"
-          :options="data.departmentalBenefitTypeList"
-        />
-        <form-error :name="`${fieldNamePrefix}.departmental_benefit_type_id`"></form-error>
-      </div>
-      <el-input-other-wrap
-        :data-vv-as="trans('entities.form.other')"
-        :name="`${fieldNamePrefix}.departmental_benefit_type_other`"
-        v-model="form.departmental_benefit_type_other"
-        v-validate="{ rules: { required: this.isDepartmentalBenefitTypeOther} }"
+      <el-select-other-wrap
+        :modelSelect.sync="form.departmental_benefit_type_id"
+        :isLoading="isLoading"
+        :nameSelect="`${fieldNamePrefix}.departmental_benefit_type_id`"
+        :dataVVas="trans('forms.business_case.departmental_benefit_type.label')"
+        :validateSelect="{ rules: { required: !this.isDepartmentalBenefitTypeOther} }"
+        :options="data.departmentalBenefitTypeList"
+        sorted
+
+        :nameOther="`${fieldNamePrefix}.departmental_benefit_type_other`"
+        :modelOther.sync="form.departmental_benefit_type_other"
+        :validateOther="{ rules: { required: this.isDepartmentalBenefitTypeOther} }"
         :isChecked.sync="isDepartmentalBenefitTypeOther"
-        maxlength="100">
-      </el-input-other-wrap>
+        maxlength="100"
+      />
     </el-form-item-wrap>
     <el-form-item-wrap
       :label="trans('forms.business_case.departmental_benefit_rationale.label')"
@@ -57,15 +53,15 @@
   import FormError from '../error.vue';
 
   import ElFormItemWrap from '../el-form-item-wrap';
+  import ElSelectOtherWrap from '../el-select-other-wrap';
   import ElSelectWrap from '../el-select-wrap';
   import ElInputWrap from '../el-input-wrap';
-  import ElInputOtherWrap from '../el-input-other-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'departmental-benefit',
 
-    components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElInputOtherWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, ElInputWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

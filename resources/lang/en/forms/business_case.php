@@ -10,6 +10,8 @@ return [
         'learners_benefit'      => 'Learners Benefit',
         'costs'                 => 'Costs',
         'internal_resources'    => 'Internal Resources',
+        'risks'                 => 'Risks',
+        'comment'               => 'Comments',
     ],
     'business_issue' => [
         'label'       => 'Business Issues',
@@ -117,5 +119,26 @@ return [
             </ul>
 
         '
+    ],
+    'risk_type' => [
+        'label'       => 'Risk',
+        'description' => 'A description of a known constraint, risk or issue affecting the project.',
+    ],
+    'risk_impact_level' => [
+        'label'       => 'Impact',
+        'description' => 'An assessment of the impact on the project if the risk ever materializes.',
+    ],
+    'risk_probability_level' => [
+        'label'       => 'Probability',
+        'description' => 'An assessment of the likelihood or probability that the risk will materialize.',
+    ],
+    'risk_rationale' => [
+        'label'       => 'Rationale',
+        'instruction' => 'Please indicate why this is a risk.',
+        'description' => 'A description of the risk rationale.',
+    ],
+    'comment' => [
+        'label'       => 'General Comments',
+        'description' => 'Any other relevant information about the buisness case.',
     ],
 ];
