@@ -51,10 +51,15 @@
     },
 
     computed: {
+      // make sure to create a copy of the options
+      // *before* sorting the array
+      // since sorting on the options directly will cause a re-render of the select
+      // causing an infinite loop.
+      // https://stackoverflow.com/questions/47384480/you-may-have-an-infinite-update-loop-in-a-component-render-function-warning-in
       innerOptions() {
         return this.sorted ?
-               this.options.sort((a, b) => this.$helpers.localeSort(a, b, 'name')) :
-               this.options;
+               this.options.slice().sort((a, b) => this.$helpers.localeSort(a, b, 'name')) :
+               this.options.slice();
       }
     },
 
@@ -67,5 +72,16 @@
 </script>
 
 <style lang="scss">
-
+  .el-select {
+    width: 300px;
+    // make sure the select tags do not overflow
+    .el-select__tags-text {
+      max-width: 225px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
 </style>

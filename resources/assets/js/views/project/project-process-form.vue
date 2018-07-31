@@ -201,8 +201,17 @@
         return parseInt(this.activeIndex, 10) === this.tabsLength;
       },
 
+      /**
+       * This function gets all values from the form,
+       * removes the falsy values,
+       * put them on the same level of depth
+       * and checks for the remaining values to be empty
+       */
       isFormEmpty() {
-        return !_.chain(this.formData).omit('id').values().compact().flatten().value().length;
+        return !_.chain(this.formData).omit('id').values().compact().flattenDeep().value().filter(item => {
+          // returns true if the props from the item are falsy values
+          return !_.isEmpty(_.compact(_.toArray(item)));
+        }).length;
       }
     },
 

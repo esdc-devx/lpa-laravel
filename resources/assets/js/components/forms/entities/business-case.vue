@@ -634,30 +634,6 @@
         'hideMainLoading'
       ]),
 
-      formatData() {
-        // make sure that the dropdowns only have the ids
-        this.isInfoLoading = true;
-        this.form.request_sources = _.map(this.form.request_sources, 'id');
-        this.form.timeframe_id = _.get(this.form.timeframe, 'id');
-        delete this.form.timeframe;
-        this.form.maintenance_fund_id = _.get(this.form.maintenance_fund, 'id');
-        delete this.form.maintenance_fund;
-        this.form.salary_fund_id = _.get(this.form.salary_fund, 'id');
-        delete this.form.salary_fund;
-        this.form.communities = _.map(this.form.communities, 'id');
-        this.form.government_priorities = _.map(this.form.government_priorities, 'id');
-        this.form.potential_solution_types = _.map(this.form.potential_solution_types, 'id');
-        this.form.internal_resources = _.map(this.form.internal_resources, 'id');
-        this.form.description = _.map(this.form.description, 'id');
-        this.form.impact_level = _.map(this.form.impact_level, 'id');
-        this.form.probability_level = _.map(this.form.probability_level, 'id');
-
-        this.isRequestSourceOther = !!this.form.request_source_other;
-        this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
-        this.isInternalResourceOther = !!this.form.internal_resource_other;
-        this.isInfoLoading = false;
-      },
-
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
@@ -687,7 +663,6 @@
 
     beforeDestroy() {
       EventBus.$off('Store:languageUpdate', this.fetchLists);
-      EventBus.$off('FormEntity:formDataUpdate', this.formatData);
     },
 
     async created() {
@@ -696,13 +671,14 @@
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = _.cloneDeep(this.formData);
-      this.formatData();
+      this.isRequestSourceOther = !!this.form.request_source_other;
+      this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
+      this.isInternalResourceOther = !!this.form.internal_resource_other;
       await this.hideMainLoading();
     },
 
     mounted() {
       EventBus.$on('Store:languageUpdate', this.fetchLists);
-      EventBus.$on('FormEntity:formDataUpdate', this.formatData);
     }
   };
 </script>

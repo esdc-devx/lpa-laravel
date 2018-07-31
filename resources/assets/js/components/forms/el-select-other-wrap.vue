@@ -20,7 +20,8 @@
         v-model="checked"
         :value="isChecked"
         @change="onCheckboxChange">
-          {{ trans('entities.form.other') }}
+          <span v-if="multiple">{{ trans('entities.form.others') }}</span>
+          <span v-else>{{ trans('entities.form.other') }}</span>
       </el-checkbox>
       <el-input-wrap
         ref="input"
