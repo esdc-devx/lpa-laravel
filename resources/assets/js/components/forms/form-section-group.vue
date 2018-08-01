@@ -25,11 +25,12 @@
 
   import DepartmentalBenefit from './entities/departmental-benefit';
   import LearnersBenefit from './entities/learners-benefit';
+  import Risk from './entities/risk';
 
   export default {
     name: 'form-section-group',
 
-    components: { DepartmentalBenefit, LearnersBenefit },
+    components: { DepartmentalBenefit, LearnersBenefit, Risk },
 
     props: {
       entity: {
@@ -78,29 +79,6 @@
     },
 
     methods: {
-      /**
-       * This function makes sure that when we have for example: { prop, prop_id, ...}
-       * that we assign the value of prop to prop_id and remove prop
-       * so that we don't send it to the server.
-       * Make sure to also deep set the values so that they are all reactives.
-      */
-      formatGroups() {
-        let that = this;
-        _.forEach(this.groups, (group, key) => {
-          _.forIn(group, (value, subKey) => {
-            if (group.hasOwnProperty(subKey + '_id')) {
-              // single value list
-              that.$set(group, subKey + '_id', _.get(value, 'id'));
-              delete group[subKey];
-            } else if (_.isArray(group[subKey])) {
-              // handle multiple value lists
-              that.$set(group, subKey + '_id', _.map(value, 'id'));
-            }
-          });
-        });
-        this.$emit('update:value', this.groups);
-      },
-
       removeGroup(index, item) {
         this.groups.splice(index, 1);
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
@@ -127,8 +105,6 @@
       },
 
       prepareGroups() {
-        this.formatGroups();
-
         if (!_.isUndefined(this.$props.min) && !this.groups.length) {
           // add the ammount of groups provided
           for (let i = 0; i < this.$props.min; i++) {

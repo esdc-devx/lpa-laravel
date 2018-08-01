@@ -13,7 +13,7 @@ class UserRepository extends BaseEloquentRepository
     const LDAP_SEARCH_LIMIT = 5;
 
     protected $model = User::class;
-    protected $relationships = ['roles', 'organizationalUnits', 'projects'];
+    protected $relationships = ['roles', 'organizationalUnits'];
     protected $requiredRelationships = ['organizationalUnits'];
 
     /**

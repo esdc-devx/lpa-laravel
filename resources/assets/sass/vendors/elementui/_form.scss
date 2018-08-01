@@ -4,16 +4,6 @@
   display: flex;
 }
 
-// make sure the select tags do not overflow
-.el-select__tags-text {
-  max-width: 115px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  display: inline-block;
-  vertical-align: middle;
-}
-
 // this fixes a color contrast issue when the radio buttons are disabled ans selected
 .el-radio-button__orig-radio:disabled:checked + .el-radio-button__inner {
   color: $--color-white;

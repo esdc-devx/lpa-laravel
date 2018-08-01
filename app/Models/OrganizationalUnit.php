@@ -2,19 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\LocalizableModel;
+use App\Models\ListableModel;
 use App\Models\Traits\UsesKeyNameField;
 use App\Models\User\User;
 
-class OrganizationalUnit extends LocalizableModel
+class OrganizationalUnit extends ListableModel
 {
-    use UsesKeyNameField;
-
-    protected $hidden = ['created_at', 'updated_at'];
-    protected $localizable = ['name'];
     protected $casts = [
         'owner' => 'boolean',
     ];
+
+    public $timestamps = true;
 
     public function director()
     {

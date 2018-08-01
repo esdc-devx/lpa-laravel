@@ -21,8 +21,6 @@ import LoadStatus         from '@/store/load-status-constants';
 import store              from '@/store/';
 import HttpStatusCodes    from '@axios/http-status-codes';
 
-import Notify from '@mixins/notify';
-
 Vue.use(Router);
 
 let forceProceed = false;

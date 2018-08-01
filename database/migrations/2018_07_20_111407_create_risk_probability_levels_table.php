@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRolesTable extends Migration
+class CreateRiskProbabilityLevelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateRolesTable extends Migration
      */
     public function up()
     {
-        Schema::create('roles', function (Blueprint $table) {
+        Schema::create('risk_probability_levels', function (Blueprint $table) {
             $table->listable();
-        });
-
-        Schema::create('role_user', function (Blueprint $table) {
-            $table->pivot('roles', 'users');
         });
     }
 
@@ -29,7 +25,6 @@ class CreateRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('role_user');
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('risk_probability_levels');
     }
 }

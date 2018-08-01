@@ -6,10 +6,12 @@ return [
         'proposal'              => 'Proposal',
         'timeframe'             => 'Timeframe',
         'audience'              => 'Audience',
-        'departmental_benefit'  => 'Departmental Benefit',
-        'learners_benefit'      => 'Learners Benefit',
+        'departmental_benefit'  => 'Departmental Benefits',
+        'learners_benefit'      => 'Learners Benefits',
         'costs'                 => 'Costs',
         'internal_resources'    => 'Internal Resources',
+        'risk'                  => 'Risks',
+        'comment'               => 'Comments',
     ],
     'business_issue' => [
         'label'       => 'Business Issues',
@@ -115,7 +117,27 @@ return [
                 <li><span>A/V</span>: This team prepares rooms for course, events, etc.</li>
                 <li><span>NOP</span>: This team helps planning national operations such as course offerings or events.</li>
             </ul>
-
         '
+    ],
+    'risks' => [
+        'label'       => 'Risk',
+        'description' => 'A description of a known constraint, risk or issue affecting the project.',
+    ],
+    'risk_impact_level' => [
+        'label'       => 'Impact',
+        'description' => 'An assessment of the impact on the project if the risk ever materializes.',
+    ],
+    'risk_probability_level' => [
+        'label'       => 'Probability',
+        'description' => 'An assessment of the likelihood or probability that the risk will materialize.',
+    ],
+    'risk_rationale' => [
+        'label'       => 'Rationale',
+        'instruction' => 'Please indicate why this is a risk.',
+        'description' => 'A description of the risk rationale.',
+    ],
+    'comment' => [
+        'label'       => 'General Comments',
+        'description' => 'Any other relevant information about the buisness case.',
     ],
 ];

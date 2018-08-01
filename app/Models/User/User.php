@@ -61,6 +61,10 @@ class User extends BaseModel implements
         'created' => \App\Events\UserCreated::class
     ];
 
+    protected $relationships = [
+        'organizationalUnits', 'roles',
+    ];
+
     public function getNameAttribute()
     {
         return "$this->first_name $this->last_name";
@@ -79,11 +83,6 @@ class User extends BaseModel implements
     public function organizationalUnits()
     {
         return $this->belongsToMany(OrganizationalUnit::class);
-    }
-
-    public function projects()
-    {
-        return $this->hasMany(Project::class, 'created_by');
     }
 
     public function hasRole(string $role)

@@ -10,19 +10,26 @@ class BusinessCase extends BaseModel
 {
     protected $hidden = ['process_instance_form_id'];
 
+    protected $fillable = [
+        'process_instance_form_id', 'request_source_other', 'business_issue', 'is_required_training', 'learning_response_strategy',
+        'potential_solution_type_other', 'expected_annual_participant_number', 'timeframe_id', 'timeframe_rationale', 'cost_center',
+        'maintenance_fund_id', 'maintenance_fund_rationale', 'salary_fund_id', 'salary_fund_rationale', 'comment', 'internal_resource_other',
+    ];
+
     public $timestamps = false;
 
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
-        'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'timeframe', 'communities',
-        'departmentalBenefits', 'departmentalBenefits.departmentalBenefitType',
-        'learnersBenefits', 'learnersBenefits.learnersBenefitType',
-        'maintenanceFund', 'salaryFund', 'internalResources',
+        // Multiple choice lists.
+        'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'communities', 'internalResources',
+        // Complex data.
+        'departmentalBenefits', 'learnersBenefits', 'risks',
     ];
 
     public function processInstanceForm()
     {
-        return $this->belongsTo(ProcessInstanceForm::class)->with('state', 'organizationalUnit', 'currentEditor', 'updatedBy');
+        return $this->belongsTo(ProcessInstanceForm::class)
+            ->with('state', 'organizationalUnit', 'currentEditor', 'updatedBy');
     }
 
     public function requestSources()
@@ -75,8 +82,14 @@ class BusinessCase extends BaseModel
         return $this->belongsToMany(InternalResource::class);
     }
 
+    public function risks()
+    {
+        return $this->belongsToMany(Risk::class);
+    }
+
     public function saveFormData(array $data)
     {
+        // Synchronize one to many relationships.
         $this->syncRelationships($data, [
             'requestSources',
             'potentialSolutionTypes',
@@ -85,15 +98,18 @@ class BusinessCase extends BaseModel
             'internalResources',
         ]);
 
+        // Synchronize one to many relationships and also create/update/delete related models.
         $this->syncRelatedModels($data, [
             'departmentalBenefits',
             'learnersBenefits',
+            'risks',
         ]);
 
         // Update properties on business case.
         $this->update($data);
 
-        // Return model with all of its updated relationships.
-        return $this->load($this->relationships);
+        // Return model with all of its updated relationships
+        // and format list output to only return ids.
+        return $this->load($this->relationships)->formatListsOutput();
     }
 }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
 {
+    protected $formatListsOutput = false;
     protected $guarded = [];
 
     /**
@@ -25,16 +26,13 @@ class BaseModel extends Model
      * @param  array $relationships
      * @return void
      */
-    protected function syncRelationships(&$data, $relationships)
+    protected function syncRelationships($data, $relationships)
     {
         foreach ($relationships as $relationship) {
             $key = snake_case($relationship);
             if (isset($data[$key])) {
                 // Synchronize relationship.
                 $this->{$relationship}()->sync($data[$key]);
-
-                // Remove updated relation from data set.
-                unset($data[$key]);
             }
         }
     }
@@ -46,7 +44,7 @@ class BaseModel extends Model
      * @param  array $relationships
      * @return void
      */
-    protected function syncRelatedModels(&$data, $relationships)
+    protected function syncRelatedModels($data, $relationships)
     {
         foreach ($relationships as $relationship) {
             $key = snake_case($relationship);
@@ -66,10 +64,63 @@ class BaseModel extends Model
                 $previous = $this->{$relationship}->pluck('id');
                 $remove = $previous->diff($ids)->values()->all();
                 $relatedModelClassName::destroy($remove);
-
-                // Remove updated relation from data set.
-                unset($data[$key]);
             }
         }
+    }
+
+    /**
+     * Once called, model will render its lists as an array of ids.
+     * These lists must extend the ListableModel class and
+     * be defined inside a $relationships property on the model.
+     *
+     * @return $this
+     */
+    public function formatListsOutput()
+    {
+        // Set flag which will be handled in the toArray() method.
+        $this->formatListsOutput = true;
+
+        if (isset($this->relationships)) {
+            foreach ($this->relationships as $relationship) {
+                $relatedModelClass = $this->{$relationship}()->getRelated();
+
+                // If relationship is an instance of the BaseModel class and was also loaded,
+                // call formatListsOutput() method recursively.
+                if (get_parent_class($relatedModelClass) === 'App\Models\BaseModel' && $this->relationLoaded($relationship)) {
+                    $this->{$relationship}->each(function ($instance) {
+                        $instance->formatListsOutput();
+                    });
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Override method used when returning the model as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        // Get the model formatted as an array.
+        $output = parent::toArray();
+
+        // Check if lists should be re-formatted to return only ids.
+        if ($this->formatListsOutput && isset($this->relationships)) {
+            foreach ($this->relationships as $relationship) {
+                $relatedModelClass = $this->{$relationship}()->getRelated();
+
+                // If relationship extends ListableModel, only return an array of ids.
+                if (get_parent_class($relatedModelClass) === 'App\Models\ListableModel') {
+                    if ($attribute = &$output[snake_case($relationship)]) {
+                        $attribute = collect($attribute)->pluck('id');
+                    }
+                }
+            }
+        }
+
+        return $output;
     }
 }

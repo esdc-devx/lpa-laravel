@@ -1,10 +1,10 @@
 <template>
   <div class="el-input-wrap">
-    <el-input :class="{ 'is-error': verrors.has(this.$attrs.name) }" ref="input" :autosize="{ minRows: 2 }" v-bind="$attrs" :value="value" @input.native="updateValue($event.target.value)" :maxlength="charsLimit">
+    <el-input :class="{ 'is-error': verrors.has(name) }" ref="input" :autosize="{ minRows: 2 }" v-bind="$attrs" :value="value" @input.native="updateValue($event.target.value)" :maxlength="charsLimit">
       <slot></slot>
     </el-input>
     <div class="input-infos">
-      <form-error :name="this.$attrs.name"></form-error>
+      <form-error :name="name"></form-error>
       <span v-if="maxlength" class="char-count">
         {{ charCount }} / {{ charsLimit }}
       </span>
@@ -28,6 +28,7 @@
 
     props: {
       maxlength: String,
+      name: String,
       value: String
     },
 

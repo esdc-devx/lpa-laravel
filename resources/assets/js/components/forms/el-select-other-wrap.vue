@@ -1,0 +1,174 @@
+<template>
+  <div class="el-select-other-wrap">
+    <div class="wrap-with-errors">
+      <el-select-wrap
+        :value.sync="modelSelect"
+        :isLoading="isLoading"
+        :name="nameSelect"
+        :data-vv-as="dataVVas"
+        v-validate="validateSelect"
+        :options="options"
+        :disabled="checked && !multiple"
+        @input="updateSelectValue($event)"
+        :multiple="multiple"
+        :sorted="sorted"
+      />
+      <form-error :name="nameSelect"></form-error>
+    </div>
+    <div class="el-input-other-wrap">
+      <el-checkbox
+        v-model="checked"
+        :value="isChecked"
+        @change="onCheckboxChange">
+          <span v-if="multiple">{{ trans('entities.form.others') }}</span>
+          <span v-else>{{ trans('entities.form.other') }}</span>
+      </el-checkbox>
+      <el-input-wrap
+        ref="input"
+        :name="nameOther"
+        v-validate="validateOther"
+        :data-vv-as="trans('entities.form.other')"
+        :disabled="!isChecked"
+        :value="modelOther"
+        :maxlength="maxlength"
+        :type="type"
+        @input.native="updateInputValue($event.target.value)">
+          <slot></slot>
+      </el-input-wrap>
+    </div>
+  </div>
+</template>
+
+<script>
+  import FormError from './error.vue';
+
+  import ElSelectWrap from './el-select-wrap';
+  import ElInputWrap from './el-input-wrap';
+
+  export default {
+    name: 'el-select-other-wrap',
+
+    inheritAttrs: false,
+
+    // Gives us the ability to inject validation in child components
+    // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
+    inject: ['$validator'],
+
+    components: { FormError, ElSelectWrap, ElInputWrap },
+
+    props: {
+      modelSelect: {
+        type: Array | Number,
+        required: true
+      },
+      options: {
+        type: Array,
+        required: true
+      },
+      modelOther: {
+        type: String | undefined | null,
+        required: true
+      },
+      nameSelect: {
+        type: String,
+        required: true
+      },
+      nameOther: {
+        type: String,
+        required: true
+      },
+      dataVVas: String,
+      validateSelect: String | Object,
+      validateOther: String | Object,
+      isLoading: {
+        type: Boolean,
+        default: false
+      },
+      isChecked: Boolean,
+      sorted: Boolean,
+      multiple: {
+        type: Boolean,
+        default: false
+      },
+      type: {
+        type: String,
+        default: 'text'
+      },
+      maxlength: String
+    },
+
+    computed: {
+      checked: {
+        get() {
+          return this.isChecked;
+        },
+        set(val) {
+          this.$emit('update:isChecked', val);
+        }
+      }
+    },
+
+    watch: {
+      isChecked: function(val) {
+        // if the other is checked and can only select 1 value
+        // the select should be disabled and remove its selected value
+        if (val && !this.multiple) {
+          this.updateSelectValue(null);
+        }
+      }
+    },
+
+    methods: {
+      updateSelectValue(value) {
+        // update parent data so that we can still v-model on the parent
+        this.$emit('update:modelSelect', value);
+      },
+
+      updateInputValue(value) {
+        // update parent data so that we can still v-model on the parent
+        this.$emit('update:modelOther', value);
+      },
+
+      onCheckboxChange(checked) {
+        // update parent property
+        if (checked) {
+          this.$nextTick(() => {
+            let inputEl = this.$refs.input.$el.querySelector('input');
+            let textareaEl = this.$refs.input.$el.querySelector('textarea');
+            let el = inputEl || textareaEl;
+            el.focus();
+          });
+        } else {
+          // empty the input so that we send null
+          // when the checkbox is unchecked
+          this.updateInputValue(null);
+        }
+      }
+    },
+
+    mounted() {
+      this.checked = !!this.modelOther;
+    }
+  };
+</script>
+
+<style lang="scss">
+  .el-select-other-wrap {
+    display: flex;
+    .el-input-other-wrap {
+      flex: 1;
+      display: flex;
+      .el-checkbox {
+        margin-left: 20px;
+        margin-right: 20px;
+        display: inline-table;
+        // make sure the line-height is constant here
+        // as it needs to be vertically centered with its folowing input
+        line-height: 40px !important;
+      }
+      .el-input-wrap {
+        flex: 1;
+      }
+    }
+  }
+</style>
