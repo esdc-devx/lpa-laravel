@@ -78,30 +78,13 @@ new Vue({
     async login() {
       let request = axios.create({baseURL: '/' + Config.DEFAULT_LANG});
       let response;
-      try {
-        response = await request.post('login', {
-          username: this.username,
-          password: this.password,
-          remember: this.remember
-        });
-        // all good, submit form manually
-        window.location = response.data.redirectURL;
-      } catch({ response }) {
-        // catch in case of token mismatch, invalid session, etc due to cache cleared by user
-        if (response.status === HttpStatusCodes.BAD_REQUEST) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.bad_request')
-          });
-          return;
-        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.server_error')
-          });
-          return;
-        }
-        this.isSubmitting = false;
-        this.manageBackendErrors(response.data.errors);
-      }
+      response = await request.post('login', {
+        username: this.username,
+        password: this.password,
+        remember: this.remember
+      });
+      // all good, submit form manually
+      window.location = response.data.redirectURL;
     },
 
     async loadLanguages() {
