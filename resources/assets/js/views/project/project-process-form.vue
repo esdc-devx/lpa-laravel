@@ -233,7 +233,6 @@
         unclaimForm: 'processes/unclaimForm',
         canEditForm: 'processes/canEditForm',
         canClaimForm: 'processes/canClaimForm',
-        canClaimForm: 'processes/canClaimForm',
         canUnclaimForm: 'processes/canUnclaimForm',
         canSubmitForm: 'processes/canSubmitForm',
         saveForm: 'processes/saveForm',

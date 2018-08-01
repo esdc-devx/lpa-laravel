@@ -10,7 +10,7 @@ return [
         'learners_benefit'      => 'Avantages pour l\'apprenant',
         'costs'                 => 'Coûts',
         'internal_resources'    => 'Ressources internes',
-        'risks'                 => 'Risques',
+        'risk'                  => 'Risques',
         'comment'               => 'Commentaires',
     ],
     'business_issue' => [

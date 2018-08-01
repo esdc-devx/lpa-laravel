@@ -436,11 +436,11 @@
 
     <el-tab-pane data-name="risks">
       <span slot="label" :class="{'is-error': errorTabs.includes('risks') }">
-        {{ trans('forms.business_case.tabs.risks') }}
+        {{ trans('forms.business_case.tabs.risk') }}
       </span>
       <form-section-group
         v-model="form.risks"
-        entity="risks"
+        entity="risk"
         :data="{
           riskTypeList,
           impactLevelList,

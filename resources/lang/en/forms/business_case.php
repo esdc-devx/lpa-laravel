@@ -10,7 +10,7 @@ return [
         'learners_benefit'      => 'Learners Benefit',
         'costs'                 => 'Costs',
         'internal_resources'    => 'Internal Resources',
-        'risks'                 => 'Risks',
+        'risk'                  => 'Risks',
         'comment'               => 'Comments',
     ],
     'business_issue' => [
