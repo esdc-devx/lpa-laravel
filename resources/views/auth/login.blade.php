@@ -118,7 +118,11 @@
                         {{ csrf_field() }}
                         <el-form-item label="{{ __('entities/user.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
                             <el-input id="username" name="username" v-model="username" v-validate="'required'" @keyup.native.enter="onSubmit" autofocus></el-input>
-                            <form-error v-for="error in verrors.collect('username')" :key="error.id">@{{ error }}</form-error>
+                            <transition-group name="el-zoom-in-top" class="input-errors" tag="div">
+                                <span class="el-form-item__error" v-for="(error, index) in verrors.collect('username')" :key="index">
+                                    @{{ error }}
+                                </span>
+                            </transition-group>
                         </el-form-item>
                         <el-form-item label="{{ __('entities/user.password') }}" for="password" :class="['is-required', {'is-error': verrors.collect('password').length }]" prop="password">
                             <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" @keyup.native.enter="onSubmit">
@@ -129,14 +133,18 @@
                                     @mouseup="isPasswordVisible = false">
                                 </i>
                             </el-input>
-                            <form-error v-for="error in verrors.collect('password')" :key="error.id">@{{ error }}</form-error>
+                            <transition-group name="el-zoom-in-top" class="input-errors" tag="div">
+                                <span class="el-form-item__error" v-for="(error, index) in verrors.collect('password')" :key="index">
+                                    @{{ error }}
+                                </span>
+                            </transition-group>
                         </el-form-item>
                         <el-form-item for="remember">
                             <el-checkbox name="remember" name="remember" v-model="remember" @keyup.native.enter="onSubmit" label="{{ __('pages/login.remember') }}"></el-checkbox>
                         </el-form-item>
 
                         <el-form-item class="controls-wrap">
-                            <el-button type="primary" :loading="isSaving" @click="onSubmit">{{ __('pages/login.login') }}</el-button>
+                            <el-button type="primary" :loading="isSubmitting" @click="onSubmit">{{ __('pages/login.login') }}</el-button>
                         </el-form-item>
                     </el-form>
                 </div>

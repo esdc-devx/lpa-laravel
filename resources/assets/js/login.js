@@ -19,10 +19,7 @@ import '@/locale';
 
 import Config from '@/config';
 
-import FormError from '@components/forms/error';
 import FormUtils from '@mixins/form/utils';
-
-import HttpStatusCodes from '@axios/http-status-codes';
 
 const elementUILocale = Config.DEFAULT_LANG === 'en' ? elementUILocaleEN : elementUILocaleFR;
 Vue.use(ElementUI, { locale: elementUILocale });
@@ -55,8 +52,6 @@ new Vue({
   el: '#app',
 
   mixins: [ FormUtils ],
-
-  components: { FormError },
 
   data() {
     return {
@@ -104,7 +99,7 @@ new Vue({
       for (let fieldName in errors) {
         fieldBag = errors[fieldName];
         for (let j = 0; j < fieldBag.length; j++) {
-          this.verrors.add({field: fieldName, msg: fieldBag[j]})
+          this.verrors.add({field: fieldName, msg: fieldBag[j]});
         }
       }
       this.focusOnError();
