@@ -117,10 +117,9 @@ return [
                 <li><span>A/V</span>: This team prepares rooms for course, events, etc.</li>
                 <li><span>NOP</span>: This team helps planning national operations such as course offerings or events.</li>
             </ul>
-
         '
     ],
-    'risk_type' => [
+    'risks' => [
         'label'       => 'Risk',
         'description' => 'A description of a known constraint, risk or issue affecting the project.',
     ],

@@ -117,10 +117,9 @@ return [
                 <li><span>A/V</span> : Cette équipe prépare les salles pour les cours, événements, etc.</li>
                 <li><span>PON</span> : Cette équipe aide à planifier les opérations au niveau national tel que les offres de cours ou les événements.</li>
             </ul>
-
         '
     ],
-    'risk_type' => [
+    'risks' => [
         'label'       => 'Risque',
         'description' => 'Une description de tout risque, enjeu ou contrainte connus touchant le projet.',
     ],

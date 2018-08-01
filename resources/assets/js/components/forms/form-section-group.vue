@@ -25,11 +25,12 @@
 
   import DepartmentalBenefit from './entities/departmental-benefit';
   import LearnersBenefit from './entities/learners-benefit';
+  import Risks from './entities/risks';
 
   export default {
     name: 'form-section-group',
 
-    components: { DepartmentalBenefit, LearnersBenefit },
+    components: { DepartmentalBenefit, LearnersBenefit, Risks },
 
     props: {
       entity: {
