@@ -3,6 +3,7 @@
     <el-form-item-wrap
       :label="trans('forms.business_case.risks.label')"
       :prop="`${fieldNamePrefix}.risk_type_id`"
+      :classes="['has-other']"
       required>
       <span slot="label-addons">
         <el-popover-wrap
