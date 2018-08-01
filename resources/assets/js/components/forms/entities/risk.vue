@@ -1,5 +1,5 @@
 <template>
-  <div class="risks">
+  <div class="risk">
     <el-form-item-wrap
       :label="trans('forms.business_case.risks.label')"
       :prop="`${fieldNamePrefix}.risk_type_id`"
@@ -104,7 +104,7 @@
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
-    name: 'risks',
+    name: 'risk',
 
     components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, ElInputWrap, ElPopoverWrap },
 
