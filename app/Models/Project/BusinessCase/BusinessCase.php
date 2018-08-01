@@ -108,7 +108,7 @@ class BusinessCase extends BaseModel
         // Update properties on business case.
         $this->update($data);
 
-        // Return model with all of its updated relationships.
+        // Return model with all of its updated relationships
         // and format list output to only return ids.
         return $this->load($this->relationships)->formatListsOutput();
     }
