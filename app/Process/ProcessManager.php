@@ -7,6 +7,7 @@ use App\Models\OrganizationalUnit;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
+use App\Models\Process\ProcessInstanceFormAssessment;
 use App\Models\Process\ProcessInstanceStep;
 use App\Models\State;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -106,11 +107,23 @@ class ProcessManager {
                         'updated_at'               => null,
                     ]);
 
-                    // Create an empty data class model mapped to the process instance form (i.e. BusinessCase, ArchitecturePlan, etc.).
+                    // Create an empty form data class model mapped to the process instance form (i.e. BusinessCase, ArchitecturePlan, etc.).
                     try {
-                        entity($form->name_key)::create([
+                        $formData = entity($form->name_key)::create([
                             'process_instance_form_id' => $processInstanceForm->id,
                         ]);
+
+                        // If process instance form has some form assessments, create them.
+                        if (! empty($form['assessments'])) {
+                            $formAssessmentIds = [];
+                            foreach ($form['assessments'] as $assessment) {
+                                $formAssessmentIds[] = ProcessInstanceFormAssessment::create([
+                                    'entity_type'           => $form->name_key,
+                                    'entity_id'             => $formData->id,
+                                    'assessed_process_form' => $assessment->assessed_process_form,
+                                ])->id;
+                            }
+                        }
                     }
                     // Since form data classes are not all yet implemented, ignore this exception.
                     catch (ModelNotFoundException $e) {

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +36,10 @@ class DatabaseServiceProvider extends ServiceProvider
                 ]);
             });
         }
+
+        // Customize polymorphic morph map to use entity name key instead of their model class name.
+        // i.e. "project" instead of "App\Models\Project".
+        Relation::morphMap(config('app.entity_types'));
 
         // Add user audit columns.
         Blueprint::macro('auditable', function () {
