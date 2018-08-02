@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             RiskTypeTableSeeder::class,
             RiskImpactLevelTableSeeder::class,
             RiskProbabilityLevelTableSeeder::class,
+            ProcessFormDecisionTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
