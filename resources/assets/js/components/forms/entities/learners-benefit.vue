@@ -9,6 +9,9 @@
         <el-popover-wrap
           :description="trans('forms.business_case.learners_benefit_type.description')">
         </el-popover-wrap>
+        <span class="instruction">
+            {{ trans('forms.business_case.learners_benefit_type.instruction') }}
+        </span>
       </span>
       <el-select-other-wrap
         :modelSelect.sync="form.learners_benefit_type_id"

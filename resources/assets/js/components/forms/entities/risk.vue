@@ -9,6 +9,9 @@
         <el-popover-wrap
           :description="trans('forms.business_case.risks.description')">
         </el-popover-wrap>
+        <span class="instruction">
+          {{ trans('forms.business_case.risks.instruction') }}
+        </span>
       </span>
       <el-select-other-wrap
         :modelSelect.sync="form.risk_type_id"

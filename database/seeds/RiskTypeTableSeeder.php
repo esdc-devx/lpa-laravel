@@ -16,7 +16,6 @@ class RiskTypeTableSeeder extends Seeder
                 'name_en' => 'Buy-in',
                 'name_fr' => 'Appui',
             ],
-
             [
                 'name_en' => 'Change in business processes',
                 'name_fr' => 'Modification des processus d’affaires',
