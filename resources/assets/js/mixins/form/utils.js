@@ -106,6 +106,14 @@ export default {
           this.notifyError({
             message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
           });
+        } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
+          this.notifyError({
+            message: Vue.prototype.trans('errors.bad_request')
+          });
+        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
+          this.notifyError({
+            message: Vue.prototype.trans('errors.server_error')
+          });
         }
         this.isSubmitting = false;
       }

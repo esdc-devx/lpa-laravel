@@ -19,6 +19,7 @@ import '@/locale';
 
 import Config from '@/config';
 
+import FormError from '@components/forms/error';
 import FormUtils from '@mixins/form/utils';
 
 const elementUILocale = Config.DEFAULT_LANG === 'en' ? elementUILocaleEN : elementUILocaleFR;
@@ -45,13 +46,18 @@ Vue.use(VeeValidate, {
   fieldsBagName: 'vfields',
   dictionary: {
     fr: veeLocaleFR
-  }
+  },
+  // Gives us the ability to inject validation in child components
+  // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
+  inject: false
 });
 
 new Vue({
   el: '#app',
 
   mixins: [ FormUtils ],
+
+  components: { FormError },
 
   data() {
     return {

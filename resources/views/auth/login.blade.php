@@ -118,11 +118,7 @@
                         {{ csrf_field() }}
                         <el-form-item label="{{ __('entities/user.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
                             <el-input id="username" name="username" v-model="username" v-validate="'required'" @keyup.native.enter="onSubmit" autofocus></el-input>
-                            <transition-group name="el-zoom-in-top" class="input-errors" tag="div">
-                                <span class="el-form-item__error" v-for="(error, index) in verrors.collect('username')" :key="index">
-                                    @{{ error }}
-                                </span>
-                            </transition-group>
+                            <form-error name="username"></form-error>
                         </el-form-item>
                         <el-form-item label="{{ __('entities/user.password') }}" for="password" :class="['is-required', {'is-error': verrors.collect('password').length }]" prop="password">
                             <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" @keyup.native.enter="onSubmit">
@@ -133,11 +129,7 @@
                                     @mouseup="isPasswordVisible = false">
                                 </i>
                             </el-input>
-                            <transition-group name="el-zoom-in-top" class="input-errors" tag="div">
-                                <span class="el-form-item__error" v-for="(error, index) in verrors.collect('password')" :key="index">
-                                    @{{ error }}
-                                </span>
-                            </transition-group>
+                            <form-error name="password"></form-error>
                         </el-form-item>
                         <el-form-item for="remember">
                             <el-checkbox name="remember" name="remember" v-model="remember" @keyup.native.enter="onSubmit" label="{{ __('pages/login.remember') }}"></el-checkbox>
