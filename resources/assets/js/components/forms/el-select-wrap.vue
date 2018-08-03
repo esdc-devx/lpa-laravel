@@ -94,4 +94,7 @@
       vertical-align: middle;
     }
   }
+  .el-select-dropdown__item span {
+    padding-right: 30px;
+  }
 </style>
