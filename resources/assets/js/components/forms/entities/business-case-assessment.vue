@@ -62,7 +62,6 @@
           v-model="form.assessment_date"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case_assessment.assessment_date.label')"
-          :disabled="form.is_process_cancelled"
           name="assessment_date"
           :picker-options="assessment_date_options"
           type="date"
@@ -183,7 +182,6 @@
       onProcessCancelledChange(isChecked) {
         // if checked, reset the form to null values
         if (isChecked) {
-          this.form.process_instance_form_id = null;
           this.form.process_cancellation_rationale = null;
           this.form.assessments.forEach(assessment => {
             assessment.process_form_decision_id = null;
