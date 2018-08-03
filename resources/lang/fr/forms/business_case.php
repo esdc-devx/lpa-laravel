@@ -1,16 +1,17 @@
 <?php
 
 return [
+    'title' => 'Analyse de rentabilisation',
     'tabs' => [
         'business_drivers'      => 'Incitatifs administratifs',
         'proposal'              => 'Proposition',
         'timeframe'             => 'Échéancier',
         'audience'              => 'Audience',
-        'departmental_benefit'  => 'Avantages pour le ministère',
-        'learners_benefit'      => 'Avantages pour l\'apprenant',
+        'departmental_benefit'  => 'Avantage pour le ministère|Avantages pour le ministère',
+        'learners_benefit'      => 'Avantage pour l\'apprenant|Avantages pour l\'apprenant',
         'costs'                 => 'Coûts',
         'internal_resources'    => 'Ressources internes',
-        'risk'                  => 'Risques',
+        'risk'                  => 'Risque|Risques',
         'comment'               => 'Commentaires',
     ],
     'business_issue' => [
@@ -28,7 +29,7 @@ return [
         'label'       => 'Sources de la demande',
         'instruction' => 'Veuillez sélectionner tous les choix applicables. Si nécessaire, utilisez le champ Autres pour spécifier les choix manquants.',
         'description' => 'Les sources de la demande.',
-        'help'        => 
+        'help'        =>
             '<ul>
                 <li><span>Demande du BDPRH ou du BCP</span> : Demande du Bureau du dirigeant principal des ressources humaines ou du Bureau du Conseil privé</li>
             </ul>',

@@ -1,20 +1,17 @@
 <template>
   <div class="el-select-other-wrap">
-    <div class="wrap-with-errors">
-      <el-select-wrap
-        :value.sync="modelSelect"
-        :isLoading="isLoading"
-        :name="nameSelect"
-        :data-vv-as="dataVVas"
-        v-validate="validateSelect"
-        :options="options"
-        :disabled="checked && !multiple"
-        @input="updateSelectValue($event)"
-        :multiple="multiple"
-        :sorted="sorted"
-      />
-      <form-error :name="nameSelect"></form-error>
-    </div>
+    <el-select-wrap
+      :value.sync="modelSelect"
+      :isLoading="isLoading"
+      :name="nameSelect"
+      :dataVVas="dataVVas"
+      validate="validateSelect"
+      :options="options"
+      :disabled="checked && !multiple"
+      @input="updateSelectValue($event)"
+      :multiple="multiple"
+      :sorted="sorted"
+    />
     <div class="el-input-other-wrap">
       <el-checkbox
         v-model="checked"
@@ -77,15 +74,30 @@
         type: String,
         required: true
       },
-      dataVVas: String,
-      validateSelect: String | Object,
-      validateOther: String | Object,
+      dataVVas: {
+        type: String,
+        default: this.nameSelect
+      },
+      validateSelect: {
+        type: String | Object,
+        default: ''
+      },
+      validateOther: {
+        type: String | Object,
+        default: ''
+      },
       isLoading: {
         type: Boolean,
         default: false
       },
-      isChecked: Boolean,
-      sorted: Boolean,
+      isChecked: {
+        type: Boolean,
+        default: false
+      },
+      sorted: {
+        type: Boolean,
+        default: false
+      },
       multiple: {
         type: Boolean,
         default: false
@@ -94,7 +106,10 @@
         type: String,
         default: 'text'
       },
-      maxlength: String
+      maxlength: {
+        type: String,
+        default: null
+      }
     },
 
     computed: {

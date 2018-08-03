@@ -1,24 +1,31 @@
 <template>
-  <el-select
-    v-bind="$attrs"
-    v-loading="isLoading"
-    element-loading-spinner="el-icon-loading"
-    :value="value"
-    :disabled="disabled || isLoading"
-    :name="name"
-    value-key="name"
-    :class="{ 'is-error': verrors.has(name) }"
-    @change="updateValue">
-    <el-option
-      v-for="item in innerOptions"
-      :key="item.id"
-      :label="item.name"
-      :value="item.id">
-    </el-option>
-  </el-select>
+  <div class="el-select-wrap">
+    <el-select
+      v-bind="$attrs"
+      v-loading="isLoading"
+      element-loading-spinner="el-icon-loading"
+      :value="value"
+      v-validate="validate"
+      :data-vv-as="dataVVas"
+      :disabled="disabled || isLoading"
+      :name="name"
+      value-key="name"
+      :class="{ 'is-error': verrors.has(name) }"
+      @change="updateValue">
+      <el-option
+        v-for="item in innerOptions"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id">
+      </el-option>
+    </el-select>
+    <form-error :name="name"></form-error>
+  </div>
 </template>
 
 <script>
+  import FormError from './error.vue';
+
   export default {
     name: 'el-select-wrap',
 
@@ -27,6 +34,8 @@
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
     inject: ['$validator'],
+
+    components: { FormError },
 
     props: {
       // @todo: remove when Element UI will add an options attribute to the select
@@ -46,7 +55,18 @@
         type: Boolean,
         default: false
       },
-      sorted: Boolean,
+      sorted: {
+        type: Boolean,
+        default: false
+      },
+      validate: {
+        type: String | Object,
+        default: ''
+      },
+      dataVVas: {
+        type: String,
+        default: this.name
+      },
       value: Array | Number
     },
 

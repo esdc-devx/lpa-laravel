@@ -30,5 +30,6 @@ return [
         'start_process'           => 'Do you want to start the <b>:process_name</b> process for the current project?',
         'pending_changes'         => 'Changes have not been saved yet. Do you want to discard those changes?',
         'validation_failure'      => 'Validation failure.  Please correct all errors (:num) before re-submitting the form.',
+        'cancel_project'          => 'Cancelling a project is a critical and definitive action. This action will automatically take place upon submitting this form with this option.',
     ]
 ];

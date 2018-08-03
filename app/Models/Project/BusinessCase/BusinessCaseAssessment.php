@@ -9,7 +9,7 @@ class BusinessCaseAssessment extends ProcessInstanceFormDataModel
 {
     protected $fillable = ['process_instance_form_id', 'is_process_cancelled', 'process_cancellation_rationale', 'assessment_date'];
     protected $casts = [
-        'is_entity_cancelled' => 'boolean'
+        'is_process_cancelled' => 'boolean'
     ];
 
     public $relationships = ['assessments'];

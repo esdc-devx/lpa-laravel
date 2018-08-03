@@ -29,7 +29,7 @@ class BusinessCaseAssessmentFormRequest extends FormRequest
             return [
                 'assessment_date'                => 'required|date|before_or_equal:today',
                 'is_process_cancelled'           => 'required|boolean',
-                'process_cancellation_rationale' => 'required_if:is_entity_cancelled,true|string|max:2500',
+                'process_cancellation_rationale' => 'required_if:is_process_cancelled,true|string|nullable|max:2500',
                 'assessments.*.comment'          => 'required_if:assessments.*.process_form_decision_id,2',
             ];
         }

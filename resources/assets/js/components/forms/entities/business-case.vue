@@ -51,9 +51,9 @@
         </span>
         <el-input-wrap
           v-model="form.business_issue"
+          v-validate="'required'"
           :data-vv-as="trans('forms.business_case.business_issue.label')"
           name="business_issue"
-          v-validate="'required'"
           maxlength="1250"
           type="textarea">
         </el-input-wrap>
@@ -79,9 +79,9 @@
         </span>
         <el-input-wrap
           v-model="form.learning_response_strategy"
+          v-validate="'required'"
           :data-vv-as="trans('forms.business_case.learning_response_strategy.label')"
           name="learning_response_strategy"
-          v-validate="'required'"
           maxlength="2500"
           type="textarea">
         </el-input-wrap>
@@ -130,19 +130,16 @@
             {{ trans('forms.business_case.government_priorities.instruction') }}
           </span>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.government_priorities"
-            :isLoading="isInfoLoading"
-            name="government_priorities"
-            :data-vv-as="trans('forms.business_case.government_priorities.label')"
-            v-validate="'required'"
-            :options="governmentPrioritiesList"
-            multiple
-            sorted
-          />
-          <form-error name="government_priorities"></form-error>
-        </div>
+        <el-select-wrap
+          v-model="form.government_priorities"
+          :isLoading="isInfoLoading"
+          name="government_priorities"
+          :data-vv-as="trans('forms.business_case.government_priorities.label')"
+          v-validate="'required'"
+          :options="governmentPrioritiesList"
+          multiple
+          sorted
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.is_required_training.label')"
@@ -183,17 +180,14 @@
             :help="trans('forms.business_case.timeframe.help')">
           </el-popover-wrap>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.timeframe_id"
-            :isLoading="isInfoLoading"
-            name="timeframe_id"
-            :data-vv-as="trans('forms.business_case.timeframe.label')"
-            v-validate="'required'"
-            :options="timeframeList"
-          />
-          <form-error name="timeframe_id"></form-error>
-        </div>
+        <el-select-wrap
+          v-model="form.timeframe_id"
+          :isLoading="isInfoLoading"
+          name="timeframe_id"
+          :data-vv-as="trans('forms.business_case.timeframe.label')"
+          v-validate="'required'"
+          :options="timeframeList"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.timeframe_rationale.label')"
@@ -209,9 +203,9 @@
         </span>
         <el-input-wrap
           v-model="form.timeframe_rationale"
+          v-validate="'required'"
           :data-vv-as="trans('forms.business_case.timeframe_rationale.label')"
           name="timeframe_rationale"
-          v-validate="'required'"
           maxlength="1250"
           type="textarea">
         </el-input-wrap>
@@ -233,19 +227,16 @@
           </el-popover-wrap>
           <span class="instruction">
             {{ trans('forms.business_case.communities.instruction') }}
-          </span>          
+          </span>
         </span>
-        <div class="wrap-with-errors">
-          <el-tree-wrap
-            name="communities"
-            v-model="form.communities"
-            :data-vv-as="trans('forms.business_case.communities.label')"
-            :data="communitiesList"
-            labelKey="name"
-            v-validate="'required'">
-          </el-tree-wrap>
-          <form-error name="communities"></form-error>
-        </div>
+        <el-tree-wrap
+          name="communities"
+          v-model="form.communities"
+          v-validate="'required'"
+          :data-vv-as="trans('forms.business_case.communities.label')"
+          :data="communitiesList"
+          labelKey="name">
+        </el-tree-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.expected_annual_participant_number.label')"
@@ -271,7 +262,7 @@
 
     <el-tab-pane data-name="departmental_benefit">
       <span slot="label" :class="{'is-error': errorTabs.includes('departmental_benefit') }">
-        {{ trans('forms.business_case.tabs.departmental_benefit') }}
+        {{ $tc('forms.business_case.tabs.departmental_benefit', 2) }}
       </span>
       <form-section-group
         v-model="form.departmental_benefits"
@@ -286,7 +277,7 @@
 
     <el-tab-pane data-name="learners_benefit">
       <span slot="label" :class="{'is-error': errorTabs.includes('learners_benefit') }">
-        {{ trans('forms.business_case.tabs.learners_benefit') }}
+        {{ $tc('forms.business_case.tabs.learners_benefit', 2) }}
       </span>
       <form-section-group
         v-model="form.learners_benefits"
@@ -318,11 +309,11 @@
         </span>
         <el-input-wrap
           v-model="form.cost_center"
+          v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }"
           :data-vv-as="trans('forms.business_case.cost_center.label')"
           name="cost_center"
           :placeholder="trans('forms.business_case.cost_center.hint')"
-          v-mask="'A#####'"
-          v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }">
+          v-mask="'A#####'">
         </el-input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
@@ -335,17 +326,14 @@
             :help="trans('forms.business_case.maintenance_fund.help')">
           </el-popover-wrap>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.maintenance_fund_id"
-            :isLoading="isInfoLoading"
-            name="maintenance_fund_id"
-            :data-vv-as="trans('forms.business_case.maintenance_fund.label')"
-            v-validate="'required'"
-            :options="maintenanceFundList"
-          />
-          <form-error name="maintenance_fund_id"></form-error>
-        </div>
+        <el-select-wrap
+          v-model="form.maintenance_fund_id"
+          :isLoading="isInfoLoading"
+          name="maintenance_fund_id"
+          :data-vv-as="trans('forms.business_case.maintenance_fund.label')"
+          v-validate="'required'"
+          :options="maintenanceFundList"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.maintenance_fund_rationale.label')"
@@ -361,9 +349,9 @@
         </span>
         <el-input-wrap
           v-model="form.maintenance_fund_rationale"
+          v-validate="{ required: form.maintenance_fund_id > 1 }"
           :data-vv-as="trans('forms.business_case.maintenance_fund_rationale.label')"
           name="maintenance_fund_rationale"
-          v-validate="{ required: form.maintenance_fund_id > 1 }"
           maxlength="1250"
           type="textarea">
         </el-input-wrap>
@@ -375,19 +363,16 @@
         <span slot="label-addons">
           <el-popover-wrap
             :description="trans('forms.business_case.salary_fund.description')">
-          </el-popover-wrap>   
+          </el-popover-wrap>
         </span>
-        <div class="wrap-with-errors">
-          <el-select-wrap
-            v-model="form.salary_fund_id"
-            :isLoading="isInfoLoading"
-            name="salary_fund_id"
-            :data-vv-as="trans('forms.business_case.salary_fund.label')"
-            v-validate="'required'"
-            :options="salaryFundList"
-          />
-          <form-error name="salary_fund_id"></form-error>
-        </div>
+        <el-select-wrap
+          v-model="form.salary_fund_id"
+          :isLoading="isInfoLoading"
+          name="salary_fund_id"
+          :data-vv-as="trans('forms.business_case.salary_fund.label')"
+          v-validate="'required'"
+          :options="salaryFundList"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.salary_fund_rationale.label')"
@@ -395,17 +380,17 @@
         :required="form.salary_fund_id > 1">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.salary_fund_rationale.description')"> 
+            :description="trans('forms.business_case.salary_fund_rationale.description')">
           </el-popover-wrap>
           <span class="instruction">
             {{ trans('forms.business_case.salary_fund_rationale.instruction') }}
-          </span>           
+          </span>
         </span>
         <el-input-wrap
           v-model="form.salary_fund_rationale"
+          v-validate="{ required: form.salary_fund_id > 1 }"
           :data-vv-as="trans('forms.business_case.salary_fund_rationale.label')"
           name="salary_fund_rationale"
-          v-validate="{ required: form.salary_fund_id > 1 }"
           maxlength="1250"
           type="textarea">
         </el-input-wrap>
@@ -429,7 +414,7 @@
           </el-popover-wrap>
           <span class="instruction">
             {{ trans('forms.business_case.internal_resources.instruction') }}
-          </span>          
+          </span>
         </span>
         <el-select-other-wrap
           :modelSelect.sync="form.internal_resources"
@@ -453,7 +438,7 @@
 
     <el-tab-pane data-name="risks">
       <span slot="label" :class="{'is-error': errorTabs.includes('risks') }">
-        {{ trans('forms.business_case.tabs.risk') }}
+        {{ $tc('forms.business_case.tabs.risk', 2) }}
       </span>
       <form-section-group
         v-model="form.risks"
@@ -483,9 +468,9 @@
         </span>
         <el-input-wrap
           v-model="form.comment"
+          v-validate="''"
           :data-vv-as="trans('forms.business_case.comment.label')"
           name="comment"
-          v-validate="''"
           maxlength="2500"
           type="textarea">
         </el-input-wrap>
