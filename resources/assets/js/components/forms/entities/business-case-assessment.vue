@@ -183,7 +183,6 @@
       onProcessCancelledChange(isChecked) {
         // if checked, reset the form to null values
         if (isChecked) {
-          this.form.assessment_date = null;
           this.form.process_instance_form_id = null;
           this.form.process_cancellation_rationale = null;
           this.form.assessments.forEach(assessment => {
