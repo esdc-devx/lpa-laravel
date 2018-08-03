@@ -15,13 +15,13 @@
         :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
         :dataVVas="trans('forms.business_case.risks.label')"
-        :validateSelect="{ rules: { required: !this.isRiskTypeOther } }"
+        :validateSelect="{ required: !this.isRiskTypeOther }"
         :options="data.riskTypeList"
         sorted
 
         :nameOther="`${fieldNamePrefix}.risk_type_other`"
         :modelOther.sync="form.risk_type_other"
-        :validateOther="{ rules: { required: this.isRiskTypeOther } }"
+        :validateOther="{ required: this.isRiskTypeOther }"
         :isChecked.sync="isRiskTypeOther"
         maxlength="100"
       />

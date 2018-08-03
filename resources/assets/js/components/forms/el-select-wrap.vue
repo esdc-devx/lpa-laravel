@@ -5,8 +5,6 @@
       v-loading="isLoading"
       element-loading-spinner="el-icon-loading"
       :value="value"
-      v-validate="validate"
-      :data-vv-as="dataVVas"
       :disabled="disabled || isLoading"
       :name="name"
       value-key="name"
@@ -58,14 +56,6 @@
       sorted: {
         type: Boolean,
         default: false
-      },
-      validate: {
-        type: String | Object,
-        default: ''
-      },
-      dataVVas: {
-        type: String,
-        default: this.name
       },
       value: Array | Number
     },
