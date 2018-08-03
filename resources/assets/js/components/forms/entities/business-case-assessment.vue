@@ -13,7 +13,11 @@
             :description="trans('forms.business_case_assessment.is_process_cancelled.description')">
           </el-popover-wrap>
         </span>
-        <el-checkbox v-model="form.is_process_cancelled">{{ trans('forms.business_case_assessment.is_process_cancelled.option') }}</el-checkbox>
+        <el-checkbox
+          v-model="form.is_process_cancelled"
+          @change="onProcessCancelledChange">
+            {{ trans('forms.business_case_assessment.is_process_cancelled.option') }}
+          </el-checkbox>
         <el-collapse-transition>
           <div v-show="form.is_process_cancelled">
             <el-alert
@@ -104,7 +108,7 @@
           {{ trans('forms.business_case_assessment.assessment_comment.instruction') }}
         </span>
         <el-input-wrap
-          v-model="form.assessment_comment"
+          v-model="item.comment"
           :disabled="form.is_process_cancelled"
           v-validate="{ required: item.process_form_decision_id === 2 }"
           :data-vv-as="trans('forms.business_case_assessment.assessment_comment.label')"
@@ -175,6 +179,21 @@
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
+      },
+
+      onProcessCancelledChange(isChecked) {
+        // if checked, reset the form to null values
+        if (isChecked) {
+          this.form.assessment_date = null;
+          this.form.process_instance_form_id = null;
+          this.form.process_cancellation_rationale = null;
+          this.form.assessments.forEach(assessment => {
+            assessment.process_form_decision_id = null;
+            assessment.comment = null;
+          });
+        } else {
+          this.form.process_cancellation_rationale = null;
+        }
       },
 
       async fetchLists() {
