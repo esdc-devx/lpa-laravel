@@ -139,6 +139,7 @@
             v-validate="'required'"
             :options="governmentPrioritiesList"
             multiple
+            sorted
           />
           <form-error name="government_priorities"></form-error>
         </div>
@@ -230,6 +231,9 @@
           <el-popover-wrap
             :description="trans('forms.business_case.communities.description')">
           </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.communities.instruction') }}
+          </span>          
         </span>
         <div class="wrap-with-errors">
           <el-tree-wrap
