@@ -18,7 +18,7 @@ class CreateBusinessCaseAssessmentsTable extends Migration
             $table->unsignedInteger('process_instance_form_id');
             $table->dateTime('assessment_date')->nullable();
             // Gate assessment fields.
-            $table->boolean('is_process_cancelled')->nullable();
+            $table->boolean('is_process_cancelled')->default(0);
             $table->text('process_cancellation_rationale')->nullable();
 
             // Foreign keys.
