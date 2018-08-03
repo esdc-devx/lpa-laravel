@@ -149,7 +149,6 @@
     data() {
       return {
         isInfoLoading: true,
-        is_process_cancelled: true,
         processFormDecisionList: [],
         assessment_date_options: {
           disabledDate(time) {
