@@ -52,7 +52,7 @@
       <el-form-item-wrap
         :label="trans('forms.business_case_assessment.assessment_date.label')"
         prop="assessment_date"
-        :required="!form.is_process_cancelled">
+        required>
         <span slot="label-addons">
           <el-popover-wrap
             :description="trans('forms.business_case_assessment.assessment_date.description')">
