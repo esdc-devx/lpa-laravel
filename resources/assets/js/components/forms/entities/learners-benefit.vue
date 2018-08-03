@@ -18,13 +18,13 @@
         :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.learners_benefit_type_id`"
         :dataVVas="trans('forms.business_case.learners_benefit_type.label')"
-        :validateSelect="{ rules: { required: !this.isLearnersBenefitTypeOther} }"
+        :validateSelect="{ required: !this.isLearnersBenefitTypeOther}"
         :options="data.learnersBenefitTypeList"
         sorted
 
         :nameOther="`${fieldNamePrefix}.learners_benefit_type_other`"
         :modelOther.sync="form.learners_benefit_type_other"
-        :validateOther="{ rules: { required: this.isLearnersBenefitTypeOther} }"
+        :validateOther="{ required: this.isLearnersBenefitTypeOther}"
         :isChecked.sync="isLearnersBenefitTypeOther"
         maxlength="100"
       />

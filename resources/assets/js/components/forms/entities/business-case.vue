@@ -24,14 +24,14 @@
           :isLoading="isInfoLoading"
           nameSelect="request_sources"
           :dataVVas="trans('forms.business_case.request_sources.label')"
-          :validateSelect="{ rules: { required: !this.isRequestSourceOther} }"
+          :validateSelect="{ required: !this.isRequestSourceOther }"
           :options="requestSourceList"
           multiple
           sorted
 
           nameOther="request_source_other"
           :modelOther.sync="form.request_source_other"
-          :validateOther="{ rules: { required: this.isRequestSourceOther} }"
+          :validateOther="{ required: this.isRequestSourceOther}"
           :isChecked.sync="isRequestSourceOther"
           maxlength="100"
         />
@@ -105,14 +105,14 @@
           :isLoading="isInfoLoading"
           nameSelect="potential_solution_types"
           :dataVVas="trans('forms.business_case.potential_solution_types.label')"
-          :validateSelect="{ rules: { required: !this.isPotentialSolutionTypesOther} }"
+          :validateSelect="{ required: !this.isPotentialSolutionTypesOther }"
           :options="potentialSolutionTypesList"
           multiple
           sorted
 
           nameOther="potential_solution_type_other"
           :modelOther.sync="form.potential_solution_type_other"
-          :validateOther="{ rules: { required: this.isPotentialSolutionTypesOther } }"
+          :validateOther="{ required: this.isPotentialSolutionTypesOther }"
           :isChecked.sync="isPotentialSolutionTypesOther"
           maxlength="1250"
           type="textarea"
@@ -421,14 +421,14 @@
           :isLoading="isInfoLoading"
           nameSelect="internal_resources"
           :dataVVas="trans('forms.business_case.internal_resources.label')"
-          :validateSelect="{ rules: { required: !this.isInternalResourceOther } }"
+          :validateSelect="{ required: !this.isInternalResourceOther }"
           :options="internalResourceList"
           multiple
           sorted
 
           nameOther="internal_resource_other"
           :modelOther.sync="form.internal_resource_other"
-          :validateOther="{ rules: { required: this.isInternalResourceOther } }"
+          :validateOther="{ required: this.isInternalResourceOther }"
           :isChecked.sync="isInternalResourceOther"
           maxlength="1250"
           type="textarea"

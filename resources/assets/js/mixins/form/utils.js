@@ -114,7 +114,7 @@ export default {
     checkInvalidTabs() {
       if (document.querySelector("form .el-tabs__nav") !== null) {
         const tabs = document.querySelectorAll("form .el-tab-pane");
-        tabs.forEach((tab) => {
+        tabs.forEach(tab => {
           this.checkTabHasErrors(tab);
         });
       }
@@ -122,21 +122,30 @@ export default {
 
     checkTabHasErrors(tab) {
       const tabName = tab.getAttribute("data-name");
-      let tabErrors = tab.querySelector('.el-form-item__error');
-      // make sure there is no error present in the form
-      // and that no errors are currently being removed from the page
-      if (tabErrors !== null && tab.querySelector('.el-zoom-in-top-leave-active') === null) {
-        if (!this.errorTabs.includes(tabName)) {
-          this.errorTabs.push(tabName);
-        }
-        return true;
-      } else {
+      // cast NodeList to Array
+      let tabErrors = Array.from(tab.querySelectorAll('.el-form-item__error'));
+
+      // if there are no errors, return false
+      if (!tabErrors.length) {
         const index = this.errorTabs.indexOf(tabName);
+        // remove tab from error list
         if (index !== -1) {
           this.errorTabs.splice(index, 1);
         }
         return false;
       }
+
+      // there are errors in the pane
+      // check if there at least one error that is not transitioning
+      return tabErrors.some(error => {
+        if (!error.classList.contains('el-zoom-in-top-leave-active')) {
+          // if not already present in list, add it
+          if (!this.errorTabs.includes(tabName)) {
+            this.errorTabs.push(tabName);
+          }
+          return true;
+        }
+      });
     },
 
     manageBackendErrors(errors) {

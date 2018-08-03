@@ -38,7 +38,7 @@
         <el-input-wrap
           v-model="form.process_cancellation_rationale"
           :disabled="!form.is_process_cancelled"
-          v-validate="{ required: form.is_process_cancelled }"
+          v-validate="{ required: !!form.is_process_cancelled }"
           :data-vv-as="trans('forms.business_case_assessment.process_cancellation_rationale.label')"
           name="process_cancellation_rationale"
           maxlength="2500"
@@ -63,10 +63,10 @@
           type="date"
           value-format="yyyy-MM-dd">
         </el-date-picker>
+        <form-error name="assessment_date"></form-error>
       </el-form-item-wrap>
     </el-tab-pane>
-
-    <el-tab-pane data-name="assessment" v-for="(item, index) in form.assessments" :key="index">
+    <el-tab-pane :data-name="item.assessed_process_form.replace('-', '_')" v-for="(item, index) in form.assessments" :key="index">
       <span slot="label" :class="{'is-error': errorTabs.includes(item.assessed_process_form.replace('-', '_')) }">
         {{ trans(`forms.${item.assessed_process_form.replace('-', '_')}.title`) }}
       </span>
@@ -93,7 +93,7 @@
       <el-form-item-wrap
         :label="trans('forms.business_case_assessment.assessment_comment.label')"
         prop="assessment_comment"
-        :required="form.process_form_decision_id === 2">
+        :required="item.process_form_decision_id === 2">
         <span slot="label-addons">
           <el-popover-wrap
             :description="trans('forms.business_case_assessment.assessment_comment.description')">
@@ -105,7 +105,7 @@
         <el-input-wrap
           v-model="form.assessment_comment"
           :disabled="form.is_process_cancelled"
-          v-validate="{ rules: { required: form.process_form_decision_id === 2 } }"
+          v-validate="{ required: item.process_form_decision_id === 2 }"
           :data-vv-as="trans('forms.business_case_assessment.assessment_comment.label')"
           name="assessment_comment"
           maxlength="2500"
