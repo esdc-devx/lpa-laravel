@@ -5,7 +5,7 @@ return [
         'business_drivers'      => 'Incitatifs administratifs',
         'proposal'              => 'Proposition',
         'timeframe'             => 'Échéancier',
-        'audience'              => 'Public cible',
+        'audience'              => 'Audience',
         'departmental_benefit'  => 'Avantages pour le ministère',
         'learners_benefit'      => 'Avantages pour l\'apprenant',
         'costs'                 => 'Coûts',
@@ -25,12 +25,17 @@ return [
         'description' => 'La liste des priorités du programme de base du gouvernement visées par ce projet.',
     ],
     'request_sources' => [
-        'label'       => 'Source de la demande',
-        'description' => 'La source de la demande.',
+        'label'       => 'Sources de la demande',
+        'instruction' => 'Veuillez sélectionner tous les choix applicables. Si nécessaire, utilisez le champ Autres pour spécifier les choix manquants.',
+        'description' => 'Les sources de la demande.',
+        'help'        => 
+            '<ul>
+                <li><span>Demande du BDPRH ou du BCP</span> : Demande du Bureau du dirigeant principal des ressources humaines ou du Bureau du Conseil privé</li>
+            </ul>',
     ],
     'potential_solution_types' => [
         'label'       => 'Types de solutions potentielles',
-        'instruction' => 'Veuillez sélectionner tous les choix applicables.',
+        'instruction' => 'Veuillez sélectionner tous les choix applicables. Si nécessaire, utilisez le champ Autres pour spécifier les choix manquants.',
         'description' => 'La liste des types de solutions potentielles pour résoudre le problème opérationnel.',
         'help'        => '
             <ul>
@@ -68,6 +73,7 @@ return [
     ],
     'departmental_benefit_type' => [
         'label'       => 'Type',
+        'instruction' => 'Veuillez sélectionner le choix applicable ou utilisez le champ Autre pour spécifier un autre choix.',
         'description' => 'Le type d’avantage pour le ministère.',
     ],
     'departmental_benefit_rationale' => [
@@ -76,6 +82,7 @@ return [
     ],
     'learners_benefit_type' => [
         'label'       => 'Type',
+        'instruction' => 'Veuillez sélectionner le choix applicable ou utilisez le champ Autre pour spécifier un autre choix.',
         'description' => 'Le type d’avantage pour l’apprenant.',
     ],
     'learners_benefit_rationale' => [
@@ -90,13 +97,14 @@ return [
     ],
     'maintenance_fund' => [
         'label'       => 'Estimation des fonds supplémentaires requis pour le fonctionnement et l\'entretien (F et E)',
+        'instruction' => 'Veuillez fournir une description et une justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
         'description' => 'L’estimation des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
         'help'        => 'Également appelé « fonds non salariaux ».',
     ],
     'maintenance_fund_rationale' => [
         'label'       => 'Justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien (F et E)',
-        'instruction' => 'Veuillez fournir une description et une justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
-        'description' => 'La description et la justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
+        'instruction' => 'Veuillez fournir une justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
+        'description' => 'La justification des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
     ],
     'salary_fund' => [
         'label'       => 'Estimation des fonds salariaux supplémentaires requis',
@@ -104,24 +112,24 @@ return [
     ],
     'salary_fund_rationale' => [
         'label'       => 'Justification des fonds salariaux supplémentaires',
-        'instruction' => 'Veuillez fournir une description et une justification des fonds salariaux supplémentaires.',
-        'description' => 'La description et la justification des fonds salariaux supplémentaires requis.',
+        'instruction' => 'Veuillez fournir une justification des fonds salariaux supplémentaires.',
+        'description' => 'La justification des fonds salariaux supplémentaires requis.',
     ],
     'internal_resources' => [
         'label'       => 'Ressources internes requises',
-        'instruction' => 'Veuillez sélectionner tous les choix applicables.',
+        'instruction' => 'Veuillez sélectionner tous les choix applicables. Si nécessaire, utilisez le champ Autres pour spécifier les choix manquants.',
         'description' => 'Une liste des ressources ministérielles qui seront requises pour ce projet.',
         'help'        => '
             <ul>
                 <li><span>Corps professoral</span> : Cette équipe travaille à l’intégration et à la gestion de ses membres. P. ex. : formateurs.</li>
                 <li><span>A/V</span> : Cette équipe prépare les salles pour les cours, événements, etc.</li>
                 <li><span>PON</span> : Cette équipe aide à planifier les opérations au niveau national tel que les offres de cours ou les événements.</li>
-            </ul>
-        '
+            </ul>',
     ],
     'risks' => [
         'label'       => 'Risque',
-        'description' => 'Une description de tout risque, enjeu ou contrainte connus touchant le projet.',
+        'instruction' => 'Veuillez sélectionner le choix applicable ou utilisez le champ Autre pour spécifier un autre choix.',
+        'description' => 'La description de tout risque, enjeu ou contrainte connus touchant le projet.',
     ],
     'risk_impact_level' => [
         'label'       => 'Impact',

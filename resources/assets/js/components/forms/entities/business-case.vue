@@ -12,8 +12,12 @@
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.request_sources.description')">
+            :description="trans('forms.business_case.request_sources.description')"
+            :help="trans('forms.business_case.request_sources.help')">
           </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.request_sources.instruction') }}
+          </span>
         </span>
         <el-select-other-wrap
           :modelSelect.sync="form.request_sources"
@@ -347,6 +351,9 @@
           <el-popover-wrap
             :description="trans('forms.business_case.maintenance_fund_rationale.description')">
           </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.maintenance_fund_rationale.instruction') }}
+          </span>
         </span>
         <el-input-wrap
           v-model="form.maintenance_fund_rationale"
@@ -364,7 +371,7 @@
         <span slot="label-addons">
           <el-popover-wrap
             :description="trans('forms.business_case.salary_fund.description')">
-          </el-popover-wrap>
+          </el-popover-wrap>   
         </span>
         <div class="wrap-with-errors">
           <el-select-wrap
@@ -384,8 +391,11 @@
         :required="form.salary_fund_id > 1">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.salary_fund_rationale.description')">
+            :description="trans('forms.business_case.salary_fund_rationale.description')"> 
           </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.salary_fund_rationale.instruction') }}
+          </span>           
         </span>
         <el-input-wrap
           v-model="form.salary_fund_rationale"
@@ -413,6 +423,9 @@
             :description="trans('forms.business_case.internal_resources.description')"
             :help="trans('forms.business_case.internal_resources.help')">
           </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.internal_resources.instruction') }}
+          </span>          
         </span>
         <el-select-other-wrap
           :modelSelect.sync="form.internal_resources"

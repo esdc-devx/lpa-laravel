@@ -25,8 +25,8 @@ class RequestSourceTableSeeder extends Seeder
                 'name_fr' => 'Changement de politique',
             ],
             [
-                'name_en' => 'Office of the Chief Human Resources Officer (OCHRO) or Privy Council Office (PCO) request',
-                'name_fr' => 'Demande du Bureau du dirigeant principal des ressources humaines (BDPRH) ou du Bureau du Conseil privé (BCP)',
+                'name_en' => 'OCHRO or PCO request',
+                'name_fr' => 'Demande du BDPRH ou du BCP',
             ],
         ];
     }

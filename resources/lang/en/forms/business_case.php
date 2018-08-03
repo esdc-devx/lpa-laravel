@@ -22,15 +22,20 @@ return [
     'government_priorities' => [
         'label'       => 'Government Core Curriculum Priorities',
         'instruction' => 'Please select all options that apply.',
-        'description' => 'The list of the Government Core Curriculum Priorities addressed by this project.',
+        'description' => 'The list of the government core curriculum priorities addressed by this project.',
     ],
     'request_sources' => [
         'label'       => 'Request Source',
+        'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
         'description' => 'The source of the request.',
+        'help'        => '
+            <ul>
+                <li><span>OCHRO or PCO request</span>: Office of the Chief Human Resources Officer or Privy Council Office request</li>
+            </ul>',
     ],
     'potential_solution_types' => [
         'label'       => 'Potential Solution Types',
-        'instruction' => 'Please select all options that apply.',
+        'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
         'description' => 'The list of potential solution types to solve the Business issue.',
         'help'        => '
             <ul>
@@ -38,7 +43,7 @@ return [
             </ul>',
     ],
     'learning_response_strategy' => [
-        'label'       => 'Learning Response Strategy (LRS)',
+        'label'       => 'Learning Response Strategy',
         'instruction' => 'Please provide a high-level overview of your project and how it addresses the gaps and issues described above.',
         'description' => 'The proposed Learning Response Strategy (LRS) description.',
     ],
@@ -68,19 +73,21 @@ return [
     ],
     'departmental_benefit_type' => [
         'label'       => 'Type',
-        'description' => 'The Departmental Benefit type.',
+        'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
+        'description' => 'The departmental benefit type.',
     ],
     'departmental_benefit_rationale' => [
         'label'       => 'Rationale',
-        'description' => 'The Departmental Benefit rationale.',
+        'description' => 'The departmental benefit rationale.',
     ],
     'learners_benefit_type' => [
         'label'       => 'Type',
-        'description' => 'The Learner Benefit type.',
+        'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
+        'description' => 'The learner benefit type.',
     ],
     'learners_benefit_rationale' => [
         'label'       => 'Rationale',
-        'description' => 'The Learner Benefit rationale.',
+        'description' => 'The learner benefit rationale.',
     ],
     'cost_center' => [
         'label'       => 'Cost Center',
@@ -95,8 +102,8 @@ return [
     ],
     'maintenance_fund_rationale' => [
         'label'       => 'Additional Operations and Maintenance (O&M) Funds Rationale',
-        'instruction' => 'Please provide a description and rationale for the additional Operations and Maintenance funds.',
-        'description' => 'The additional Operations and Maintenance funds description and rationale.',
+        'instruction' => 'Please provide a rationale for the additional Operations and Maintenance funds.',
+        'description' => 'The additional Operations and Maintenance funds rationale.',
     ],
     'salary_fund' => [
         'label'       => 'Estimated Additional Salary Funds Required',
@@ -104,12 +111,12 @@ return [
     ],
     'salary_fund_rationale' => [
         'label'       => 'Additional Salary Funds Rationale',
-        'instruction' => 'Please provide a description and rationale for the Salary funds.',
-        'description' => 'The additional Salary funds description and rationale.',
+        'instruction' => 'Please provide a rationale for the Salary funds.',
+        'description' => 'The additional Salary funds rationale.',
     ],
     'internal_resources' => [
         'label'       => 'Required Internal Resources',
-        'instruction' => 'Please select all options that apply.',
+        'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
         'description' => 'A list of the departemental resources that will be required for this project.',
         'help'        => '
             <ul>
@@ -121,7 +128,8 @@ return [
     ],
     'risks' => [
         'label'       => 'Risk',
-        'description' => 'A description of a known constraint, risk or issue affecting the project.',
+        'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
+        'description' => 'The description of a known constraint, risk or issue affecting the project.',
     ],
     'risk_impact_level' => [
         'label'       => 'Impact',
