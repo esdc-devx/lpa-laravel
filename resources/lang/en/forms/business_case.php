@@ -1,16 +1,17 @@
 <?php
 
 return [
+    'title' => 'Business Case',
     'tabs' => [
         'business_drivers'      => 'Business Drivers',
         'proposal'              => 'Proposal',
         'timeframe'             => 'Timeframe',
         'audience'              => 'Audience',
-        'departmental_benefit'  => 'Departmental Benefits',
-        'learners_benefit'      => 'Learners Benefits',
+        'departmental_benefit'  => 'Departmental Benefit|Departmental Benefits',
+        'learners_benefit'      => 'Learners Benefit|Learners Benefits',
         'costs'                 => 'Costs',
         'internal_resources'    => 'Internal Resources',
-        'risk'                  => 'Risks',
+        'risk'                  => 'Risk|Risks',
         'comment'               => 'Comments',
     ],
     'business_issue' => [

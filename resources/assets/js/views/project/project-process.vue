@@ -46,7 +46,7 @@
               :status="
                 step.state.name_key === 'locked' ? 'wait' :
                 step.state.name_key === 'unlocked' ? 'process' :
-                step.state.name_key === 'done' ? 'success' :
+                step.state.name_key === 'done' ? 'finish' :
                 step.state.name_key === 'cancelled' ? 'error' : ''
               "
               :icon="'el-icon-lpa-' + step.state.name_key">
@@ -313,8 +313,8 @@
           @include svg(locked, lighten(map-get($color-form-states, locked), 25%));
         }
         // Completed
-        .el-step__title.is-success, .el-step__description.is-success {
-          color: map-get($color-form-states, success) !important;
+        .el-step__title.is-finish, .el-step__description.is-finish {
+          color: map-get($color-form-states, done) !important;
         }
         // Cancelled
         .el-step__title.is-error, .el-step__description.is-error {
