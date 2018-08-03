@@ -48,7 +48,7 @@
       <el-form-item-wrap
         :label="trans('forms.business_case_assessment.assessment_date.label')"
         prop="assessment_date"
-        required>
+        :required="!form.is_process_cancelled">
         <span slot="label-addons">
           <el-popover-wrap
             :description="trans('forms.business_case_assessment.assessment_date.description')">
@@ -58,6 +58,7 @@
           v-model="form.assessment_date"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case_assessment.assessment_date.label')"
+          :disabled="form.is_process_cancelled"
           name="assessment_date"
           :picker-options="assessment_date_options"
           type="date"
