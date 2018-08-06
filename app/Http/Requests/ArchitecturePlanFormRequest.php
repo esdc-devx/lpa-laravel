@@ -31,7 +31,7 @@ class ArchitecturePlanFormRequest extends FormRequest
                 'planned_products.*.type_id'     => 'required|integer',
                 'planned_products.*.sub_type_id' => 'required|integer',
                 'planned_products.*.quantity'    => 'required|integer|min:1|max:100',
-                'comment'                        => 'string|max:2500',
+                'comment'                        => 'string|nullable|max:2500',
             ];
         }
 

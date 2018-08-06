@@ -11,15 +11,17 @@
         </el-popover-wrap>
       </span>
       <el-cascader
+        :value="typeModel"
         :name="`${fieldNamePrefix}.type`"
-        v-loading="isInfoLoading"
+        v-loading="isLoading"
         element-loading-spinner="el-icon-loading"
         v-validate="'required'"
         :data-vv-as="trans('forms.architecture_plan.type.label')"
-        :options="typeList"
+        :options="data.typeList"
+        :props="typeOptions"
         @change="onTypeChange">
       </el-cascader>
-      <form-error :name="`${fieldNamePrefix}.type`"></form-error>
+      <form-error :name="`${fieldNamePrefix}.type_id`"></form-error>
     </el-form-item-wrap>
     <el-form-item-wrap
       :label="trans('forms.architecture_plan.quantity.label')"
@@ -33,7 +35,7 @@
       <el-input-number
         :name="`${fieldNamePrefix}.quantity`"
         v-model="form.quantity"
-        v-validate="{ required: true, numeric: true, regex: /[0-9]{1,3}/ }"
+        v-validate="{ required: true, numeric: true }"
         :data-vv-as="trans('forms.architecture_plan.quantity.label')"
         v-mask="'###'"
         :min="1"
@@ -81,6 +83,7 @@
       fieldNamePrefix() {
         return 'planned_products.' + this.index;
       },
+
       form: {
         get() {
           return this.value;
@@ -88,6 +91,28 @@
         set(val) {
           this.$emit('update:value', val);
         }
+      },
+
+      typeModel() {
+        return [this.form.type_id, this.form.sub_type_id];
+      }
+    },
+
+    watch: {
+      /**
+       * When the data changes, remove empty children
+       * so that the cascader doesn't try to populate them
+       */
+      'data.typeList': function(list) {
+        let formattedList = _.cloneDeep(list);
+        _.forEach(formattedList, item => {
+          _.forEach(item.children, itemSub => {
+            if (itemSub.children && itemSub.children.length === 0) {
+              delete itemSub.children;
+            }
+          });
+        });
+        this.data.typeList = formattedList;
       }
     },
 
@@ -98,21 +123,22 @@
         defaults: {
           planned_product_type_id: null,
           planned_product_quantity: null
+        },
+
+        typeOptions: {
+          label: 'name',
+          value: 'id'
         }
       };
     },
 
     methods: {
       onTypeChange(value) {
-        let type = value[0];
-        let subType = value[1];
+        let typeId = value[0];
+        let subTypeId = value[1];
 
-        [this.form.type, this.form.subType] = [type, subType];
+        [this.form.type_id, this.form.sub_type_id] = [typeId, subTypeId];
       }
-    },
-
-    mounted() {
-
     }
   };
 </script>

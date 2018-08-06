@@ -1,12 +1,13 @@
 <template>
   <el-tabs v-bind="$attrs" @tab-click="onTabClick">
     <el-tab-pane data-name="planned_product">
-      <span slot="label" :class="{'is-error': errorTabs.includes('planned_product') }"> {{ trans('forms.architecture_plan.tabs.planned_product') }}
+      <span slot="label" :class="{'is-error': errorTabs.includes('planned_product') }">
+        {{ $tc('forms.architecture_plan.tabs.planned_product', 2) }}
       </span>
-      <h2>{{ trans('forms.architecture_plan.tabs.planned_product') }}</h2>
       <form-section-group
         v-model="form.planned_products"
-        entity="planned-product"
+        entityForm="architecture_plan"
+        entitySection="planned-product"
         :data="{
           typeList
         }"
@@ -107,8 +108,8 @@
       async fetchLists() {
         await this.showMainLoading();
         this.isInfoLoading = true;
-        let response = await axios.get('lists?include[]=type');
-        this.typeList = response['type'];
+        let response = await axios.get('lists?include[]=learning-product-type');
+        this.typeList = response.data.data['learning-product-type'];
         this.isInfoLoading = false;
         await this.hideMainLoading();
       }
@@ -124,7 +125,6 @@
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = _.cloneDeep(this.formData);
-      this.bindCheckboxes();
       await this.hideMainLoading();
     },
 

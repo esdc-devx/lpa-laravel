@@ -3,8 +3,8 @@
 return [
     'title' => 'Architecture Plan',
     'tabs' => [
-        'planned_products'       => 'Planned Products',
-        'comments'              => 'Comments',
+        'planned_product'  => 'Planned Product|Planned Products',
+        'comments'         => 'Comments',
     ],
     'type' => [
         'label'       => 'Learning Product Type',
