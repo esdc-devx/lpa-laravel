@@ -145,7 +145,7 @@ class CamundaEventSubscriber
             foreach ($assessments as $assessment) {
                 $variables[camel_case("decision-form-{$assessment->assessed_process_form}")] = [
                     'type'  => 'String',
-                    'value' => $assessment->decision->name_key,
+                    'value' => $assessment->decision->name_key ?? null,
                 ];
             }
         }
