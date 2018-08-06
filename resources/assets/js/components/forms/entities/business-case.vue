@@ -27,7 +27,7 @@
 
           nameOther="request_source_other"
           :modelOther.sync="form.request_source_other"
-          :validateOther="{ required: this.isRequestSourceOther}"
+          :validateOther="{ required: this.isRequestSourceOther }"
           :isChecked.sync="isRequestSourceOther"
           maxlength="100"
         />
