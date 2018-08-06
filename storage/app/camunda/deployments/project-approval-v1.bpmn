@@ -6,57 +6,46 @@
   <bpmn:process id="project-approval" name="Project Approval" isExecutable="true" camunda:historyTimeToLive="P30D">
     <bpmn:laneSet>
       <bpmn:lane id="Lane_0xteu9y" name="SCIC">
-        <bpmn:flowNodeRef>assess-architecture-plan</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>assess-business-case</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>architecture-plan-assessment-decision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>business-case-assessment-decision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assess-business-case</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assess-architecture-plan</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>architecture-plan-assessment-decision</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_02rck8b</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_0q9yvui</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_1h7n5ox" name="Owner">
-        <bpmn:flowNodeRef>prepare-architecture-plan</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>prepare-business-case</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_02rck8b</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>prepare-architecture-plan</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:exclusiveGateway id="business-case-assessment-decision" name="Business Case Assessment Decision?">
-      <bpmn:incoming>SequenceFlow_0stz2fj</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_154xf87</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1181hdz</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_02678ki</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0k7m7l1</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_02678ki" name="Rejected" sourceRef="business-case-assessment-decision" targetRef="prepare-business-case">
+    <bpmn:sequenceFlow id="SequenceFlow_02678ki" name="Form &#10;Rejected" sourceRef="business-case-assessment-decision" targetRef="prepare-business-case">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormBusinessCase == constantDecisionFormRejected}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_1181hdz" name="Approved" sourceRef="business-case-assessment-decision" targetRef="prepare-architecture-plan">
+    <bpmn:sequenceFlow id="SequenceFlow_1181hdz" name="Form &#10;Approved" sourceRef="business-case-assessment-decision" targetRef="prepare-architecture-plan">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormBusinessCase == constantDecisionFormApproved}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0stz2fj" sourceRef="assess-business-case" targetRef="business-case-assessment-decision" />
-    <bpmn:sequenceFlow id="SequenceFlow_0k7m7l1" name="Cancelled" sourceRef="business-case-assessment-decision" targetRef="EndEvent_02rck8b">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormBusinessCase == constantDecisionFormCancelled}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_0k7m7l1" name="Process&#10;Cancelled" sourceRef="business-case-assessment-decision" targetRef="EndEvent_0q9yvui">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isProcessCancelled == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="architecture-plan-assessment-decision" name="Architecture Plan Assessment Decision?">
-      <bpmn:incoming>SequenceFlow_144rfxb</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_108qq7v</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0emknjh</bpmn:outgoing>
-      <bpmn:outgoing>SequenceFlow_0rygfql</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="EndEvent_02rck8b" name="">
-      <bpmn:incoming>SequenceFlow_108qq7v</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_0rygfql</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_0k7m7l1</bpmn:incoming>
-      <bpmn:terminateEventDefinition />
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_144rfxb" sourceRef="assess-architecture-plan" targetRef="architecture-plan-assessment-decision" />
-    <bpmn:sequenceFlow id="SequenceFlow_108qq7v" name="Approved" sourceRef="architecture-plan-assessment-decision" targetRef="EndEvent_02rck8b">
+    <bpmn:sequenceFlow id="SequenceFlow_108qq7v" name="Form&#10;Approved" sourceRef="architecture-plan-assessment-decision" targetRef="EndEvent_02rck8b">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormArchitecturePlan == constantDecisionFormApproved}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0emknjh" name="Rejected" sourceRef="architecture-plan-assessment-decision" targetRef="prepare-architecture-plan">
+    <bpmn:sequenceFlow id="SequenceFlow_0emknjh" name="Form &#10;Rejected" sourceRef="architecture-plan-assessment-decision" targetRef="prepare-architecture-plan">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormArchitecturePlan == constantDecisionFormRejected}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0rygfql" name="Cancelled" sourceRef="architecture-plan-assessment-decision" targetRef="EndEvent_02rck8b">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormArchitecturePlan == constantDecisionFormCancelled}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_0rygfql" name="Process Cancelled" sourceRef="architecture-plan-assessment-decision" targetRef="EndEvent_0q9yvui">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isProcessCancelled == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="prepare-architecture-plan" name="Prepare Architecture Plan" camunda:candidateGroups="${owner}">
+    <bpmn:sequenceFlow id="SequenceFlow_154xf87" sourceRef="assess-business-case" targetRef="business-case-assessment-decision" />
+    <bpmn:userTask id="prepare-architecture-plan" name="Prepare Architecture Plan" camunda:formKey="architecture-plan" camunda:candidateGroups="${owner}">
       <bpmn:extensionElements>
         <camunda:taskListener event="complete">
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
@@ -69,43 +58,39 @@ task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateF
       <bpmn:incoming>SequenceFlow_0emknjh</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0dqnycx</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="assess-architecture-plan" name="Assess Architecture Plan" camunda:candidateGroups="scic">
+    <bpmn:userTask id="assess-architecture-plan" name="Assess Architecture Plan" camunda:formKey="architecture-plan-assessment" camunda:candidateGroups="scic">
       <bpmn:extensionElements>
         <camunda:taskListener event="complete">
-          <camunda:script scriptFormat="javascript"><![CDATA[switch (decisionFormArchitecturePlan) {
+          <camunda:script scriptFormat="javascript"><![CDATA[if (isProcessCancelled) {
 
-   case constantDecisionFormApproved:
+   task.execution.setVariable("stateEntity", constantStateEntityCancelled);
+   task.execution.setVariable("stateProcessInstance", constantStateProcessInstanceCancelled);
+   task.execution.setVariable("stateStepArchitecturePlan", constantStateStepCancelled);
+   task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateFormCancelled);
+ }
+ else {
 
-      task.execution.setVariable("stateEntity", constantStateEntityApproved);
+   switch (decisionFormArchitecturePlan) {
 
-      task.execution.setVariable("stateStepArchitecturePlan", constantStateStepDone);
+      case constantDecisionFormApproved:
 
-      task.execution.setVariable("stateFormArchitecturePlan", constantStateFormDone);
-      task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateFormDone);
+         task.execution.setVariable("stateEntity", constantStateEntityApproved);
+         task.execution.setVariable("stateProcessInstance", constantStateProcessInstanceCompleted);
+         task.execution.setVariable("stateStepArchitecturePlan", constantStateStepDone);
+         task.execution.setVariable("stateFormArchitecturePlan", constantStateFormDone);
+         task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateFormDone);
+         break;
 
-      break;
+      case constantDecisionFormRejected:
 
-   case constantDecisionFormRejected:
+         task.execution.setVariable("stateFormArchitecturePlan",  constantStateFormRejected);
+         task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateFormLocked);
+         break;
 
-      task.execution.setVariable("stateFormArchitecturePlan",  constantStateFormRejected);
-      task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateFormLocked);
+      default:
 
-      break;
-
-   case constantDecisionFormCancelled:
-
-      task.execution.setVariable("stateEntity", constantStateFormCancelled);
-
-      task.execution.setVariable("stateStepArchitecturePlan", constantStateStepCancelled);
-
-      task.execution.setVariable("stateFormArchitecturePlan", constantStateFormDone);
-      task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateFormCancelled);
-
-      break;
-
-   default:
-
-       throw new Error('Unexpected value for the "decisionFormArchitecturePlan" variable: "'+decisionFormArchitecturePlan+'".');
+         throw new Error('Unexpected value for the "decisionFormArchitecturePlan" variable: "'+decisionFormArchitecturePlan+'".');
+   }
 }
 ]]></camunda:script>
         </camunda:taskListener>
@@ -114,70 +99,22 @@ task.execution.setVariable("stateFormArchitecturePlanAssessment", constantStateF
       <bpmn:outgoing>SequenceFlow_144rfxb</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_0dqnycx" sourceRef="prepare-architecture-plan" targetRef="assess-architecture-plan" />
-    <bpmn:userTask id="prepare-business-case" name="Prepare Business Case" camunda:formKey="business-case" camunda:candidateGroups="${owner}">
-      <bpmn:extensionElements>
-        <camunda:formData />
-        <camunda:taskListener event="complete">
-          <camunda:script scriptFormat="javascript"><![CDATA[// Form States
-task.execution.setVariable("stateFormBusinessCase", constantStateFormSubmitted);
-task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormUnlocked);
-]]></camunda:script>
-        </camunda:taskListener>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_02678ki</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_0swmovm</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_10mvl52</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:userTask id="assess-business-case" name="Assess Business Case" camunda:formKey="business-case-assessment" camunda:candidateGroups="scic">
-      <bpmn:extensionElements>
-        <camunda:taskListener event="complete">
-          <camunda:script scriptFormat="javascript"><![CDATA[switch (decisionFormBusinessCase) {
-
-   case constantDecisionFormApproved:
-
-      task.execution.setVariable("stateEntity", constantStateEntityDefined);
-
-      task.execution.setVariable("stateStepBusinessCase", constantStateStepDone);
-      task.execution.setVariable("stateStepArchitecturePlan", constantStateStepUnlocked);
-
-      task.execution.setVariable("stateFormBusinessCase", constantStateFormDone);
-      task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormDone);
-      task.execution.setVariable("stateFormArchitecturePlan", constantStateFormUnlocked);
-
-      break;
-
-   case constantDecisionFormRejected:
-
-      task.execution.setVariable("stateFormBusinessCase",  constantStateFormRejected);
-      task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormLocked);
-
-      break;
-
-   case constantDecisionFormCancelled:
-
-      task.execution.setVariable("stateEntity", constantStateFormCancelled);
-
-      task.execution.setVariable("stateStepBusinessCase", constantStateStepCancelled);
-
-      task.execution.setVariable("stateFormBusinessCase", constantStateFormDone);
-      task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormCancelled);
-
-      break;
-
-   default:
-
-       throw new Error('Unexpected value for the "decisionFormBusinessCase" variable: "'+decisionFormBusinessCase+'".');
-}
-
-
-
-]]></camunda:script>
-        </camunda:taskListener>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_10mvl52</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0stz2fj</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:startEvent id="StartEvent_1" name="">
+    <bpmn:exclusiveGateway id="architecture-plan-assessment-decision" name="Architecture Plan Assessment Decision?">
+      <bpmn:incoming>SequenceFlow_144rfxb</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_108qq7v</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0emknjh</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0rygfql</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_02rck8b" name="Completed">
+      <bpmn:incoming>SequenceFlow_108qq7v</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_0q9yvui" name="Cancelled">
+      <bpmn:incoming>SequenceFlow_0k7m7l1</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0rygfql</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_10mvl52" sourceRef="prepare-business-case" targetRef="assess-business-case" />
+    <bpmn:sequenceFlow id="SequenceFlow_0swmovm" sourceRef="StartEvent_1" targetRef="prepare-business-case" />
+    <bpmn:startEvent id="StartEvent_1" name="Start">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="javascript"><![CDATA[// Process Constants
@@ -188,6 +125,11 @@ execution.setVariable("constantStateEntityDefined", "defined");
 execution.setVariable("constantStateEntityApproved", "approved");
 execution.setVariable("constantStateEntityCancelled", "cancelled");
 
+// Process States
+execution.setVariable("constantStateProcessInstanceActive", "active");
+execution.setVariable("constantStateProcessInstanceCompleted", "completed");
+execution.setVariable("constantStateProcessInstanceCancelled", "cancelled");
+
 // Step States
 execution.setVariable("constantStateStepLocked", "locked");
 execution.setVariable("constantStateStepUnlocked", "unlocked");
@@ -195,20 +137,22 @@ execution.setVariable("constantStateStepDone", "done");
 execution.setVariable("constantStateStepCancelled", "cancelled");
 
 // Form States
-execution.setVariable("constantStateFormLocked", "locked");  
-execution.setVariable("constantStateFormUnlocked", "unlocked");  
-execution.setVariable("constantStateFormSubmitted", "submitted");  
-execution.setVariable("constantStateFormRejected", "rejected");  
-execution.setVariable("constantStateFormDone", "done");  
-execution.setVariable("constantStateFormCancelled", "cancelled");  
+execution.setVariable("constantStateFormLocked", "locked");
+execution.setVariable("constantStateFormUnlocked", "unlocked");
+execution.setVariable("constantStateFormSubmitted", "submitted");
+execution.setVariable("constantStateFormRejected", "rejected");
+execution.setVariable("constantStateFormDone", "done");
+execution.setVariable("constantStateFormCancelled", "cancelled");
 
 // Form Decisions
-execution.setVariable("constantDecisionFormApproved", "approved");  
-execution.setVariable("constantDecisionFormRejected", "rejected");  
-execution.setVariable("constantDecisionFormCancelled", "cancelled");  
-execution.setVariable("constantDecisionFormNone", "none");  
+execution.setVariable("constantDecisionFormApproved", "approved");
+execution.setVariable("constantDecisionFormRejected", "rejected");
+execution.setVariable("constantDecisionFormNone", "none");
 
 // Process Variables
+
+// Process States
+execution.setVariable("stateProcessInstance", constantStateProcessInstanceActive);
 
 // Step States
 execution.setVariable("stateStepBusinessCase", constantStateStepUnlocked);
@@ -228,17 +172,72 @@ execution.setVariable("decisionFormArchitecturePlan", constantDecisionFormNone);
       </bpmn:extensionElements>
       <bpmn:outgoing>SequenceFlow_0swmovm</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="SequenceFlow_0swmovm" sourceRef="StartEvent_1" targetRef="prepare-business-case" />
-    <bpmn:sequenceFlow id="SequenceFlow_10mvl52" sourceRef="prepare-business-case" targetRef="assess-business-case" />
+    <bpmn:userTask id="assess-business-case" name="Assess Business Case" camunda:formKey="business-case-assessment" camunda:candidateGroups="scic">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[if (isProcessCancelled) {
+
+   task.execution.setVariable("stateEntity", constantStateEntityCancelled);
+   task.execution.setVariable("stateProcessInstance", constantStateProcessInstanceCancelled);
+   task.execution.setVariable("stateStepBusinessCase", constantStateStepCancelled);
+   task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormCancelled);
+}
+else {
+
+   switch (decisionFormBusinessCase) {
+
+      case constantDecisionFormApproved:
+
+         task.execution.setVariable("stateEntity", constantStateEntityDefined);
+         task.execution.setVariable("stateStepBusinessCase", constantStateStepDone);
+         task.execution.setVariable("stateStepArchitecturePlan", constantStateStepUnlocked);
+         task.execution.setVariable("stateFormBusinessCase", constantStateFormDone);
+         task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormDone);
+         task.execution.setVariable("stateFormArchitecturePlan", constantStateFormUnlocked);
+         break;
+
+      case constantDecisionFormRejected:
+
+         task.execution.setVariable("stateFormBusinessCase",  constantStateFormRejected);
+         task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormLocked);
+         break;
+
+      default:
+
+         throw new Error('Unexpected value for the "decisionFormBusinessCase" variable: "'+decisionFormBusinessCase+'".');
+   }
+}
+
+
+]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_10mvl52</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_154xf87</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="prepare-business-case" name="Prepare Business Case" camunda:formKey="business-case" camunda:candidateGroups="${owner}">
+      <bpmn:extensionElements>
+        <camunda:formData />
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[// Form States
+task.execution.setVariable("stateFormBusinessCase", constantStateFormSubmitted);
+task.execution.setVariable("stateFormBusinessCaseAssessment", constantStateFormUnlocked);
+]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_02678ki</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0swmovm</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_10mvl52</bpmn:outgoing>
+    </bpmn:userTask>
   </bpmn:process>
   <bpmn:message id="Message_1qm4sjc" name="Message_17o8lnm" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1owbzst">
       <bpmndi:BPMNShape id="Participant_02hnwqb_di" bpmnElement="Participant_02hnwqb">
-        <dc:Bounds x="62" y="131" width="1512" height="482" />
+        <dc:Bounds x="75" y="127" width="1189" height="441" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1fi3xxl_di" bpmnElement="assess-business-case">
-        <dc:Bounds x="323" y="249" width="100" height="80" />
+        <dc:Bounds x="315" y="249" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0olg0zg_di" bpmnElement="business-case-assessment-decision" isMarkerVisible="true">
         <dc:Bounds x="520" y="264" width="50" height="50" />
@@ -247,131 +246,134 @@ execution.setVariable("decisionFormArchitecturePlan", constantDecisionFormNone);
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="198" y="462" width="36" height="36" />
+        <dc:Bounds x="190" y="462" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="204" y="498" width="25" height="12" />
+          <dc:Bounds x="197" y="498" width="25" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1y25eey_di" bpmnElement="prepare-business-case">
-        <dc:Bounds x="323" y="440" width="100" height="80" />
+        <dc:Bounds x="315" y="440" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_10mvl52_di" bpmnElement="SequenceFlow_10mvl52">
-        <di:waypoint xsi:type="dc:Point" x="373" y="440" />
-        <di:waypoint xsi:type="dc:Point" x="373" y="329" />
+        <di:waypoint xsi:type="dc:Point" x="365" y="440" />
+        <di:waypoint xsi:type="dc:Point" x="365" y="329" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="343" y="379" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0stz2fj_di" bpmnElement="SequenceFlow_0stz2fj">
-        <di:waypoint xsi:type="dc:Point" x="423" y="289" />
-        <di:waypoint xsi:type="dc:Point" x="520" y="289" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="426.5" y="268" width="90" height="12" />
+          <dc:Bounds x="335" y="379" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_144rfxb_di" bpmnElement="SequenceFlow_144rfxb">
-        <di:waypoint xsi:type="dc:Point" x="925" y="289" />
-        <di:waypoint xsi:type="dc:Point" x="1090" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="821" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="934" y="289" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="962.5" y="268" width="90" height="12" />
+          <dc:Bounds x="832.5" y="268" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0dqnycx_di" bpmnElement="SequenceFlow_0dqnycx">
-        <di:waypoint xsi:type="dc:Point" x="875" y="440" />
-        <di:waypoint xsi:type="dc:Point" x="875" y="385" />
-        <di:waypoint xsi:type="dc:Point" x="875" y="385" />
-        <di:waypoint xsi:type="dc:Point" x="875" y="329" />
+        <di:waypoint xsi:type="dc:Point" x="771" y="440" />
+        <di:waypoint xsi:type="dc:Point" x="771" y="385" />
+        <di:waypoint xsi:type="dc:Point" x="771" y="385" />
+        <di:waypoint xsi:type="dc:Point" x="771" y="329" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="845" y="379" width="90" height="12" />
+          <dc:Bounds x="741" y="379" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1181hdz_di" bpmnElement="SequenceFlow_1181hdz">
-        <di:waypoint xsi:type="dc:Point" x="545" y="264" />
-        <di:waypoint xsi:type="dc:Point" x="545" y="227" />
-        <di:waypoint xsi:type="dc:Point" x="713" y="227" />
-        <di:waypoint xsi:type="dc:Point" x="713" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="825" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="570" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="641" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="641" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="721" y="480" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="545" y="207.16230366492158" width="50" height="12" />
+          <dc:Bounds x="574.8650161888374" y="252.21615055437394" width="50" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_02678ki_di" bpmnElement="SequenceFlow_02678ki">
         <di:waypoint xsi:type="dc:Point" x="545" y="314" />
         <di:waypoint xsi:type="dc:Point" x="545" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="423" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="415" y="480" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="556" y="308" width="45" height="12" />
+          <dc:Bounds x="556" y="308" width="45" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0swmovm_di" bpmnElement="SequenceFlow_0swmovm">
-        <di:waypoint xsi:type="dc:Point" x="234" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="275" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="275" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="323" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="226" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="267" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="267" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="315" y="480" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="245" y="474" width="90" height="12" />
+          <dc:Bounds x="237" y="474" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Lane_0xteu9y_di" bpmnElement="Lane_0xteu9y">
-        <dc:Bounds x="92" y="131" width="1482" height="247" />
+        <dc:Bounds x="105" y="127" width="1159" height="251" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1h7n5ox_di" bpmnElement="Lane_1h7n5ox">
-        <dc:Bounds x="92" y="378" width="1482" height="235" />
+        <dc:Bounds x="105" y="378" width="1159" height="190" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_1cg3z13_di" bpmnElement="architecture-plan-assessment-decision" isMarkerVisible="true">
-        <dc:Bounds x="1090" y="264" width="50" height="50" />
+        <dc:Bounds x="934" y="264" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1013" y="246" width="88" height="36" />
+          <dc:Bounds x="857" y="246" width="88" height="36" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_108qq7v_di" bpmnElement="SequenceFlow_108qq7v">
-        <di:waypoint xsi:type="dc:Point" x="1115" y="264" />
-        <di:waypoint xsi:type="dc:Point" x="1115" y="224" />
-        <di:waypoint xsi:type="dc:Point" x="1456" y="224" />
-        <di:waypoint xsi:type="dc:Point" x="1456" y="462" />
+        <di:waypoint xsi:type="dc:Point" x="984" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="1053" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="1053" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="1144" y="289" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1115" y="203.69417580055875" width="50" height="12" />
+          <dc:Bounds x="990" y="252" width="50" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0emknjh_di" bpmnElement="SequenceFlow_0emknjh">
-        <di:waypoint xsi:type="dc:Point" x="1115" y="314" />
-        <di:waypoint xsi:type="dc:Point" x="1115" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="925" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="314" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="821" y="480" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1127" y="308" width="45" height="12" />
+          <dc:Bounds x="971" y="308" width="45" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_1ldjwvv_di" bpmnElement="prepare-architecture-plan">
-        <dc:Bounds x="825" y="440" width="100" height="80" />
+        <dc:Bounds x="721" y="440" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_11nca8u_di" bpmnElement="assess-architecture-plan">
-        <dc:Bounds x="825" y="249" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_19jlgwk_di" bpmnElement="EndEvent_02rck8b">
-        <dc:Bounds x="1438" y="462" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1413" y="502" width="88" height="12" />
-        </bpmndi:BPMNLabel>
+        <dc:Bounds x="721" y="249" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0rygfql_di" bpmnElement="SequenceFlow_0rygfql">
-        <di:waypoint xsi:type="dc:Point" x="1140" y="289" />
-        <di:waypoint xsi:type="dc:Point" x="1207" y="289" />
-        <di:waypoint xsi:type="dc:Point" x="1207" y="480" />
-        <di:waypoint xsi:type="dc:Point" x="1438" y="480" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="264" />
+        <di:waypoint xsi:type="dc:Point" x="959" y="227" />
+        <di:waypoint xsi:type="dc:Point" x="1144" y="227" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1144.5" y="267.7760115606937" width="51" height="12" />
+          <dc:Bounds x="947.5970772442589" y="190" width="51" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0k7m7l1_di" bpmnElement="SequenceFlow_0k7m7l1">
-        <di:waypoint xsi:type="dc:Point" x="570" y="289" />
-        <di:waypoint xsi:type="dc:Point" x="628" y="289" />
-        <di:waypoint xsi:type="dc:Point" x="628" y="566" />
-        <di:waypoint xsi:type="dc:Point" x="1456" y="566" />
-        <di:waypoint xsi:type="dc:Point" x="1456" y="498" />
+        <di:waypoint xsi:type="dc:Point" x="545" y="264" />
+        <di:waypoint xsi:type="dc:Point" x="545" y="179" />
+        <di:waypoint xsi:type="dc:Point" x="1162" y="179" />
+        <di:waypoint xsi:type="dc:Point" x="1162" y="209" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="570.1588235294117" y="267.4999999999999" width="51" height="12" />
+          <dc:Bounds x="548.3501527908217" y="184.72819215366226" width="51" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0ckpd8x_di" bpmnElement="EndEvent_02rck8b">
+        <dc:Bounds x="1144" y="271" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1134" y="319" width="55" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_154xf87_di" bpmnElement="SequenceFlow_154xf87">
+        <di:waypoint xsi:type="dc:Point" x="415" y="289" />
+        <di:waypoint xsi:type="dc:Point" x="520" y="289" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="467.5" y="268" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0q9yvui_di" bpmnElement="EndEvent_0q9yvui">
+        <dc:Bounds x="1144.012987012987" y="208.85227272727275" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1137" y="249" width="51" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

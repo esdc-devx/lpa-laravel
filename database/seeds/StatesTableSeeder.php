@@ -71,6 +71,11 @@ class StatesTableSeeder extends Seeder
                     'name_en'  => 'Cancelled',
                     'name_fr'  => 'Annulé'
                 ],
+                [
+                    'name_key' => 'cancelled',
+                    'name_en' => 'Cancelled',
+                    'name_fr' => 'Annulé'
+                ],
             ],
             'process-step' => [
                 [

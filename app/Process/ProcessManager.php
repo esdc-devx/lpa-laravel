@@ -202,11 +202,6 @@ class ProcessManager {
         $this->processInstance->state()->associate($this->processStates['process-instance']);
         $this->processInstance->save();
 
-        // Update entity state.
-        $entity = entity($this->processInstance->entity_type)->findOrFail($this->processInstance->entity_id);
-        $entity->state()->associate($this->processStates['entity']);
-        $entity->save();
-
         // Update process instance steps state.
         foreach ($this->processInstance->steps as $step) {
             $step->state()->associate($this->processStates["step-{$step->definition->name_key}"]);
@@ -226,6 +221,18 @@ class ProcessManager {
                 $form->save();
             }
         }
+
+        // Fetch entity associated with process instance.
+        $entity = entity($this->processInstance->entity_type)->findOrFail($this->processInstance->entity_id);
+
+        // If process instance is no longer active in Camunda, remove mapping with entity.
+        if ($this->processStates['process-instance']->name_key !== 'active') {
+            $entity->currentProcess()->dissociate();
+        }
+
+        // Update entity state.
+        $entity->state()->associate($this->processStates['entity']);
+        $entity->save();
 
         return $this;
     }
@@ -266,16 +273,17 @@ class ProcessManager {
                 case starts_with($state, 'form'):
                     $key = "process-form.{$variable->value}";
                     break;
+                case $state == 'process-instance':
+                    $key = "process-instance.{$variable->value}";
+                    break;
+                default;
+                    $key = null;
             }
-            $this->processStates[$state] = $states[$key];
+
+            if ($key && ($stateModelInstance = $states[$key] ?? null)) {
+                $this->processStates[$state] = $stateModelInstance;
+            }
         });
-
-        // Resolve and format process instance state from Camunda.
-        $processInstanceState = $this->camunda->processes()->getInstance($this->processInstance->engine_process_instance_id)->state;
-        $processInstanceState = strtolower(str_replace('_', '-', $processInstanceState));
-
-        // Map Camunda process instance state to its state model instance.
-        $this->processStates['process-instance'] = $states["process-instance.$processInstanceState"];
 
         return $this;
     }

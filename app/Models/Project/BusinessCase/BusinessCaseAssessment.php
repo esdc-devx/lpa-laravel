@@ -7,6 +7,7 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 
 class BusinessCaseAssessment extends ProcessInstanceFormDataModel
 {
+    protected $hidden = ['process_instance_form_id'];
     protected $fillable = ['process_instance_form_id', 'is_process_cancelled', 'process_cancellation_rationale', 'assessment_date'];
     protected $casts = [
         'is_process_cancelled' => 'boolean'
