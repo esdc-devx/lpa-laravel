@@ -151,10 +151,10 @@ class CamundaEventSubscriber
         }
 
         // If form contains a cancellation decision on the process, return it back to Camunda.
-        if ($isProcessCancelled = $processInstanceFormData->is_process_cancelled ?? null) {
+        if (isset($processInstanceFormData->is_process_cancelled)) {
             $variables['isProcessCancelled'] = [
                 'type'  => 'Boolean',
-                'value' => $isProcessCancelled,
+                'value' => $processInstanceFormData->is_process_cancelled,
             ];
         }
 
