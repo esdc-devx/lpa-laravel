@@ -6,6 +6,8 @@ use App\Models\BaseModel;
 
 class ProcessInstanceFormDataModel extends BaseModel
 {
+    protected $hidden = ['process_instance_form_id'];
+
     public $timestamps = false;
     public $relationships = [];
 

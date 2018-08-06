@@ -248,6 +248,7 @@ return [
 
     // Used to resolve model class from a string, usually stored into the database or as a route parameter.
     'entity_types' => [
+        'architecture-plan'         => App\Models\Project\ArchitecturePlan\ArchitecturePlan::class,
         'business-case'             => App\Models\Project\BusinessCase\BusinessCase::class,
         'business-case-assessment'  => App\Models\Project\BusinessCase\BusinessCaseAssessment::class,
         'community'                 => App\Models\Community::class,
@@ -255,8 +256,10 @@ return [
         'government-priority'       => App\Models\Project\BusinessCase\GovernmentPriority::class,
         'internal-resource'         => App\Models\Project\BusinessCase\InternalResource::class,
         'learners-benefit-type'     => App\Models\Project\BusinessCase\LearnersBenefitType::class,
+        'learning-product-type'     => App\Models\LearningProduct\LearningProductType::class,
         'maintenance-fund'          => App\Models\Project\BusinessCase\MaintenanceFund::class,
         'organizational-unit'       => App\Models\OrganizationalUnit::class,
+        'planned-product'           => App\Models\Project\ArchitecturePlan\ArchitecturePlan::class,
         'potential-solution-type'   => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'process-form-decision'     => App\Models\Process\ProcessFormDecision::class,
         'project'                   => App\Models\Project\Project::class,
