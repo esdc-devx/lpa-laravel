@@ -18,13 +18,13 @@
         :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
         :dataVVas="trans('forms.business_case.risks.label')"
-        :validateSelect="{ rules: { required: !this.isRiskTypeOther } }"
+        :validateSelect="{ required: !this.isRiskTypeOther }"
         :options="data.riskTypeList"
         sorted
 
         :nameOther="`${fieldNamePrefix}.risk_type_other`"
         :modelOther.sync="form.risk_type_other"
-        :validateOther="{ rules: { required: this.isRiskTypeOther } }"
+        :validateOther="{ required: this.isRiskTypeOther }"
         :isChecked.sync="isRiskTypeOther"
         maxlength="100"
       />
@@ -38,17 +38,14 @@
           :description="trans('forms.business_case.risk_impact_level.description')">
         </el-popover-wrap>
       </span>
-      <div class="wrap-with-errors">
-        <el-select-wrap
-          v-model="form.risk_impact_level_id"
-          :isLoading="isLoading"
-          :name="`${fieldNamePrefix}.risk_impact_level_id`"
-          :data-vv-as="trans('forms.business_case.risk_impact_level.label')"
-          v-validate="'required'"
-          :options="data.impactLevelList"
-        />
-        <form-error :name="`${fieldNamePrefix}.risk_impact_level_id`"></form-error>
-      </div>
+      <el-select-wrap
+        v-model="form.risk_impact_level_id"
+        :isLoading="isLoading"
+        :name="`${fieldNamePrefix}.risk_impact_level_id`"
+        :data-vv-as="trans('forms.business_case.risk_impact_level.label')"
+        v-validate="'required'"
+        :options="data.impactLevelList"
+      />
     </el-form-item-wrap>
     <el-form-item-wrap
       :label="trans('forms.business_case.risk_probability_level.label')"
@@ -59,17 +56,14 @@
           :description="trans('forms.business_case.risk_probability_level.description')">
         </el-popover-wrap>
       </span>
-      <div class="wrap-with-errors">
-        <el-select-wrap
-          v-model="form.risk_probability_level_id"
-          :isLoading="isLoading"
-          :name="`${fieldNamePrefix}.risk_probability_level`"
-          :data-vv-as="trans('forms.business_case.risk_probability_level.label')"
-          v-validate="'required'"
-          :options="data.probabilityLevelList"
-        />
-        <form-error :name="`${fieldNamePrefix}.risk_probability_level_id`"></form-error>
-      </div>
+      <el-select-wrap
+        v-model="form.risk_probability_level_id"
+        :isLoading="isLoading"
+        :name="`${fieldNamePrefix}.risk_probability_level`"
+        :data-vv-as="trans('forms.business_case.risk_probability_level.label')"
+        v-validate="'required'"
+        :options="data.probabilityLevelList"
+      />
     </el-form-item-wrap>
     <el-form-item-wrap
       :label="trans('forms.business_case.risk_rationale.label')"
@@ -85,9 +79,9 @@
       </span>
       <el-input-wrap
         v-model="form.rationale"
+        v-validate="'required'"
         :data-vv-as="trans('forms.business_case.risk_rationale.label')"
         :name="`${fieldNamePrefix}.rationale`"
-        v-validate="'required'"
         maxlength="1250"
         type="textarea">
       </el-input-wrap>

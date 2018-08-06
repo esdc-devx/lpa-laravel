@@ -2,11 +2,10 @@
 
 namespace App\Models\Project\BusinessCase;
 
-use App\Models\BaseModel;
 use App\Models\Community;
-use App\Models\Process\ProcessInstanceForm;
+use App\Models\Process\ProcessInstanceFormDataModel;
 
-class BusinessCase extends BaseModel
+class BusinessCase extends ProcessInstanceFormDataModel
 {
     protected $hidden = ['process_instance_form_id'];
 
@@ -16,8 +15,6 @@ class BusinessCase extends BaseModel
         'maintenance_fund_id', 'maintenance_fund_rationale', 'salary_fund_id', 'salary_fund_rationale', 'comment', 'internal_resource_other',
     ];
 
-    public $timestamps = false;
-
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
         // Multiple choice lists.
@@ -25,12 +22,6 @@ class BusinessCase extends BaseModel
         // Complex data.
         'departmentalBenefits', 'learnersBenefits', 'risks',
     ];
-
-    public function processInstanceForm()
-    {
-        return $this->belongsTo(ProcessInstanceForm::class)
-            ->with('state', 'organizationalUnit', 'currentEditor', 'updatedBy');
-    }
 
     public function requestSources()
     {
@@ -89,7 +80,6 @@ class BusinessCase extends BaseModel
 
     public function saveFormData(array $data)
     {
-        // Synchronize one to many relationships.
         $this->syncRelationships($data, [
             'requestSources',
             'potentialSolutionTypes',
@@ -98,18 +88,12 @@ class BusinessCase extends BaseModel
             'internalResources',
         ]);
 
-        // Synchronize one to many relationships and also create/update/delete related models.
         $this->syncRelatedModels($data, [
             'departmentalBenefits',
             'learnersBenefits',
             'risks',
         ]);
 
-        // Update properties on business case.
-        $this->update($data);
-
-        // Return model with all of its updated relationships
-        // and format list output to only return ids.
-        return $this->load($this->relationships)->formatListsOutput();
+        parent::saveFormData($data);
     }
 }

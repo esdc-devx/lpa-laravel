@@ -35,7 +35,7 @@
           <div slot="header">
             <h3>{{ viewingProcess.definition.name }}</h3>
           </div>
-          <el-steps :active="activeStep" finish-status="success" align-center>
+          <el-steps :active="activeStep" finish-status="finish" align-center>
             <el-step
               v-for="(step, index) in steps"
               :class="{ 'is-selected': selectedIndex === index }"
@@ -46,7 +46,7 @@
               :status="
                 step.state.name_key === 'locked' ? 'wait' :
                 step.state.name_key === 'unlocked' ? 'process' :
-                step.state.name_key === 'done' ? 'success' :
+                step.state.name_key === 'done' ? 'finish' :
                 step.state.name_key === 'cancelled' ? 'error' : ''
               "
               :icon="'el-icon-lpa-' + step.state.name_key">
@@ -299,6 +299,13 @@
           .el-step__title.is-wait, .el-step__description.is-wait {
             color: map-get($color-form-states, locked) !important;
           }
+          // Cancelled
+          .el-step__head.is-error .el-step__icon-inner {
+            @include svg(cancelled, map-get($color-form-states, cancelled));
+          }
+          .el-step__title.is-error, .el-step__description.is-error {
+            color: map-get($color-form-states, cancelled) !important;
+          }
         }
 
         // Unlocked
@@ -313,12 +320,19 @@
           @include svg(locked, lighten(map-get($color-form-states, locked), 25%));
         }
         // Completed
-        .el-step__title.is-success, .el-step__description.is-success {
-          color: map-get($color-form-states, success) !important;
+        .el-step__title.is-finish, .el-step__description.is-finish {
+          color: map-get($color-form-states, done) !important;
         }
         // Cancelled
         .el-step__title.is-error, .el-step__description.is-error {
-          color: map-get($color-form-states, cancelled) !important;
+          color: lighten(map-get($color-form-states, cancelled), 25%) !important;
+        }
+        .el-step__head.is-error .el-step__icon-inner {
+          @include svg(cancelled, lighten(map-get($color-form-states, cancelled), 25%));
+          &:before {
+            // remove the elementui default icon
+            content: '';
+          }
         }
       }
 

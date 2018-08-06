@@ -45,7 +45,7 @@ class RouteServiceProvider extends ServiceProvider
         // Resolve process instance form with its form data entity.
         Route::bind('processInstanceFormData', function ($processInstanceFormId) {
             $processInstanceForm = ProcessInstanceForm::with([
-                'definition', 'state', 'organizationalUnit', 'currentEditor', 'updatedBy', 'formData',
+                'definition', 'state', 'organizationalUnit', 'currentEditor', 'updatedBy',
             ])->findOrFail($processInstanceFormId);
             // Format form data lists as an array of ids to make it easier when working with forms.
             $processInstanceForm->formData->formatListsOutput();

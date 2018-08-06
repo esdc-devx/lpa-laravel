@@ -99,13 +99,14 @@
 
   // Forms
   import BusinessCase from '@components/forms/entities/business-case';
+  import BusinessCaseAssessment from '@components/forms/entities/business-case-assessment';
 
   let namespace = 'projects';
 
   export default {
     name: 'project-process-form',
 
-    components: { InfoBox, BusinessCase },
+    components: { InfoBox, BusinessCase, BusinessCaseAssessment },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -369,6 +370,10 @@
         this.formData = _.cloneDeep(this.originalFormData);
       },
 
+      async triggerLoadProcessFormInfo() {
+        await this.loadProcessInstanceForm(this.formId);
+      },
+
       async fetch() {
         try {
           await this.showMainLoading();
@@ -412,6 +417,7 @@
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
         EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
+        EventBus.$off('Store:languageUpdate', this.triggerLoadProcessFormInfo);
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
           this.isClaiming = false;
@@ -432,6 +438,7 @@
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
+      EventBus.$on('Store:languageUpdate', this.triggerLoadProcessFormInfo);
       this.fetch();
     }
   };

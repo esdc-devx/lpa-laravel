@@ -1,24 +1,31 @@
 <template>
-  <el-tree
-    ref="tree"
-    v-bind="$attrs"
-    :data="data"
-    :props=" { label: labelKey }"
-    default-expand-all
-    :default-checked-keys="value"
-    :expand-on-click-node="false"
-    :check-on-click-node="!elForm.disabled"
-    show-checkbox
-    node-key="id"
-    @check="handleCheckChange">
-  </el-tree>
+  <div class="el-tree-wrap">
+    <el-tree
+      ref="tree"
+      v-bind="$attrs"
+      :data="data"
+      :props=" { label: labelKey }"
+      default-expand-all
+      :default-checked-keys="value"
+      :expand-on-click-node="false"
+      :check-on-click-node="!elForm.disabled"
+      show-checkbox
+      node-key="id"
+      @check="handleCheckChange">
+    </el-tree>
+    <form-error :name="name"></form-error>
+  </div>
 </template>
 
 <script>
+  import FormError from './error.vue';
+
   export default {
     name: 'el-tree-wrap',
 
     inheritAttrs: false,
+
+    components: { FormError },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -30,6 +37,10 @@
     props: {
       data: {
         type: Array,
+        required: true
+      },
+      name: {
+        type: String,
         required: true
       },
       labelKey: String,

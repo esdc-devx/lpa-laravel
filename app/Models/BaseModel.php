@@ -47,23 +47,27 @@ class BaseModel extends Model
     protected function syncRelatedModels($data, $relationships)
     {
         foreach ($relationships as $relationship) {
-            $key = snake_case($relationship);
-            if (isset($data[$key])) {
+            // Check if there is some data for the relationship.
+            if ($attribute = $data[snake_case($relationship)] ?? null) {
                 $ids = [];
-                $relatedModelClassName = get_class($this->{$relationship}()->getRelated());
+                $relationClass = class_basename($this->{$relationship}());
+                $relatedModelClass = get_class($this->{$relationship}()->getRelated());
 
-                // Create or update related models.
-                foreach ($data[$key] as $item) {
-                    $ids[] = $relatedModelClassName::updateOrCreate(['id' => $item['id'] ?? null], $item)->id;
+                // Create or update all related models and store their ids to
+                // synchronize them (if necessary).
+                foreach ($attribute as $item) {
+                    $ids[] = $relatedModelClass::updateOrCreate(['id' => $item['id'] ?? null], $item)->id;
                 }
 
-                // Synchronize relationships.
-                $this->{$relationship}()->sync($ids);
+                // If relation is many to many, we also need to synchronize relationships.
+                if ($relationClass === 'BelongsToMany') {
+                    $this->{$relationship}()->sync($ids);
+                }
 
                 // Delete model entries that are no longer referenced.
                 $previous = $this->{$relationship}->pluck('id');
                 $remove = $previous->diff($ids)->values()->all();
-                $relatedModelClassName::destroy($remove);
+                $relatedModelClass::destroy($remove);
             }
         }
     }

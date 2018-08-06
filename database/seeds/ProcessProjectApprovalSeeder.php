@@ -4,6 +4,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessStep;
 use App\Models\Process\ProcessForm;
+use App\Models\Process\ProcessFormAssessment;
 
 class ProcessProjectApprovalSeeder extends Seeder
 {
@@ -21,14 +22,16 @@ class ProcessProjectApprovalSeeder extends Seeder
                     'name_fr'  => 'Analyse de rentabilisation',
                     'forms'    => [
                         [
-                            'name_key' => 'business-case',
-                            'name_en'  => 'Business Case',
-                            'name_fr'  => 'Analyse de rentabilisation'
+                            'name_key'    => 'business-case',
+                            'name_en'     => 'Business Case',
+                            'name_fr'     => 'Analyse de rentabilisation',
+                            'assessments' => [],
                         ],
                         [
-                            'name_key' => 'business-case-assessment',
-                            'name_en'  => 'Business Case Assessment',
-                            'name_fr'  => 'Évaluation de l\'analyse de rentabilisation'
+                            'name_key'    => 'business-case-assessment',
+                            'name_en'     => 'Business Case Assessment',
+                            'name_fr'     => 'Évaluation de l\'analyse de rentabilisation',
+                            'assessments' => ['business-case'],
                         ],
                     ]
                 ],
@@ -38,14 +41,16 @@ class ProcessProjectApprovalSeeder extends Seeder
                     'name_fr'  => 'Plan d\'architecture',
                     'forms'    => [
                         [
-                            'name_key' => 'architecture-plan',
-                            'name_en'  => 'Architecture Plan',
-                            'name_fr'  => 'Plan d\'architecture'
+                            'name_key'    => 'architecture-plan',
+                            'name_en'     => 'Architecture Plan',
+                            'name_fr'     => 'Plan d\'architecture',
+                            'assessments' => [],
                         ],
                         [
-                            'name_key' => 'architecture-plan-assessment',
-                            'name_en'  => 'Architecture Plan Assessment',
-                            'name_fr'  => 'Évaluation du plan d\'architecture'
+                            'name_key'    => 'architecture-plan-assessment',
+                            'name_en'     => 'Architecture Plan Assessment',
+                            'name_fr'     => 'Évaluation du plan d\'architecture',
+                            'assessments' => ['architecture-plan'],
                         ],
                     ]
                 ],
@@ -82,13 +87,21 @@ class ProcessProjectApprovalSeeder extends Seeder
 
             // Generate process forms data.
             foreach ($step['forms'] as $key => $form) {
-                ProcessForm::create([
+                $formId = ProcessForm::create([
                     'process_step_id'  => $stepId,
                     'name_key'         => $form['name_key'],
                     'name_en'          => $form['name_en'],
                     'name_fr'          => $form['name_fr'],
                     'display_sequence' => $key,
-                ]);
+                ])->id;
+
+                // Generate form assessments mapping.
+                foreach ($form['assessments'] as $assessment) {
+                    ProcessFormAssessment::create([
+                        'process_form_id'       => $formId,
+                        'assessed_process_form' => $assessment,
+                    ]);
+                }
             }
         }
     }

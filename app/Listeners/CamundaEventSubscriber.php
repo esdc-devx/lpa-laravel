@@ -84,11 +84,17 @@ class CamundaEventSubscriber
         }
     }
 
+    /**
+     * Handle process instance form submission event.
+     */
     public function onProcessInstanceFormSubmit($event)
     {
-        // Complete task associated with process instance form.
-        //@todo: Add some logic to pass in some variables back to Camunda when submitting a form assessment.
-        $this->camunda->tasks()->complete($event->processInstanceForm->engine_task_id);
+        // Complete task associated with process instance form and
+        // send some variables back to Camunda.
+        $this->camunda->tasks()->complete(
+            $event->processInstanceForm->engine_task_id,
+            $this->getFormDataVariables($event->processInstanceForm->formData)
+        );
 
         // Update process instance variables and tasks.
         \Process::load($event->processInstanceForm->step->processInstance)->updateProcessInstance();
@@ -121,6 +127,40 @@ class CamundaEventSubscriber
         foreach (array_diff($camundaGroups, $currentGroups) as $groupId) {
             $this->camunda->groups()->remove($user, $groupId);
         }
+    }
+
+    /**
+     * Retrieve form assessments decisions and format them into an array to be
+     * sent back to Camunda when completing a task.
+     *
+     * @param  App\Models\Process\ProcessInstanceFormDataModel $processInstanceFormData
+     * @return array
+     */
+    protected function getFormDataVariables($processInstanceFormData)
+    {
+        $variables = [];
+
+        // If form data contains any assessments, return decisions back to Camunda.
+        if ($assessments = $processInstanceFormData->assessments ?? null) {
+            foreach ($assessments as $assessment) {
+                $variables[camel_case("decision-form-{$assessment->assessed_process_form}")] = [
+                    'type'  => 'String',
+                    'value' => $assessment->decision->name_key ?? null,
+                ];
+            }
+        }
+
+        // If form contains a cancellation decision on the process, return it back to Camunda.
+        if (isset($processInstanceFormData->is_process_cancelled)) {
+            $variables['isProcessCancelled'] = [
+                'type'  => 'Boolean',
+                'value' => $processInstanceFormData->is_process_cancelled,
+            ];
+        }
+
+        // @note: Could maybe add a method on the ProcessInstanceFormDataModel to send back other form variables when needed.
+
+        return ! empty($variables) ? $variables : null;
     }
 
     /**

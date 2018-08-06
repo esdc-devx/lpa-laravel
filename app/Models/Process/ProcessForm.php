@@ -10,4 +10,9 @@ class ProcessForm extends LocalizableModel
     protected $localizable = ['name'];
 
     public $timestamps = false;
+
+    public function assessments()
+    {
+        return $this->hasMany(ProcessFormAssessment::class, 'process_form_id');
+    }
 }

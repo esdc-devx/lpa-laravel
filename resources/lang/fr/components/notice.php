@@ -30,5 +30,6 @@ return [
         'start_process'           => 'Voulez-vous démarrer le processus <b>:process_name</b> pour le projet courant?',
         'pending_changes'         => 'Des changements n\'ont pas encore été sauvegardés. Voulez-vous supprimer ces changements?',
         'validation_failure'      => 'Échec de validation. Veuillez corriger toutes les erreurs (:num) avant de re-soumettre le formulaire.',
+        'cancel_project'          => 'L\'annulation d\'un projet est une action critique et définitive. Cette action aura automatiquement lieu lors de la soumission de ce formulaire avec cette option.',
     ]
 ];
