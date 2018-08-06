@@ -53,7 +53,7 @@ class ArchitecturePlanFormRequest extends FormRequest
                 foreach ($this->planned_products as $key => $plannedProduct) {
                     $productId = "{$plannedProduct['type_id']}.{$plannedProduct['sub_type_id']}";
                     if ($productIds->contains($productId)) {
-                        $validator->errors()->add("planned_products.$key.type_id", 'There cannot be more than one product of this type.');
+                        $validator->errors()->add("planned_products.$key.type_id", __('validation.custom.planned_products.unique'));
                         continue;
                     }
                     $productIds->push($productId);

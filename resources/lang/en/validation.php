@@ -108,6 +108,9 @@ return [
         'risks' => [
             'required' => 'There needs to be at least one risk.',
         ],
+        'planned_products' => [
+            'unique' => 'There cannot be more than one product of this type.',
+        ],
     ],
 
     /*
