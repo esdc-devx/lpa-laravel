@@ -100,13 +100,14 @@
   // Forms
   import BusinessCase from '@components/forms/entities/business-case';
   import BusinessCaseAssessment from '@components/forms/entities/business-case-assessment';
+  import ArchitecturePlan from '@components/forms/entities/architecture-plan';
 
   let namespace = 'projects';
 
   export default {
     name: 'project-process-form',
 
-    components: { InfoBox, BusinessCase, BusinessCaseAssessment },
+    components: { InfoBox, BusinessCase, BusinessCaseAssessment, ArchitecturePlan },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

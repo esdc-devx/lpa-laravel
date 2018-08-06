@@ -4,7 +4,7 @@ import '@/locale';
 export default {
   _notify({ message = '', type = 'info', autoClose = true }) {
     return Vue.prototype.$notify({
-      title: Vue.prototype.trans("components.notice.type[" + type + "]"),
+      title: Vue.prototype.trans(`components.notice.type.${type}`),
       message,
       type,
       dangerouslyUseHTMLString: true,
