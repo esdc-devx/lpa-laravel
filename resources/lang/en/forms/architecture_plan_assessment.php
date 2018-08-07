@@ -4,6 +4,7 @@ return [
     'title' => 'Assessment',
     'tabs' => [
         'assessment'      => 'Assessment',
+        // form tabs ommited, since they are dynamically added by the entity title
     ],
     'is_process_cancelled' => [
         'label'       => 'Project Cancellation',

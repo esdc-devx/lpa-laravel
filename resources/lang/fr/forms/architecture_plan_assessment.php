@@ -4,7 +4,7 @@ return [
     'title' => 'Évaluation du plan d\'architecture',
     'tabs' => [
         'assessment' => 'Évaluation',
-        // form tabs ommited, since they are dynamically added by theit entity title
+        // form tabs ommited, since they are dynamically added by the entity title
     ],
     'is_process_cancelled' => [
         'label'       => 'Annulation du projet',
