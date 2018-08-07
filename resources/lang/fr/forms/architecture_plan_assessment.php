@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'title' => 'Évaluation',
+    'title' => 'Évaluation du plan d\'architecture',
     'tabs' => [
-        'assessment' => 'Évaluation de l\'analyse de rentabilisation',
+        'assessment' => 'Évaluation',
+        // form tabs ommited, since they are dynamically added by theit entity title
     ],
     'is_process_cancelled' => [
         'label'       => 'Annulation du projet',
