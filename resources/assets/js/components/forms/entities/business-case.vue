@@ -266,7 +266,7 @@
       </span>
       <form-section-group
         v-model="form.departmental_benefits"
-        entityForm="business_case"
+        entityForm="business-case"
         entitySection="departmental-benefit"
         :data="{
           departmentalBenefitTypeList
@@ -282,7 +282,7 @@
       </span>
       <form-section-group
         v-model="form.learners_benefits"
-        entityForm="business_case"
+        entityForm="business-case"
         entitySection="learners-benefit"
         :data="{
           learnersBenefitTypeList
@@ -444,7 +444,7 @@
       </span>
       <form-section-group
         v-model="form.risks"
-        entityForm="business_case"
+        entityForm="business-case"
         entitySection="risk"
         :data="{
           riskTypeList,
