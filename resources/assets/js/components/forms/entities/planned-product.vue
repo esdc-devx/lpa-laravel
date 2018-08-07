@@ -50,13 +50,12 @@
   import FormError from '../error.vue';
 
   import ElFormItemWrap from '../el-form-item-wrap';
-  import ElInputWrap from '../el-input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'planned-products',
 
-    components: { FormError, ElFormItemWrap, ElInputWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
