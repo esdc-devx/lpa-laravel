@@ -32,14 +32,15 @@
         </el-popover-wrap>
       </span>
       <el-input-number
-        :name="`${fieldNamePrefix}.quantity`"
         v-model="form.quantity"
+        :name="`${fieldNamePrefix}.quantity`"
         v-validate="{ required: true, numeric: true }"
         :data-vv-as="trans('forms.architecture_plan.quantity.label')"
         v-mask="'###'"
         :min="1"
         :max="100">
       </el-input-number>
+      <form-error :name="`${fieldNamePrefix}.quantity`"></form-error>
     </el-form-item-wrap>
   </div>
 </template>
@@ -110,21 +111,18 @@
     },
 
     watch: {
-      'form.quantity': {
-        immediate: true,
-        handler(value) {
-          // this handle the fact that we receive null from the server
-          // and that the component converts null to 0,
-          // which produces a form dirty: null !== 0
-          value = value === null ? undefined : value;
-          this.form.quantity = value;
-        }
+      'form.quantity': function (value) {
+        // this handle the fact that we receive null from the server
+        // and that the component converts null to 0,
+        // which produces a form dirty: null !== 0
+        value = value === null ? undefined : value;
+        this.form.quantity = value;
       },
       /**
        * When the data changes, remove empty children
        * so that the cascader doesn't try to populate them
        */
-      'data.typeList': function(list) {
+      'data.typeList': function (list) {
         let formattedList = _.cloneDeep(list);
         _.forEach(formattedList, item => {
           _.forEach(item.children, itemSub => {
