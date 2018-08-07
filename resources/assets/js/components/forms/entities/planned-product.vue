@@ -2,7 +2,7 @@
   <div class="planned-product">
     <el-form-item-wrap
       :label="trans('forms.architecture_plan.type.label')"
-      :prop="`${fieldNamePrefix}.type`"
+      :prop="`${fieldNamePrefix}.type_id`"
       required>
       <span slot="label-addons">
         <el-popover-wrap
@@ -11,16 +11,16 @@
         </el-popover-wrap>
       </span>
       <el-cascader
-        :value="typeModel"
-        :name="`${fieldNamePrefix}.type`"
+        v-model="typeModel"
+        :name="`${fieldNamePrefix}.type_id`"
         v-loading="isLoading"
         element-loading-spinner="el-icon-loading"
         v-validate="'required'"
         :data-vv-as="trans('forms.architecture_plan.type.label')"
         :options="data.typeList"
-        :props="typeOptions"
-        @change="onTypeChange">
+        :props="typeOptions">
       </el-cascader>
+      {{typeModel}}
       <form-error :name="`${fieldNamePrefix}.type_id`"></form-error>
     </el-form-item-wrap>
     <el-form-item-wrap
@@ -93,8 +93,22 @@
         }
       },
 
-      typeModel() {
-        return [this.form.type_id, this.form.sub_type_id];
+      typeModel: {
+        get() {
+          // make sure to not return an array of nulls here
+          // since vee-validate would think that it is a valide value
+          if (!_.isNumber(this.form.typeId) && !_.isNumber(this.form.subTypeId)) {
+            this.form.type_id = undefined;
+            this.form.sub_type_id = undefined;
+          }
+          return [this.form.type_id, this.form.sub_type_id];
+        },
+        set(value) {
+          let typeId = value[0];
+          let subTypeId = value[1];
+
+          [this.form.type_id, this.form.sub_type_id] = [typeId, subTypeId];
+        }
       }
     },
 
@@ -121,8 +135,9 @@
         // this is used when adding a group
         // so that we know what properties to be aware of when adding a group
         defaults: {
-          planned_product_type_id: null,
-          planned_product_quantity: null
+          type_id: null,
+          sub_type_id: null,
+          quantity: null
         },
 
         typeOptions: {
@@ -130,19 +145,14 @@
           value: 'id'
         }
       };
-    },
-
-    methods: {
-      onTypeChange(value) {
-        let typeId = value[0];
-        let subTypeId = value[1];
-
-        [this.form.type_id, this.form.sub_type_id] = [typeId, subTypeId];
-      }
     }
   };
 </script>
 
 <style lang="scss">
-
+  .planned-product {
+    .el-cascader {
+      min-width: 400px;
+    }
+  }
 </style>
