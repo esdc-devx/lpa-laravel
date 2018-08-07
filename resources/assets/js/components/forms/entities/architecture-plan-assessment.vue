@@ -132,7 +132,7 @@
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
-    name: 'business-case',
+    name: 'architecture-plan-assessment',
 
     components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElPopoverWrap },
 
