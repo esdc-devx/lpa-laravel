@@ -235,7 +235,8 @@
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.communities.label')"
           :data="communitiesList"
-          labelKey="name">
+          labelKey="name"
+          sorted>
         </el-tree-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
