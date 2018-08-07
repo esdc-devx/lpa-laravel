@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Évaluation de l\'analyse de rentabilisation',
+    'title' => 'Évaluation du plan d\'architecture',
     'tabs' => [
         'assessment' => 'Évaluation',
         // form tabs ommited, since they are dynamically added by the entity title
