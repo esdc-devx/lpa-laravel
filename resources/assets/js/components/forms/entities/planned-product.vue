@@ -110,6 +110,16 @@
     },
 
     watch: {
+      'form.quantity': {
+        immediate: true,
+        handler(value) {
+          // this handle the fact that we receive null from the server
+          // and that the component converts null to 0,
+          // which produces a form dirty: null !== 0
+          value = value === null ? undefined : value;
+          this.form.quantity = value;
+        }
+      },
       /**
        * When the data changes, remove empty children
        * so that the cascader doesn't try to populate them
