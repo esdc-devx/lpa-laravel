@@ -6,7 +6,7 @@
       </span>
       <form-section-group
         v-model="form.planned_products"
-        entityForm="architecture_plan"
+        entityForm="architecture-plan"
         entitySection="planned-product"
         :data="{
           typeList
