@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import EventBus from '@/event-bus.js';
 
-import HttpStatusCodes from "@axios/http-status-codes";
+import HttpStatusCodes from '@axios/http-status-codes';
 
 const swipeTransitionDuration = 500;
 let errorNotif;
@@ -112,8 +112,8 @@ export default {
     },
 
     checkInvalidTabs() {
-      if (document.querySelector("form .el-tabs__nav") !== null) {
-        const tabs = document.querySelectorAll("form .el-tab-pane");
+      if (document.querySelector('form .el-tabs__nav') !== null) {
+        const tabs = document.querySelectorAll('form .el-tab-pane');
         tabs.forEach(tab => {
           this.checkTabHasErrors(tab);
         });
@@ -121,7 +121,7 @@ export default {
     },
 
     checkTabHasErrors(tab) {
-      const tabName = tab.getAttribute("data-name");
+      const tabName = tab.getAttribute('data-name');
       // cast NodeList to Array
       let tabErrors = Array.from(tab.querySelectorAll('.el-form-item__error'));
 

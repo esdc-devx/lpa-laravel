@@ -7,8 +7,6 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 
 class BusinessCase extends ProcessInstanceFormDataModel
 {
-    protected $hidden = ['process_instance_form_id'];
-
     protected $fillable = [
         'process_instance_form_id', 'request_source_other', 'business_issue', 'is_required_training', 'learning_response_strategy',
         'potential_solution_type_other', 'expected_annual_participant_number', 'timeframe_id', 'timeframe_rationale', 'cost_center',

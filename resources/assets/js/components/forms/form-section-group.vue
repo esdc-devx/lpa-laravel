@@ -1,19 +1,23 @@
 <template>
   <div class="form-section-group">
     <h2>
-      {{ $tc('forms.business_case.tabs["'+ title +'"]', 2) }}
+      {{ $tc(`forms.${entityFormKey}.tabs.${entitySectionKey}`, 2) }}
       <div class="header-controls">
-        <el-button type="text" size="mini" @click="expandAll = true">{{ trans('entities.general.expand_all') }}</el-button>
-        <el-button type="text" size="mini" @click="expandAll = false">{{ trans('entities.general.collapse_all') }}</el-button>
+        <el-button type="text" size="mini" @click="expandAll = true">
+          {{ trans('entities.general.expand_all') }}
+        </el-button>
+        <el-button type="text" size="mini" @click="expandAll = false">
+          {{ trans('entities.general.collapse_all') }}
+        </el-button>
       </div>
     </h2>
     <el-collapse :value="activePanels">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
-          {{ $tc('forms.business_case.tabs["'+ title +'"]') }} {{ index + 1 }}
+          {{ $tc(`forms.${entityFormKey}.tabs.${entitySectionKey}`) }} {{ index + 1 }}
           <el-button v-if="groups.length > 1" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
         </template>
-        <component ref="component" :is="entity" :data="data" class="form-item-group" :index="index" :value="item" :isLoading="isLoading"></component>
+        <component ref="component" :is="entitySection" :data="data" class="form-item-group" :index="index" :value="item" :isLoading="isLoading"></component>
       </el-collapse-item>
     </el-collapse>
     <el-button class="add-group" type="primary" icon="el-icon-plus" @click="addGroup()"></el-button>
@@ -23,17 +27,23 @@
 <script>
   import EventBus from '@/event-bus.js';
 
+  // Form sections
   import DepartmentalBenefit from './entities/departmental-benefit';
   import LearnersBenefit from './entities/learners-benefit';
   import Risk from './entities/risk';
+  import PlannedProduct from './entities/planned-product';
 
   export default {
     name: 'form-section-group',
 
-    components: { DepartmentalBenefit, LearnersBenefit, Risk },
+    components: { DepartmentalBenefit, LearnersBenefit, Risk, PlannedProduct },
 
     props: {
-      entity: {
+      entityForm: {
+        type: String,
+        required: true
+      },
+      entitySection: {
         type: String,
         required: true
       },
@@ -53,8 +63,11 @@
     },
 
     computed: {
-      title() {
-        return this.entity.replace('-', '_');
+      entityFormKey() {
+        return this.entityForm.replace('-', '_');
+      },
+      entitySectionKey() {
+        return this.entitySection.replace('-', '_');
       },
 
       activePanels() {
@@ -96,7 +109,7 @@
           let groupsLength = this.groups.length - 1;
           let defaults = this.$refs.component[groupsLength].defaults;
           if (_.isUndefined(defaults)) {
-            this.$log.error(`Entity '${this.entity}' should have a 'defaults' attribute in its data.`);
+            this.$log.error(`Entity '${this.entitySection}' should have a 'defaults' attribute in its data.`);
             return;
           }
           for (const key in defaults) {
