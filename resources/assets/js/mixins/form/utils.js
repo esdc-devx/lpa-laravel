@@ -103,7 +103,10 @@ export default {
       } catch({ response }) {
         if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
           this.manageBackendErrors(response.data.errors);
-          this.notifyError({
+          if (errorNotif) {
+            errorNotif.close();
+          }
+          errorNotif = this.notifyError({
             message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
           });
         } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
