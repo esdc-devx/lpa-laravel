@@ -100,11 +100,25 @@ export default {
     async handleCallback(callback) {
       try {
         await callback();
+        if (errorNotif) {
+          errorNotif.close();
+        }
       } catch({ response }) {
         if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
           this.manageBackendErrors(response.data.errors);
-          this.notifyError({
+          if (errorNotif) {
+            errorNotif.close();
+          }
+          errorNotif = this.notifyError({
             message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
+          });
+        } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
+          this.notifyError({
+            message: Vue.prototype.trans('errors.bad_request')
+          });
+        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
+          this.notifyError({
+            message: Vue.prototype.trans('errors.server_error')
           });
         }
         this.isSubmitting = false;

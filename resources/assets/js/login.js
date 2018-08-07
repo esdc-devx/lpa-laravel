@@ -22,8 +22,6 @@ import Config from '@/config';
 import FormError from '@components/forms/error';
 import FormUtils from '@mixins/form/utils';
 
-import HttpStatusCodes from '@axios/http-status-codes';
-
 const elementUILocale = Config.DEFAULT_LANG === 'en' ? elementUILocaleEN : elementUILocaleFR;
 Vue.use(ElementUI, { locale: elementUILocale });
 
@@ -48,7 +46,10 @@ Vue.use(VeeValidate, {
   fieldsBagName: 'vfields',
   dictionary: {
     fr: veeLocaleFR
-  }
+  },
+  // Gives us the ability to inject validation in child components
+  // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
+  inject: false
 });
 
 new Vue({
@@ -78,30 +79,13 @@ new Vue({
     async login() {
       let request = axios.create({baseURL: '/' + Config.DEFAULT_LANG});
       let response;
-      try {
-        response = await request.post('login', {
-          username: this.username,
-          password: this.password,
-          remember: this.remember
-        });
-        // all good, submit form manually
-        window.location = response.data.redirectURL;
-      } catch({ response }) {
-        // catch in case of token mismatch, invalid session, etc due to cache cleared by user
-        if (response.status === HttpStatusCodes.BAD_REQUEST) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.bad_request')
-          });
-          return;
-        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.server_error')
-          });
-          return;
-        }
-        this.isSubmitting = false;
-        this.manageBackendErrors(response.data.errors);
-      }
+      response = await request.post('login', {
+        username: this.username,
+        password: this.password,
+        remember: this.remember
+      });
+      // all good, submit form manually
+      window.location = response.data.redirectURL;
     },
 
     async loadLanguages() {
@@ -121,7 +105,7 @@ new Vue({
       for (let fieldName in errors) {
         fieldBag = errors[fieldName];
         for (let j = 0; j < fieldBag.length; j++) {
-          this.verrors.add({field: fieldName, msg: fieldBag[j]})
+          this.verrors.add({field: fieldName, msg: fieldBag[j]});
         }
       }
       this.focusOnError();

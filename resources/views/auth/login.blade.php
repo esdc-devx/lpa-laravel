@@ -117,11 +117,11 @@
                         action="{{ route('login') }}">
                         {{ csrf_field() }}
                         <el-form-item label="{{ __('entities/user.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
-                            <el-input id="username" name="username" v-model="username" v-validate="'required'" @keyup.native.enter="onSubmit" autofocus></el-input>
-                            <form-error v-for="error in verrors.collect('username')" :key="error.id">@{{ error }}</form-error>
+                            <el-input id="username" name="username" v-model="username" v-validate="'required'" data-vv-as="{{ __('entities/user.username') }}" @keyup.native.enter="onSubmit" autofocus></el-input>
+                            <form-error name="username"></form-error>
                         </el-form-item>
                         <el-form-item label="{{ __('entities/user.password') }}" for="password" :class="['is-required', {'is-error': verrors.collect('password').length }]" prop="password">
-                            <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" @keyup.native.enter="onSubmit">
+                            <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" data-vv-as="{{ __('entities/user.password') }}" @keyup.native.enter="onSubmit">
                                 <i
                                     class="el-icon-view el-input__icon"
                                     slot="suffix"
@@ -129,14 +129,14 @@
                                     @mouseup="isPasswordVisible = false">
                                 </i>
                             </el-input>
-                            <form-error v-for="error in verrors.collect('password')" :key="error.id">@{{ error }}</form-error>
+                            <form-error name="password"></form-error>
                         </el-form-item>
                         <el-form-item for="remember">
                             <el-checkbox name="remember" name="remember" v-model="remember" @keyup.native.enter="onSubmit" label="{{ __('pages/login.remember') }}"></el-checkbox>
                         </el-form-item>
 
                         <el-form-item class="controls-wrap">
-                            <el-button type="primary" :loading="isSaving" @click="onSubmit">{{ __('pages/login.login') }}</el-button>
+                            <el-button type="primary" :loading="isSubmitting" @click="onSubmit">{{ __('pages/login.login') }}</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
