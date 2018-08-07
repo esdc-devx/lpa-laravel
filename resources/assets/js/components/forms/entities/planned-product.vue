@@ -20,7 +20,6 @@
         :options="data.typeList"
         :props="typeOptions">
       </el-cascader>
-      {{typeModel}}
       <form-error :name="`${fieldNamePrefix}.type_id`"></form-error>
     </el-form-item-wrap>
     <el-form-item-wrap
