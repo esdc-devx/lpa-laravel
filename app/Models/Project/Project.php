@@ -5,9 +5,12 @@ namespace App\Models\Project;
 use App\Models\BaseModel;
 use App\Models\OrganizationalUnit;
 use App\Models\Process\ProcessInstance;
+use App\Models\Project\ArchitecturePlan\ArchitecturePlan;
+use App\Models\Project\ArchitecturePlan\ArchitecturePlanAssessment;
+use App\Models\Project\BusinessCase\BusinessCase;
+use App\Models\Project\BusinessCase\BusinessCaseAssessment;
 use App\Models\State;
 use App\Models\Traits\UsesUserAudit;
-use App\Models\User\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends BaseModel
@@ -34,6 +37,21 @@ class Project extends BaseModel
 
     public function businessCase()
     {
-        return $this->hasOne(BusinessCase::class);
+        return $this->belongsTo(BusinessCase::class);
+    }
+
+    public function businessCaseAssessment()
+    {
+        return $this->belongsTo(BusinessCaseAssessment::class);
+    }
+
+    public function architecturePlan()
+    {
+        return $this->belongsTo(ArchitecturePlan::class);
+    }
+
+    public function architecturePlanAssessment()
+    {
+        return $this->belongsTo(ArchitecturePlanAssessment::class);
     }
 }
