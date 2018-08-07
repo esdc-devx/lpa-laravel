@@ -96,9 +96,8 @@
         get() {
           // make sure to not return an array of nulls here
           // since vee-validate would think that it is a valide value
-          if (!_.isNumber(this.form.typeId) && !_.isNumber(this.form.subTypeId)) {
-            this.form.type_id = undefined;
-            this.form.sub_type_id = undefined;
+          if (!_.isNumber(this.form.type_id) && !_.isNumber(this.form.sub_type_id)) {
+            return null;
           }
           return [this.form.type_id, this.form.sub_type_id];
         },

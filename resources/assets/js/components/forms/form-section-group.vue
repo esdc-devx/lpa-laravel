@@ -1,7 +1,7 @@
 <template>
   <div class="form-section-group">
     <h2>
-      {{ $tc(`forms.${entityForm}.tabs.${sectionTitle}`, 2) }}
+      {{ $tc(`forms.${formTitleKey}.tabs.${sectionTitleKey}`, 2) }}
       <div class="header-controls">
         <el-button type="text" size="mini" @click="expandAll = true">
           {{ trans('entities.general.expand_all') }}
@@ -14,7 +14,7 @@
     <el-collapse :value="activePanels">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
-          {{ $tc(`forms.${entityForm}.tabs.${sectionTitle}`) }} {{ index + 1 }}
+          {{ $tc(`forms.${formTitleKey}.tabs.${sectionTitleKey}`) }} {{ index + 1 }}
           <el-button v-if="groups.length > 1" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
         </template>
         <component ref="component" :is="entitySection" :data="data" class="form-item-group" :index="index" :value="item" :isLoading="isLoading"></component>
@@ -63,7 +63,10 @@
     },
 
     computed: {
-      sectionTitle() {
+      formTitleKey() {
+        return this.entityForm.replace('-', '_');
+      },
+      sectionTitleKey() {
         return this.entitySection.replace('-', '_');
       },
 
