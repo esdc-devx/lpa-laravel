@@ -70,6 +70,7 @@ class UserFormRequest extends FormRequest
     /**
      * Inject additional custom validation rules.
      *
+     * @param  \Illuminate\Validation\Validator $validator
      * @return void
      */
     public function withValidator($validator)
