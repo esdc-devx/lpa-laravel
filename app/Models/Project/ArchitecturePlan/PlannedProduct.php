@@ -21,6 +21,6 @@ class PlannedProduct extends BaseModel
 
     public function subType()
     {
-        return $this->belongsTo(LearningProductType::class, 'sub_type_id');
+        return $this->belongsTo(LearningProductType::class);
     }
 }

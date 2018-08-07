@@ -41,7 +41,7 @@ class ArchitecturePlanFormRequest extends FormRequest
     /**
      * Inject additional custom validation rules.
      *
-     * @return bool
+     * @return void
      */
     public function withValidator($validator)
     {
