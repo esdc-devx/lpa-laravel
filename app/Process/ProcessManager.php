@@ -19,6 +19,7 @@ class ProcessManager {
     protected $processInstance;
     protected $processStates = [];
     protected $processTasks = [];
+    protected $processInstanceFormsData;
 
     public function __construct(Camunda $camunda)
     {
@@ -191,7 +192,7 @@ class ProcessManager {
     public function updateProcessInstance()
     {
         if (is_null($this->processInstance)) {
-            throw new \Exception('Cannot resolve process states, you must first load a process.');
+            throw new \Exception('Cannot update process, you must first load a process instance.');
         }
 
         // Resolve states and tasks from Camunda.
@@ -234,6 +235,78 @@ class ProcessManager {
         $entity->state()->associate($this->processStates['entity']);
         $entity->save();
 
+        // Handle process instance completed logic.
+        if ($this->processStates['process-instance']->name_key === 'completed') {
+            $this->completeProcessInstance();
+        }
+
+        return $this;
+    }
+
+    /**
+     * Attach all process form data entities to their parent entity.
+     * i.e. Attach BusinessCase, ArchitecturePlan, etc. to Project.
+     *
+     * @return $this
+     */
+    public function attachFormData()
+    {
+        if (is_null($this->processInstance)) {
+            throw new \Exception('Cannot attach form data, you must first load a process instance.');
+        }
+
+        // Resolve entity tied to process instance.
+        $entity = entity($this->processInstance->entity_type)
+            ->findOrFail($this->processInstance->entity_id);
+
+        // Resolve and associate form data entities.
+        $this->resolveProcessInstanceFormsData()->processInstanceFormsData->each(function($formData, $key) use ($entity) {
+            $entity->{camel_case($key)}()->associate($formData);
+        });
+        $entity->save();
+
+        return $this;
+    }
+
+    /**
+     * Fire a process completed event for entities to respond for.
+     * Event class is formed from process definition name (i.e. ProcessProjectApprovalCompleted).
+     *
+     * @return $this
+     */
+    protected function completeProcessInstance()
+    {
+        $processName = studly_case($this->processInstance->definition->name_key);
+        $eventClass = "App\Events\Process{$processName}Completed";
+        if (class_exists($eventClass)) {
+            event(new $eventClass($this->processInstance));
+        }
+
+        return $this;
+    }
+
+    /**
+     * Resolve all process instance forms data entities
+     * keyed by their form definition name key.
+     *
+     * @return $this
+     */
+    protected function resolveProcessInstanceFormsData()
+    {
+        $this->processInstanceFormsData = collect([]);
+
+        // Loop through each process steps and forms.
+        $this->processInstance->steps->each(function ($step) {
+            $step->forms->each(function ($form) {
+                $formKey = $form->definition->name_key;
+
+                // Resolve form data entity using form name key.
+                $this->processInstanceFormsData[$formKey] = entity($formKey)
+                    ->where('process_instance_form_id', $form->id)
+                    ->firstOrfail();
+            });
+        });
+
         return $this;
     }
 
@@ -244,10 +317,6 @@ class ProcessManager {
      */
     protected function resolveStates()
     {
-        if (is_null($this->processInstance)) {
-            throw new \Exception('Cannot resolve process states, you must first load a process.');
-        }
-
         // Retrieve all states and re-key collection for easier reference during mapping.
         $states = State::all()->keyBy(function($item) {
             return $item->entity_type . '.' . $item->name_key;
@@ -295,10 +364,6 @@ class ProcessManager {
      */
     protected function resolveTasks()
     {
-        if (is_null($this->processInstance)) {
-            throw new \Exception('Cannot resolve process tasks, you must first load a process.');
-        }
-
         // Retrieve all organizational units and re-key collection for easier reference during mapping.
         $organizationalUnits = OrganizationalUnit::all()->keyBy(function ($item) {
             return $item->name_key;
