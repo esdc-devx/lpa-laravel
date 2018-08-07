@@ -117,11 +117,11 @@
                         action="{{ route('login') }}">
                         {{ csrf_field() }}
                         <el-form-item label="{{ __('entities/user.username') }}" for="username" :class="['is-required', {'is-error': verrors.collect('username').length }]" prop="username">
-                            <el-input id="username" name="username" v-model="username" v-validate="'required'" @keyup.native.enter="onSubmit" autofocus></el-input>
+                            <el-input id="username" name="username" v-model="username" v-validate="'required'" data-vv-as="{{ __('entities/user.username') }}" @keyup.native.enter="onSubmit" autofocus></el-input>
                             <form-error name="username"></form-error>
                         </el-form-item>
                         <el-form-item label="{{ __('entities/user.password') }}" for="password" :class="['is-required', {'is-error': verrors.collect('password').length }]" prop="password">
-                            <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" @keyup.native.enter="onSubmit">
+                            <el-input id="password" name="password" :type="isPasswordVisible ? 'text' : 'password'" v-model="password" v-validate="'required'" data-vv-as="{{ __('entities/user.password') }}" @keyup.native.enter="onSubmit">
                                 <i
                                     class="el-icon-view el-input__icon"
                                     slot="suffix"
