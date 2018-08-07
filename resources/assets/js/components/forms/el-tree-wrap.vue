@@ -3,7 +3,7 @@
     <el-tree
       ref="tree"
       v-bind="$attrs"
-      :data="data"
+      :data="innerData"
       :props=" { label: labelKey }"
       default-expand-all
       :default-checked-keys="value"
@@ -43,8 +43,18 @@
         type: String,
         required: true
       },
+      sorted: Boolean,
       labelKey: String,
       value: Array
+    },
+
+    computed: {
+      innerData() {
+        // since we will be modifying the data recursively
+        // make a deep copy of it
+        // so that the watcher doesn't re-evaluate the value on change
+        return _.cloneDeep(this.data);
+      }
     },
 
     watch: {
@@ -52,6 +62,12 @@
       // as the value may have changed but the checkboxes won't reflect the new values
       value: function(newVal) {
         this.$refs.tree.setCheckedKeys(newVal);
+      },
+
+      data: function() {
+        if (this.sorted) {
+          this.sortTree(this.innerData);
+        }
       }
     },
 
@@ -61,6 +77,19 @@
         // 2018-07-17 @note: this is a limitation of ElementUI
         // that doesn't accept v-model on el-tree elements
         this.$emit('input', value);
+      },
+
+      /**
+       * Recursively loop through all the childrens and sort them alphabetically based on locale
+       */
+      sortTree(level) {
+        let that = this;
+        level = level.sort((a, b) => this.$helpers.localeSort(a, b, 'name'))
+        _.forEach(level, child => {
+          if (child.children && child.children.length !== 0) {
+            that.sortTree(child.children);
+          }
+        });
       },
 
       handleCheckChange(checkedNode, treeCheckedStatus) {
