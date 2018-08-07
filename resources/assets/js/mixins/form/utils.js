@@ -100,6 +100,9 @@ export default {
     async handleCallback(callback) {
       try {
         await callback();
+        if (errorNotif) {
+          errorNotif.close();
+        }
       } catch({ response }) {
         if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
           this.manageBackendErrors(response.data.errors);
