@@ -70,6 +70,7 @@
         <form-error name="assessment_date"></form-error>
       </el-form-item-wrap>
     </el-tab-pane>
+
     <el-tab-pane :data-name="item.assessed_process_form.replace('-', '_')" v-for="(item, index) in form.assessments" :key="index">
       <span slot="label" :class="{'is-error': errorTabs.includes(item.assessed_process_form.replace('-', '_')) }">
         {{ trans(`forms.${item.assessed_process_form.replace('-', '_')}.title`) }}
