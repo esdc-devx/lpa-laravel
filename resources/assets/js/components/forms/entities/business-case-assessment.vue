@@ -17,7 +17,7 @@
           v-model="form.is_process_cancelled"
           @change="onProcessCancelledChange">
             {{ trans('forms.business_case_assessment.is_process_cancelled.option') }}
-          </el-checkbox>
+        </el-checkbox>
         <el-collapse-transition>
           <div v-show="form.is_process_cancelled">
             <el-alert
@@ -42,7 +42,7 @@
         <el-input-wrap
           v-model="form.process_cancellation_rationale"
           :disabled="!form.is_process_cancelled"
-          v-validate="{ required: !!form.is_process_cancelled }"
+          v-validate="{ required: form.is_process_cancelled }"
           :data-vv-as="trans('forms.business_case_assessment.process_cancellation_rationale.label')"
           name="process_cancellation_rationale"
           maxlength="2500"
