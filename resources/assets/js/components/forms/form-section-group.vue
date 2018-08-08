@@ -15,7 +15,12 @@
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
           {{ $tc(`forms.${entityFormKey}.tabs.${entitySectionKey}`) }} {{ index + 1 }}
-          <el-button v-if="groups.length > 1" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
+          <!--
+            only show the delete button:
+            if the min value is not specified (0) always show it
+            else show it only when there are more groups than the min value
+          -->
+          <el-button v-if="min ? groups.length > min : true" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
         </template>
         <component ref="component" :is="entitySection" :data="data" class="form-item-group" :index="index" :value="item" :isLoading="isLoading"></component>
       </el-collapse-item>
@@ -122,9 +127,9 @@
       },
 
       prepareGroups() {
-        if (!_.isUndefined(this.$props.min) && !this.groups.length) {
+        if (!_.isUndefined(this.min) && !this.groups.length) {
           // add the ammount of groups provided
-          for (let i = 0; i < this.$props.min; i++) {
+          for (let i = 0; i < this.min; i++) {
             this.addGroup(true);
           }
         }
