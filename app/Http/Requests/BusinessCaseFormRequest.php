@@ -2,21 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class BusinessCaseFormRequest extends FormRequest
+class BusinessCaseFormRequest extends ProcessInstanceFormDataRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        // Defer to ProcessInstanceFormRequest authorize method.
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,8 +11,7 @@ class BusinessCaseFormRequest extends FormRequest
      */
     public function rules()
     {
-        // If form is submitted, enforce validation rules.
-        if (collect($this->segments())->last() == 'submit') {
+        if ($this->submitted()) {
             return [
                 'request_sources'                                         => 'required_without:request_source_other|array',
                 'request_source_other'                                    => 'nullable|string|max:100',
@@ -39,11 +25,11 @@ class BusinessCaseFormRequest extends FormRequest
                 'communities'                                             => 'required|array',
                 'expected_annual_participant_number'                      => 'required|integer|between:1,500000',
                 'departmental_benefits'                                   => 'required|array|min:1',
-                'departmental_benefits.*.departmental_benefit_type_id'    => 'required_without:departmental_benefits.*.departmental_benefit_type_other|nullable|integer',
+                'departmental_benefits.*.departmental_benefit_type_id'    => 'required_without:departmental_benefits.*.departmental_benefit_type_other|distinct|nullable|integer',
                 'departmental_benefits.*.departmental_benefit_type_other' => 'nullable|string|max:100',
                 'departmental_benefits.*.rationale'                       => 'required|string|max:1250',
                 'learners_benefits'                                       => 'required|array|min:1',
-                'learners_benefits.*.learners_benefit_type_id'            => 'required_without:learners_benefits.*.learners_benefit_type_other|nullable|integer',
+                'learners_benefits.*.learners_benefit_type_id'            => 'required_without:learners_benefits.*.learners_benefit_type_other|distinct|nullable|integer',
                 'learners_benefits.*.learners_benefit_type_other'         => 'nullable|string|max:100',
                 'learners_benefits.*.rationale'                           => 'required|string|max:1250',
                 'cost_center'                                             => 'required|string|max:6|regex:/[A-Z][0-9]{5}/',
@@ -54,7 +40,7 @@ class BusinessCaseFormRequest extends FormRequest
                 'internal_resources'                                      => 'required_without:internal_resource_other|array',
                 'internal_resource_other'                                 => 'nullable|string|max:1250',
                 'risks'                                                   => 'required|array|min:1',
-                'risks.*.risk_type_id'                                    => 'required_without:risks.*.risk_type_other|nullable|integer',
+                'risks.*.risk_type_id'                                    => 'required_without:risks.*.risk_type_other|distinct|nullable|integer',
                 'risks.*.risk_type_other'                                 => 'nullable|string|max:100',
                 'risks.*.risk_impact_level_id'                            => 'required|integer',
                 'risks.*.risk_probability_level_id'                       => 'required|integer',
