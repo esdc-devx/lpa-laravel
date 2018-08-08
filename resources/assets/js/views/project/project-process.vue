@@ -73,7 +73,7 @@
             </el-table-column>
             <el-table-column
               :label="trans('entities.general.status')"
-              width="160px"
+              width="180px"
               class-name="status">
               <template slot-scope="scope">
                 <span>{{ scope.row.state.name }}</span>

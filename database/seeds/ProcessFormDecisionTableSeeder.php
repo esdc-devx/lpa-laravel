@@ -15,7 +15,7 @@ class ProcessFormDecisionTableSeeder extends Seeder
             ],
             [
                 'name_key' => 'rejected',
-                'name_en'  => 'Requires Adjustement',
+                'name_en'  => 'Requires Adjustments',
                 'name_fr'  => 'Nécessite des ajustements',
             ],
         ];
