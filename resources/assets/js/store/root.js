@@ -95,17 +95,18 @@ export const actions = {
   },
 
   hideMainLoading({ commit }, context) {
+    let countSupposedToBe = state.mainLoadingCount - 1;
     // grab the actual mainLoadingCount value and decrease it
-    let count = state.mainLoadingCount - 1;
+    let count = (state.mainLoadingCount - 1) < 0 ? 0 : state.mainLoadingCount - 1;
     commit(types.MAIN_LOADING_COUNT, count);
-    if (state.mainLoadingCount === 0) {
+    if (count === 0) {
       // only hide the main loading if the count is equal to 0
       // meaning that we hit the last showMainLoading call
       commit(types.TOGGLE_MAIN_LOADING, false);
     // check if we have hideLoading leftovers
-    } else if (state.mainLoadingCount < 0) {
-      commit(types.MAIN_LOADING_COUNT, 0);
-      Vue.$log.warn(`Too many calls to hideMainLoading. Count would be at: ${count}. Count was reset to 0.`);
+    }
+    if (countSupposedToBe) {
+      Vue.$log.warn(`Too many calls to hideMainLoading.`);
     }
   },
 
