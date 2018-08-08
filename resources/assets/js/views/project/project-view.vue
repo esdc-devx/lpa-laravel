@@ -129,6 +129,7 @@
           await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+          await this.hideMainLoading();
         }
       },
 

@@ -1,6 +1,6 @@
 <template>
   <transition name="fade" mode="in-out">
-    <div v-show="isHomePage === false" class="breadcrumb">
+    <div class="breadcrumb">
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item v-for="(crumb, index) in getBreadcrumbs()" :to="{ path: '/' + language + '/' + crumb.path }" :key="index">{{ crumb.name }}</el-breadcrumb-item>
       </el-breadcrumb>
@@ -25,16 +25,12 @@
     computed: {
       ...mapGetters([
         'language'
-      ]),
-      isHomePage: function() {
-        return this.breadcrumbs.length <= 1;
-      }
+      ])
     },
 
     watch: {
       $route: function (to) {
         // update the internal breadcrumbs length
-        // so that the isHomePage can react
         this.breadcrumbs = this.getBreadcrumbs();
       }
     },
@@ -124,7 +120,9 @@
           path = this.resolvePath(resolvedPath.join('/'));
 
           // don't add any crumb that do not have a valid path
-          if (path) {
+          // also allow adding 404 and 403 paths by default
+          // since the path cannot be matched to a route as its a regex.
+          if (path || crumb.name === 'not-found' || crumb.name === 'forbidden') {
             // even if the title is empty for now,
             // it will be processed by the store later on
             crumbs.push({ name: title, path: path });

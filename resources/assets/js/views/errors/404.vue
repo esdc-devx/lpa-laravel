@@ -18,15 +18,8 @@
       ])
     },
 
-    methods: {
-      ...mapActions([
-        'hideMainLoading'
-      ])
-    },
-
     mounted() {
       EventBus.$emit('App:ready');
-      this.hideMainLoading();
     }
   };
 </script>
