@@ -2,21 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class ArchitecturePlanFormRequest extends FormRequest
+class ArchitecturePlanFormRequest extends ProcessInstanceFormDataRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize()
-    {
-        // Defer to ProcessInstanceFormRequest authorize method.
-        return true;
-    }
-
     /**
      * Get the validation rules that apply to the request.
      *
@@ -24,8 +11,7 @@ class ArchitecturePlanFormRequest extends FormRequest
      */
     public function rules()
     {
-        // If form is submitted, enforce validation rules.
-        if (collect($this->segments())->last() == 'submit') {
+        if ($this->submitted()) {
             return [
                 'planned_products'               => 'array|min:1',
                 'planned_products.*.type_id'     => 'required|integer',
@@ -46,8 +32,7 @@ class ArchitecturePlanFormRequest extends FormRequest
      */
     public function withValidator($validator)
     {
-        // If form is submitted, enforce validation rules.
-        if (collect($this->segments())->last() == 'submit') {
+        if ($this->submitted()) {
             $validator->after(function ($validator) {
                 // Ensure there is only one planned product of the same type.
                 $productIds = collect([]);

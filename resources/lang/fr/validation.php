@@ -25,7 +25,7 @@ return [
     'digits'               => 'The :attribute must be :digits digits.',
     'digits_between'       => 'The :attribute must be between :min and :max digits.',
     'dimensions'           => 'The :attribute has invalid image dimensions.',
-    'distinct'             => 'The :attribute field has a duplicate value.',
+    'distinct'             => 'La valeur du champ :attribute ne peut être utilisée plus d\'une fois.',
     'email'                => 'The :attribute must be a valid email address.',
     'exists'               => 'The selected :attribute is invalid.',
     'file'                 => 'The :attribute must be a file.',
@@ -61,7 +61,6 @@ return [
     'required_unless'      => 'The :attribute field is required unless :other is in :values.',
     'required_with'        => 'The :attribute field is required when :values is present.',
     'required_with_all'    => 'The :attribute field is required when :values is present.',
-    //@note: To be reviewed.
     'required_without'     => 'Le champ :attribute est requis lorsque :values n\'est pas présent.',
     'required_without_all' => 'The :attribute field is required when none of :values are present.',
     'same'                 => 'The :attribute and :other must match.',
@@ -126,14 +125,14 @@ return [
      */
 
     'attributes' => [
-        'organizational_unit' => 'Unité organisationnelle',
-        //@note: To be reviewed.
-        'departmental_benefits.*.rationale' => 'Justification',
-        'departmental_benefits.*.departmental_benefit_type_id' => 'Type',
+        'organizational_unit'                                     => 'Unité organisationnelle',
+        'departmental_benefits.*.rationale'                       => 'Justification',
+        'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
         'departmental_benefits.*.departmental_benefit_type_other' => 'Autre',
-        'learners_benefits.*.rationale' => 'Justification',
-        'learners_benefits.*.learners_benefit_type_id' => 'Type',
-        'learners_benefits.*.learners_benefit_type_other' => 'Autre',
+        'learners_benefits.*.rationale'                           => 'Justification',
+        'learners_benefits.*.learners_benefit_type_id'            => 'Type',
+        'learners_benefits.*.learners_benefit_type_other'         => 'Autre',
+        'risks.*.risk_type_id'                                    => 'Risque',
     ],
 
 ];

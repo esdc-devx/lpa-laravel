@@ -25,7 +25,7 @@ return [
     'digits'               => 'The :attribute must be :digits digits.',
     'digits_between'       => 'The :attribute must be between :min and :max digits.',
     'dimensions'           => 'The :attribute has invalid image dimensions.',
-    'distinct'             => 'The :attribute field has a duplicate value.',
+    'distinct'             => 'The :attribute field value cannot be used more than once.',
     'email'                => 'The :attribute must be a valid email address.',
     'exists'               => 'The selected :attribute is invalid.',
     'file'                 => 'The :attribute must be a file.',
@@ -125,13 +125,13 @@ return [
     */
 
     'attributes' => [
-        //@note: To be reviewed.
-        'departmental_benefits.*.rationale' => 'Rationale',
-        'departmental_benefits.*.departmental_benefit_type_id' => 'Type',
+        'departmental_benefits.*.rationale'                       => 'Rationale',
+        'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
         'departmental_benefits.*.departmental_benefit_type_other' => 'Other',
-        'learners_benefits.*.rationale' => 'Rationale',
-        'learners_benefits.*.learners_benefit_type_id' => 'Type',
-        'learners_benefits.*.learners_benefit_type_other' => 'Other',
+        'learners_benefits.*.rationale'                           => 'Rationale',
+        'learners_benefits.*.learners_benefit_type_id'            => 'Type',
+        'learners_benefits.*.learners_benefit_type_other'         => 'Other',
+        'risks.*.risk_type_id'                                    => 'Risk',
     ],
 
 ];
