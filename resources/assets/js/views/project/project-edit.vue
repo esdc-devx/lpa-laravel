@@ -31,7 +31,6 @@
             v-validate="'required'"
             :options="organizationalUnits"
           />
-          <form-error name="organizationalUnit"></form-error>
         </el-form-item-wrap>
 
         <el-form-item>
