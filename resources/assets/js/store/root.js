@@ -105,7 +105,7 @@ export const actions = {
       commit(types.TOGGLE_MAIN_LOADING, false);
     // check if we have hideLoading leftovers
     }
-    if (countSupposedToBe) {
+    if (countSupposedToBe < 0) {
       Vue.$log.warn(`Too many calls to hideMainLoading.`);
     }
   },

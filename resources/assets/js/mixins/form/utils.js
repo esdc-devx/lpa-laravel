@@ -139,19 +139,9 @@ export default {
       // cast NodeList to Array
       let tabErrors = Array.from(tab.querySelectorAll('.el-form-item__error'));
 
-      // if there are no errors, return false
-      if (!tabErrors.length) {
-        const index = this.errorTabs.indexOf(tabName);
-        // remove tab from error list
-        if (index !== -1) {
-          this.errorTabs.splice(index, 1);
-        }
-        return false;
-      }
-
       // there are errors in the pane
       // check if there at least one error that is not transitioning
-      return tabErrors.some(error => {
+      let errorsFound = tabErrors.some(error => {
         if (!error.classList.contains('el-zoom-in-top-leave-active')) {
           // if not already present in list, add it
           if (!this.errorTabs.includes(tabName)) {
@@ -160,6 +150,16 @@ export default {
           return true;
         }
       });
+
+      // if there are no errors, return false
+      if (!tabErrors.length || !errorsFound) {
+        const index = this.errorTabs.indexOf(tabName);
+        // remove tab from error list
+        if (index !== -1) {
+          this.errorTabs.splice(index, 1);
+        }
+        return false;
+      }
     },
 
     manageBackendErrors(errors) {
