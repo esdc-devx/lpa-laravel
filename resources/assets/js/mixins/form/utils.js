@@ -208,6 +208,9 @@ export default {
 
   beforeDestroy() {
     EventBus.$off('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
+    if (errorNotif) {
+      errorNotif.close();
+    }
   },
 
   mounted() {
