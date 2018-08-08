@@ -9,7 +9,7 @@
           </dl>
           <dl>
             <dt>{{ $tc('entities.general.assigned_organizational_units') }}</dt>
-            <dd>{{ viewingFormInfo.organizational_unit.name }}</dd>
+            <dd>{{ viewingFormInfo.organizational_unit ? viewingFormInfo.organizational_unit.name : trans('entities.general.na') }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.form.current_editor') }}</dt>
