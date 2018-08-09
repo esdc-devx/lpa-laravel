@@ -5,7 +5,7 @@
       :isLoading="isLoading"
       :name="nameSelect"
       v-validate="validateSelect"
-      :data-vv-as="dataVVas"
+      :data-vv-as="dataVVasSelect"
       :options="options"
       :disabled="checked && !multiple"
       @input="updateSelectValue($event)"
@@ -24,7 +24,7 @@
         ref="input"
         :name="nameOther"
         v-validate="validateOther"
-        :data-vv-as="trans('entities.form.other')"
+        :data-vv-as="dataVVasOther"
         :disabled="!isChecked"
         :value="modelOther"
         :maxlength="maxlength"
@@ -74,9 +74,15 @@
         type: String,
         required: true
       },
-      dataVVas: {
+      dataVVasSelect: {
         type: String,
         default: this.nameSelect
+      },
+      dataVVasOther: {
+        type: String,
+        default: function () {
+          return this.trans('entities.form.other');
+        }
       },
       validateSelect: {
         type: String | Object,
@@ -124,7 +130,7 @@
     },
 
     watch: {
-      isChecked: function(val) {
+      isChecked: function (val) {
         // if the other is checked and can only select 1 value
         // the select should be disabled and remove its selected value
         if (val && !this.multiple) {

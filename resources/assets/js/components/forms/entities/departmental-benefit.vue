@@ -17,13 +17,14 @@
         :modelSelect.sync="form.departmental_benefit_type_id"
         :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.departmental_benefit_type_id`"
-        :dataVVas="trans('forms.business_case.departmental_benefit_type.label')"
+        :dataVVasSelect="trans('forms.business_case.departmental_benefit_type.label')"
         :validateSelect="{ required: !this.isDepartmentalBenefitTypeOther }"
         :options="data.departmentalBenefitTypeList"
         sorted
 
-        :nameOther="`${fieldNamePrefix}.departmental_benefit_type_other`"
         :modelOther.sync="form.departmental_benefit_type_other"
+        :nameOther="`${fieldNamePrefix}.departmental_benefit_type_other`"
+        :dataVVasOther="trans('forms.business_case.departmental_benefit_type_other.label')"
         :validateOther="{ required: this.isDepartmentalBenefitTypeOther }"
         :isChecked.sync="isDepartmentalBenefitTypeOther"
         maxlength="100"

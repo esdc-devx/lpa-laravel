@@ -34,6 +34,9 @@ return [
                 <li><span>OCHRO or PCO request</span>: Office of the Chief Human Resources Officer or Privy Council Office request</li>
             </ul>',
     ],
+    'request_source_other' => [
+        'label'       => 'Other Request Sources',
+    ],
     'potential_solution_types' => [
         'label'       => 'Potential Solution Types',
         'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
@@ -42,6 +45,9 @@ return [
             <ul>
                 <li><span>Commercial Off-The-Shelf (COTS)</span>: Third party material that requires purchase. E.g.: Skillsoft.</li>
             </ul>',
+    ],
+    'potential_solution_type_other' => [
+        'label'       => 'Other Potential Solution Types',
     ],
     'learning_response_strategy' => [
         'label'       => 'Learning Response Strategy',
@@ -77,6 +83,9 @@ return [
         'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
         'description' => 'The departmental benefit type.',
     ],
+    'departmental_benefit_type_other' => [
+        'label'       => 'Other Type',
+    ],
     'departmental_benefit_rationale' => [
         'label'       => 'Rationale',
         'description' => 'The departmental benefit rationale.',
@@ -85,6 +94,9 @@ return [
         'label'       => 'Type',
         'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
         'description' => 'The learner benefit type.',
+    ],
+    'learner_benefit_type_other' => [
+        'label'       => 'Other Type',
     ],
     'learners_benefit_rationale' => [
         'label'       => 'Rationale',
@@ -127,10 +139,16 @@ return [
             </ul>
         '
     ],
-    'risks' => [
+    'internal_resource_other' => [
+        'label'       => 'Other Required Internal Resources',
+    ],
+    'risk_type' => [
         'label'       => 'Risk',
         'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
         'description' => 'The description of a known constraint, risk or issue affecting the project.',
+    ],
+    'risk_type_other' => [
+        'label'       => 'Other Risk',
     ],
     'risk_impact_level' => [
         'label'       => 'Impact',
