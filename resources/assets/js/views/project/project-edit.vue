@@ -24,7 +24,7 @@
           prop="organizational_unit"
           required>
           <el-select-wrap
-            v-model="form.organizational_unit"
+            v-model="form.project.organizational_unit"
             :isLoading="isProjectInfoLoading"
             name="organizational_unit"
             :data-vv-as="$tc('entities.general.organizational_units')"
