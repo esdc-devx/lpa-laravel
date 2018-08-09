@@ -31,7 +31,7 @@ return [
     'file'                 => 'The :attribute must be a file.',
     'filled'               => 'The :attribute field must have a value.',
     'image'                => 'The :attribute must be an image.',
-    'in'                   => 'The selected :attribute is invalid.',
+    'in'                   => 'La valeur sélectionnée pour le champ :attribute est invalide.',
     'in_array'             => 'The :attribute field does not exist in :other.',
     'integer'              => 'The :attribute must be an integer.',
     'ip'                   => 'The :attribute must be a valid IP address.',
