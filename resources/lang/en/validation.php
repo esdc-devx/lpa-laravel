@@ -125,6 +125,7 @@ return [
     */
 
     'attributes' => [
+        'organizational_unit'                                     => 'Organizational Unit',
         'departmental_benefits.*.rationale'                       => 'Rationale',
         'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
         'departmental_benefits.*.departmental_benefit_type_other' => 'Other',
