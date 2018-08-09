@@ -4,6 +4,7 @@ return [
     'general'          => 'Execption générale. Contactez votre administrateur.',
     'not_found'        => 'Non trouvé',
     'forbidden'        => 'Autorisations insuffisantes.',
+    'timeout'          => 'La connection avec le serveur à expirée.',
     'bad_request'      => 'Mauvaise requête. Rafraichissez votre page.',
     'server_error'     => 'Erreur serveur. Rafraichissez votre page.',
     'error_edit_admin' => 'Impossible d\'éditer le compte administrateur.',
