@@ -150,9 +150,6 @@ return [
     'risk_type_other' => [
         'label'       => 'Other Risk',
     ],
-    'internal_resource_other' => [
-        'label'       => 'Other Required Internal Resources',
-    ],
     'risk_impact_level' => [
         'label'       => 'Impact',
         'description' => 'An assessment of the impact on the project if the risk ever materializes.',

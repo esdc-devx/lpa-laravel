@@ -84,7 +84,7 @@ return [
         'description' => 'Le type d’avantage pour le ministère.',
     ],
     'departmental_benefit_type_other' => [
-        'label'       => 'Autre Type',
+        'label'       => 'Autre type',
     ],
     'departmental_benefit_rationale' => [
         'label'       => 'Justification',
@@ -96,7 +96,7 @@ return [
         'description' => 'Le type d’avantage pour l’apprenant.',
     ],
     'learner_benefit_type_other' => [
-        'label'       => 'Autre Type',
+        'label'       => 'Autre type',
     ],
     'learners_benefit_rationale' => [
         'label'       => 'Justification',
