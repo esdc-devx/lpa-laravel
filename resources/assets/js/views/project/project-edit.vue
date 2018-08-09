@@ -21,12 +21,12 @@
 
         <el-form-item-wrap
           :label="$tc('entities.general.organizational_units')"
-          prop="organizationalUnit"
+          prop="organizational_unit"
           required>
           <el-select-wrap
             v-model="form.organizational_unit"
             :isLoading="isProjectInfoLoading"
-            name="organizationalUnit"
+            name="organizational_unit"
             :data-vv-as="$tc('entities.general.organizational_units')"
             v-validate="'required'"
             :options="organizationalUnits"
