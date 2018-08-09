@@ -24,7 +24,7 @@
           :isLoading="isInfoLoading"
           nameSelect="request_sources"
           :dataVVasSelect="trans('forms.business_case.request_sources.label')"
-          :validateSelect="'required'"
+          :validateSelect="{ required: !this.isRequestSourceOther }"
           :options="requestSourceList"
           multiple
           sorted
@@ -106,7 +106,7 @@
           :isLoading="isInfoLoading"
           nameSelect="potential_solution_types"
           :dataVVasSelect="trans('forms.business_case.potential_solution_types.label')"
-          :validateSelect="'required'"
+          :validateSelect="{ required: !this.isPotentialSolutionTypesOther }"
           :options="potentialSolutionTypesList"
           multiple
           sorted
@@ -426,7 +426,7 @@
           :isLoading="isInfoLoading"
           nameSelect="internal_resources"
           :dataVVasSelect="trans('forms.business_case.internal_resources.label')"
-          :validateSelect="'required'"
+          :validateSelect="{ required: !this.isInternalResourceOther }"
           :options="internalResourceList"
           multiple
           sorted
