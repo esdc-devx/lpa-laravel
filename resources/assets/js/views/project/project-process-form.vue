@@ -419,7 +419,10 @@
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
         EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
-        EventBus.$off('Store:languageUpdate', this.triggerLoadProcessFormInfo);
+        EventBus.$off('Store:languageUpdate', () => {
+          this.triggerLoadProcessFormInfo();
+          this.triggerLoadProcessInstance();
+        });
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
           this.isClaiming = false;
@@ -440,7 +443,10 @@
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
-      EventBus.$on('Store:languageUpdate', this.triggerLoadProcessFormInfo);
+      EventBus.$on('Store:languageUpdate', () => {
+        this.triggerLoadProcessFormInfo();
+        this.triggerLoadProcessInstance();
+      });
       this.fetch();
     }
   };
