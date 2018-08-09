@@ -397,6 +397,18 @@
           await this.hideMainLoading();
           callback();
         }).catch(() => false);
+      },
+
+      onLanguageUpdate() {
+        this.triggerLoadProcessFormInfo();
+        this.triggerLoadProcessInstance();
+      },
+
+      destroyEvents() {
+        // Destroy any events we might be listening
+        // so that they do not get called while being on another page
+        EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
+        EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
       }
     },
 
@@ -404,6 +416,7 @@
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
         this.confirmLoseChanges().then(async () => {
           await this.showMainLoading();
+          this.destroyEvents();
           this.discardChanges();
           if (!this.isFormSubmitted) {
             try {
@@ -416,10 +429,7 @@
           next();
         }).catch(() => false);
       } else {
-        // Destroy any events we might be listening
-        // so that they do not get called while being on another page
-        EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
-        EventBus.$off('Store:languageUpdate', this.triggerLoadProcessFormInfo);
+        this.destroyEvents();
         // if user is currently claiming, remove claim
         if (this.isClaiming) {
           this.isClaiming = false;
@@ -440,7 +450,7 @@
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
-      EventBus.$on('Store:languageUpdate', this.triggerLoadProcessFormInfo);
+      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
       this.fetch();
     }
   };
