@@ -18,12 +18,12 @@ return [
     ],
     'process_form_decision_id' => [
         'label'       => 'Decision',
-        'description' => 'The decision on the Business Case.',
+        'description' => 'The decision on the Architecture Plan.',
     ],
     'assessment_comment' => [
         'label'       => 'Comments',
         'instruction' => 'Please provide an explanation if adjustments are required.',
-        'description' => 'Comments supporting the decision on the Business Case.',
+        'description' => 'Comments supporting the decision on the Architecture Plan.',
     ],
     'assessment_date' => [
         'label'       => 'Assessment Date',
