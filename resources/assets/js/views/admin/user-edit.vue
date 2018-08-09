@@ -30,7 +30,7 @@
           <el-select-wrap
             v-model="form.user.organizational_units"
             :isLoading="isUserInfoLoading"
-            name="organizationalUnits"
+            name="organizational_units"
             :data-vv-as="$tc('entities.general.organizational_units', 2)"
             v-validate="''"
             :options="organizationalUnits"

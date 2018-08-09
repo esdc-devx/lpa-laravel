@@ -31,7 +31,7 @@ return [
     'file'                 => 'The :attribute must be a file.',
     'filled'               => 'The :attribute field must have a value.',
     'image'                => 'The :attribute must be an image.',
-    'in'                   => 'The selected :attribute is invalid.',
+    'in'                   => 'The selected value for the field :attribute is invalid.',
     'in_array'             => 'The :attribute field does not exist in :other.',
     'integer'              => 'The :attribute must be an integer.',
     'ip'                   => 'The :attribute must be a valid IP address.',
@@ -125,6 +125,7 @@ return [
     */
 
     'attributes' => [
+        'organizational_unit'                                     => 'Organizational Unit',
         'departmental_benefits.*.rationale'                       => 'Rationale',
         'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
         'departmental_benefits.*.departmental_benefit_type_other' => 'Other',
