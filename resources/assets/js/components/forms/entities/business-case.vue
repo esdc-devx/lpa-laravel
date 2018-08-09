@@ -272,7 +272,6 @@
         :data="{
           departmentalBenefitTypeList
         }"
-        :min="1"
         :isLoading="isInfoLoading"
       />
     </el-tab-pane>
@@ -288,7 +287,6 @@
         :data="{
           learnersBenefitTypeList
         }"
-        :min="1"
         :isLoading="isInfoLoading"
       />
     </el-tab-pane>
@@ -452,7 +450,6 @@
           impactLevelList,
           probabilityLevelList
         }"
-        :min="1"
         :isLoading="isInfoLoading"
       />
     </el-tab-pane>
