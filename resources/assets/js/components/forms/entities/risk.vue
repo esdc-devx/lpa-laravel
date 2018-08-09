@@ -1,29 +1,30 @@
 <template>
   <div class="risk">
     <el-form-item-wrap
-      :label="trans('forms.business_case.risks.label')"
+      :label="trans('forms.business_case.risk_type.label')"
       :prop="`${fieldNamePrefix}.risk_type_id`"
       :classes="['has-other']"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.business_case.risks.description')">
+          :description="trans('forms.business_case.risk_type.description')">
         </el-popover-wrap>
         <span class="instruction">
-          {{ trans('forms.business_case.risks.instruction') }}
+          {{ trans('forms.business_case.risk_type.instruction') }}
         </span>
       </span>
       <el-select-other-wrap
         :modelSelect.sync="form.risk_type_id"
         :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
-        :dataVVas="trans('forms.business_case.risks.label')"
+        :dataVVasSelect="trans('forms.business_case.risk_type.label')"
         :validateSelect="{ required: !this.isRiskTypeOther }"
         :options="data.riskTypeList"
         sorted
 
-        :nameOther="`${fieldNamePrefix}.risk_type_other`"
         :modelOther.sync="form.risk_type_other"
+        :nameOther="`${fieldNamePrefix}.risk_type_other`"
+        :dataVVasOther="trans('forms.business_case.risk_type_other.label')"
         :validateOther="{ required: this.isRiskTypeOther }"
         :isChecked.sync="isRiskTypeOther"
         maxlength="100"

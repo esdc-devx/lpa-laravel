@@ -34,6 +34,9 @@ return [
                 <li><span>Demande du BDPRH ou du BCP</span> : Demande du Bureau du dirigeant principal des ressources humaines ou du Bureau du Conseil privé</li>
             </ul>',
     ],
+    'request_source_other' => [
+        'label'       => 'Autres sources de la demande',
+    ],
     'potential_solution_types' => [
         'label'       => 'Types de solutions potentielles',
         'instruction' => 'Veuillez sélectionner tous les choix applicables. Si nécessaire, utilisez le champ Autres pour spécifier les choix manquants.',
@@ -42,6 +45,9 @@ return [
             <ul>
                 <li><span>Solution commerciale</span> : matériel d\'un tiers exigeant un achat, par exemple, Skillsoft.</li>
             </ul>',
+    ],
+    'potential_solution_type_other' => [
+        'label'       => 'Autres types de solutions potentielles',
     ],
     'learning_response_strategy' => [
         'label'       => 'Stratégie en matière d’apprentissage',
@@ -77,6 +83,9 @@ return [
         'instruction' => 'Veuillez sélectionner le choix applicable ou utilisez le champ Autre pour spécifier un autre choix.',
         'description' => 'Le type d’avantage pour le ministère.',
     ],
+    'departmental_benefit_type_other' => [
+        'label'       => 'Autre Type',
+    ],
     'departmental_benefit_rationale' => [
         'label'       => 'Justification',
         'description' => 'La justification de l’avantage pour le ministère.',
@@ -85,6 +94,9 @@ return [
         'label'       => 'Type',
         'instruction' => 'Veuillez sélectionner le choix applicable ou utilisez le champ Autre pour spécifier un autre choix.',
         'description' => 'Le type d’avantage pour l’apprenant.',
+    ],
+    'learner_benefit_type_other' => [
+        'label'       => 'Autre Type',
     ],
     'learners_benefit_rationale' => [
         'label'       => 'Justification',
@@ -127,10 +139,16 @@ return [
                 <li><span>PON</span> : Cette équipe aide à planifier les opérations au niveau national tel que les offres de cours ou les événements.</li>
             </ul>',
     ],
-    'risks' => [
+    'internal_resource_other' => [
+        'label'       => 'Autres ressources internes requises',
+    ],
+    'risk_type' => [
         'label'       => 'Risque',
         'instruction' => 'Veuillez sélectionner le choix applicable ou utilisez le champ Autre pour spécifier un autre choix.',
         'description' => 'La description de tout risque, enjeu ou contrainte connus touchant le projet.',
+    ],
+    'risk_type_other' => [
+        'label'       => 'Autre risque',
     ],
     'risk_impact_level' => [
         'label'       => 'Impact',

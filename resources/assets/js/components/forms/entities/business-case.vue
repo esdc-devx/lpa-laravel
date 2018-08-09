@@ -23,14 +23,15 @@
           :modelSelect.sync="form.request_sources"
           :isLoading="isInfoLoading"
           nameSelect="request_sources"
-          :dataVVas="trans('forms.business_case.request_sources.label')"
+          :dataVVasSelect="trans('forms.business_case.request_sources.label')"
           :validateSelect="'required'"
           :options="requestSourceList"
           multiple
           sorted
 
-          nameOther="request_source_other"
           :modelOther.sync="form.request_source_other"
+          nameOther="request_source_other"
+          :dataVVasOther="trans('forms.business_case.request_source_other.label')"
           :validateOther="{ required: this.isRequestSourceOther }"
           :isChecked.sync="isRequestSourceOther"
           maxlength="100"
@@ -104,14 +105,15 @@
           :modelSelect.sync="form.potential_solution_types"
           :isLoading="isInfoLoading"
           nameSelect="potential_solution_types"
-          :dataVVas="trans('forms.business_case.potential_solution_types.label')"
+          :dataVVasSelect="trans('forms.business_case.potential_solution_types.label')"
           :validateSelect="'required'"
           :options="potentialSolutionTypesList"
           multiple
           sorted
 
-          nameOther="potential_solution_type_other"
           :modelOther.sync="form.potential_solution_type_other"
+          nameOther="potential_solution_type_other"
+          :dataVVasOther="trans('forms.business_case.potential_solution_type_other.label')"
           :validateOther="{ required: this.isPotentialSolutionTypesOther }"
           :isChecked.sync="isPotentialSolutionTypesOther"
           maxlength="1250"
@@ -423,14 +425,15 @@
           :modelSelect.sync="form.internal_resources"
           :isLoading="isInfoLoading"
           nameSelect="internal_resources"
-          :dataVVas="trans('forms.business_case.internal_resources.label')"
+          :dataVVasSelect="trans('forms.business_case.internal_resources.label')"
           :validateSelect="'required'"
           :options="internalResourceList"
           multiple
           sorted
 
-          nameOther="internal_resource_other"
           :modelOther.sync="form.internal_resource_other"
+          nameOther="internal_resource_other"
+          :dataVVasOther="trans('forms.business_case.internal_resource_other.label')"
           :validateOther="{ required: this.isInternalResourceOther }"
           :isChecked.sync="isInternalResourceOther"
           maxlength="1250"
