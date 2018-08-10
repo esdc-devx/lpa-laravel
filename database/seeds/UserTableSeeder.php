@@ -37,11 +37,13 @@ class UserTableSeeder extends Seeder
         // Enforce eloquent guard attributes to ensure data integrity.
         Model::reguard();
 
-        // Create admin account to boot the application.
-        $this->createAdminUser(config('auth.admin.username'));
+        // Create admin account to boot the application and admin users.
+        $adminUsers = collect(array_merge(
+            [config('auth.admin.username')],
+            config('auth.admin_users')
+        ));
 
-        // Create default admin users.
-        collect(config('auth.admin_users'))->each(function($username) {
+        $adminUsers->each(function($username) {
             $this->createAdminUser($username);
         });
     }
