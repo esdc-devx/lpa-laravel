@@ -26,9 +26,9 @@ return [
         'description' => 'The list of the government core curriculum priorities addressed by this project.',
     ],
     'request_sources' => [
-        'label'       => 'Request Source',
+        'label'       => 'Request Sources',
         'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
-        'description' => 'The source of the request.',
+        'description' => 'The sources of the request.',
         'help'        => '
             <ul>
                 <li><span>OCHRO or PCO request</span>: Office of the Chief Human Resources Officer or Privy Council Office request</li>
@@ -40,7 +40,7 @@ return [
     'potential_solution_types' => [
         'label'       => 'Potential Solution Types',
         'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
-        'description' => 'The list of potential solution types to solve the Business issue.',
+        'description' => 'The list of potential solution types to solve the business issue.',
         'help'        => '
             <ul>
                 <li><span>Commercial Off-The-Shelf (COTS)</span>: Third party material that requires purchase. E.g.: Skillsoft.</li>
@@ -51,7 +51,7 @@ return [
     ],
     'learning_response_strategy' => [
         'label'       => 'Learning Response Strategy',
-        'instruction' => 'Please provide a high-level overview of your project and how it addresses the gaps and issues described above.',
+        'instruction' => 'Please provide a high-level overview of your project and how it addresses the perfomance gaps or the business issues identified previously.',
         'description' => 'The proposed Learning Response Strategy (LRS) description.',
     ],
     'is_required_training' => [
@@ -104,8 +104,8 @@ return [
     ],
     'cost_center' => [
         'label'       => 'Cost Center',
-        'instruction' => 'Please provide your Cost Centre.',
-        'description' => 'The project cost centre.',
+        'instruction' => 'Please provide your Cost Center.',
+        'description' => 'The project cost center.',
         'hint'        => 'Ex: Q12345',
     ],
     'maintenance_fund' => [
@@ -165,6 +165,6 @@ return [
     ],
     'comment' => [
         'label'       => 'General Comments',
-        'description' => 'Any other relevant information about the buisness case.',
+        'description' => 'Any other relevant information about the business case.',
     ],
 ];

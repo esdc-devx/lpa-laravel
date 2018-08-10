@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Créer un project',
+    'title' => 'Créer un projet',
 ];

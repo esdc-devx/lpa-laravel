@@ -6,11 +6,11 @@
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
-        <el-form-item :label="trans('entities.general.name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
+        <el-form-item :label="trans('entities.general.full_name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
           <el-autocomplete
             id="name"
             name="name"
-            :data-vv-as="trans('entities.general.name')"
+            :data-vv-as="trans('entities.general.full_name')"
             ref="name"
             popper-class="name-autocomplete"
             v-validate="nameRules"

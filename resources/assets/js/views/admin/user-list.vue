@@ -21,7 +21,7 @@
       <el-table-column
         sortable
         prop="name"
-        :label="trans('entities.general.name')">
+        :label="trans('entities.general.full_name')">
       </el-table-column>
       <el-table-column
         sortable

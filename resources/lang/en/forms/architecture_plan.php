@@ -23,7 +23,7 @@ return [
     ],
     'comment' => [
         'label'       => 'General Comments',
-        'instruction' => 'If this project includes other product types such as Video, job aids, Events, etc, please give their respective number.',
+        'instruction' => 'If this project includes other product types such as videos, job aids, events, etc, please give their respective number.',
         'description' => 'Any other relevant information about the Architecture Plan.',
     ],
 ];
