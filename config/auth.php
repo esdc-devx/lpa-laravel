@@ -114,4 +114,17 @@ return [
         'password' => env('ADMIN_PASSWORD', ''),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Users Admin Accounts
+    |--------------------------------------------------------------------------
+    |
+    | Users that should be granted admin role when installing the application.
+    | The environment variable must be formatted this way:
+    | ADMIN_USERS="user1,user2,user3"
+    |
+     */
+
+     'admin_users' => env('ADMIN_USERS') ? array_map('trim', explode(',', env('ADMIN_USERS'))) : [],
+
 ];
