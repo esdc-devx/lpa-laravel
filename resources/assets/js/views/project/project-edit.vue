@@ -10,13 +10,13 @@
           :label="trans('entities.general.name')"
           prop="name"
           required>
-          <el-input-wrap
+          <input-wrap
             name="name"
             :data-vv-as="trans('entities.general.name')"
             v-model="form.project.name"
             maxlength="175"
             v-validate="'required'">
-          </el-input-wrap>
+          </input-wrap>
         </el-form-item-wrap>
 
         <el-form-item-wrap
@@ -48,7 +48,7 @@
 
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
-  import ElInputWrap from '@components/forms/el-input-wrap';
+  import InputWrap from '@components/forms/input-wrap';
   import FormError from '@components/forms/error.vue';
 
   import FormUtils from '@mixins/form/utils.js';
@@ -63,7 +63,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElFormItemWrap, ElSelectWrap, ElInputWrap, FormError },
+    components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 
     computed: {
       ...mapGetters({

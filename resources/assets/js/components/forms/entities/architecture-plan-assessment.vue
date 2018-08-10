@@ -39,7 +39,7 @@
             :description="trans('forms.architecture_plan_assessment.process_cancellation_rationale.description')">
           </el-popover-wrap>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.process_cancellation_rationale"
           :disabled="!form.is_process_cancelled"
           v-validate="{ required: form.is_process_cancelled }"
@@ -47,7 +47,7 @@
           name="process_cancellation_rationale"
           maxlength="2500"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.architecture_plan_assessment.assessment_date.label')"
@@ -107,7 +107,7 @@
         <span class="instruction">
           {{ trans('forms.architecture_plan_assessment.assessment_comment.instruction') }}
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="item.comment"
           :disabled="form.is_process_cancelled"
           v-validate="{ required: item.process_form_decision_id === 2 }"
@@ -115,7 +115,7 @@
           name="assessment_comment"
           maxlength="2500"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -129,13 +129,13 @@
 
   import ElFormItemWrap from '../el-form-item-wrap';
   import ElSelectWrap from '../el-select-wrap';
-  import ElInputWrap from '../el-input-wrap';
+  import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'architecture-plan-assessment',
 
-    components: { FormError, ElFormItemWrap, ElSelectWrap, ElInputWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectWrap, InputWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

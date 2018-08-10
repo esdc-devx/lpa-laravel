@@ -50,14 +50,14 @@
             {{ trans('forms.business_case.business_issue.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.business_issue"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.business_issue.label')"
           name="business_issue"
           maxlength="1250"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -78,14 +78,14 @@
             {{ trans('forms.business_case.learning_response_strategy.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.learning_response_strategy"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.learning_response_strategy.label')"
           name="learning_response_strategy"
           maxlength="2500"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.potential_solution_types.label')"
@@ -203,14 +203,14 @@
             {{ trans('forms.business_case.timeframe_rationale.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.timeframe_rationale"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.timeframe_rationale.label')"
           name="timeframe_rationale"
           maxlength="1250"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -310,14 +310,14 @@
             {{ trans('forms.business_case.cost_center.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.cost_center"
           v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }"
           :data-vv-as="trans('forms.business_case.cost_center.label')"
           name="cost_center"
           :placeholder="trans('forms.business_case.cost_center.hint')"
           v-mask="'A#####'">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.maintenance_fund.label')"
@@ -350,14 +350,14 @@
             {{ trans('forms.business_case.maintenance_fund_rationale.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.maintenance_fund_rationale"
           v-validate="{ required: form.maintenance_fund_id > 1 }"
           :data-vv-as="trans('forms.business_case.maintenance_fund_rationale.label')"
           name="maintenance_fund_rationale"
           maxlength="1250"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.salary_fund.label')"
@@ -389,14 +389,14 @@
             {{ trans('forms.business_case.salary_fund_rationale.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.salary_fund_rationale"
           v-validate="{ required: form.salary_fund_id > 1 }"
           :data-vv-as="trans('forms.business_case.salary_fund_rationale.label')"
           name="salary_fund_rationale"
           maxlength="1250"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -470,14 +470,14 @@
             :description="trans('forms.business_case.comment.description')">
           </el-popover-wrap>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.comment"
           v-validate="''"
           :data-vv-as="trans('forms.business_case.comment.label')"
           name="comment"
           maxlength="2500"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -492,7 +492,7 @@
   import ElFormItemWrap from '../el-form-item-wrap';
   import ElSelectOtherWrap from '../el-select-other-wrap';
   import ElSelectWrap from '../el-select-wrap';
-  import ElInputWrap from '../el-input-wrap';
+  import InputWrap from '../input-wrap';
   import FormSectionGroup from '../form-section-group';
   import ElTreeWrap from '../el-tree-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
@@ -500,7 +500,7 @@
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, ElInputWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, InputWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

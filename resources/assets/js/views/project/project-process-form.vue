@@ -52,6 +52,7 @@
                 :formData="formData"
                 :errorTabs="errorTabs">
               </component>
+
             </el-form>
           </el-main>
           <div class="form-footer">
