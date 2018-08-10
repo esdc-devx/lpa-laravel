@@ -78,14 +78,14 @@
           {{ trans('forms.business_case.risk_rationale.instruction') }}
         </span>
       </span>
-      <el-input-wrap
+      <input-wrap
         v-model="form.rationale"
         v-validate="'required'"
         :data-vv-as="trans('forms.business_case.risk_rationale.label')"
         :name="`${fieldNamePrefix}.rationale`"
         maxlength="1250"
         type="textarea">
-      </el-input-wrap>
+      </input-wrap>
     </el-form-item-wrap>
   </div>
 </template>
@@ -98,13 +98,13 @@
   import ElFormItemWrap from '../el-form-item-wrap';
   import ElSelectOtherWrap from '../el-select-other-wrap';
   import ElSelectWrap from '../el-select-wrap';
-  import ElInputWrap from '../el-input-wrap';
+  import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'risk',
 
-    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, ElInputWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, InputWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

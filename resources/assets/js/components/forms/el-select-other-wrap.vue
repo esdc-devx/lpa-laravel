@@ -20,18 +20,19 @@
           <span v-if="multiple">{{ trans('entities.form.others') }}</span>
           <span v-else>{{ trans('entities.form.other') }}</span>
       </el-checkbox>
-      <el-input-wrap
+      <input-wrap
         ref="input"
         :name="nameOther"
         v-validate="validateOther"
         :data-vv-as="dataVVasOther"
         :disabled="!isChecked"
-        :value="modelOther"
+        :value="innerOther"
+        v-model="innerOther"
         :maxlength="maxlength"
         :type="type"
         @input.native="updateInputValue($event.target.value)">
           <slot></slot>
-      </el-input-wrap>
+      </input-wrap>
     </div>
   </div>
 </template>
@@ -40,7 +41,7 @@
   import FormError from './error.vue';
 
   import ElSelectWrap from './el-select-wrap';
-  import ElInputWrap from './el-input-wrap';
+  import InputWrap from './input-wrap';
 
   export default {
     name: 'el-select-other-wrap',
@@ -51,7 +52,7 @@
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
     inject: ['$validator'],
 
-    components: { FormError, ElSelectWrap, ElInputWrap },
+    components: { FormError, ElSelectWrap, InputWrap },
 
     props: {
       modelSelect: {
@@ -110,12 +111,22 @@
       },
       type: {
         type: String,
-        default: 'text'
+        default: 'input',
+        validator: function (value) {
+          // The value must match one of these strings
+          return ['input', 'textarea'].indexOf(value) !== -1
+        }
       },
       maxlength: {
         type: String,
         default: null
       }
+    },
+
+    data() {
+      return {
+        innerOther: this.modelOther
+      };
     },
 
     computed: {
@@ -147,7 +158,9 @@
 
       updateInputValue(value) {
         // update parent data so that we can still v-model on the parent
-        this.$emit('update:modelOther', value);
+        this.$helpers.debounceAction(() => {
+          this.$emit('update:modelOther', value);
+        });
       },
 
       onCheckboxChange(checked) {
@@ -187,7 +200,7 @@
         // as it needs to be vertically centered with its folowing input
         line-height: 40px !important;
       }
-      .el-input-wrap {
+      .input-wrap {
         flex: 1;
       }
     }
