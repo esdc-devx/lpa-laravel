@@ -22,11 +22,19 @@ axios.interceptors.request.use(config => config, error => {
   return Promise.reject(error);
 });
 axios.interceptors.response.use(response => response, error => {
-  let response = error.response;
-  let errorResponse = response.data && response.data.errors ? response.data.errors : '';
-  let errorMsg = error.message || '';
-
   let trans = Vue.prototype.trans;
+
+  let response = error.response;
+  // if the response is undefined, we likely got a timeout
+  if (!response) {
+    Notify.notifyError({
+      message: trans('errors.timeout')
+    });
+    Vue.$log.error(`[axios][interceptor]: ${trans('errors.timeout')}`);
+    return Promise.reject(error);
+  }
+
+  let errorResponse = response && response.data && response.data.errors ? response.data.errors : '';
 
   if (response.status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login

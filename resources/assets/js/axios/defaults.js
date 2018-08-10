@@ -7,8 +7,8 @@ let defaultLang = Config.DEFAULT_LANG;
 
 const defaults = {
   baseURL: '/' + defaultLang + '/api',
-  // buff to 10s to be sure that when on slow connections we are still capable of loading data
-  timeout: 10000,
+  // buff to 20s to be sure that when on slow connections we are still capable of loading data
+  timeout: 20000,
   headers: {
     common: {
       'Accept-Language': defaultLang,
