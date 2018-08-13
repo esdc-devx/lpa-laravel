@@ -6,7 +6,6 @@
         :is="type"
         :class="[`el-${type}__inner`, { 'is-error': verrors.has(name) }]"
         v-text="innerValue"
-        v-model="innerValue"
         :name="name"
         :maxlength="charsLimit"
         @keyup="onKeyDown"
@@ -78,7 +77,6 @@
         // update parent data so that we can still v-model on the parent
         this.$helpers.debounceAction(() => {
           this.$emit('input', value);
-          this.innerValue = value;
         });
       },
 
