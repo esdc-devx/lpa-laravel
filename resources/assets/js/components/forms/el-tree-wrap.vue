@@ -76,7 +76,9 @@
         // update parent data so that we can still v-model on the parent
         // 2018-07-17 @note: this is a limitation of ElementUI
         // that doesn't accept v-model on el-tree elements
-        this.$emit('input', value);
+        this.$helpers.debounceAction(() => {
+          this.$emit('input', value);
+        });
       },
 
       /**
