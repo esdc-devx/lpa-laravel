@@ -10,7 +10,7 @@
           <el-input name="username" v-model="form.user.username" disabled></el-input>
         </el-form-item>
 
-        <el-form-item :label="trans('entities.general.name')" for="name">
+        <el-form-item :label="trans('entities.general.full_name')" for="name">
           <el-input name="name" v-model="form.user.name" disabled></el-input>
         </el-form-item>
 

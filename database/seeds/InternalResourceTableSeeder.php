@@ -37,8 +37,8 @@ class InternalResourceTableSeeder extends Seeder
                 'name_fr' => 'Technologie de l’information (TI)',
             ],
             [
-                'name_en' => 'GC Campus',
-                'name_fr' => 'GC Campus',
+                'name_en' => 'GCcampus',
+                'name_fr' => 'GCcampus',
             ],
             [
                 'name_en' => 'Audio Visual - Logistic (A/V)',

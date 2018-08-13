@@ -39,6 +39,9 @@
             :description="trans('forms.architecture_plan_assessment.process_cancellation_rationale.description')">
           </el-popover-wrap>
         </span>
+        <span class="instruction">
+          {{ trans('forms.architecture_plan_assessment.process_cancellation_rationale.instruction') }}
+        </span>
         <el-input-wrap
           v-model="form.process_cancellation_rationale"
           :disabled="!form.is_process_cancelled"

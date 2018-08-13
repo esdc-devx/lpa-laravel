@@ -51,7 +51,7 @@ return [
     ],
     'learning_response_strategy' => [
         'label'       => 'Stratégie en matière d’apprentissage',
-        'instruction' => 'Veuillez fournir un aperçu général de votre projet et de la manière dont il permet de régler les lacunes et les problèmes décrits ci-dessus.',
+        'instruction' => 'Veuillez fournir un aperçu général de votre projet et de la manière dont il permet de régler les lacunes en matière de rendement ou les problèmes opérationnels identifiés précédemment.',
         'description' => 'La description de la stratégie en matière d’apprentissage proposée.',
     ],
     'is_required_training' => [
