@@ -250,15 +250,16 @@
             :description="trans('forms.business_case.expected_annual_participant_number.description')">
           </el-popover-wrap>
         </span>
-        <el-input-number
-          name="expected_annual_participant_number"
-          :data-vv-as="trans('forms.business_case.expected_annual_participant_number.label')"
+        <input-wrap
           v-model="form.expected_annual_participant_number"
-          v-mask="'######'"
+          name="expected_annual_participant_number"
           v-validate="{ required: true, numeric: true, regex: /[0-9]{1,6}/ }"
+          :data-vv-as="trans('forms.business_case.expected_annual_participant_number.label')"
+          v-mask="'######'"
           :min="1"
-          :max="500000">
-        </el-input-number>
+          :max="500000"
+          type="number">
+        </input-wrap>
         <form-error name="expected_annual_participant_number"></form-error>
       </el-form-item-wrap>
     </el-tab-pane>

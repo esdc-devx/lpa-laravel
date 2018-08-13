@@ -13,7 +13,7 @@ export const helpers = {
 
   debounceAction: _.debounce(callback => {
     callback();
-  }, 500),
+  }, Config.DEBOUNCE_WAIT_TIME),
 
   /**
    * Sorting method called when a column header is clicked to compare each rows and sort them accordingly
