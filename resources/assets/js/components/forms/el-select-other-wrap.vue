@@ -20,7 +20,7 @@
           <span v-if="multiple">{{ trans('entities.form.others') }}</span>
           <span v-else>{{ trans('entities.form.other') }}</span>
       </el-checkbox>
-      <el-input-wrap
+      <input-wrap
         ref="input"
         :name="nameOther"
         v-validate="validateOther"
@@ -29,9 +29,9 @@
         :value="modelOther"
         :maxlength="maxlength"
         :type="type"
-        @input.native="updateInputValue($event.target.value)">
+        v-on="inputListeners">
           <slot></slot>
-      </el-input-wrap>
+      </input-wrap>
     </div>
   </div>
 </template>
@@ -40,7 +40,7 @@
   import FormError from './error.vue';
 
   import ElSelectWrap from './el-select-wrap';
-  import ElInputWrap from './el-input-wrap';
+  import InputWrap from './input-wrap';
 
   export default {
     name: 'el-select-other-wrap',
@@ -51,7 +51,7 @@
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
     inject: ['$validator'],
 
-    components: { FormError, ElSelectWrap, ElInputWrap },
+    components: { FormError, ElSelectWrap, InputWrap },
 
     props: {
       modelSelect: {
@@ -110,7 +110,11 @@
       },
       type: {
         type: String,
-        default: 'text'
+        default: 'input',
+        validator: function (value) {
+          // The value must match one of these strings
+          return ['input', 'textarea'].indexOf(value) !== -1
+        }
       },
       maxlength: {
         type: String,
@@ -126,6 +130,22 @@
         set(val) {
           this.$emit('update:isChecked', val);
         }
+      },
+      // taken from: https://vuejs.org/v2/guide/components-custom-events.html#Binding-Native-Events-to-Components
+      inputListeners: function () {
+        var that = this;
+        return Object.assign({},
+          // We add all the listeners from the parent
+          this.$listeners,
+          // Then we can add custom listeners or override the
+          // behavior of some listeners.
+          {
+            // This ensures that the component works with v-model
+            input: function (value) {
+              that.updateInputValue(value);
+            }
+          }
+        )
       }
     },
 
@@ -187,7 +207,7 @@
         // as it needs to be vertically centered with its folowing input
         line-height: 40px !important;
       }
-      .el-input-wrap {
+      .input-wrap {
         flex: 1;
       }
     }

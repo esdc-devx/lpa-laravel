@@ -31,14 +31,14 @@
             {{ trans('forms.architecture_plan.comment.instruction') }}
           </span>
         </span>
-        <el-input-wrap
+        <input-wrap
           v-model="form.comment"
           name="comment"
           v-validate="''"
           :data-vv-as="trans('forms.architecture_plan.comment.label')"
           maxlength="2500"
           type="textarea">
-        </el-input-wrap>
+        </input-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -52,13 +52,13 @@
 
   import ElFormItemWrap from '../el-form-item-wrap';
   import FormSectionGroup from '../form-section-group';
-  import ElInputWrap from '../el-input-wrap';
+  import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
   export default {
     name: 'architecture-plan',
 
-    components: { FormError, FormSectionGroup, ElFormItemWrap, ElInputWrap, ElPopoverWrap },
+    components: { FormError, FormSectionGroup, ElFormItemWrap, InputWrap, ElPopoverWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
