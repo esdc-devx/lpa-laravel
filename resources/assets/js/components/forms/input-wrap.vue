@@ -278,6 +278,10 @@
   .input-wrap {
     display: flex;
     flex-direction: column;
+    .el-input {
+      // fixes IE11 display underneath for errors
+      display: flex;
+    }
     .char-count {
       color: $--color-text-secondary;
     }
