@@ -84,16 +84,20 @@ export default {
           this.$nextTick(() => {
             this.checkInvalidTabs();
           });
-          if (errorNotif) {
-            errorNotif.close();
-          }
-          errorNotif = this.notifyError({
-            message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
-          });
+          this.showRefreshErrorNotif();
         }
 
         this.isSubmitting = false;
         this.focusOnError();
+      });
+    },
+
+    showRefreshErrorNotif() {
+      if (errorNotif) {
+        errorNotif.close();
+      }
+      errorNotif = this.notifyError({
+        message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
       });
     },
 
@@ -106,6 +110,9 @@ export default {
       } catch({ response }) {
         if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
           this.manageBackendErrors(response.data.errors);
+          if (this.options.hasTabsToValidate) {
+            this.showRefreshErrorNotif();
+          }
         } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
           this.notifyError({
             message: Vue.prototype.trans('errors.bad_request')
