@@ -15,10 +15,7 @@
         :value="currentTextValue"
         :name="name"
         :maxlength="charsLimit"
-        @keyup="onKeyUp"
         @input="onInput"
-        @mousedown="isDragging = true"
-        @mouseup="isDragging = false"
         v-autosize>
       </component>
       <div v-else class="el-input-number">
@@ -124,8 +121,7 @@
         // without relying on the parent to get it
         currentTextValue: this.value,
         currentNumberValue: this.value,
-        innerTextValue: this.value,
-        isDragging: false
+        innerTextValue: this.value
       };
     },
 
@@ -191,20 +187,11 @@
         });
       },
 
-      onKeyUp(e) {
+      onInput(e) {
         let value = e.target.value;
         // update our internal value so that the charCount can keep track of the count
         this.innerTextValue = value;
         this.updateValue(value);
-      },
-
-      onInput(e) {
-        let value = e.target.value;
-        // if is not a keyboard event
-        if (this.isDragging) {
-          // might be mouse event (copy-paste, cut, drag), update the model
-          this.updateValue(value);
-        }
       },
 
       // Input Number methods
@@ -257,7 +244,6 @@
         }
       },
       setCurrentValue(newVal) {
-        const oldVal = this.currentNumberValue;
         if (typeof newVal === 'number' && this.precision !== undefined) {
           newVal = this.toPrecision(newVal, this.precision);
         }
@@ -267,8 +253,14 @@
         this.currentNumberValue = newVal;
         this.updateValue(newVal);
       },
+      // Because of a limitation of Vuejs regarding custom components that have DOM elements inside,
+      // we cannot make their values reactives
+      // so we have to manually reassign them
       onDiscardChanges() {
+        this.currentTextValue = this.value;
         this.currentNumberValue = this.value;
+        this.$refs.input.value = this.currentTextValue;
+        this.$refs.inputNumber.value = this.currentNumberValue;
       }
     },
 
