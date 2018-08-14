@@ -163,9 +163,12 @@
     watch: {
       isInputDisabled: function(isDisabled) {
         if (isDisabled) {
-          // reset input value when it is disabled
+          // check if we are dealing with an input tag,
+          // and reset input value when it is disabled
           // as we cannot make a <component> tag reactive
-          this.$refs.input.value = null;
+          if (this.type === 'input') {
+            this.$refs.input.value = null;
+          }
           this.currentTextValue = null;
           // notify the parent
           this.updateValue(null);
