@@ -137,7 +137,7 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('FormEntity:formDataUpdate', this.prepareGroups);
+      EventBus.$off('FormEntity:discardChanges', this.prepareGroups);
     },
 
     created() {
@@ -145,7 +145,7 @@
     },
 
     mounted() {
-      EventBus.$on('FormEntity:formDataUpdate', this.prepareGroups);
+      EventBus.$on('FormEntity:discardChanges', this.prepareGroups);
     }
   };
 </script>

@@ -10,7 +10,7 @@
           :label="trans('entities.general.name')"
           prop="name"
           required>
-          <el-input-wrap
+          <input-wrap
             id="name"
             name="name"
             :data-vv-as="trans('entities.general.name')"
@@ -18,7 +18,7 @@
             maxlength="175"
             v-validate="'required'"
             auto-complete="off">
-          </el-input-wrap>
+          </input-wrap>
         </el-form-item-wrap>
         <el-form-item-wrap
           :label="$tc('entities.general.organizational_units')"
@@ -53,7 +53,7 @@
 
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
-  import ElInputWrap from '@components/forms/el-input-wrap';
+  import InputWrap from '@components/forms/input-wrap';
 
   let namespace = 'projects';
 
@@ -64,7 +64,7 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElFormItemWrap, ElSelectWrap, ElInputWrap, FormError },
+    components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 
     computed: {
       ...mapGetters({

@@ -6,7 +6,14 @@ import Config from '@/config.js';
 export const helpers = {
   throttleAction: _.throttle(callback => {
     callback();
-  }, Config.THROTTLE_WAIT_TIME),
+  }, Config.THROTTLE_WAIT_TIME, {
+    leading: false,
+    trailing: true
+  }),
+
+  debounceAction: _.debounce(callback => {
+    callback();
+  }, Config.DEBOUNCE_WAIT_TIME),
 
   /**
    * Sorting method called when a column header is clicked to compare each rows and sort them accordingly
