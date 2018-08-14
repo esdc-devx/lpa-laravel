@@ -16,7 +16,8 @@
         :name="name"
         :maxlength="charsLimit"
         @keyup="onKeyDown"
-        @input="onInput">
+        @input="onInput"
+        v-autosize>
       </component>
       <div v-else class="el-input-number">
         <span
@@ -292,6 +293,7 @@
     // avoid being able to squish the textarea when resizing
     textarea {
       min-height: 50px;
+      max-height: 300px;
     }
 
     // Hide the up and down arrows from the input number
