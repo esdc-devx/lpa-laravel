@@ -17,6 +17,8 @@
         :maxlength="charsLimit"
         @keyup="onKeyUp"
         @input="onInput"
+        @mousedown="isDragging = true"
+        @mouseup="isDragging = false"
         v-autosize>
       </component>
       <div v-else class="el-input-number">
@@ -122,7 +124,8 @@
         // without relying on the parent to get it
         currentTextValue: this.value,
         currentNumberValue: this.value,
-        innerTextValue: this.value
+        innerTextValue: this.value,
+        isDragging: false
       };
     },
 
@@ -198,7 +201,7 @@
       onInput(e) {
         let value = e.target.value;
         // if is not a keyboard event
-        if (!(e instanceof InputEvent)) {
+        if (this.isDragging) {
           // might be mouse event (copy-paste, cut, drag), update the model
           this.updateValue(value);
         }
