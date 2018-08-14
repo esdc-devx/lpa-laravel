@@ -11,11 +11,11 @@
         v-bind="$attrs"
         :is="type"
         :class="[`el-${type}__inner`, { 'is-error': verrors.has(name) }]"
-        v-text="currentTextValue"
-        :value="currentTextValue"
+        v-text="value"
+        :value="value"
         :name="name"
         :maxlength="charsLimit"
-        @keyup="onKeyDown"
+        @keyup="onKeyUp"
         @input="onInput"
         v-autosize>
       </component>
@@ -127,6 +127,8 @@
 
     computed: {
       charCount() {
+        // based on our internal text value and not the value instead
+        // so that we get an instant feedback on the UI
         return (this.currentTextValue || '').length;
       },
       charsLimit() {
@@ -169,6 +171,7 @@
           if (this.type === 'input') {
             this.$refs.input.value = null;
           }
+          // nullify our internal text value
           this.currentTextValue = null;
           // notify the parent
           this.updateValue(null);
@@ -184,7 +187,7 @@
         });
       },
 
-      onKeyDown(e) {
+      onKeyUp(e) {
         let value = e.target.value;
         // update our internal value so that the charCount can keep track of the count
         this.currentTextValue = value;
@@ -194,7 +197,7 @@
       onInput(e) {
         let value = e.target.value;
         // if is not a keyboard event
-        if (!(e instanceof KeyboardEvent)) {
+        if (!(e instanceof InputEvent)) {
           // might be mouse event (copy-paste, cut, drag), update the model
           this.updateValue(value);
         }
