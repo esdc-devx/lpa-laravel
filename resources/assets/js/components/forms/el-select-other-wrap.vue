@@ -26,11 +26,10 @@
         v-validate="validateOther"
         :data-vv-as="dataVVasOther"
         :disabled="!isChecked"
-        :value="innerOther"
-        v-model="innerOther"
+        :value="modelOther"
         :maxlength="maxlength"
         :type="type"
-        @input.native="updateInputValue($event.target.value)">
+        v-on="inputListeners">
           <slot></slot>
       </input-wrap>
     </div>
@@ -123,12 +122,6 @@
       }
     },
 
-    data() {
-      return {
-        innerOther: this.modelOther
-      };
-    },
-
     computed: {
       checked: {
         get() {
@@ -137,6 +130,22 @@
         set(val) {
           this.$emit('update:isChecked', val);
         }
+      },
+      // taken from: https://vuejs.org/v2/guide/components-custom-events.html#Binding-Native-Events-to-Components
+      inputListeners: function () {
+        var that = this;
+        return Object.assign({},
+          // We add all the listeners from the parent
+          this.$listeners,
+          // Then we can add custom listeners or override the
+          // behavior of some listeners.
+          {
+            // This ensures that the component works with v-model
+            input: function (value) {
+              that.updateInputValue(value);
+            }
+          }
+        )
       }
     },
 
@@ -158,9 +167,7 @@
 
       updateInputValue(value) {
         // update parent data so that we can still v-model on the parent
-        this.$helpers.debounceAction(() => {
-          this.$emit('update:modelOther', value);
-        });
+        this.$emit('update:modelOther', value);
       },
 
       onCheckboxChange(checked) {

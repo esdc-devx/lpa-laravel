@@ -287,7 +287,7 @@
 
         // wait until data has been synced through components
         this.$nextTick(() => {
-          EventBus.$emit('FormEntity:formDataUpdate');
+          EventBus.$emit('FormEntity:discardChanges');
         });
       },
 

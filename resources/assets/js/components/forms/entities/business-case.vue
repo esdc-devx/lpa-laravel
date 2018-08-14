@@ -599,7 +599,7 @@
 
     beforeDestroy() {
       EventBus.$off('Store:languageUpdate', this.fetchLists);
-      EventBus.$off('FormEntity:formDataUpdate', this.bindCheckboxes);
+      EventBus.$off('FormEntity:discardChanges', this.bindCheckboxes);
     },
 
     async created() {
@@ -614,7 +614,7 @@
 
     mounted() {
       EventBus.$on('Store:languageUpdate', this.fetchLists);
-      EventBus.$on('FormEntity:formDataUpdate', this.bindCheckboxes);
+      EventBus.$on('FormEntity:discardChanges', this.bindCheckboxes);
     }
   };
 </script>

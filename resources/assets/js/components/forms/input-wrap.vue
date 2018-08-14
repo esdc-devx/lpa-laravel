@@ -1,12 +1,18 @@
 <template>
   <div class="input-wrap">
-    <div :class="[`el-${type}`, { 'is-disabled': isFormDisabled }]">
+    <div :class="[`el-${type}`, { 'is-disabled': isInputDisabled }]">
+      <!--
+        v-text will be setting the value for textareas
+        whereas :value will set the value for input text
+      -->
       <component
+        ref="input"
         v-if="!typeIsNumber"
         v-bind="$attrs"
         :is="type"
         :class="[`el-${type}__inner`, { 'is-error': verrors.has(name) }]"
-        v-text="value"
+        v-text="currentTextValue"
+        :value="currentTextValue"
         :name="name"
         :maxlength="charsLimit"
         @keyup="onKeyDown"
@@ -27,7 +33,7 @@
           @click="increase">
             <i class="el-icon-plus"></i>
         </span>
-        <div :class="['el-input', {'is-disabled': isFormDisabled}]">
+        <div :class="['el-input', {'is-disabled': isInputDisabled}]">
           <input
             ref="inputNumber"
             type="text"
@@ -37,7 +43,7 @@
             :value="currentNumberValue"
             :min="min"
             :max="max"
-            :disabled="isFormDisabled"
+            :disabled="isInputDisabled"
             @keydown.up.native.prevent="increase"
             @keydown.down.native.prevent="decrease"
             @input="handleInputChange">
@@ -111,18 +117,21 @@
 
     data() {
       return {
-        charCount: 0,
         // this allows us to keep the count internally
         // without relying on the parent to get it
+        currentTextValue: this.value,
         currentNumberValue: this.value
       };
     },
 
     computed: {
+      charCount() {
+        return (this.currentTextValue || '').length;
+      },
       charsLimit() {
         return this.maxlength;
       },
-      isFormDisabled() {
+      isInputDisabled() {
         return this.$attrs.disabled || this.elForm.disabled;
       },
 
@@ -131,10 +140,10 @@
         return this.type === 'number';
       },
       isMinDisabled() {
-        return this.isFormDisabled || this._decrease(this.currentNumberValue, this.step) < this.min;
+        return this.isInputDisabled || this._decrease(this.currentNumberValue, this.step) < this.min;
       },
       isMaxDisabled() {
-        return this.isFormDisabled || this._increase(this.currentNumberValue, this.step) > this.max;
+        return this.isInputDisabled || this._increase(this.currentNumberValue, this.step) > this.max;
       },
       numPrecision() {
         const { currentNumberValue, step, getPrecision, precision } = this;
@@ -150,6 +159,19 @@
       }
     },
 
+    watch: {
+      isInputDisabled: function(isDisabled) {
+        if (isDisabled) {
+          // reset input value when it is disabled
+          // as we cannot make a <component> tag reactive
+          this.$refs.input.value = null;
+          this.currentTextValue = null;
+          // notify the parent
+          this.updateValue(null);
+        }
+      }
+    },
+
     methods: {
       updateValue(value) {
         // update parent data so that we can still v-model on the parent
@@ -160,7 +182,8 @@
 
       onKeyDown(e) {
         let value = e.target.value;
-        this.charCount = value.length;
+        // update our internal value so that the charCount can keep track of the count
+        this.currentTextValue = value;
         this.updateValue(value);
       },
 
@@ -230,21 +253,20 @@
         if (newVal >= this.max) newVal = this.max;
         if (newVal <= this.min) newVal = this.min;
 
-        this.updateValue(newVal);
         this.currentNumberValue = newVal;
+        this.updateValue(newVal);
       },
-      onFormDataUpdate() {
+      onDiscardChanges() {
         this.currentNumberValue = this.value;
       }
     },
 
     beforeDestroy() {
-      EventBus.$on('FormEntity:formDataUpdate', this.onFormDataUpdate);
+      EventBus.$off('FormEntity:discardChanges', this.onDiscardChanges);
     },
 
     mounted() {
-      EventBus.$on('FormEntity:formDataUpdate', this.onFormDataUpdate);
-      this.charCount = this.value ? this.value.length : 0;
+      EventBus.$on('FormEntity:discardChanges', this.onDiscardChanges);
     }
   };
 </script>
@@ -265,6 +287,11 @@
     .input-infos {
       display: flex;
       justify-content: flex-end;
+    }
+
+    // avoid being able to squish the textarea when resizing
+    textarea {
+      min-height: 50px;
     }
 
     // Hide the up and down arrows from the input number
