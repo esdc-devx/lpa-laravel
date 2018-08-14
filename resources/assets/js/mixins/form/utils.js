@@ -121,7 +121,7 @@ export default {
 
     checkInvalidTabs() {
       if (document.querySelector('form .el-tabs__nav') !== null) {
-        const tabs = document.querySelectorAll('form .el-tab-pane');
+        const tabs = Array.from(document.querySelectorAll('form .el-tab-pane'));
         tabs.forEach(tab => {
           this.checkTabHasErrors(tab);
         });
