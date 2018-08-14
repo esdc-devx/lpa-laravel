@@ -52,6 +52,7 @@
                 :formData="formData"
                 :errorTabs="errorTabs">
               </component>
+
             </el-form>
           </el-main>
           <div class="form-footer">
@@ -286,7 +287,7 @@
 
         // wait until data has been synced through components
         this.$nextTick(() => {
-          EventBus.$emit('FormEntity:formDataUpdate');
+          EventBus.$emit('FormEntity:discardChanges');
         });
       },
 
