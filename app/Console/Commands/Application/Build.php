@@ -185,12 +185,13 @@ class Build extends BaseCommand
             $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
             foreach ($files as $name => $file) {
                 $filePath = $file->getRealPath();
+                // Format file name by removing root path
+                // and replacing backslash with frontslash for Linux compatibility.
                 $baseFilePath = str_replace("$rootPath\\", '', $filePath);
                 $baseFilePath = str_replace('\\', '/', $baseFilePath);
 
                 // Validate if file should be added to the package.
                 if ( ! is_dir($filePath) && $this->validateFile($baseFilePath)) {
-                    // Add file to the archive while replacing backslash for Linux compatibility.
                     $archive->addFile($filePath, $baseFilePath);
                 }
             }
