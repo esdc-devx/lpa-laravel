@@ -11,6 +11,7 @@
         <span slot="title">{{ item.text }}</span>
       </el-menu-item>
     </el-menu>
+    <div class="build-info" v-if="!isCollapsed" :title="date">{{  version }} ({{ build }})</div>
     <div class="side-bar-toggle" @click="toggleSideBar">
       <div :class="['side-bar-toggle-inner', { 'collapsed': isCollapsed }]">
         <span></span>
@@ -25,6 +26,7 @@
   import { mapGetters } from 'vuex';
 
   import Config from '@/config.js';
+  import BuildInfo from '@/version';
   import MenuUtils from '@mixins/menu/utils.js';
 
   export default {
@@ -57,7 +59,10 @@
 
     data() {
       return {
-        isCollapsed: false
+        isCollapsed: false,
+        date: BuildInfo.date,
+        version: BuildInfo.version,
+        build: BuildInfo.build
       };
     },
 
@@ -212,5 +217,14 @@
         }
       }
     }
+  }
+
+  .build-info {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    color: #7d7990;
+    cursor: default;
   }
 </style>
