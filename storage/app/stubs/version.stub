@@ -1,0 +1,5 @@
+export default {
+    date: '@date',
+    version: '@version',
+    build: '@build'
+};
