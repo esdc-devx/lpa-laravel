@@ -93,14 +93,20 @@
             process_name: processName
           })
         }).then(async () => {
-          this.showMainLoading();
-          let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
-          this.notifySuccess({
-            message: this.trans('components.notice.message.process_started', { name: processName })
-          });
-          let projectId = this.$route.params.projectId;
-          this.$router.push(`${projectId}/process/${response.process_instance.id}`);
-          this.hideMainLoading();
+          try {
+            await this.showMainLoading();
+            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
+            this.notifySuccess({
+              message: this.trans('components.notice.message.process_started', { name: processName })
+            });
+            let projectId = this.$route.params.projectId;
+            this.$router.push(`${projectId}/process/${response.process_instance.id}`);
+            await this.hideMainLoading();
+          } catch ({ response }) {
+            // if same user has already started the process, re-fetch the info
+            this.fetch();
+            await this.hideMainLoading();
+          }
         }).catch(() => false);
       },
 
@@ -113,17 +119,16 @@
             this.processDefinitionPermissions,
             definition.name_key,
             await this.canStartProcess({ projectId: this.$route.params.projectId, processDefinitionNameKey: definition.name_key })
-          )
+          );
         }
       },
 
       async fetch() {
-        await this.showMainLoading();
-        let projectId = this.$route.params.projectId;
         try {
+          await this.showMainLoading();
+          let projectId = this.$route.params.projectId;
           await this.loadProject(projectId);
           await this.loadProcessDefinitions('project');
-          EventBus.$emit('App:ready');
           this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
           await this.hideMainLoading();
@@ -152,6 +157,7 @@
     },
 
     mounted() {
+      EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
     }
   };

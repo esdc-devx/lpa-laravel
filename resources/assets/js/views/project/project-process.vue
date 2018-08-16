@@ -209,8 +209,10 @@
       next();
     },
 
-    created() {
-      this.fetch();
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.fetch();
+      });
     },
 
     mounted() {

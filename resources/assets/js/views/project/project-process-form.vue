@@ -442,20 +442,27 @@
       }
     },
 
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.fetch();
+      });
+    },
+
     async created() {
+      await this.showMainLoading();
       // store the reference to the current form id
       this.formId = this.$route.params.formId;
 
       this.rights.canEdit = await this.canEditForm(this.formId);
       this.rights.canClaim = await this.canClaimForm(this.formId);
       this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
+      await this.hideMainLoading();
     },
 
     mounted() {
       EventBus.$emit('App:ready');
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-      this.fetch();
     }
   };
 </script>
