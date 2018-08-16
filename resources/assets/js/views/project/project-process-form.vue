@@ -169,15 +169,14 @@
             await this.showMainLoading();
             try {
               await this.claimForm(this.formId);
-              await this.hideMainLoading();
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
                 this.discardChanges();
                 // reload the process_instance_form data since we are unsynced
                 await this.triggerLoadProcessInstanceForm();
-                await this.hideMainLoading();
               }
             }
+            await this.hideMainLoading();
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
@@ -186,9 +185,7 @@
                 this.discardChanges();
                 await this.unclaimForm(this.formId);
                 await this.hideMainLoading();
-              }).catch(async () => {
-                return false;
-              });
+              }).catch(() => false);
           } else {
             await this.showMainLoading();
             await this.unclaimForm(this.formId);
@@ -378,18 +375,17 @@
       },
 
       async fetch() {
+        await this.showMainLoading();
         try {
-          await this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
           this.formComponent = this.viewingFormInfo.definition.name_key;
           this.setupStage();
-          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
-          await this.hideMainLoading();
         }
+        await this.hideMainLoading();
       },
 
       beforeLogout(callback) {
@@ -423,11 +419,7 @@
           if (!this.isFormSubmitted) {
             try {
               await this.unclaimForm(this.formId);
-            } catch(e) {
-              // could not unclaim form, but still proceed to requested page
-              await this.hideMainLoading();
-              next();
-            }
+            } catch(e) {}
           }
           await this.hideMainLoading();
           next();

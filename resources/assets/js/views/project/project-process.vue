@@ -190,15 +190,14 @@
       },
 
       async fetch() {
+        await this.showMainLoading();
         try {
-          await this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
-          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
-          await this.hideMainLoading();
         }
+        await this.hideMainLoading();
       }
     },
 

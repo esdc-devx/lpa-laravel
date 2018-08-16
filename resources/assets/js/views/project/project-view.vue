@@ -93,20 +93,19 @@
             process_name: processName
           })
         }).then(async () => {
+          await this.showMainLoading();
           try {
-            await this.showMainLoading();
             let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
             this.notifySuccess({
               message: this.trans('components.notice.message.process_started', { name: processName })
             });
             let projectId = this.$route.params.projectId;
             this.$router.push(`${projectId}/process/${response.process_instance.id}`);
-            await this.hideMainLoading();
           } catch ({ response }) {
-            // if same user has already started the process, re-fetch the info
+            // on error, re-fetch the info just to be in-sync
             this.fetch();
-            await this.hideMainLoading();
           }
+          await this.hideMainLoading();
         }).catch(() => false);
       },
 
@@ -124,18 +123,17 @@
       },
 
       async fetch() {
+        await this.showMainLoading();
         try {
-          await this.showMainLoading();
           let projectId = this.$route.params.projectId;
           await this.loadProject(projectId);
           await this.loadProcessDefinitions('project');
           this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
-          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
-          await this.hideMainLoading();
         }
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
