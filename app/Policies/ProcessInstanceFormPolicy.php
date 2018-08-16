@@ -46,6 +46,11 @@ class ProcessInstanceFormPolicy
             return false;
         }
 
+        // Ensure that process instance state is active.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+            return false;
+        }
+
         return true;
     }
 
@@ -104,6 +109,11 @@ class ProcessInstanceFormPolicy
             return false;
         }
 
+        // Ensure that process instance state is active.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+            return false;
+        }
+
         return true;
     }
 
@@ -145,6 +155,11 @@ class ProcessInstanceFormPolicy
 
         // Ensure that user is part of candidate editor organizational unit.
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
+            return false;
+        }
+
+        // Ensure that process instance state is active.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
             return false;
         }
 
