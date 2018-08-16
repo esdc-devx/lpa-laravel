@@ -388,6 +388,7 @@
           await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+          await this.hideMainLoading();
         }
       },
 
@@ -423,7 +424,9 @@
             try {
               await this.unclaimForm(this.formId);
             } catch(e) {
+              // could not unclaim form, but still proceed to requested page
               await this.hideMainLoading();
+              next();
             }
           }
           await this.hideMainLoading();
