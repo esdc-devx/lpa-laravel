@@ -31,7 +31,7 @@ export default {
         this.$log.warn('[Mixin][Table][utils] Missing ref="table" reference on the table element.');
         return;
       }
-      if (col.sortable && !_.isUndefined(col.filterable)) {
+      if (col.sortable && !_.isUndefined(col.filters)) {
         this.$refs.table.$refs.elTable.$refs.tableHeader.handleSortClick(e, col);
       }
     },
