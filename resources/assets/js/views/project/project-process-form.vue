@@ -598,7 +598,6 @@
           color: $--color-primary;
           font-weight: 500;
           line-height: 10px;
-          padding: 0;
         }
         .instruction {
           font-style: italic;

@@ -38,9 +38,9 @@
           <el-popover-wrap
             :description="trans('forms.business_case_assessment.process_cancellation_rationale.description')">
           </el-popover-wrap>
-        </span>
-        <span class="instruction">
-          {{ trans('forms.business_case_assessment.process_cancellation_rationale.instruction') }}
+          <span class="instruction">
+            {{ trans('forms.business_case_assessment.process_cancellation_rationale.instruction') }}
+          </span>
         </span>
         <input-wrap
           v-model="form.process_cancellation_rationale"
@@ -105,9 +105,9 @@
           <el-popover-wrap
             :description="trans('forms.business_case_assessment.assessment_comment.description')">
           </el-popover-wrap>
-        </span>
-        <span class="instruction">
-          {{ trans('forms.business_case_assessment.assessment_comment.instruction') }}
+          <span class="instruction">
+            {{ trans('forms.business_case_assessment.assessment_comment.instruction') }}
+          </span>
         </span>
         <input-wrap
           v-model="item.comment"
