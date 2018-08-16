@@ -246,6 +246,7 @@ class ProcessManager {
     /**
      * Attach all process form data entities to their parent entity.
      * i.e. Attach BusinessCase, ArchitecturePlan, etc. to Project.
+     * This operation is usually done when a process is completed.
      *
      * @return $this
      */
@@ -269,15 +270,62 @@ class ProcessManager {
     }
 
     /**
-     * Fire a process completed event for entities to respond for.
-     * Event class is formed from process definition name (i.e. ProcessProjectApprovalCompleted).
+     * Called once a process instance is considered completed in Camunda.
      *
      * @return $this
      */
     protected function completeProcessInstance()
     {
+        return $this->fireEvent('Completed');
+    }
+
+    /**
+     * Cancel a process instance in Camunda and update all
+     * process and entity information accordingly.
+     *
+     * @return $this
+     */
+    public function cancelProcessInstance()
+    {
+        // Cancel process instance in Camunda.
+        $this->camunda->processes()->delete($this->processInstance->engine_process_instance_id);
+
+        // Update process instance state and timestamps/audit.
+        $this->processInstance->state()->associate(State::getByKey('process-instance.cancelled')->first());
+        $this->processInstance->updateAudit();
+
+        // Remove all engine tasks id from process instance forms since
+        // these tasks will no longer exist in Camunda.
+        $this->processInstance->steps->each(function ($step) {
+            $step->forms->each(function ($form) {
+                $form->engine_task_id = null;
+                $form->save();
+            });
+        });
+
+        // Remove current process instance association from entity.
+        $entity = entity($this->processInstance->entity_type)
+            ->findOrFail($this->processInstance->entity_id);
+        $entity->currentProcess()->dissociate();
+
+        // Revert entity state to what it was before starting the process and update timestamps/audit.
+        $entity->state_id = $this->processInstance->entity_previous_state_id;
+        $entity->updateAudit();
+
+        return $this->fireEvent('Cancelled');
+    }
+
+    /**
+     * Fire a process event. Event class is formed from
+     * process definition name and event type (i.e. ProcessProjectApprovalCompleted).
+     *
+     * @param  string $eventType
+     * @return $this
+     */
+    protected function fireEvent($eventType)
+    {
         $processName = studly_case($this->processInstance->definition->name_key);
-        $eventClass = "App\Events\Process{$processName}Completed";
+        $eventClass = "App\Events\Process{$processName}{$eventType}";
         if (class_exists($eventClass)) {
             event(new $eventClass($this->processInstance));
         }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Process\ProcessDefinition;
+use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Project\Project;
 
@@ -53,6 +54,18 @@ class AuthorizationController extends APIController
     {
         return $this->respond([
             'allowed' => auth()->user()->can('start-process', [$project, $processDefinition])
+        ]);
+    }
+
+    /**
+     * Authorize process instance cancel action.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function cancelProcessInstance(ProcessInstance $processInstance)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('cancel', $processInstance)
         ]);
     }
 
