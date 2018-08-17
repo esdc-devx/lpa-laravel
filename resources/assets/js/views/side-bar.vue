@@ -79,7 +79,7 @@
 
     methods: {
       toggleSideBar() {
-        this.$helpers.throttleAction(() => {
+        this.$helpers.debounceAction(() => {
           this.isCollapsed = !this.isCollapsed;
           this.$nextTick(() => {
             // When the sidebar collapses-expands, ElementUI re-render the menu

@@ -104,14 +104,7 @@
         this.notifySuccess({
           message: this.trans('components.notice.message.created', { name: this.form.name })
         });
-        this.jumpToCreatedProject();
-      },
-
-      // Navigation
-      jumpToCreatedProject() {
-        this.$helpers.throttleAction(() => {
-          this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
-        });
+        this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
       },
 
       async triggerLoadProjectCreateInfo() {

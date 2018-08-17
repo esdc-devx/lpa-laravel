@@ -4,13 +4,6 @@ import store from '@/store/';
 import Config from '@/config.js';
 
 export const helpers = {
-  throttleAction: _.throttle(callback => {
-    callback();
-  }, Config.THROTTLE_WAIT_TIME, {
-    leading: false,
-    trailing: true
-  }),
-
   debounceAction: _.debounce(callback => {
     callback();
   }, Config.DEBOUNCE_WAIT_TIME),
