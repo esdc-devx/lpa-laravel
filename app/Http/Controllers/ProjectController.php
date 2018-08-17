@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProjectFormRequest;
-use App\Models\Process\ProcessDefinition;
-use App\Models\Process\ProcessInstance;
 use App\Models\Project\Project;
 use App\Repositories\OrganizationalUnitRepository;
 use App\Repositories\ProjectRepository;
@@ -119,15 +117,15 @@ class ProjectController extends APIController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  Project $project
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Project $project)
     {
-        $this->authorize('delete', $this->projects->getById($id));
+        $this->authorize('delete', $project);
 
-        return $this->respond(
-            $this->projects->delete($id)
-        );
+        return $this->respond([
+            'deleted' => $project->delete(),
+        ]);
     }
 }
