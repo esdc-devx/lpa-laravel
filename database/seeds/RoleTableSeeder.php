@@ -15,13 +15,13 @@ class RoleTableSeeder extends Seeder
             ],
             [
                 'name_key' => 'owner',
-                'name_en'  => 'Content Owner',
-                'name_fr'  => 'Propriétaire de contenu'
+                'name_en'  => 'Learning Product Owner',
+                'name_fr'  => 'Propriétaire de produits d\'apprentissage'
             ],
             [
                 'name_key' => 'process-contributor',
-                'name_en'  => 'Process Contributor',
-                'name_fr'  => 'Contributeur aux processus'
+                'name_en'  => 'Learning Product Contributor',
+                'name_fr'  => 'Contributeur aux produits d\'apprentissage'
             ],
         ];
     }
