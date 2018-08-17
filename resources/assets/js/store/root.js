@@ -1,4 +1,7 @@
 import Vue from 'vue';
+
+import EventBus from '@/event-bus';
+
 import { Validator } from 'vee-validate';
 import axios from '@axios/interceptor';
 import * as types from './mutations-types';
@@ -124,11 +127,19 @@ export const mutations = {
     state.language = lang;
     localStorage.setItem('language', lang);
 
+    // change the locale of the translation plugin
+    // this makes sure that when using the browser back-forward buttons
+    // that the language is still propagated around the app
+    if (window.i18n) {
+      window.i18n.locale = lang;
+    }
+
     Validator.localize(lang);
 
     // reflect the language in the lang attribute
     // for accessibility purposes
     document.querySelector('html').lang = lang;
+    EventBus.$emit('Store:languageUpdate', lang);
   },
 
   [types.SET_LANGUAGES](state, languages) {

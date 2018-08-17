@@ -194,6 +194,16 @@ export default {
       });
     },
 
+    regenerateErrors() {
+      this.$nextTick(() => {
+        this.verrors.items.forEach(error => {
+          if (error.regenerate) {
+            error.msg = error.regenerate();
+          }
+        });
+      });
+    },
+
     resetFieldsState() {
       this.$nextTick(() => {
         _.forEach(this.$validator.fields.items, field => {
@@ -208,6 +218,7 @@ export default {
   },
 
   beforeDestroy() {
+    EventBus.$off('Store:languageUpdate', this.regenerateErrors);
     EventBus.$off('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
     if (errorNotif) {
       errorNotif.close();
@@ -215,6 +226,7 @@ export default {
   },
 
   mounted() {
+    EventBus.$on('Store:languageUpdate', this.regenerateErrors);
     EventBus.$on('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
   }
 };
