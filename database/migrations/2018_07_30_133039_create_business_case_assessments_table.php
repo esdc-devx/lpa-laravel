@@ -34,6 +34,5 @@ class CreateBusinessCaseAssessmentsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('business_case_assessments');
-        DB::unprepared('DROP TRIGGER `trigger_delete_business_case_assessments`');
     }
 }
