@@ -15,6 +15,7 @@ class CreateRisksTable extends Migration
     {
         Schema::create('risks', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('business_case_id');
             $table->unsignedInteger('risk_type_id')->nullable();
             $table->string('risk_type_other')->nullable();
             $table->unsignedInteger('risk_impact_level_id')->nullable();
@@ -22,13 +23,10 @@ class CreateRisksTable extends Migration
             $table->text('rationale')->nullable();
 
             // Foreign keys.
+            $table->referenceOn('business_case_id', 'business_cases')->onDelete('cascade');
             $table->referenceOn('risk_type_id', 'risk_types');
             $table->referenceOn('risk_impact_level_id', 'risk_impact_levels');
             $table->referenceOn('risk_probability_level_id', 'risk_probability_levels');
-        });
-
-        Schema::create('business_case_risk', function (Blueprint $table) {
-            $table->pivot('business_cases', 'risks');
         });
     }
 

@@ -19,7 +19,7 @@ class CreateArchitecturePlansTable extends Migration
             $table->text('comment')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms');
+            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
         });
     }
 

@@ -22,7 +22,7 @@ class CreateBusinessCaseAssessmentsTable extends Migration
             $table->text('process_cancellation_rationale')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms');
+            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
         });
     }
 
@@ -34,5 +34,6 @@ class CreateBusinessCaseAssessmentsTable extends Migration
     public function down()
     {
         Schema::dropIfExists('business_case_assessments');
+        DB::unprepared('DROP TRIGGER `trigger_delete_business_case_assessments`');
     }
 }

@@ -7,9 +7,8 @@ use App\Models\LearningProduct\LearningProductType;
 
 class PlannedProduct extends BaseModel
 {
-    protected $hidden = ['pivot'];
     protected $fillable = [
-        'type_id', 'sub_type_id', 'quantity',
+        'architecture_plan_id', 'type_id', 'sub_type_id', 'quantity',
     ];
 
     public $timestamps = false;

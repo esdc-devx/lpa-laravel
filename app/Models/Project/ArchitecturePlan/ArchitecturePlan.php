@@ -12,7 +12,7 @@ class ArchitecturePlan extends ProcessInstanceFormDataModel
 
     public function plannedProducts()
     {
-        return $this->belongsToMany(PlannedProduct::class);
+        return $this->hasMany(PlannedProduct::class);
     }
 
     public function saveFormData(array $data)

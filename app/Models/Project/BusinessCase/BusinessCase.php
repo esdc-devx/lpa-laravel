@@ -48,12 +48,12 @@ class BusinessCase extends ProcessInstanceFormDataModel
 
     public function departmentalBenefits()
     {
-        return $this->belongsToMany(DepartmentalBenefit::class);
+        return $this->hasMany(DepartmentalBenefit::class);
     }
 
     public function learnersBenefits()
     {
-        return $this->belongsToMany(LearnersBenefit::class);
+        return $this->hasMany(LearnersBenefit::class);
     }
 
     public function maintenanceFund()
@@ -73,7 +73,7 @@ class BusinessCase extends ProcessInstanceFormDataModel
 
     public function risks()
     {
-        return $this->belongsToMany(Risk::class);
+        return $this->hasMany(Risk::class);
     }
 
     public function saveFormData(array $data)

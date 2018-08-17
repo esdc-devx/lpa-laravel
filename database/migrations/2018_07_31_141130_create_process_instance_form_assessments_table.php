@@ -15,6 +15,7 @@ class CreateProcessInstanceFormAssessmentsTable extends Migration
     {
         Schema::create('process_instance_form_assessments', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('process_instance_form_id');
             $table->string('entity_type');
             $table->unsignedInteger('entity_id');
             $table->string('assessed_process_form');
@@ -22,6 +23,7 @@ class CreateProcessInstanceFormAssessmentsTable extends Migration
             $table->text('comment')->nullable();
 
             // Foreign keys.
+            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
             $table->referenceOn('process_form_decision_id', 'process_form_decisions');
         });
     }
