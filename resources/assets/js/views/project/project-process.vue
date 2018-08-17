@@ -190,14 +190,14 @@
       },
 
       async fetch() {
+        await this.showMainLoading();
         try {
-          await this.showMainLoading();
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
-          await this.hideMainLoading();
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
+        await this.hideMainLoading();
       }
     },
 
@@ -208,8 +208,10 @@
       next();
     },
 
-    created() {
-      this.fetch();
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.fetch();
+      });
     },
 
     mounted() {
