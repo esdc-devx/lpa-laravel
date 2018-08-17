@@ -158,10 +158,8 @@
         await this.showMainLoading();
         this.$parent.$el.scrollTop = 0;
         page = _.isUndefined(page) ? this.currentPage : page;
-        try {
-          await this.loadUsers(page);
-          this.parseUsers();
-        } catch ({ response }) {}
+        await this.loadUsers(page);
+        this.parseUsers();
         await this.hideMainLoading();
       },
 

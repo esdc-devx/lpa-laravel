@@ -417,9 +417,7 @@
           this.destroyEvents();
           this.discardChanges();
           if (!this.isFormSubmitted) {
-            try {
-              await this.unclaimForm(this.formId);
-            } catch(e) {}
+            await this.unclaimForm(this.formId);
           }
           await this.hideMainLoading();
           next();
