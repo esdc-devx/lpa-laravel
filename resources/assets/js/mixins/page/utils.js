@@ -1,7 +1,7 @@
 export default {
   methods: {
     goToPage(routeName) {
-      this.$helpers.throttleAction(() => {
+      this.$helpers.debounceAction(() => {
         let currentParams = this.$router.currentRoute.params;
         this.$router.push({
           name: routeName,
@@ -28,10 +28,7 @@ export default {
         this.$log.error(`Route name: ${routeName}, cannot be found.`);
       }
 
-      this.$router.push({
-        name: routeName,
-        params: currentParams
-      });
+      this.goToPage(routeName);
     }
   }
 };
