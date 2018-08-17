@@ -47,6 +47,7 @@
             v-validate="''"
             :options="roles"
             multiple
+            sorted
           />
         </el-form-item>
 
