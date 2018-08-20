@@ -68,6 +68,11 @@ export default {
       return response.data.data;
     },
 
+    async cancelInstance({ commit }, processId) {
+      let response = await ProcessAPI.cancelInstance(processId);
+      return response.data.data;
+    },
+
     async claimForm({ commit }, formId) {
       let response = await ProcessAPI.claimForm(formId);
       commit('setCurrentEditor', response.data.data.current_editor);
@@ -90,6 +95,11 @@ export default {
       let response = await ProcessAPI.submitForm(formId, form);
       commit('setViewingFormInfo', response.data.data);
       return response.data.data.form_data;
+    },
+
+    async canCancelProcess({ commit }, processId) {
+      let response = await ProcessAPI.canCancelProcess(processId);
+      return response.data.data.allowed;
     },
 
     async canEditForm({ commit }, formId) {

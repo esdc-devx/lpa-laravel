@@ -29,6 +29,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Process instance routes.
     Route::get('process-instances/{id}', 'ProcessInstanceController@show')->name('process-instances.show');
+    Route::put('process-instances/{id}/cancel', 'ProcessInstanceController@cancel')->name('process-instances.cancel');
 
     // Process instance form routes.
     Route::get('process-instance-forms/{processInstanceFormData}', 'ProcessInstanceFormController@show')->name('process-instance-forms.show');
@@ -47,6 +48,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/project/edit/{project}', 'AuthorizationController@editProject')->name('authorization.project.edit');
     Route::get('authorization/project/delete/{project}', 'AuthorizationController@deleteProject')->name('authorization.project.delete');
     Route::get('authorization/project/{project}/start-process/{processDefinition}', 'AuthorizationController@startProjectProcess')->name('authorization.project.start-process');
+
+    // Process instance authorization routes.
+    Route::get('authorization/process-instance/cancel/{processInstance}', 'AuthorizationController@cancelProcessInstance')->name('authorization.process-instance.cancel');
 
     // Process instance form authorization routes.
     Route::get('authorization/process-instance-form/claim/{processInstanceForm}', 'AuthorizationController@claimProcessInstanceForm')->name('authorization.process-instance-form.claim');

@@ -91,5 +91,18 @@ export default {
         catchCallback: reject
       });
     });
+  },
+
+  confirmCancelProcess() {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title: this.trans('components.notice.title.cancel_process'),
+        message: this.trans('components.notice.message.cancel_process'),
+        action: 'proceed',
+        confirmButtonClass: 'el-button--warning',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
   }
 };

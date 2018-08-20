@@ -14,5 +14,6 @@ return [
     'discard'  => 'Supprimer',
     'confirm'  => 'Confirmer',
     'close'    => 'Fermer',
-    'save'     => 'Sauvegarder'
+    'save'     => 'Sauvegarder',
+    'proceed'  => 'Poursuivre',
 ];
