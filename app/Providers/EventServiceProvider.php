@@ -23,7 +23,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $subscribe = [
         'App\Listeners\CamundaEventSubscriber',
-        'App\Listeners\ProjectEventSubscriber',
+        'App\Listeners\ProcessEventSubscriber',
     ];
 
     /**

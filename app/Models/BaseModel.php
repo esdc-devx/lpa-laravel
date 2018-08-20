@@ -20,7 +20,7 @@ class BaseModel extends Model
     }
 
     /**
-     * Synchronize relationships.
+     * Synchronize many to many relationships.
      *
      * @param  array $data
      * @param  array $relationships
@@ -56,6 +56,10 @@ class BaseModel extends Model
                 // Create or update all related models and store their ids to
                 // synchronize them (if necessary).
                 foreach ($attribute as $item) {
+                    // Add foreign key field used for one to many relationships.
+                    if ($relationClass === 'HasMany') {
+                        $item[$this->{$relationship}()->getForeignKeyName()] = $this->id;
+                    }
                     $ids[] = $relatedModelClass::updateOrCreate(['id' => $item['id'] ?? null], $item)->id;
                 }
 

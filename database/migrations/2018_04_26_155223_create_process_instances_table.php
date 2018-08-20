@@ -22,9 +22,12 @@ class CreateProcessInstancesTable extends Migration
             $table->string('engine_auth_token');
             $table->unsignedInteger('entity_previous_state_id')->nullable();
             $table->unsignedInteger('state_id')->nullable();
+            // Audit and timestamps
             $table->auditable();
+            $table->softDeletes();
             $table->timestamps();
 
+            // Foreing keys.
             $table->referenceOn('process_definition_id', 'process_definitions');
             $table->referenceOn('state_id', 'states')->onDelete('set null');
         });

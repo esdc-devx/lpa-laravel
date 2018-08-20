@@ -15,17 +15,15 @@ class CreatePlannedProductsTable extends Migration
     {
         Schema::create('planned_products', function (Blueprint $table) {
             $table->increments('id');
+            $table->unsignedInteger('architecture_plan_id');
             $table->unsignedInteger('type_id')->nullable();
             $table->unsignedInteger('sub_type_id')->nullable();
             $table->integer('quantity')->nullable();
 
             // Foreign keys.
+            $table->referenceOn('architecture_plan_id', 'architecture_plans')->onDelete('cascade');
             $table->referenceOn('type_id', 'learning_product_types');
             $table->referenceOn('sub_type_id', 'learning_product_types');
-        });
-
-        Schema::create('architecture_plan_planned_product', function (Blueprint $table) {
-            $table->pivot('architecture_plans', 'planned_products');
         });
     }
 

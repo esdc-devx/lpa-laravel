@@ -119,9 +119,10 @@ class ProcessManager {
                             $formAssessmentIds = [];
                             foreach ($form['assessments'] as $assessment) {
                                 $formAssessmentIds[] = ProcessInstanceFormAssessment::create([
-                                    'entity_type'           => $form->name_key,
-                                    'entity_id'             => $formData->id,
-                                    'assessed_process_form' => $assessment->assessed_process_form,
+                                    'process_instance_form_id' => $processInstanceForm->id,
+                                    'entity_type'              => $form->name_key,
+                                    'entity_id'                => $formData->id,
+                                    'assessed_process_form'    => $assessment->assessed_process_form,
                                 ])->id;
                             }
                         }

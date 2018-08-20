@@ -40,7 +40,7 @@ class CreateBusinessCasesTable extends Migration
             $table->text('comment')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms');
+            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
             $table->referenceOn('timeframe_id', 'timeframes');
             $table->referenceOn('maintenance_fund_id', 'maintenance_funds');
             $table->referenceOn('salary_fund_id', 'salary_funds');
