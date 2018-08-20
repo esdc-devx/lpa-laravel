@@ -4,7 +4,7 @@ return [
     'title' => 'Plan d\'architecture',
     'tabs' => [
         'planned_product' => 'Produits prévus',
-        'comments'        => 'Comments',
+        'comments'        => 'Commentaires',
     ],
     'type' => [
         'label'       => 'Type de produit d’apprentissage',
