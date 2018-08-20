@@ -18,7 +18,6 @@
     h2 {
       margin-right: 20px;
       flex: 1;
-      line-height: 1;
     }
     .el-card__body {
       display: flex;
@@ -39,7 +38,7 @@
         }
         dd {
           margin: 0;
-          margin-top: 5px;
+          line-height: 1.2;
         }
         dd + dd {
           margin-top: 0;
