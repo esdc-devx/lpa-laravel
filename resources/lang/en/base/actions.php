@@ -14,5 +14,6 @@ return [
     'discard'  => 'Discard',
     'confirm'  => 'Confirm',
     'close'    => 'Close',
-    'save'     => 'Save'
+    'save'     => 'Save',
+    'proceed'  => 'Proceed',
 ];

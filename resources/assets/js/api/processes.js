@@ -18,6 +18,10 @@ export default {
     return axios.get(`process-instance-forms/${formId}`);
   },
 
+  cancelInstance(processId) {
+    return axios.put(`process-instances/${processId}/cancel`);
+  },
+
   claimForm(formId) {
     return axios.put(`process-instance-forms/${formId}/claim`);
   },
@@ -32,6 +36,10 @@ export default {
 
   submitForm(formId, form) {
     return axios.put(`process-instance-forms/${formId}/submit`, form);
+  },
+
+  canCancelProcess(processId) {
+    return axios.get(`authorization/process-instance/cancel/${processId}`);
   },
 
   canEditForm(formId) {

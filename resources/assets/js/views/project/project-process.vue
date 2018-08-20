@@ -22,8 +22,15 @@
             <dd>{{ viewingProcess.updated_at }}</dd>
           </dl>
           <div class="controls">
-            <!-- @todo: #LPA-4906 -->
-            <!-- <el-button size="small" type="danger" plain>Cancel Process<i class="el-icon-close"></i></el-button> -->
+            <el-button
+              size="small"
+              type="danger"
+              v-if="hasRole('admin')"
+              :disabled="!rights.canCancelProcess"
+              @click="onCancelProcess"
+              plain>
+              {{ trans('components.notice.title.cancel_process') }} <i class="el-icon-close"></i>
+            </el-button>
           </div>
         </info-box>
       </el-col>
@@ -113,15 +120,20 @@
 
     data() {
       return {
+        processId: null,
         activeStep: 0,
-        selectedIndex: null
+        selectedIndex: null,
+        rights: {
+          canCancelProcess: false
+        }
       }
     },
 
     computed: {
       ...mapGetters({
         language: 'language',
-        viewingProcess: `${namespace}/viewing`
+        viewingProcess: `${namespace}/viewing`,
+        hasRole: 'users/hasRole'
       }),
 
       steps() {
@@ -143,7 +155,9 @@
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
         loadProject: 'projects/loadProject',
-        loadProcessInstance: `${namespace}/loadInstance`
+        loadProcessInstance: `${namespace}/loadInstance`,
+        cancelProcessInstance: `${namespace}/cancelInstance`,
+        canCancelProcess: `${namespace}/canCancelProcess`
       }),
 
       viewForm(form) {
@@ -173,6 +187,24 @@
 
       onStepChange(index) {
         this.selectedIndex = index;
+      },
+
+      onCancelProcess() {
+        this.confirmCancelProcess().then(async () => {
+          await this.showMainLoading();
+          try {
+            let response = await this.cancelProcessInstance(this.processId);
+            this.notifySuccess({
+              message: this.trans('components.notice.message.process_cancelled')
+            });
+            // Reload process intance info.
+            await this.triggerLoadProcessInstance();
+            this.rights.canCancelProcess = false;
+          } catch ({ response }) {
+            //@todo: Add logic to handle exceptions.
+          }
+          await this.hideMainLoading();
+        }).catch(() => false);
       },
 
       async triggerLoadProject() {
@@ -212,6 +244,11 @@
       next(vm => {
         vm.fetch();
       });
+    },
+
+    async created() {
+      this.processId = this.$route.params.processId;
+      this.rights.canCancelProcess = await this.canCancelProcess(this.processId);
     },
 
     mounted() {
