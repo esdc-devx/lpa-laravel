@@ -2,7 +2,7 @@
   <div class="project-info">
     <info-box>
       <div slot="header">
-        <h2>{{ projectProp.name }}</h2>
+        <h2><i class="el-icon-lpa-projects"></i>{{ projectProp.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
           <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
           <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain><i class="el-icon-lpa-delete"></i></el-button>
@@ -130,14 +130,25 @@
   .project-info {
     .info-box {
       h2 {
+        position: relative;
         margin-top: 0;
         margin-bottom: 0;
         display: inline-block;
+        padding-left: 34px;
+        i {
+          @include svg(projects, $--color-primary);
+          width: 24px;
+          position: absolute;
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+        }
       }
       dl {
         width: 25%;
         &:first-of-type {
           flex-basis: 100%;
+          margin-bottom: 10px;
         }
       }
 
