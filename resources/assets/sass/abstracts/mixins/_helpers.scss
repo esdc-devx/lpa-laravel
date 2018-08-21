@@ -72,7 +72,7 @@
     position: $type;
     top: 50%;
   } @else if $type == flex {
-    @include display-flex();
+    display: flex;
     justify-content: center;
     flex-direction: column;
     // Note: A height is needed so that the element(s)
@@ -108,7 +108,7 @@
     top: 50%;
     left: 50%;
   } @else if $type == flex {
-    @include display-flex();
+    display: flex;
     justify-content: center;
     align-items: center;
     // Note: A height is needed so that the element(s)

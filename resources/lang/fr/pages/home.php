@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'welcome'                      => 'Bienvenue :name',
-    'instruction'                  => 'Sélectionnez une des tâches ci-dessous pour continuer ou utilisez le menu au haut de la page pour naviguer.',
     'title_owner'                  => 'Que voulez-vous faire aujourd’hui?',
     'title_non_owner'              => 'Bienvenue à l’Application des produits d’apprentissage',
     'instruction_owner'            => 'Veuillez sélectionner l’une des tâches ci-dessous pour créer un nouveau projet ou produit d’apprentissage; ou sélectionnez l’une des catégories à gauche pour accéder à la section correspondante.',

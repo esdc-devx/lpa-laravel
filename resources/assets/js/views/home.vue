@@ -75,7 +75,7 @@
     // make sure the content is at the top
     top: 0;
     left: 0;
-    width: 100%;
+    @include size(100%);
     height: 100%;
     box-sizing: border-box;
     background-color: $--color-white;
