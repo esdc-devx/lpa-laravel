@@ -15,7 +15,6 @@
       </span>
       <el-select-other-wrap
         :modelSelect.sync="form.risk_type_id"
-        :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
         :dataVVasSelect="trans('forms.business_case.risk_type.label')"
         :validateSelect="{ required: !this.isRiskTypeOther }"
@@ -41,7 +40,6 @@
       </span>
       <el-select-wrap
         v-model="form.risk_impact_level_id"
-        :isLoading="isLoading"
         :name="`${fieldNamePrefix}.risk_impact_level_id`"
         :data-vv-as="trans('forms.business_case.risk_impact_level.label')"
         v-validate="'required'"
@@ -59,7 +57,6 @@
       </span>
       <el-select-wrap
         v-model="form.risk_probability_level_id"
-        :isLoading="isLoading"
         :name="`${fieldNamePrefix}.risk_probability_level`"
         :data-vv-as="trans('forms.business_case.risk_probability_level.label')"
         v-validate="'required'"
@@ -119,11 +116,7 @@
         type: Number,
         required: true
       },
-      value: Object,
-      isLoading: {
-        type: Boolean,
-        required: true
-      }
+      value: Object
     },
 
     computed: {

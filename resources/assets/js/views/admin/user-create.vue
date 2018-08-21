@@ -32,7 +32,6 @@
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
           <el-select-wrap
             v-model="form.organizational_units"
-            :isLoading="isUserInfoLoading"
             name="organizational_units"
             :data-vv-as="$tc('entities.general.organizational_units', 2)"
             v-validate="''"
@@ -44,7 +43,6 @@
         <el-form-item :label="trans('entities.user.roles')" for="roles" prop="roles">
           <el-select-wrap
             v-model="form.roles"
-            :isLoading="isUserInfoLoading"
             name="roles"
             :data-vv-as="trans('entities.user.roles')"
             v-validate="''"
@@ -100,7 +98,6 @@
 
     data() {
       return {
-        isUserInfoLoading: false,
         form: {
           name: '',
           username: '',
@@ -171,9 +168,9 @@
       },
 
       async triggerLoadUserCreateInfo() {
-        this.isUserInfoLoading = true;
+        await this.showMainLoading();
         await this.loadUserCreateInfo();
-        this.isUserInfoLoading = false;
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
@@ -197,9 +194,7 @@
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
-      await this.showMainLoading();
       this.triggerLoadUserCreateInfo();
-      await this.hideMainLoading();
       this.autofocus('name');
     }
   };

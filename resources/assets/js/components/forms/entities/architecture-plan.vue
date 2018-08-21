@@ -12,7 +12,6 @@
           typeList
         }"
         :min="1"
-        :isLoading="isInfoLoading"
       />
     </el-tab-pane>
     <el-tab-pane>
@@ -71,7 +70,6 @@
 
     data() {
       return {
-        isInfoLoading: true,
         typeList: []
       }
     },
@@ -107,10 +105,8 @@
 
       async fetchLists() {
         await this.showMainLoading();
-        this.isInfoLoading = true;
         let response = await axios.get('lists?include[]=learning-product-type');
         this.typeList = response.data.data['learning-product-type'];
-        this.isInfoLoading = false;
         await this.hideMainLoading();
       }
     },

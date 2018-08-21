@@ -21,7 +21,6 @@
         </span>
         <el-select-other-wrap
           :modelSelect.sync="form.request_sources"
-          :isLoading="isInfoLoading"
           nameSelect="request_sources"
           :dataVVasSelect="trans('forms.business_case.request_sources.label')"
           :validateSelect="{ required: !this.isRequestSourceOther }"
@@ -103,7 +102,6 @@
         </span>
         <el-select-other-wrap
           :modelSelect.sync="form.potential_solution_types"
-          :isLoading="isInfoLoading"
           nameSelect="potential_solution_types"
           :dataVVasSelect="trans('forms.business_case.potential_solution_types.label')"
           :validateSelect="{ required: !this.isPotentialSolutionTypesOther }"
@@ -134,7 +132,6 @@
         </span>
         <el-select-wrap
           v-model="form.government_priorities"
-          :isLoading="isInfoLoading"
           name="government_priorities"
           :data-vv-as="trans('forms.business_case.government_priorities.label')"
           v-validate="'required'"
@@ -184,7 +181,6 @@
         </span>
         <el-select-wrap
           v-model="form.timeframe_id"
-          :isLoading="isInfoLoading"
           name="timeframe_id"
           :data-vv-as="trans('forms.business_case.timeframe.label')"
           v-validate="'required'"
@@ -275,7 +271,6 @@
         :data="{
           departmentalBenefitTypeList
         }"
-        :isLoading="isInfoLoading"
       />
     </el-tab-pane>
 
@@ -290,7 +285,6 @@
         :data="{
           learnersBenefitTypeList
         }"
-        :isLoading="isInfoLoading"
       />
     </el-tab-pane>
 
@@ -332,7 +326,6 @@
         </span>
         <el-select-wrap
           v-model="form.maintenance_fund_id"
-          :isLoading="isInfoLoading"
           name="maintenance_fund_id"
           :data-vv-as="trans('forms.business_case.maintenance_fund.label')"
           v-validate="'required'"
@@ -371,7 +364,6 @@
         </span>
         <el-select-wrap
           v-model="form.salary_fund_id"
-          :isLoading="isInfoLoading"
           name="salary_fund_id"
           :data-vv-as="trans('forms.business_case.salary_fund.label')"
           v-validate="'required'"
@@ -422,7 +414,6 @@
         </span>
         <el-select-other-wrap
           :modelSelect.sync="form.internal_resources"
-          :isLoading="isInfoLoading"
           nameSelect="internal_resources"
           :dataVVasSelect="trans('forms.business_case.internal_resources.label')"
           :validateSelect="{ required: !this.isInternalResourceOther }"
@@ -454,7 +445,6 @@
           impactLevelList,
           probabilityLevelList
         }"
-        :isLoading="isInfoLoading"
       />
     </el-tab-pane>
 
@@ -514,7 +504,6 @@
 
     data() {
       return {
-        isInfoLoading: true,
         requestSourceList: [],
         isRequestSourceOther: false,
         potentialSolutionTypesList: [],
@@ -571,7 +560,6 @@
 
       async fetchLists() {
         await this.showMainLoading();
-        this.isInfoLoading = true;
         let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource&include[]=risk-type&include[]=risk-impact-level&include[]=risk-probability-level');
         this.requestSourceList = response.data.data['request-source'];
         this.governmentPrioritiesList = response.data.data['government-priority'];
@@ -586,7 +574,6 @@
         this.riskTypeList = response.data.data['risk-type'];
         this.impactLevelList = response.data.data['risk-impact-level'];
         this.probabilityLevelList = response.data.data['risk-probability-level'];
-        this.isInfoLoading = false;
         await this.hideMainLoading();
       },
 

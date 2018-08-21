@@ -26,7 +26,6 @@
           required>
           <el-select-wrap
             v-model="form.organizational_unit"
-            :isLoading="isProjectInfoLoading"
             name="organizational_unit"
             :data-vv-as="$tc('entities.general.organizational_units')"
             v-validate="'required'"
@@ -76,7 +75,6 @@
 
     data() {
       return {
-        isProjectInfoLoading: false,
         form: {
           name: '',
           organizational_unit: null
@@ -115,9 +113,9 @@
       },
 
       async triggerLoadProjectCreateInfo() {
-        this.isProjectInfoLoading = true;
+        await this.showMainLoading();
         await this.loadProjectCreateInfo();
-        this.isProjectInfoLoading = false;
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
@@ -141,9 +139,7 @@
       EventBus.$emit('App:ready');
       EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
-      await this.showMainLoading();
       this.triggerLoadProjectCreateInfo();
-      await this.hideMainLoading();
       this.autofocus('name');
     }
   };
