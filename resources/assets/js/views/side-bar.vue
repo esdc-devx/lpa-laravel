@@ -186,7 +186,7 @@
       opacity: 0.8;
     }
     i {
-      width: $svg-icons-size !important;
+      width: $svg-icons-size-small !important;
     }
     .el-menu-item {
       transition: $--all-transition;

@@ -68,11 +68,11 @@
  */
 @mixin vertical-center($type: relative) {
   @if $type == relative or $type == absolute {
-    @include translateY(-50%);
+    transform: translateY(-50%);
     position: $type;
     top: 50%;
   } @else if $type == flex {
-    @include display-flex();
+    display: flex;
     justify-content: center;
     flex-direction: column;
     // Note: A height is needed so that the element(s)
@@ -91,7 +91,7 @@
  */
 @mixin horizontal-center($type: relative) {
   @if $type == relative or $type == absolute {
-    @include translateX(-50%);
+    transform: translateX(-50%);
     position: $type;
     left: 50%;
   }
@@ -103,12 +103,12 @@
  */
 @mixin dead-center($type: absolute) {
   @if $type == relative or $type == absolute {
-    @include translate(-50%, -50%);
+    transform: translate(-50%, -50%);
     position: $type;
     top: 50%;
     left: 50%;
   } @else if $type == flex {
-    @include display-flex();
+    display: flex;
     justify-content: center;
     align-items: center;
     // Note: A height is needed so that the element(s)
@@ -134,7 +134,7 @@
   }
   // ^ arrow
   &:before {
-    @include translateY(calc(50% - #{$border-width}));
+    transform: translateY(calc(50% - #{$border-width}));
     // IE11 doesn't interprete calc in translations...
     -ms-transform: translateY(50%) translateY(-#{$border-width});
     top: calc(50% - #{$border-height});
@@ -142,7 +142,7 @@
   }
   // v arrow
   &:after {
-    @include translateY(calc(-50% + #{$border-width}));
+    transform: translateY(calc(-50% + #{$border-width}));
     // IE11 doesn't interprete calc in translations...
     -ms-transform: translateY(-50%) translateY(#{$border-width});
     bottom: calc(50% - #{$border-height});

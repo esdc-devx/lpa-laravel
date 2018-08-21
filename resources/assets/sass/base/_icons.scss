@@ -1,7 +1,7 @@
 // It is necessary to add the 'el-icon' prefix to any custom icons
 // so that ElementUI understand them
 [class^="el-icon-lpa"], [class*=" el-icon-lpa"] {
-  @include size($svg-icons-size);
+  @include size($svg-icons-size-small);
   vertical-align: sub;
 }
 
