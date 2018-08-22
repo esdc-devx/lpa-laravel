@@ -175,8 +175,7 @@
                         active-text-color="#fff"
                         class="top-menu"
                         mode="horizontal"
-                        router
-                        default-active="help-menu">
+                        router>
                         <el-submenu index="help-menu" popper-class="sub-menu">
                             <template slot="title">{{ __('base/navigation.help') }}</template>
                             <el-menu-item index=""><a href="{{ __('base/navigation.help_support_center_url') }}" target="_blank">{{ __('base/navigation.help_support_center') }}</a></el-menu-item>
