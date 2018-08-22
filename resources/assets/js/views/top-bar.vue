@@ -153,9 +153,7 @@
       },
 
       toggleAdminBar() {
-        this.$helpers.debounceAction(() => {
-          this.$store.dispatch('toggleAdminBar');
-        });
+        this.$store.dispatch('toggleAdminBar');
       }
     },
 
