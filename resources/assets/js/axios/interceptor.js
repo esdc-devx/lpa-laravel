@@ -2,7 +2,6 @@ import Vue from 'vue';
 import axios from 'axios';
 import axiosDefaults from './defaults';
 import HttpStatusCodes from './http-status-codes';
-import router from '@/router';
 import store from '@/store/';
 import Config from '@/config';
 import EventBus from '@/event-bus';
