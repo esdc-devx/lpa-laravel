@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Exceptions\InsufficientPrivilegesException;
+use App\Exceptions\OperationDeniedException;
 use App\Models\User\User;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Project\Project;
@@ -33,8 +35,8 @@ class ProjectPolicy
     public function before($user, $ability)
     {
         // Prevent any actions if user is not an admin or doesn't have the owner role.
-        if (!$user->isAdmin() && !$user->hasRole('owner')) {
-            return false;
+        if (! $user->isAdmin() && ! $user->hasRole('owner')) {
+            throw new InsufficientPrivilegesException();
         }
     }
 
@@ -56,8 +58,16 @@ class ProjectPolicy
      * @return mixed
      */
     public function update(User $user, Project $project) {
-        // Ensure that  user is part of the project's organizational unit.
-        return $user->isAdmin() || $this->userOwnProject($user, $project);
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Ensure that user has the right role and is part of the project's organizational unit.
+        if (! $user->hasRole('owner') || ! $this->userOwnProject($user, $project)) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return true;
     }
 
     /**
@@ -70,7 +80,7 @@ class ProjectPolicy
     public function delete(User $user, Project $project) {
         // Ensure that project has no running processes.
         if ($project->currentProcess) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         if ($user->isAdmin()) {
@@ -78,12 +88,17 @@ class ProjectPolicy
             return true;
         }
 
-        // Ensure that user is part of the project's organizational unit and that project is still new.
-        if ($this->userOwnProject($user, $project) && $project->state->name_key === 'new') {
-            return true;
+        // Ensure that user is part of the project's organizational unit.
+        if (! $this->userOwnProject($user, $project)) {
+            throw new InsufficientPrivilegesException();
         }
 
-        return false;
+        // Ensure that project is still new.
+        if (! $project->state->name_key === 'new') {
+            throw new OperationDeniedException();
+        }
+
+        return true;
     }
 
     /**
@@ -97,23 +112,24 @@ class ProjectPolicy
     public function startProcess(User $user, Project $project, ProcessDefinition $processDefinition)
     {
         // Ensure that user is part of the project's organizational unit.
-        if (!$user->isAdmin() && !$this->userOwnProject($user, $project)) {
-            return false;
+        if (! $user->isAdmin() && ! $this->userOwnProject($user, $project)) {
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure that project has no running processes.
         if ($project->currentProcess) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         // Handle any business logic for each process.
         switch ($processDefinition->name_key) {
             case 'project-approval':
                 // Ensure project is new.
-                return $project->state->name_key === 'new';
-
+                if ($project->state->name_key !== 'new') {
+                    throw new OperationDeniedException();
+                }
         }
 
-        return false;
+        return true;
     }
 }

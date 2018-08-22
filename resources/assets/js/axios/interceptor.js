@@ -2,7 +2,6 @@ import Vue from 'vue';
 import axios from 'axios';
 import axiosDefaults from './defaults';
 import HttpStatusCodes from './http-status-codes';
-import router from '@/router';
 import store from '@/store/';
 import Config from '@/config';
 import EventBus from '@/event-bus';
@@ -23,8 +22,8 @@ axios.interceptors.request.use(config => config, error => {
 });
 axios.interceptors.response.use(response => response, error => {
   let trans = Vue.prototype.trans;
-
   let response = error.response;
+
   // if the response is undefined, we likely got a timeout
   if (!response) {
     Notify.notifyError({
@@ -34,7 +33,7 @@ axios.interceptors.response.use(response => response, error => {
     return Promise.reject(error);
   }
 
-  let errorResponse = response && response.data && response.data.errors ? response.data.errors : '';
+  let errorResponse = response.data;
 
   if (response.status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
@@ -52,7 +51,8 @@ axios.interceptors.response.use(response => response, error => {
       });
   } else if (response.status === HttpStatusCodes.FORBIDDEN) {
     Notify.notifyError({
-      message: trans('errors.forbidden')
+      title: errorResponse.type === 'App\\Exceptions\\InsufficientPrivilegesException' ? trans('components.notice.title.insufficient_privileges') : trans('components.notice.title.operation_denied'),
+      message: errorResponse.message
     });
   } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
@@ -65,7 +65,16 @@ axios.interceptors.response.use(response => response, error => {
     });
   }
 
-  Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);
+  // Log error to the console.
+  if (errorResponse) {
+    let errorMessage = '';
+    errorMessage += errorResponse.message || '';
+    errorMessage += errorResponse.debug || '';
+    if (errorMessage) {
+      Vue.$log.error(`[axios][interceptor]: ${errorMessage}`);
+    }
+  }
+
   return Promise.reject(error);
 });
 

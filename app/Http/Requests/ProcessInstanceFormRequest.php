@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProcessInstanceFormRequest extends FormRequest
@@ -41,7 +42,7 @@ class ProcessInstanceFormRequest extends FormRequest
         // Get last segment of request url (either edit or submit).
         $action = collect($this->segments())->last();
 
-        return $this->user()->can($action, $this->processInstanceForm);
+        return Gate::authorize($action, $this->processInstanceForm);
     }
 
     /**
