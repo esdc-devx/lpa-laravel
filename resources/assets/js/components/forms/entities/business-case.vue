@@ -256,7 +256,6 @@
           :max="500000"
           type="number">
         </input-wrap>
-        <form-error name="expected_annual_participant_number"></form-error>
       </el-form-item-wrap>
     </el-tab-pane>
 
