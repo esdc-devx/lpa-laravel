@@ -44,8 +44,8 @@
             :min="min"
             :max="max"
             :disabled="isInputDisabled"
-            @keydown.up.native.prevent="increase"
-            @keydown.down.native.prevent="decrease"
+            @keydown.up="increase"
+            @keydown.down="decrease"
             @input="handleInputChange">
         </div>
       </div>
@@ -251,6 +251,7 @@
         if (newVal <= this.min) newVal = this.min;
 
         this.currentNumberValue = newVal;
+        this.$refs.inputNumber.value = this.currentNumberValue;
         this.updateValue(newVal);
       },
       // Because of a limitation of Vuejs regarding custom components that have DOM elements inside,
