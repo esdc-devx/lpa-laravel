@@ -13,7 +13,6 @@
       <el-cascader
         v-model="typeModel"
         :name="`${fieldNamePrefix}.type_id`"
-        v-loading="isLoading"
         element-loading-spinner="el-icon-loading"
         v-validate="'required'"
         :data-vv-as="trans('forms.architecture_plan.type.label')"
@@ -31,16 +30,16 @@
           :description="trans('forms.architecture_plan.quantity.description')">
         </el-popover-wrap>
       </span>
-      <el-input-number
+      <input-wrap
         v-model="form.quantity"
         :name="`${fieldNamePrefix}.quantity`"
-        v-validate="{ required: true, numeric: true }"
+        v-validate="'required'"
         :data-vv-as="trans('forms.architecture_plan.quantity.label')"
         v-mask="'###'"
         :min="1"
-        :max="100">
-      </el-input-number>
-      <form-error :name="`${fieldNamePrefix}.quantity`"></form-error>
+        :max="100"
+        type="number">
+      </input-wrap>
     </el-form-item-wrap>
   </div>
 </template>
@@ -52,11 +51,12 @@
 
   import ElFormItemWrap from '../el-form-item-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
+  import InputWrap from '../input-wrap';
 
   export default {
     name: 'planned-products',
 
-    components: { FormError, ElFormItemWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElPopoverWrap, InputWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -71,9 +71,8 @@
         type: Number,
         required: true
       },
-      value: Object,
-      isLoading: {
-        type: Boolean,
+      value: {
+        type: Object,
         required: true
       }
     },
