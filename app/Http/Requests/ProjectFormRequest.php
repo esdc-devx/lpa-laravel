@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Project\Project;
+use App\Policies\ProjectPolicy;
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ProjectFormRequest extends FormRequest
@@ -17,10 +19,10 @@ class ProjectFormRequest extends FormRequest
         // Defer to ProjectPolicy class to handle authorization.
         switch ($this->method()) {
             case 'POST':
-                return $this->user()->can('create', Project::class);
+                return Gate::authorize('create', Project::class);
 
             case 'PUT':
-                return $this->user()->can('update', Project::find($this->project));
+                return Gate::authorize('update', Project::find($this->project));
         }
         return false;
     }

@@ -8,10 +8,12 @@ return [
         'error'           => 'Error',
     ],
     'title'   => [
-        'delete_project'  => 'Delete Project',
-        'pending_changes' => 'Pending Changes',
-        'submit_form'     => 'Submit Form',
-        'cancel_process'  => 'Cancel Process',
+        'delete_project'          => 'Delete Project',
+        'pending_changes'         => 'Pending Changes',
+        'submit_form'             => 'Submit Form',
+        'cancel_process'          => 'Cancel Process',
+        'insufficient_privileges' => 'Insufficient Privileges',
+        'operation_denied'        => 'Operation Denied',
     ],
     'message' => [
         'created'                 => '<b>:name</b> has been created.',
