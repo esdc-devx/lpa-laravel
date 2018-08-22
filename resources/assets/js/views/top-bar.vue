@@ -132,7 +132,7 @@
         // to avoid seeing bouncing texts
         // @note: hideMainLoading is called when the language is set in router
         await this.showMainLoading();
-        this.$helpers.throttleAction(() => {
+        this.$helpers.debounceAction(() => {
           let storeLang = this.$store.getters.language;
           let newLang = this.getSwitchedLang(storeLang);
           let route = Object.assign({}, this.$route);
@@ -152,9 +152,7 @@
       },
 
       toggleAdminBar() {
-        this.$helpers.throttleAction(() => {
-          this.$store.dispatch('toggleAdminBar');
-        });
+        this.$store.dispatch('toggleAdminBar');
       }
     },
 
