@@ -91,7 +91,6 @@
         <el-select-wrap
           v-model="item.process_form_decision_id"
           :disabled="form.is_process_cancelled"
-          :isLoading="isInfoLoading"
           name="process_form_decision_id"
           :data-vv-as="trans('forms.architecture_plan_assessment.process_form_decision_id.label')"
           v-validate="'required'"
@@ -151,7 +150,6 @@
 
     data() {
       return {
-        isInfoLoading: true,
         processFormDecisionList: [],
         assessment_date_options: {
           disabledDate(time) {
@@ -198,10 +196,8 @@
 
       async fetchLists() {
         await this.showMainLoading();
-        this.isInfoLoading = true;
         let response = await axios.get('lists?include[]=process-form-decision');
         this.processFormDecisionList = response.data.data['process-form-decision'];
-        this.isInfoLoading = false;
         await this.hideMainLoading();
       },
     },

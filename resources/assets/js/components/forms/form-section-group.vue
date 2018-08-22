@@ -22,7 +22,7 @@
           -->
           <el-button v-if="min ? groups.length > min : true" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
         </template>
-        <component ref="component" :is="entitySection" :data="data" class="form-item-group" :index="index" :value="item" :isLoading="isLoading"></component>
+        <component ref="component" :is="entitySection" :data="data" class="form-item-group" :index="index" :value="item"></component>
       </el-collapse-item>
     </el-collapse>
     <el-button class="add-group" type="primary" icon="el-icon-plus" @click="addGroup()"></el-button>
@@ -59,10 +59,6 @@
       min: {
         type: Number,
         default: 0
-      },
-      isLoading: {
-        type: Boolean,
-        required: true
       },
       value: Array
     },

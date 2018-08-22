@@ -25,7 +25,6 @@
           required>
           <el-select-wrap
             v-model="form.project.organizational_unit"
-            :isLoading="isProjectInfoLoading"
             name="organizational_unit"
             :data-vv-as="$tc('entities.general.organizational_units')"
             v-validate="'required'"
@@ -75,7 +74,6 @@
 
     data() {
       return {
-        isProjectInfoLoading: false,
         form: {
           project: {}
         }
@@ -84,6 +82,8 @@
 
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         updateProject: `${namespace}/update`,
         loadProjectEditInfo: `${namespace}/loadProjectEditInfo`
       }),
@@ -106,7 +106,7 @@
       },
 
       async triggerLoadProjectEditInfo() {
-        this.isProjectInfoLoading = true;
+        await this.showMainLoading();
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProjectEditInfo(projectId);
@@ -115,10 +115,10 @@
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options
           this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
-          this.isProjectInfoLoading = false;
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
@@ -127,10 +127,10 @@
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the project
-        this.isProjectInfoLoading = true;
+        await this.showMainLoading();
         let projectId = this.$route.params.projectId;
         await this.loadProjectEditInfo(projectId);
-        this.isProjectInfoLoading = false;
+        await this.hideMainLoading();
       }
     },
 

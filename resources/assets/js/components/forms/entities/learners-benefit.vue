@@ -15,7 +15,6 @@
       </span>
       <el-select-other-wrap
         :modelSelect.sync="form.learners_benefit_type_id"
-        :isLoading="isLoading"
         :nameSelect="`${fieldNamePrefix}.learners_benefit_type_id`"
         :dataVVasSelect="trans('forms.business_case.learners_benefit_type.label')"
         :validateSelect="{ required: !this.isLearnersBenefitTypeOther }"
@@ -80,11 +79,7 @@
         type: Number,
         required: true
       },
-      value: Object,
-      isLoading: {
-        type: Boolean,
-        required: true
-      }
+      value: Object
     },
 
     computed: {

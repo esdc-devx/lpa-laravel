@@ -135,7 +135,6 @@
         this.$helpers.throttleAction(() => {
           let storeLang = this.$store.getters.language;
           let newLang = this.getSwitchedLang(storeLang);
-          EventBus.$emit('Store:languageUpdate', newLang);
           let route = Object.assign({}, this.$route);
 
           // change the locale of the translation plugin

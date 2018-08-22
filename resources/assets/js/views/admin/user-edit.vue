@@ -29,7 +29,6 @@
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
           <el-select-wrap
             v-model="form.user.organizational_units"
-            :isLoading="isUserInfoLoading"
             name="organizational_units"
             :data-vv-as="$tc('entities.general.organizational_units', 2)"
             v-validate="''"
@@ -41,7 +40,6 @@
         <el-form-item :label="trans('entities.user.roles')" for="roles">
           <el-select-wrap
             v-model="form.user.roles"
-            :isLoading="isUserInfoLoading"
             name="roles"
             :data-vv-as="trans('entities.user.roles')"
             v-validate="''"
@@ -93,7 +91,6 @@
 
     data() {
       return {
-        isUserInfoLoading: false,
         form: {
           user: {}
         }
@@ -102,6 +99,8 @@
 
     methods: {
       ...mapActions({
+        showMainLoading: 'showMainLoading',
+        hideMainLoading: 'hideMainLoading',
         updateUser: `${namespace}/update`,
         loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),
@@ -129,7 +128,7 @@
       },
 
       async triggerLoadUserInfo() {
-        this.isUserInfoLoading = true;
+        await this.showMainLoading();
         let userId = this.$route.params.userId;
         try {
           await this.loadUserEditInfo(userId);
@@ -139,10 +138,10 @@
           // since ElementUI only need ids to populate the selected options
           this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
           this.form.user.roles = _.map(this.viewingUser.roles, 'id');
-          this.isUserInfoLoading = false;
         } catch(e) {
           this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
         }
+        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
@@ -151,10 +150,10 @@
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the user
-        this.isUserInfoLoading = true;
+        await this.showMainLoading();
         let userId = this.$route.params.userId;
         await this.loadUserEditInfo(userId);
-        this.isUserInfoLoading = false;
+        await this.hideMainLoading();
       }
     },
 
