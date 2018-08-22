@@ -26,6 +26,13 @@
             padding: 0;
         }
 
+        /*  
+         *  The following menu styling sections are inspired from styles found in the top-bar.vue. 
+         *  Since there are no router for the login page, we must make sure that the default-active 
+         *  attribute of the <el-menu> from element ui behaves the same way as if we had a router. 
+         *  Hence, few quirks were required: see li, .el-menu-item, .el-submenu__title
+         *   
+        */
         .top-bar {
             user-select: none;
             padding: 0 20px;
@@ -36,6 +43,67 @@
             height: 100%;
             display: flex;
             align-items: center;
+        }
+
+        .top-bar .el-menu-item,
+        .top-bar .el-submenu .el-submenu__title {
+            height: 50px;
+            line-height: 50px;
+        }
+
+        .top-bar .el-menu {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .top-bar .el-menu > .el-menu-item {
+            border: 0px;
+            background-color: #201e2c;
+        }
+
+        .sub-menu .el-menu,
+        .sub-menu .el-menu-item,
+        .sub-menu .el-submenu .el-submenu__title {
+            color: black !important;
+            background-color: white !important;
+        }
+
+        .sub-menu .el-menu {
+            border-radius: 0;
+            border: 1px solid #cdcdcd;
+            padding: 0;
+            margin-top: 2px;
+        }
+
+        .sub-menu .el-menu-item:hover {
+            color: white !important;
+            background-color: #322f43 !important;
+        }
+
+        li:hover,
+        li:hover .el-submenu__title {
+            background-color: #322f43 !important;
+            cursor: pointer;
+        }
+
+        .el-submenu__title {
+            border: none !important;
+        }
+
+        .sub-menu .el-menu-item a {
+            display: block;
+            width: 100%;
+            padding: 0 10px;
+            margin: 0 -10px;
+            color: black !important;
+            background-color: transparent !important;
+            text-decoration: none;
+            font-weight: normal;
+        }
+        
+        .sub-menu .el-menu-item a:hover {
+            color: white !important;
+            cursor: pointer;
         }
 
         h1 {
@@ -100,7 +168,24 @@
             <el-header height="50px">
                 <div class="top-bar">
                     <h1>{{ __('base/navigation.app_name') }}</h1>
-                    <a :href="'/' + toggledLocale + '/login'" class="lang">{{ __('base/navigation.language_toggle') }}</a>
+                    
+                    <el-menu
+                        background-color="#201e2c"
+                        text-color="#fff"
+                        active-text-color="#fff"
+                        class="top-menu"
+                        mode="horizontal"
+                        router>
+                        <el-submenu index="help-menu" popper-class="sub-menu">
+                            <template slot="title">{{ __('base/navigation.help') }}</template>
+                            <el-menu-item index=""><a href="{{ __('base/navigation.help_support_center_url') }}" target="_blank">{{ __('base/navigation.help_support_center') }}</a></el-menu-item>
+                            <el-menu-item index=""><a href="{{ __('base/navigation.help_getting_started_url') }}" target="_blank">{{ __('base/navigation.help_getting_started') }}</a></el-menu-item>
+                            <el-menu-item index=""><a href="{{ __('base/navigation.help_projects_url') }}" target="_blank">{{ __('base/navigation.help_projects') }}</a></el-menu-item>
+                            <el-menu-item index=""><a href="{{ __('base/navigation.help_learning_products_url') }}" target="_blank">{{ __('base/navigation.help_learning_products') }}</a></el-menu-item>
+                        </el-submenu>
+                        <el-menu-item index="language"><a :href="'/' + toggledLocale + '/login'" class="lang">{{ __('base/navigation.language_toggle') }}</a></el-menu-item>
+                    </el-menu>
+                    
                 </div>
             </el-header>
             <el-main>

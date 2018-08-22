@@ -14,18 +14,19 @@
           class="top-menu"
           mode="horizontal"
           router>
-          <el-submenu index="1" popper-class="sub-menu">
+          <el-submenu index="user-menu" popper-class="sub-menu">
             <template slot="title">{{ user.name }}</template>
-            <el-menu-item index="" @click="onLogout()"><span>{{ trans('base.navigation.logout') }}</span></el-menu-item>
+            <el-menu-item index="" @click="onLogout()">{{ trans('base.navigation.logout') }}</el-menu-item>
           </el-submenu>
-          <el-menu-item index="" @click="setLanguage" :class="{ 'disabled': isMainLoading }">
-            <span>{{ trans('base.navigation.language_toggle') }}</span>
-          </el-menu-item>
-          <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar">
-            <span>
-              <i :class="['el-icon-lpa-settings', { 'active' : isAdminBarShown} ]"></i>
-            </span>
-          </el-menu-item>
+          <el-submenu index="help-menu" popper-class="sub-menu">
+            <template slot="title">{{ trans('base.navigation.help') }}</template>
+            <el-menu-item index=""><a :href="trans('base.navigation.help_support_center_url')" target="_blank">{{ trans('base.navigation.help_support_center') }}</a></el-menu-item>
+            <el-menu-item index=""><a :href="trans('base.navigation.help_getting_started_url')" target="_blank">{{ trans('base.navigation.help_getting_started') }}</a></el-menu-item>
+            <el-menu-item index=""><a :href="trans('base.navigation.help_projects_url')" target="_blank">{{ trans('base.navigation.help_projects') }}</a></el-menu-item>
+            <el-menu-item index=""><a :href="trans('base.navigation.help_learning_products_url')" target="_blank">{{ trans('base.navigation.help_learning_products') }}</a></el-menu-item>
+          </el-submenu>
+          <el-menu-item index="" @click="setLanguage" :class="{ 'disabled': isMainLoading }">{{ trans('base.navigation.language_toggle') }}</el-menu-item>
+          <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar"><i :class="['el-icon-lpa-settings', { 'active' : isAdminBarShown} ]"></i></el-menu-item>
         </el-menu>
       </nav>
     </el-col>
@@ -219,11 +220,6 @@
         border: none !important;
       }
 
-      // ElementUI override
-      .el-menu-item span {
-        vertical-align: baseline;
-      }
-
       .el-icon-setting {
         color: $--color-white;
         vertical-align: sub;
@@ -249,6 +245,20 @@
         color: $--color-white !important;
         background-color: #322f43 !important;
       }
+    }
+  }
+
+  .sub-menu .el-menu-item a {
+    display: block;
+    width: 100%;
+    padding: 0 10px;
+    margin: 0 -10px;
+    color: $--color-black !important;
+    background-color: transparent !important;
+    text-decoration: none;
+    font-weight: normal;
+    &:hover {
+      color: $--color-white !important;
     }
   }
 </style>
