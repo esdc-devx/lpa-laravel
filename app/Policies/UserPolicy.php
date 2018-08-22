@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Exceptions\InsufficientPrivilegesException;
+use App\Exceptions\OperationDeniedException;
 use App\Models\User\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -18,9 +20,9 @@ class UserPolicy
      */
     public function before($user, $ability)
     {
-        // For admin users, allow any actions except for update which has an extra validation.
-        if ($user->isAdmin() && $ability !== 'update') {
-            return true;
+        // Deny any action if users is not admin.
+        if (! $user->isAdmin()) {
+            throw new InsufficientPrivilegesException();
         }
     }
 
@@ -30,7 +32,9 @@ class UserPolicy
      * @param  User $user
      * @return void
      */
-    public function search(User $user) {}
+    public function search(User $user) {
+        return true;
+    }
 
     /**
      * Determine whether the user can view models.
@@ -38,7 +42,9 @@ class UserPolicy
      * @param  User $user
      * @return mixed
      */
-    public function view(User $user, User $model) {}
+    public function view(User $user, User $model) {
+        return true;
+    }
 
     /**
      * Determine whether the user can create models.
@@ -46,7 +52,9 @@ class UserPolicy
      * @param  User $user
      * @return mixed
      */
-    public function create(User $user) {}
+    public function create(User $user) {
+        return true;
+    }
 
     /**
      * Determine whether the user can update the model.
@@ -56,11 +64,12 @@ class UserPolicy
      * @return mixed
      */
     public function update(User $user, User $model) {
-        // Prevent any update operations on admin account.
+        // Prevent any update operations on system admin account.
         if (strcasecmp($model->username, config('auth.admin.username')) === 0) {
-            return false;
+            throw new OperationDeniedException();
         }
-        return $user->isAdmin();
+
+        return true;
     }
 
     /**
@@ -69,5 +78,7 @@ class UserPolicy
      * @param  User $user
      * @return mixed
      */
-    public function delete(User $user) {}
+    public function delete(User $user) {
+        return true;
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\User\User;
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Auth\Access\AuthorizationException;
 
@@ -18,13 +19,10 @@ class UserFormRequest extends FormRequest
         // Defer to UserPolicy class to handle authorization.
         switch ($this->method()) {
             case 'POST':
-                return $this->user()->can('create', User::class);
+                return Gate::authorize('create', User::class);
 
             case 'PUT':
-                return $this->user()->can('update', User::find($this->user));
-
-            default:
-                return false;
+                return Gate::authorize('update', User::find($this->user));
         }
     }
 
