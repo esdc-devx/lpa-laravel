@@ -96,16 +96,22 @@
       },
 
       async create() {
-        let project = await this.createProject(this.form);
-        this.$store.commit(`${namespace}/setViewing`, project);
-        this.isSubmitting = false;
-        this.notifySuccess({
-          message: this.trans('components.notice.message.created', { name: this.form.name })
-        });
-        this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
+        try {
+          let project = await this.createProject(this.form);
+          this.$store.commit(`${namespace}/setViewing`, project);
+          this.notifySuccess({
+            message: this.trans('components.notice.message.created', { name: this.form.name })
+          });
+          this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
+        } catch (e) {
+          // Exception handled by interceptor
+        }
+        finally {
+          this.isSubmitting = false;
+        }
       },
 
-      async triggerLoadProjectCreateInfo() {
+      async fetch() {
         await this.showMainLoading();
         await this.loadProjectCreateInfo();
         await this.hideMainLoading();
@@ -117,22 +123,24 @@
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.triggerLoadProjectCreateInfo();
+        await this.fetch();
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
     async mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
-
-      this.triggerLoadProjectCreateInfo();
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
+      await this.fetch();
       this.autofocus('name');
     }
   };

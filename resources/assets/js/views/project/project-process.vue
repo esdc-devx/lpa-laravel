@@ -122,7 +122,6 @@
       return {
         processId: null,
         activeStep: 0,
-        selectedIndex: null,
         rights: {
           canCancelProcess: false
         }
@@ -136,17 +135,21 @@
         hasRole: 'users/hasRole'
       }),
 
+      selectedIndex: {
+        get() {
+          return this.activeStep;
+        },
+        set(val) {
+          this.activeStep = val;
+        }
+      },
+
       steps() {
         return _.sortBy(this.viewingProcess.steps, 'definition.display_sequence');
       },
 
       forms() {
-        // steps might not be loaded yet
-        if (!this.steps[this.selectedIndex]) {
-          return [];
-        }
-
-        return _.sortBy(this.steps[this.selectedIndex].forms, 'definition.display_sequence');
+        return _.sortBy(this.viewingProcess.steps[this.selectedIndex].forms, 'definition.display_sequence');
       }
     },
 
@@ -161,8 +164,7 @@
       }),
 
       viewForm(form) {
-        let processId = this.$route.params.processId;
-        this.$router.push(`${processId}/form/${form.id}`);
+        this.$router.push(`${this.processId}/form/${form.id}`);
       },
 
       getFormRowClassName({row, rowIndex}) {
@@ -216,9 +218,7 @@
         let processId = this.$route.params.processId;
         await this.loadProcessInstance(processId);
 
-        this.activeStep = this.getActiveStep();
-        // make sure that the selectedIndex is updated
-        this.selectedIndex = this.activeStep;
+        this.selectedIndex = this.getActiveStep();
       },
 
       async fetch() {
@@ -226,24 +226,27 @@
         try {
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.fetch);
-      next();
-    },
-
+    // This makes sure that before entering the route, that we set the active step
+    // so that when the page is rendered, the correct step is selected.
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        vm.fetch();
+        vm.selectedIndex = vm.getActiveStep();
       });
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.fetch();
+      next();
     },
 
     async created() {
@@ -253,7 +256,11 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.fetch);
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
     }
   };
 </script>

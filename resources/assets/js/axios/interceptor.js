@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import axiosDefaults from './defaults';
 import HttpStatusCodes from './http-status-codes';
+import router from '@/router';
 import store from '@/store/';
 import Config from '@/config';
 import EventBus from '@/event-bus';
@@ -23,6 +24,7 @@ axios.interceptors.request.use(config => config, error => {
 axios.interceptors.response.use(response => response, error => {
   let trans = Vue.prototype.trans;
   let response = error.response;
+  let status = response.status;
 
   // if the response is undefined, we likely got a timeout
   if (!response) {
@@ -35,7 +37,7 @@ axios.interceptors.response.use(response => response, error => {
 
   let errorResponse = response.data;
 
-  if (response.status === HttpStatusCodes.UNAUTHORIZED) {
+  if (status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
     Vue.prototype.$alert(
       trans('auth.session_expired'),
@@ -49,19 +51,18 @@ axios.interceptors.response.use(response => response, error => {
           window.location.href = `/${store.getters.language}/login`;
         }
       });
-  } else if (response.status === HttpStatusCodes.FORBIDDEN) {
+  } else if (status === HttpStatusCodes.NOT_FOUND) {
+    let newPath = router.history.pending.path || router.history.current.path;
+    router.replace({ name: 'not-found', params: { '0': newPath } });
+  } else if (status === HttpStatusCodes.FORBIDDEN) {
     Notify.notifyError({
-      title: errorResponse.type === 'App\\Exceptions\\InsufficientPrivilegesException' ? trans('components.notice.title.insufficient_privileges') : trans('components.notice.title.operation_denied'),
-      message: errorResponse.message
+      title: errorResponse.type,
+      message: errorResponse.message || trans('errors.forbidden')
     });
-  } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-    // internal error
+  } else {
+    // internal error or anything else
     Notify.notifyError({
       message: trans('errors.general')
-    });
-  } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
-    Notify.notifyError({
-      message: trans('errors.bad_request')
     });
   }
 
@@ -74,6 +75,10 @@ axios.interceptors.response.use(response => response, error => {
       Vue.$log.error(`[axios][interceptor]: ${errorMessage}`);
     }
   }
+
+  // make sure that the loading is hidden
+  // in case we hit a page that cannot be loaded
+  store.dispatch('hideMainLoading');
 
   return Promise.reject(error);
 });
