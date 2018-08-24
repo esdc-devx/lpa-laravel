@@ -13,6 +13,7 @@
         :class="[`el-${type}__inner`, { 'is-error': verrors.has(name) }]"
         v-text="currentTextValue"
         :value="currentTextValue"
+        :disabled="isInputDisabled"
         :name="name"
         :maxlength="charsLimit"
         @input="onInput"
