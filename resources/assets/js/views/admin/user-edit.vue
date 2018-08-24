@@ -132,16 +132,17 @@
         let userId = this.$route.params.userId;
         try {
           await this.loadUserEditInfo(userId);
-          EventBus.$emit('App:ready');
           this.form.user = Object.assign({}, this.viewingUser);
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options
           this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
           this.form.user.roles = _.map(this.viewingUser.roles, 'id');
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       async onLanguageUpdate() {
@@ -157,10 +158,9 @@
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
@@ -171,7 +171,7 @@
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
+      EventBus.$emit('App:ready');
     }
   };
 </script>

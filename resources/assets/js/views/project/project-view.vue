@@ -122,29 +122,34 @@
         }
       },
 
-      async fetch() {
+      async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         try {
           let projectId = this.$route.params.projectId;
-          await this.loadProject(projectId);
+          // @note: project info is loaded in the router's beforeEnter
+          // do not reload the project info on page load
+          if (!isInitialLoad) {
+            await this.loadProject(projectId);
+          }
           await this.loadProcessDefinitions('project');
           this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       async onLanguageUpdate() {
-        await this.fetch();
+        this.fetch(false);
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
@@ -156,7 +161,11 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
     }
   };
 </script>

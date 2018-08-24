@@ -155,8 +155,12 @@
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
           if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
+            // @note: since we are in a computed property, we cannot use the normal async-await
+            // because vuejs doesn't support it.
             this.canSubmitForm(this.formId).then(allowed => {
               this.rights.canSubmit = allowed;
+            }).catch(e => {
+              // Exception handled by interceptor
             });
             return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
           }
@@ -173,7 +177,11 @@
               if (response.status === HttpStatusCodes.FORBIDDEN) {
                 this.discardChanges();
                 // reload the process_instance_form data since we are unsynced
-                await this.triggerLoadProcessInstanceForm();
+                try {
+                  await this.triggerLoadProcessInstanceForm();
+                } catch (e) {
+                  // Exception handled by interceptor
+                }
               }
             }
             await this.hideMainLoading();
@@ -183,13 +191,25 @@
               .then(async () => {
                 await this.showMainLoading();
                 this.discardChanges();
-                await this.unclaimForm(this.formId);
-                await this.hideMainLoading();
+                try {
+                  await this.unclaimForm(this.formId);
+                } catch (e) {
+                  // Exception handled by interceptor
+                }
+                finally {
+                  await this.hideMainLoading();
+                }
               }).catch(() => false);
           } else {
             await this.showMainLoading();
-            await this.unclaimForm(this.formId);
-            await this.hideMainLoading();
+            try {
+              await this.unclaimForm(this.formId);
+            } catch (e) {
+              // Exception handled by interceptor
+            }
+            finally {
+              await this.hideMainLoading();
+            }
           }
         }
       },
@@ -315,9 +335,15 @@
             await this.showMainLoading();
             this.discardChanges();
             // remove ownership on form
-            await this.unclaimForm(this.formId);
-            this.isSaving = false;
-            await this.hideMainLoading();
+            try {
+              await this.unclaimForm(this.formId);
+            } catch (e) {
+              // Exception handled by interceptor
+            }
+            finally {
+              this.isSaving = false;
+              await this.hideMainLoading();
+            }
           }
         }
       },
@@ -382,17 +408,25 @@
           await this.triggerLoadProcessInstanceForm();
           this.formComponent = this.viewingFormInfo.definition.name_key;
           this.setupStage();
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
           await this.showMainLoading();
-          await this.unclaimForm(this.formId);
-          await this.hideMainLoading();
+          try {
+            await this.unclaimForm(this.formId);
+          } catch (e) {
+            // Exception handled by interceptor
+          }
+          finally {
+            await this.hideMainLoading();
+          }
           callback();
         }).catch(() => false);
       },
@@ -406,7 +440,6 @@
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
         EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
-        EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
       }
     },
 
@@ -417,7 +450,11 @@
           this.destroyEvents();
           this.discardChanges();
           if (!this.isFormSubmitted) {
-            await this.unclaimForm(this.formId);
+            try {
+              await this.unclaimForm(this.formId);
+            } catch (e) {
+              // Exception handled by interceptor
+            }
           }
           await this.hideMainLoading();
           next();
@@ -432,6 +469,12 @@
       }
     },
 
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
+      next();
+    },
+
     beforeRouteEnter(to, from, next) {
       next(vm => {
         vm.fetch();
@@ -442,17 +485,26 @@
       await this.showMainLoading();
       // store the reference to the current form id
       this.formId = this.$route.params.formId;
-
-      this.rights.canEdit = await this.canEditForm(this.formId);
-      this.rights.canClaim = await this.canClaimForm(this.formId);
-      this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
-      await this.hideMainLoading();
+      try {
+        this.rights.canEdit = await this.canEditForm(this.formId);
+        this.rights.canClaim = await this.canClaimForm(this.formId);
+        this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
+      } catch (e) {
+        // Exception handled by interceptor
+      }
+      finally {
+        await this.hideMainLoading();
+      }
     },
 
     mounted() {
       EventBus.$emit('App:ready');
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
     }
   };
 </script>

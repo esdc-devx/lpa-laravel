@@ -120,13 +120,20 @@
       return {
         // this allows us to keep the count internally
         // without relying on the parent to get it
-        currentTextValue: this.value,
         currentNumberValue: this.value,
         innerTextValue: this.value
       };
     },
 
     computed: {
+      currentTextValue: {
+        get() {
+          return this.value;
+        },
+        set(val) {
+          this.updateValue(val);
+        }
+      },
       charCount() {
         // based on our internal text value and not the value instead
         // so that we get an instant feedback on the UI

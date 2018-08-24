@@ -127,7 +127,7 @@
           users = await this.search(queryString);
           this.inUserList = _.map(users, 'name');
           callback(users);
-        } catch(e) {
+        } catch (e) {
           this.$notifyError({
             message: 'Unable to retrieve users.'
           });
@@ -183,16 +183,14 @@
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
-    async mounted() {
+    mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
 
       this.triggerLoadUserCreateInfo();
       this.autofocus('name');

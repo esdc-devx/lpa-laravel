@@ -103,7 +103,7 @@
         this.$emit('update:value', tab.index);
       },
 
-      async fetchLists() {
+      async fetch() {
         await this.showMainLoading();
         let response = await axios.get('lists?include[]=learning-product-type');
         this.typeList = response.data.data['learning-product-type'];
@@ -112,12 +112,12 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.fetchLists);
+      EventBus.$off('Store:languageUpdate', this.fetch);
     },
 
     async created() {
       await this.showMainLoading();
-      this.fetchLists();
+      this.fetch();
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = _.cloneDeep(this.formData);
@@ -125,7 +125,7 @@
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.fetchLists);
+      EventBus.$on('Store:languageUpdate', this.fetch);
     }
   };
 </script>

@@ -8,5 +8,5 @@ export default {
   SERVER_ERROR:         500,
   NOT_IMPLEMENTED:      501,
   BAD_GATEWAY:          502,
-  UNAVAILLABLE:         503
+  UNAVAILABLE:          503
 };

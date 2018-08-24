@@ -28,7 +28,7 @@ Vue.prototype.trans = (string, args) => {
 export async function setLanguage() {
   try {
     return await store.dispatch('setLanguage');
-  } catch(e) {
+  } catch (e) {
     throw e;
   }
 };
@@ -36,7 +36,7 @@ export async function setLanguage() {
 export async function loadLanguages() {
   try {
     return await store.dispatch('loadLanguages');
-  } catch(e) {
+  } catch (e) {
     throw e;
   }
 };

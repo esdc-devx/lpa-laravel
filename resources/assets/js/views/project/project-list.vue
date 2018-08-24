@@ -119,17 +119,22 @@
 
       async triggerLoadProjects() {
         await this.showMainLoading();
-        await this.loadProjects();
-        this.normalizedList = _.map(this.projects, project => {
-          let normProject = _.pick(project, this.normalizedListAttrs);
-          normProject.organizational_unit = normProject.organizational_unit.name;
-          normProject.state = normProject.state.name;
-          // @todo: change to real property instead
-          normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
-          return normProject;
-        });
-
-        await this.hideMainLoading();
+        try {
+          await this.loadProjects();
+          this.normalizedList = _.map(this.projects, project => {
+            let normProject = _.pick(project, this.normalizedListAttrs);
+            normProject.organizational_unit = normProject.organizational_unit.name;
+            normProject.state = normProject.state.name;
+            // @todo: change to real property instead
+            normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
+            return normProject;
+          });
+        } catch (e) {
+          // Exception handled by interceptor
+        }
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       async onLanguageUpdate() {
@@ -137,16 +142,14 @@
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
       this.triggerLoadProjects();
     }
   };

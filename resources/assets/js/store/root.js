@@ -64,7 +64,7 @@ export const actions = {
       response = await axios.get('locales');
       commit(types.SET_LANGUAGES, response.data.data);
       return response.data.data;
-    } catch(e) {
+    } catch (e) {
       throw e;
     }
   },

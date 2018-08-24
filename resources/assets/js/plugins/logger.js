@@ -69,7 +69,7 @@ function isValidOptions(options, logLevels) {
 }
 function getMethodName() {
   let error = {};
-  try { throw new Error('') } catch(e) { error = e };
+  try { throw new Error('') } catch (e) { error = e };
   let stackTrace = error.stack.split('\n')[3];
   if (/ /.test(stackTrace)) {
     stackTrace = stackTrace.trim().split(' ')[1];

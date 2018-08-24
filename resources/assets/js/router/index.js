@@ -51,7 +51,7 @@ async function isAuthenticated(to, from, next) {
     if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
       return true;
     }
-  } catch(e) {
+  } catch (e) {
     Vue.$log.error(`[router][isAuthenticated] ${e}`);
     return false;
   }
@@ -151,17 +151,6 @@ const routes = [
     }
   },
   {
-    path: '/:lang/profile',
-    name: 'profile',
-    component: Profile,
-    meta: {
-      title() {
-        return this.trans('base.navigation.profile');
-      },
-      breadcrumbs: () => 'profile'
-    }
-  },
-  {
     path: '/:lang/projects',
     name: 'projects',
     component: ProjectList,
@@ -183,11 +172,18 @@ const routes = [
       breadcrumbs: () => 'projects/project-create'
     },
     beforeEnter: async (to, from, next) => {
-      let canCreateProject = await store.dispatch('projects/canCreateProject');
-      if (canCreateProject) {
-        next();
-      } else {
-        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        let canCreateProject = await store.dispatch('projects/canCreateProject');
+        if (canCreateProject) {
+          next();
+        } else {
+          router.replace({ name: 'forbidden', params: { '0': to.path } });
+        }
+      } catch (e) {
+        // Exception handled by interceptor
       }
     }
   },
@@ -198,6 +194,17 @@ const routes = [
     meta: {
       title: () => `${store.getters['projects/viewing'].name}`,
       breadcrumbs: () => 'projects/project-view'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('projects/loadProject', to.params.projectId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+      }
     }
   },
   {
@@ -212,17 +219,20 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        let canCreateProject = await store.dispatch(
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        let canEditProject = await store.dispatch(
           'projects/canEditProject',
           to.params.projectId
         );
-        if (canCreateProject) {
+        if (canEditProject) {
           next();
         } else {
           router.replace({ name: 'forbidden', params: { '0': to.path } });
         }
       } catch (e) {
-        router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
+        // Exception handled by interceptor
       }
     }
   },
@@ -233,6 +243,18 @@ const routes = [
     meta: {
       title: () => `${store.getters['processes/viewing'].definition.name}`,
       breadcrumbs: () => 'projects/project-view/project-process'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('projects/loadProject', to.params.projectId);
+        await store.dispatch('processes/loadInstance', to.params.processId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+      }
     }
   },
   {
@@ -242,6 +264,19 @@ const routes = [
     meta: {
       title: () => `${store.getters['processes/viewingFormInfo'].definition.name}`,
       breadcrumbs: () => 'projects/project-view/project-process/project-process-form'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('projects/loadProject', to.params.projectId);
+        await store.dispatch('processes/loadInstance', to.params.processId);
+        await store.dispatch('processes/loadInstanceForm', to.params.formId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+      }
     }
   },
   {
