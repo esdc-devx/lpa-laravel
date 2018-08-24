@@ -401,14 +401,16 @@
         await this.loadProcessInstanceForm(this.formId);
       },
 
-      async fetch() {
+      async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         try {
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
-          this.formComponent = this.viewingFormInfo.definition.name_key;
-          this.setupStage();
+          if (isInitialLoad) {
+            this.formComponent = this.viewingFormInfo.definition.name_key;
+            this.setupStage();
+          }
         } catch (e) {
           // Exception handled by interceptor
         }
@@ -433,8 +435,7 @@
       },
 
       onLanguageUpdate() {
-        this.triggerLoadProcessFormInfo();
-        this.triggerLoadProcessInstance();
+        this.fetch(false);
       },
 
       destroyEvents() {
