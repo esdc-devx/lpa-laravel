@@ -150,12 +150,12 @@
       },
 
       async onLanguageUpdate() {
+        await this.showMainLoading();
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the user
-        await this.showMainLoading();
         let userId = this.$route.params.userId;
         await this.loadUserEditInfo(userId);
         await this.hideMainLoading();

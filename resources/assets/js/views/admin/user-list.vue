@@ -122,7 +122,7 @@
       // Pagination
       handlePageChange(newCurrentPage) {
         this.scrollToTop();
-        this.triggerLoadUsers(newCurrentPage);
+        this.fetch(newCurrentPage);
       },
 
       scrollToTop() {
@@ -154,7 +154,7 @@
         return row.group === value;
       },
 
-      async triggerLoadUsers(page) {
+      async fetch(page) {
         await this.showMainLoading();
         this.$parent.$el.scrollTop = 0;
         page = _.isUndefined(page) ? this.currentPage : page;
@@ -164,7 +164,7 @@
       },
 
       async onLanguageUpdate() {
-        await this.triggerLoadUsers();
+        await this.fetch();
       }
     },
 
@@ -176,7 +176,7 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      this.triggerLoadUsers();
+      this.fetch();
     }
   };
 </script>
