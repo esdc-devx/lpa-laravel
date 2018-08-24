@@ -2,6 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import axiosDefaults from './defaults';
 import HttpStatusCodes from './http-status-codes';
+import router from '@/router';
 import store from '@/store/';
 import Config from '@/config';
 import EventBus from '@/event-bus';
@@ -23,6 +24,7 @@ axios.interceptors.request.use(config => config, error => {
 axios.interceptors.response.use(response => response, error => {
   let trans = Vue.prototype.trans;
   let response = error.response;
+  let status = response.status;
 
   // if the response is undefined, we likely got a timeout
   if (!response) {
