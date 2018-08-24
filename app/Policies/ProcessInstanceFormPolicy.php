@@ -76,6 +76,39 @@ class ProcessInstanceFormPolicy
     }
 
     /**
+     * Determine whether the user can release the form.
+     *
+     * @param  User $user
+     * @param  ProcessInstanceForm $model
+     * @param  User $editor
+     * @return boolean
+     */
+    public function release(User $user, ProcessInstanceForm $processInstanceForm, $editor)
+    {
+        // Ensure user has the right role.
+        if (! $user->isAdmin()) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        // Ensure form still has a current editor.
+        if (is_null($processInstanceForm->currentEditor)) {
+            throw new OperationDeniedException();
+        }
+
+        // Ensure form editor is not current user.
+        if ($processInstanceForm->currentEditor->is($user)) {
+            throw new OperationDeniedException();
+        }
+
+        // Ensure current form editor is still the same one as it was after making the request.
+        if (! $processInstanceForm->currentEditor->is($editor)) {
+            throw new OperationDeniedException();
+        }
+
+        return true;
+    }
+
+    /**
      * Determine whether the user can edit the form.
      *
      * @param  User $user
