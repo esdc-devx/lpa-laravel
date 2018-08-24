@@ -1,13 +1,13 @@
 <template>
-  <div class="project-view content">
+  <div class="project content">
     <el-row>
       <el-col>
-        <process-current-bar :data="project" type="project"/>
+        <process-current-bar :data="viewingProject" type="project"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <project-info :project="project"/>
+        <project-info :project="viewingProject"/>
       </el-col>
       <el-col :span="6" v-if="canBeVisible">
         <el-card shadow="never" class="project-actions">
@@ -44,7 +44,7 @@
   let namespace = 'projects';
 
   export default {
-    name: 'project-view',
+    name: 'project',
 
     components: { ProcessCurrentBar, ProjectInfo },
 
@@ -63,15 +63,7 @@
 
     data() {
       return {
-        processDefinitionPermissions: {},
-        project: {
-          organizational_unit: {
-            director: {}
-          },
-          state: {},
-          created_by: {},
-          updated_by: {}
-        }
+        processDefinitionPermissions: {}
       };
     },
 
@@ -95,7 +87,7 @@
         }).then(async () => {
           await this.showMainLoading();
           try {
-            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
+            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.viewingProject.id });
             this.notifySuccess({
               message: this.trans('components.notice.message.process_started', { name: processName })
             });
@@ -132,7 +124,6 @@
             await this.loadProject(projectId);
           }
           await this.loadProcessDefinitions('project');
-          this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
         } catch (e) {
           // Exception handled by interceptor
@@ -174,7 +165,7 @@
   @import '~@sass/abstracts/vars';
   @import '~@sass/abstracts/mixins/helpers';
 
-  .project-view {
+  .project {
     margin: 0 auto;
 
     .project-actions {
