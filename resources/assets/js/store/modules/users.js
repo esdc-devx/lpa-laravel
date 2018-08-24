@@ -80,7 +80,7 @@ export default {
         commit('setCurrentUser', response.data.data);
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_SUCCESS);
         return response.data.data;
-      } catch(e) {
+      } catch (e) {
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_FAILED);
         throw e;
       }

@@ -557,7 +557,7 @@
         this.$emit('update:value', tab.index);
       },
 
-      async fetchLists() {
+      async fetch() {
         await this.showMainLoading();
         let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource&include[]=risk-type&include[]=risk-impact-level&include[]=risk-probability-level');
         this.requestSourceList = response.data.data['request-source'];
@@ -584,13 +584,13 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.fetchLists);
+      EventBus.$off('Store:languageUpdate', this.fetch);
       EventBus.$off('FormEntity:discardChanges', this.bindCheckboxes);
     },
 
     async created() {
       await this.showMainLoading();
-      this.fetchLists();
+      this.fetch();
       // load all the form fields with data passed in
       // create a new copy without reference so that we don't alter the original values
       this.form = _.cloneDeep(this.formData);
@@ -599,7 +599,7 @@
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.fetchLists);
+      EventBus.$on('Store:languageUpdate', this.fetch);
       EventBus.$on('FormEntity:discardChanges', this.bindCheckboxes);
     }
   };
