@@ -30,7 +30,6 @@ return [
         'submit_form'             => 'Voulez-vous soumettre le formulaire?',
         'language_toggle'         => 'Changer la langue réinitialisera les filtres du tableau. Voulez-vous poursuivre?',
         'delete_project'          => 'Vous vous apprêtez à supprimer le projet intitulé «&nbsp;<b>:name</b>&nbsp;» (<b>No.&nbsp;APA&nbsp;:&nbsp;:id</b>) ainsi que toutes ses informations associées. Voulez-vous poursuivre?',
-        'already_deleted_project' => 'La suppression a échoué car le projet a déjà été supprimé.',
         'start_process'           => 'Voulez-vous démarrer le processus <b>:process_name</b> pour le projet courant?',
         'cancel_process'          => 'L\'annulation d\'un processus est une action critique et définitive. Voulez-vous vraiment poursuivre avec l\'annulation de ce processus?',
         'pending_changes'         => 'Des changements n\'ont pas encore été sauvegardés. Voulez-vous supprimer ces changements?',

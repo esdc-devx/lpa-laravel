@@ -113,14 +113,6 @@ export default {
           if (this.options.hasTabsToValidate) {
             this.showRefreshErrorNotif();
           }
-        } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.bad_request')
-          });
-        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.server_error')
-          });
         }
         this.isSubmitting = false;
       }

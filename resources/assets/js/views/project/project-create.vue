@@ -96,19 +96,14 @@
       },
 
       async create() {
-        try {
-          let project = await this.createProject(this.form);
-          this.$store.commit(`${namespace}/setViewing`, project);
-          this.notifySuccess({
-            message: this.trans('components.notice.message.created', { name: this.form.name })
-          });
-          this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
-        } catch (e) {
-          // Exception handled by interceptor
-        }
-        finally {
-          this.isSubmitting = false;
-        }
+        // @note: no try-catch required here
+        // since we already do it in the form utils
+        await this.createProject(this.form);
+        this.isSubmitting = false;
+        this.notifySuccess({
+          message: this.trans('components.notice.message.created', { name: this.form.name })
+        });
+        this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
       },
 
       async fetch() {

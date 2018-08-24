@@ -75,6 +75,7 @@ export default {
 
     async create({ commit }, project) {
       let response = await ProjectsAPI.create(project);
+      commit('setViewing', response.data.data.project);
       return response.data.data;
     },
 

@@ -36,13 +36,13 @@
                 :disabled="!rights.canClaim && !rights.canUnclaim"
                 class="claim"
                 active-color="#13ce66"
-                v-model="isClaiming"
+                v-model="isClaimed"
                 :inactive-text="trans('entities.form.claim')">
               </el-switch>
             </el-header>
           </div>
           <el-main>
-            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming" :class="{'is-disabled': !isClaiming}">
+            <el-form label-position="top" @submit.native.prevent :disabled="!isClaimed" :class="{'is-disabled': !isClaimed}">
               <component
                 :is="formComponent"
                 ref="tabs"
@@ -76,7 +76,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaiming)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -151,18 +151,22 @@
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
 
-      isClaiming: {
+      isClaimed: {
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
           if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            // @note: since we are in a computed property, we cannot use the normal async-await
-            // because vuejs doesn't support it.
-            this.canSubmitForm(this.formId).then(allowed => {
-              this.rights.canSubmit = allowed;
-            }).catch(e => {
-              // Exception handled by interceptor
-            });
-            return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
+            let _isCurrentEditor = this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
+
+            if (_isCurrentEditor) {
+              // @note: since we are in a computed property, we cannot use the normal async-await
+              // because vuejs doesn't support it.
+              this.canSubmitForm(this.formId).then(allowed => {
+                this.rights.canSubmit = allowed;
+              }).catch(e => {
+                // Exception handled by interceptor
+              });
+            }
+            return _isCurrentEditor;
           }
           return false;
         },
@@ -175,7 +179,6 @@
               await this.claimForm(this.formId);
             } catch({ response }) {
               if (response.status === HttpStatusCodes.FORBIDDEN) {
-                this.discardChanges();
                 // reload the process_instance_form data since we are unsynced
                 try {
                   await this.triggerLoadProcessInstanceForm();
@@ -184,7 +187,9 @@
                 }
               }
             }
-            await this.hideMainLoading();
+            finally {
+              await this.hideMainLoading();
+            }
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
@@ -355,17 +360,14 @@
       },
 
       async triggerSubmitForm() {
-        let newData = _.cloneDeep(this.formData);
-        await this.submitForm({ formId: this.formId, form: newData });
+        // @note: no try-catch required here
+        // since we already do it in the form utils
+        await this.submitForm({ formId: this.formId, form: this.formData });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-        // reset the fields states
-        // so that we get a pristine form with the new values
-        this.resetFieldsState();
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.form_submitted')
         });
-        this.isFormSubmitted = true;
         this.goToParentPage();
       },
 
@@ -462,8 +464,8 @@
       } else {
         this.destroyEvents();
         // if user is currently claiming, remove claim
-        if (this.isClaiming) {
-          this.isClaiming = false;
+        if (this.isClaimed) {
+          this.isClaimed = false;
         }
         next();
       }

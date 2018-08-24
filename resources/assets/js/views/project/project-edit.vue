@@ -93,6 +93,8 @@
       },
 
       async update() {
+        // @note: no try-catch required here
+        // since we already do it in the form utils
         await this.updateProject({
           id: this.form.project.id,
           name: this.form.project.name,

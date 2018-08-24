@@ -30,7 +30,6 @@ return [
         'submit_form'             => 'Do you want to submit the form?',
         'language_toggle'         => 'Changing the language will reset the table filters. Do you want to continue?',
         'delete_project'          => 'You are about to delete the project named "<b>:name</b>" (<b>LPA #: :id</b>) and all its related information. Do you want to continue?',
-        'already_deleted_project' => 'The deletion failed because the project has already been deleted.',
         'start_process'           => 'Do you want to start the <b>:process_name</b> process for the current project?',
         'cancel_process'          => 'Cancelling a process is a critical and definitive action. Do you really want to proceed with the cancellation of this process?',
         'pending_changes'         => 'Changes have not been saved yet. Do you want to discard those changes?',
