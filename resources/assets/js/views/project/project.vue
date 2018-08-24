@@ -93,11 +93,17 @@
             });
             let projectId = this.$route.params.projectId;
             this.$router.push(`${projectId}/process/${response.process_instance.id}`);
-          } catch ({ response }) {
-            // on error, re-fetch the info just to be in-sync
-            this.fetch();
+          } catch (e) {
+            if (e.response) {
+              // on error, re-fetch the info just to be in-sync
+              this.fetch();
+            } else {
+              throw e;
+            }
           }
-          await this.hideMainLoading();
+          finally {
+            await this.hideMainLoading();
+          }
         }).catch(() => false);
       },
 
@@ -127,6 +133,9 @@
           this.getProcessDefinitionPermissions();
         } catch (e) {
           // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
         finally {
           await this.hideMainLoading();

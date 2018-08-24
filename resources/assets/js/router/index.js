@@ -184,6 +184,9 @@ const routes = [
         }
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
@@ -204,6 +207,9 @@ const routes = [
         next();
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
@@ -233,6 +239,9 @@ const routes = [
         }
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
@@ -254,6 +263,9 @@ const routes = [
         next();
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
@@ -276,6 +288,9 @@ const routes = [
         next();
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
@@ -329,6 +344,9 @@ const routes = [
         next();
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },

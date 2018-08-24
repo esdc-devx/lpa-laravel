@@ -143,6 +143,9 @@
           this.form.user.roles = _.map(this.viewingUser.roles, 'id');
         } catch (e) {
           // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
         finally {
           await this.hideMainLoading();

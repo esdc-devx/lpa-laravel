@@ -130,6 +130,9 @@
           });
         } catch (e) {
           // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
         finally {
           await this.hideMainLoading();

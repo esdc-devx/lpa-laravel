@@ -107,13 +107,17 @@ export default {
         if (errorNotif) {
           errorNotif.close();
         }
-      } catch({ response }) {
-        if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
+      } catch (e) {
+        if (e.response && e.response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
           this.manageBackendErrors(response.data.errors);
           if (this.options.hasTabsToValidate) {
             this.showRefreshErrorNotif();
           }
+        } else {
+          throw e;
         }
+      }
+      finally {
         this.isSubmitting = false;
       }
     },
