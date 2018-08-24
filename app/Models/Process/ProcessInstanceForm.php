@@ -104,6 +104,16 @@ class ProcessInstanceForm extends BaseModel
     }
 
     /**
+     * Remove current form editor.
+     *
+     * @return $this
+     */
+    public function release()
+    {
+        return $this->unclaim();
+    }
+
+    /**
      * Save form data changes and update all audit informations.
      *
      * @param  array $data

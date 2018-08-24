@@ -35,6 +35,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('process-instance-forms/{processInstanceFormData}', 'ProcessInstanceFormController@show')->name('process-instance-forms.show');
     Route::put('process-instance-forms/{processInstanceForm}/claim', 'ProcessInstanceFormController@claim')->name('process-instance-forms.claim');
     Route::put('process-instance-forms/{processInstanceForm}/unclaim', 'ProcessInstanceFormController@unclaim')->name('process-instance-forms.unclaim');
+    Route::put('process-instance-forms/{processInstanceForm}/release', 'ProcessInstanceFormController@release')->name('process-instance-forms.release');
     Route::put('process-instance-forms/{processInstanceFormData}/edit', 'ProcessInstanceFormController@edit')->name('process-instance-forms.edit');
     Route::put('process-instance-forms/{processInstanceFormData}/submit', 'ProcessInstanceFormController@submit')->name('process-instance-forms.submit');
 
@@ -55,6 +56,7 @@ Route::middleware('auth:api')->group(function () {
     // Process instance form authorization routes.
     Route::get('authorization/process-instance-form/claim/{processInstanceForm}', 'AuthorizationController@claimProcessInstanceForm')->name('authorization.process-instance-form.claim');
     Route::get('authorization/process-instance-form/unclaim/{processInstanceForm}', 'AuthorizationController@unclaimProcessInstanceForm')->name('authorization.process-instance-form.unclaim');
+    Route::get('authorization/process-instance-form/release/{processInstanceForm}', 'AuthorizationController@releaseProcessInstanceForm')->name('authorization.process-instance-form.release');
     Route::get('authorization/process-instance-form/edit/{processInstanceForm}', 'AuthorizationController@editProcessInstanceForm')->name('authorization.process-instance-form.edit');
     Route::get('authorization/process-instance-form/submit/{processInstanceForm}', 'AuthorizationController@submitProcessInstanceForm')->name('authorization.process-instance-form.submit');
 });
