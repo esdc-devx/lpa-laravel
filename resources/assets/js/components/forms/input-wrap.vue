@@ -163,7 +163,7 @@
     },
 
     watch: {
-      isInputDisabled: function(isDisabled) {
+      '$attrs.disabled': function(isDisabled) {
         if (isDisabled) {
           // check if we are dealing with an input tag,
           // and reset input value when it is disabled
