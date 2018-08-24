@@ -52,7 +52,6 @@
                 :formData="formData"
                 :errorTabs="errorTabs">
               </component>
-
             </el-form>
           </el-main>
           <div class="form-footer">
@@ -160,7 +159,7 @@
             if (_isCurrentEditor) {
               // @note: since we are in a computed property, we cannot use the normal async-await
               // because vuejs doesn't support it.
-              this.canSubmitForm(this.formId).then(allowed => {
+              this.canSubmitForm(this.$route.params.formId).then(allowed => {
                 this.rights.canSubmit = allowed;
               }).catch(e => {
                 // Exception handled by interceptor
