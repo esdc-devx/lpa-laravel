@@ -118,6 +118,9 @@
           this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
         } catch (e) {
           // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
         finally {
           await this.hideMainLoading();

@@ -176,14 +176,19 @@
             await this.showMainLoading();
             try {
               await this.claimForm(this.formId);
-            } catch({ response }) {
-              if (response.status === HttpStatusCodes.FORBIDDEN) {
+            } catch (e) {
+              if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
                 // reload the process_instance_form data since we are unsynced
                 try {
                   await this.triggerLoadProcessInstanceForm();
                 } catch (e) {
                   // Exception handled by interceptor
+                  if (!e.response) {
+                    throw e;
+                  }
                 }
+              } else {
+                throw e;
               }
             }
             finally {
@@ -199,6 +204,9 @@
                   await this.unclaimForm(this.formId);
                 } catch (e) {
                   // Exception handled by interceptor
+                  if (!e.response) {
+                    throw e;
+                  }
                 }
                 finally {
                   await this.hideMainLoading();
@@ -210,6 +218,9 @@
               await this.unclaimForm(this.formId);
             } catch (e) {
               // Exception handled by interceptor
+              if (!e.response) {
+                throw e;
+              }
             }
             finally {
               await this.hideMainLoading();
@@ -334,8 +345,8 @@
           this.notifySuccess({
             message: this.trans('components.notice.message.changes_saved')
           });
-        } catch({ response }) {
-          if (response.status === HttpStatusCodes.FORBIDDEN) {
+        } catch (e) {
+          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             await this.showMainLoading();
             this.discardChanges();
             // remove ownership on form
@@ -343,11 +354,16 @@
               await this.unclaimForm(this.formId);
             } catch (e) {
               // Exception handled by interceptor
+              if (!e.response) {
+                throw e;
+              }
             }
             finally {
               this.isSaving = false;
               await this.hideMainLoading();
             }
+          } else {
+            throw e;
           }
         }
       },
@@ -413,6 +429,9 @@
           }
         } catch (e) {
           // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
         finally {
           await this.hideMainLoading();
@@ -426,6 +445,9 @@
             await this.unclaimForm(this.formId);
           } catch (e) {
             // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
           }
           finally {
             await this.hideMainLoading();
@@ -456,6 +478,9 @@
               await this.unclaimForm(this.formId);
             } catch (e) {
               // Exception handled by interceptor
+              if (!e.response) {
+                throw e;
+              }
             }
           }
           await this.hideMainLoading();
@@ -493,6 +518,9 @@
         this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
       } catch (e) {
         // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
       finally {
         await this.hideMainLoading();
