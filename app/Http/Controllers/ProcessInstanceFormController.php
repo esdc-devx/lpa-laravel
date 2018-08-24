@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProcessInstanceFormRequest;
 use App\Models\Process\ProcessInstanceForm;
+use App\Models\User\User;
 
 class ProcessInstanceFormController extends APIController
 {
@@ -19,7 +20,7 @@ class ProcessInstanceFormController extends APIController
     }
 
     /**
-     * Set current user as the process instance form editor.
+     * Turn on edit mode on a process instance form.
      *
      * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
@@ -34,7 +35,7 @@ class ProcessInstanceFormController extends APIController
     }
 
     /**
-     * Remove current process instance form editor.
+     * Turn off edit mode on a process instance form.
      *
      * @param  ProcessInstanceForm $processInstanceForm
      * @return \Illuminate\Http\Response
@@ -45,6 +46,23 @@ class ProcessInstanceFormController extends APIController
 
         return $this->respond(
             $processInstanceForm->unclaim()
+        );
+    }
+
+    /**
+     * Remove current process instance form editor.
+     *
+     * @param  ProcessInstanceForm $processInstanceForm
+     * @param  User $editor
+     * @return \Illuminate\Http\Response
+     */
+    public function release(ProcessInstanceForm $processInstanceForm)
+    {
+        $editor = User::find(request()->get('editor'));
+        $this->authorize('release', [$processInstanceForm, $editor]);
+
+        return $this->respond(
+            $processInstanceForm->release()
         );
     }
 
