@@ -59,6 +59,7 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // Store exception to return more details in "respondWithError" method.
         $this->exception = $exception;
 
         // Render Rest API errors.
