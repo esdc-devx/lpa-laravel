@@ -127,11 +127,15 @@
         this.goToParentPage();
       },
 
-      async triggerLoadUserInfo() {
+      async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         let userId = this.$route.params.userId;
         try {
-          await this.loadUserEditInfo(userId);
+          // @note: project info is loaded in the router's beforeEnter
+          // do not reload the project info on page load
+          if (!isInitialLoad) {
+            await this.loadUserEditInfo(userId);
+          }
           this.form.user = Object.assign({}, this.viewingUser);
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options
@@ -166,12 +170,17 @@
 
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        vm.triggerLoadUserInfo();
+        vm.fetch();
       });
     },
 
     mounted() {
       EventBus.$emit('App:ready');
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
     }
   };
 </script>

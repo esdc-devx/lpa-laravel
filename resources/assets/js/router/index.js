@@ -5,7 +5,7 @@ import Config from '@/config';
 import Home               from '@/views/home.vue';
 import Profile            from '@/views/profile.vue';
 import ProjectList        from '@/views/project/project-list.vue';
-import ProjectView        from '@/views/project/project-view.vue';
+import ProjectView        from '@/views/project/project.vue';
 import ProjectEdit        from '@/views/project/project-edit.vue';
 import ProjectCreate      from '@/views/project/project-create.vue';
 import ProjectProcess     from '@/views/project/project-process.vue';
@@ -189,11 +189,11 @@ const routes = [
   },
   {
     path: '/:lang/projects/:projectId(\\d+)',
-    name: 'project-view',
+    name: 'project',
     component: ProjectView,
     meta: {
       title: () => `${store.getters['projects/viewing'].name}`,
-      breadcrumbs: () => 'projects/project-view'
+      breadcrumbs: () => 'projects/project'
     },
     beforeEnter: async (to, from, next) => {
       try {
@@ -215,7 +215,7 @@ const routes = [
       title() {
         return this.trans('base.navigation.edit');
       },
-      breadcrumbs: () => 'projects/project-view/project-edit'
+      breadcrumbs: () => 'projects/project/project-edit'
     },
     beforeEnter: async (to, from, next) => {
       try {
@@ -242,7 +242,7 @@ const routes = [
     component: ProjectProcess,
     meta: {
       title: () => `${store.getters['processes/viewing'].definition.name}`,
-      breadcrumbs: () => 'projects/project-view/project-process'
+      breadcrumbs: () => 'projects/project/project-process'
     },
     beforeEnter: async (to, from, next) => {
       try {
@@ -263,7 +263,7 @@ const routes = [
     component: ProjectProcessForm,
     meta: {
       title: () => `${store.getters['processes/viewingFormInfo'].definition.name}`,
-      breadcrumbs: () => 'projects/project-view/project-process/project-process-form'
+      breadcrumbs: () => 'projects/project/project-process/project-process-form'
     },
     beforeEnter: async (to, from, next) => {
       try {
@@ -319,6 +319,17 @@ const routes = [
     meta: {
       title: () => `${store.getters['users/viewing'].name}`,
       breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-edit'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('users/loadUserEditInfo', to.params.userId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+      }
     }
   },
   {

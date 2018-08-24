@@ -98,18 +98,7 @@
             });
             this.goToParentPage();
           } catch (e) {
-            this.$alert(
-              this.trans('components.notice.message.already_deleted_project'),
-              this.trans('components.notice.type.error'),
-              {
-                type: 'error',
-                showClose: false,
-                confirmButtonText: this.trans('base.actions.ok'),
-                callback: action => {
-                  this.goToParentPage();
-                }
-              }
-            );
+            // Exception handled by interceptor
           }
         }).catch(() => false);
       }

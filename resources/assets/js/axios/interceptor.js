@@ -52,8 +52,11 @@ axios.interceptors.response.use(response => response, error => {
         }
       });
   } else if (status === HttpStatusCodes.NOT_FOUND) {
-    let newPath = router.history.pending.path || router.history.current.path;
-    router.replace({ name: 'not-found', params: { '0': newPath } });
+    let newPath = router.history.pending ? router.history.pending.path : router.history.current.path;
+    // cannot redirect user to same path,
+    // so we need to change it while keeping the path to be accessed
+    // thus we add '/404' at the end
+    router.replace({ name: 'not-found', params: { '0': newPath + '/404' } });
   } else if (status === HttpStatusCodes.FORBIDDEN) {
     Notify.notifyError({
       title: errorResponse.type,
