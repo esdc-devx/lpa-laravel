@@ -99,6 +99,9 @@
             this.goToParentPage();
           } catch (e) {
             // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
           }
         }).catch(() => false);
       }

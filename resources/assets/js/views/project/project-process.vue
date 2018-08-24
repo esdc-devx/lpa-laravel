@@ -202,10 +202,15 @@
             // Reload process intance info.
             await this.triggerLoadProcessInstance();
             this.rights.canCancelProcess = false;
-          } catch ({ response }) {
-            //@todo: Add logic to handle exceptions.
+          } catch (e) {
+            // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
           }
-          await this.hideMainLoading();
+          finally {
+            await this.hideMainLoading();
+          }
         }).catch(() => false);
       },
 
@@ -228,6 +233,9 @@
           await this.triggerLoadProcessInstance();
         } catch (e) {
           // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
         finally {
           await this.hideMainLoading();

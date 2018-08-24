@@ -109,10 +109,14 @@
         try {
           await this.logout();
           window.location = `/${this.language}/login`;
-        } catch({ response }) {
-          // redirect to login page even if we have an error,
-          // chances are that the user cleared its cache before the action
-          window.location = `/${this.language}/login`;
+        } catch (e) {
+          if (e.response) {
+            // redirect to login page even if we have an error,
+            // chances are that the user cleared its cache before the action
+            window.location = `/${this.language}/login`;
+          } else {
+            throw e;
+          }
         }
       },
 
