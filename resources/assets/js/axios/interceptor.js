@@ -24,7 +24,6 @@ axios.interceptors.request.use(config => config, error => {
 axios.interceptors.response.use(response => response, error => {
   let trans = Vue.prototype.trans;
   let response = error.response;
-  let status = response.status;
 
   // if the response is undefined, we likely got a timeout
   if (!response) {
