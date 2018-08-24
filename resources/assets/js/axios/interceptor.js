@@ -62,8 +62,8 @@ axios.interceptors.response.use(response => response, error => {
       title: errorResponse.type,
       message: errorResponse.message || trans('errors.forbidden')
     });
-  } else {
-    // internal error or anything else
+  } else if (status === HttpStatusCodes.SERVER_ERROR) {
+    // internal error
     Notify.notifyError({
       message: trans('errors.general')
     });
