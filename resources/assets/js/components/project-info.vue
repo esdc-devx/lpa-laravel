@@ -97,19 +97,11 @@
               message: this.trans('components.notice.message.project_deleted')
             });
             this.goToParentPage();
-          } catch(e) {
-            this.$alert(
-              this.trans('components.notice.message.already_deleted_project'),
-              this.trans('components.notice.type.error'),
-              {
-                type: 'error',
-                showClose: false,
-                confirmButtonText: this.trans('base.actions.ok'),
-                callback: action => {
-                  this.goToParentPage();
-                }
-              }
-            );
+          } catch (e) {
+            // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
           }
         }).catch(() => false);
       }

@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Exceptions\InsufficientPrivilegesException;
+use App\Exceptions\OperationDeniedException;
 use App\Models\Process\ProcessInstance;
 use App\Models\User\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -21,12 +23,12 @@ class ProcessInstancePolicy
     {
         // Ensure user has admin role.
         if (! $user->isAdmin()) {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure process instance state is active.
         if ($processInstance->state->name_key !== 'active') {
-            return false;
+            throw new OperationDeniedException();
         }
 
         return true;

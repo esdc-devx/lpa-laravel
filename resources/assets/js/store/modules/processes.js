@@ -12,7 +12,7 @@ export default {
       state: {},
       created_by: {},
       updated_by: {},
-      steps: {}
+      steps: []
     },
     viewingForm: {},
     viewingFormInfo: {

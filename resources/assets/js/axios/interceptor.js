@@ -23,8 +23,8 @@ axios.interceptors.request.use(config => config, error => {
 });
 axios.interceptors.response.use(response => response, error => {
   let trans = Vue.prototype.trans;
-
   let response = error.response;
+
   // if the response is undefined, we likely got a timeout
   if (!response) {
     Notify.notifyError({
@@ -34,9 +34,10 @@ axios.interceptors.response.use(response => response, error => {
     return Promise.reject(error);
   }
 
-  let errorResponse = response && response.data && response.data.errors ? response.data.errors : '';
+  let status = response.status;
+  let errorResponse = response.data;
 
-  if (response.status === HttpStatusCodes.UNAUTHORIZED) {
+  if (status === HttpStatusCodes.UNAUTHORIZED) {
     // not logged in, redirect to login
     Vue.prototype.$alert(
       trans('auth.session_expired'),
@@ -50,22 +51,38 @@ axios.interceptors.response.use(response => response, error => {
           window.location.href = `/${store.getters.language}/login`;
         }
       });
-  } else if (response.status === HttpStatusCodes.FORBIDDEN) {
+  } else if (status === HttpStatusCodes.NOT_FOUND) {
+    let newPath = router.history.pending ? router.history.pending.path : router.history.current.path;
+    // cannot redirect user to same path,
+    // so we need to change it while keeping the path to be accessed
+    // thus we add '/404' at the end
+    router.replace({ name: 'not-found', params: { '0': newPath + '/404' } });
+  } else if (status === HttpStatusCodes.FORBIDDEN) {
     Notify.notifyError({
-      message: trans('errors.forbidden')
+      title: errorResponse.type,
+      message: errorResponse.message || trans('errors.forbidden')
     });
-  } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
+  } else if (status === HttpStatusCodes.SERVER_ERROR) {
     // internal error
     Notify.notifyError({
       message: trans('errors.general')
     });
-  } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
-    Notify.notifyError({
-      message: trans('errors.bad_request')
-    });
   }
 
-  Vue.$log.error(`[axios][interceptor]: ${errorResponse}`);
+  // Log error to the console.
+  if (errorResponse) {
+    let errorMessage = '';
+    errorMessage += errorResponse.message || '';
+    errorMessage += errorResponse.debug || '';
+    if (errorMessage) {
+      Vue.$log.error(`[axios][interceptor]: ${errorMessage}`);
+    }
+  }
+
+  // make sure that the loading is hidden
+  // in case we hit a page that cannot be loaded
+  store.dispatch('hideMainLoading');
+
   return Promise.reject(error);
 });
 

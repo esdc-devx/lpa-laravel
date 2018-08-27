@@ -2,17 +2,17 @@
 
 namespace App\Exceptions;
 
-use Exception;
-use App\Http\Traits\UsesJsonResponse;
 use App\Camunda\Exceptions\GeneralException as CamundaGeneralException;
+use App\Http\Traits\UsesJsonResponse;
+use Exception;
+use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
+use Illuminate\Auth\AuthenticationException as AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException as VerifyCsrfToken;
 use Illuminate\Validation\ValidationException as ValidationException;
-use Illuminate\Auth\AuthenticationException as AuthenticationException;
-use Illuminate\Auth\Access\AuthorizationException as AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException as ModelNotFoundException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException as MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException as NotFoundHttpException;
 
 class Handler extends ExceptionHandler
 {
@@ -59,6 +59,9 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        // Store exception to return more details in "respondWithError" method.
+        $this->exception = $exception;
+
         // Render Rest API errors.
         if (collect($request->getAcceptableContentTypes())->contains('application/json')) {
             // Handle Camunda errors.
@@ -82,7 +85,7 @@ class Handler extends ExceptionHandler
             }
 
             // Handle authorization errors.
-            if ($exception instanceof AuthorizationException) {
+            if ($exception instanceof AuthorizationException || is_subclass_of($exception, AuthorizationException::class)) {
                 // @todo: Maybe add some sort of logging for forbidden actions.
                 return $this->respondForbidden($exception->getMessage());
             }
@@ -103,20 +106,7 @@ class Handler extends ExceptionHandler
             }
 
             // Default to internal error response.
-            $error = $exception->getMessage();
-
-            // Add debug information when debug mode is on.
-            if (config('app.debug')) {
-                $exceptionClass = get_class($exception);
-                $file = $exception->getFile();
-                $line = $exception->getLine();
-
-                $error .= PHP_EOL . "Exception: $exceptionClass";
-                $error .= PHP_EOL . "File: $file";
-                $error .= PHP_EOL . "Line: $line";
-            }
-
-            return $this->respondInternalError($error);
+            return $this->respondInternalError($exception->getMessage());
         }
 
         return parent::render($request, $exception);

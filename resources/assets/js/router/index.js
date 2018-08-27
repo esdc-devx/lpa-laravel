@@ -5,7 +5,7 @@ import Config from '@/config';
 import Home               from '@/views/home.vue';
 import Profile            from '@/views/profile.vue';
 import ProjectList        from '@/views/project/project-list.vue';
-import ProjectView        from '@/views/project/project-view.vue';
+import ProjectView        from '@/views/project/project.vue';
 import ProjectEdit        from '@/views/project/project-edit.vue';
 import ProjectCreate      from '@/views/project/project-create.vue';
 import ProjectProcess     from '@/views/project/project-process.vue';
@@ -51,7 +51,7 @@ async function isAuthenticated(to, from, next) {
     if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
       return true;
     }
-  } catch(e) {
+  } catch (e) {
     Vue.$log.error(`[router][isAuthenticated] ${e}`);
     return false;
   }
@@ -151,17 +151,6 @@ const routes = [
     }
   },
   {
-    path: '/:lang/profile',
-    name: 'profile',
-    component: Profile,
-    meta: {
-      title() {
-        return this.trans('base.navigation.profile');
-      },
-      breadcrumbs: () => 'profile'
-    }
-  },
-  {
     path: '/:lang/projects',
     name: 'projects',
     component: ProjectList,
@@ -183,21 +172,45 @@ const routes = [
       breadcrumbs: () => 'projects/project-create'
     },
     beforeEnter: async (to, from, next) => {
-      let canCreateProject = await store.dispatch('projects/canCreateProject');
-      if (canCreateProject) {
-        next();
-      } else {
-        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        let canCreateProject = await store.dispatch('projects/canCreateProject');
+        if (canCreateProject) {
+          next();
+        } else {
+          router.replace({ name: 'forbidden', params: { '0': to.path } });
+        }
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
   {
     path: '/:lang/projects/:projectId(\\d+)',
-    name: 'project-view',
+    name: 'project',
     component: ProjectView,
     meta: {
       title: () => `${store.getters['projects/viewing'].name}`,
-      breadcrumbs: () => 'projects/project-view'
+      breadcrumbs: () => 'projects/project'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('projects/loadProject', to.params.projectId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
     }
   },
   {
@@ -208,21 +221,27 @@ const routes = [
       title() {
         return this.trans('base.navigation.edit');
       },
-      breadcrumbs: () => 'projects/project-view/project-edit'
+      breadcrumbs: () => 'projects/project/project-edit'
     },
     beforeEnter: async (to, from, next) => {
       try {
-        let canCreateProject = await store.dispatch(
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        let canEditProject = await store.dispatch(
           'projects/canEditProject',
           to.params.projectId
         );
-        if (canCreateProject) {
+        if (canEditProject) {
           next();
         } else {
           router.replace({ name: 'forbidden', params: { '0': to.path } });
         }
       } catch (e) {
-        router.replace(`/${store.getters.language}/${HttpStatusCodes.NOT_FOUND}`);
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
       }
     }
   },
@@ -232,7 +251,22 @@ const routes = [
     component: ProjectProcess,
     meta: {
       title: () => `${store.getters['processes/viewing'].definition.name}`,
-      breadcrumbs: () => 'projects/project-view/project-process'
+      breadcrumbs: () => 'projects/project/project-process'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('projects/loadProject', to.params.projectId);
+        await store.dispatch('processes/loadInstance', to.params.processId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
     }
   },
   {
@@ -241,7 +275,23 @@ const routes = [
     component: ProjectProcessForm,
     meta: {
       title: () => `${store.getters['processes/viewingFormInfo'].definition.name}`,
-      breadcrumbs: () => 'projects/project-view/project-process/project-process-form'
+      breadcrumbs: () => 'projects/project/project-process/project-process-form'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('projects/loadProject', to.params.projectId);
+        await store.dispatch('processes/loadInstance', to.params.processId);
+        await store.dispatch('processes/loadInstanceForm', to.params.formId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
     }
   },
   {
@@ -284,6 +334,20 @@ const routes = [
     meta: {
       title: () => `${store.getters['users/viewing'].name}`,
       breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-edit'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('users/loadUserEditInfo', to.params.userId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
     }
   },
   {

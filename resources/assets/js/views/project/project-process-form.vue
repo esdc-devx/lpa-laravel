@@ -36,13 +36,13 @@
                 :disabled="!rights.canClaim && !rights.canUnclaim"
                 class="claim"
                 active-color="#13ce66"
-                v-model="isClaiming"
+                v-model="isClaimed"
                 :inactive-text="trans('entities.form.claim')">
               </el-switch>
             </el-header>
           </div>
           <el-main>
-            <el-form label-position="top" @submit.native.prevent :disabled="!isClaiming" :class="{'is-disabled': !isClaiming}">
+            <el-form label-position="top" @submit.native.prevent :disabled="!isClaimed" :class="{'is-disabled': !isClaimed}">
               <component
                 :is="formComponent"
                 ref="tabs"
@@ -52,7 +52,6 @@
                 :formData="formData"
                 :errorTabs="errorTabs">
               </component>
-
             </el-form>
           </el-main>
           <div class="form-footer">
@@ -76,7 +75,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaiming)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -151,14 +150,22 @@
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
 
-      isClaiming: {
+      isClaimed: {
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
           if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            this.canSubmitForm(this.formId).then(allowed => {
-              this.rights.canSubmit = allowed;
-            });
-            return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
+            let _isCurrentEditor = this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
+
+            if (_isCurrentEditor) {
+              // @note: since we are in a computed property, we cannot use the normal async-await
+              // because vuejs doesn't support it.
+              this.canSubmitForm(this.$route.params.formId).then(allowed => {
+                this.rights.canSubmit = allowed;
+              }).catch(e => {
+                // Exception handled by interceptor
+              });
+            }
+            return _isCurrentEditor;
           }
           return false;
         },
@@ -169,27 +176,32 @@
             await this.showMainLoading();
             try {
               await this.claimForm(this.formId);
-            } catch({ response }) {
-              if (response.status === HttpStatusCodes.FORBIDDEN) {
-                this.discardChanges();
+            } catch (e) {
+              if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
                 // reload the process_instance_form data since we are unsynced
-                await this.triggerLoadProcessInstanceForm();
+                try {
+                  await this.triggerLoadProcessInstanceForm();
+                } catch (e) {
+                  // Exception handled by interceptor
+                  if (!e.response) {
+                    throw e;
+                  }
+                }
+              } else {
+                throw e;
               }
             }
-            await this.hideMainLoading();
+            finally {
+              await this.hideMainLoading();
+            }
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
               .then(async () => {
-                await this.showMainLoading();
                 this.discardChanges();
-                await this.unclaimForm(this.formId);
-                await this.hideMainLoading();
               }).catch(() => false);
           } else {
-            await this.showMainLoading();
-            await this.unclaimForm(this.formId);
-            await this.hideMainLoading();
+            this.discardChanges();
           }
         }
       },
@@ -257,11 +269,12 @@
       onCancel() {
         this.confirmLoseChanges()
           .then(() => {
-            this.discardChanges();
+            this.discardChanges(false);
           }).catch(() => false);
       },
 
-      discardChanges() {
+      async discardChanges(shouldUnclaim = true) {
+        await this.showMainLoading();
         let formWasDirty = this.isFormDirty;
 
         this.formData = _.cloneDeep(this.originalFormData);
@@ -280,6 +293,24 @@
           this.notifyInfo({
             message: this.trans('components.notice.message.changes_discarded')
           });
+        }
+
+        // remove ownership on form
+        try {
+          // No need to unclaim the form if it was submitted
+          // since the backend will automatically unclaim it.
+          if (!this.isFormSubmitted && shouldUnclaim) {
+            await this.unclaimForm(this.formId);
+          }
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
+        }
+        finally {
+          this.isSaving = false;
+          await this.hideMainLoading();
         }
 
         // wait until data has been synced through components
@@ -310,14 +341,11 @@
           this.notifySuccess({
             message: this.trans('components.notice.message.changes_saved')
           });
-        } catch({ response }) {
-          if (response.status === HttpStatusCodes.FORBIDDEN) {
-            await this.showMainLoading();
+        } catch (e) {
+          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             this.discardChanges();
-            // remove ownership on form
-            await this.unclaimForm(this.formId);
-            this.isSaving = false;
-            await this.hideMainLoading();
+          } else {
+            throw e;
           }
         }
       },
@@ -329,29 +357,17 @@
       },
 
       async triggerSubmitForm() {
-        let newData = _.cloneDeep(this.formData);
-        await this.submitForm({ formId: this.formId, form: newData });
+        // @note: no try-catch required here
+        // since we already do it in the form utils
+        await this.submitForm({ formId: this.formId, form: this.formData });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-        // reset the fields states
-        // so that we get a pristine form with the new values
-        this.resetFieldsState();
-        this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.form_submitted')
         });
+        // sets the flag so that we do not unclaim the form after submitting it
+        // since the backend will automatically unclaim it.
         this.isFormSubmitted = true;
         this.goToParentPage();
-      },
-
-      setupStage() {
-        this.$nextTick(() => {
-          // we need to wait until the dom is ready
-          // so that we have access to the tabs panes
-          if (this.$refs.tabs.$children[0].panes) {
-            // tabsLength needs to be zero-based
-            this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
-          }
-        });
       },
 
       async triggerLoadProject() {
@@ -374,62 +390,77 @@
         await this.loadProcessInstanceForm(this.formId);
       },
 
-      async fetch() {
+      async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         try {
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
           await this.triggerLoadProcessInstanceForm();
-          this.formComponent = this.viewingFormInfo.definition.name_key;
-          this.setupStage();
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+          if (isInitialLoad) {
+            this.formComponent = this.viewingFormInfo.definition.name_key;
+            this.setupStage();
+          }
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
+      },
+
+      setupStage() {
+        this.$nextTick(() => {
+          // we need to wait until the dom is ready
+          // so that we have access to the tabs panes
+          if (this.$refs.tabs.$children[0].panes) {
+            // tabsLength needs to be zero-based
+            this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
+          }
+        });
       },
 
       beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
-          await this.showMainLoading();
-          await this.unclaimForm(this.formId);
-          await this.hideMainLoading();
+          this.discardChanges();
           callback();
         }).catch(() => false);
       },
 
       onLanguageUpdate() {
-        this.triggerLoadProcessFormInfo();
-        this.triggerLoadProcessInstance();
+        this.fetch(false);
       },
 
       destroyEvents() {
         // Destroy any events we might be listening
         // so that they do not get called while being on another page
         EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
-        EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
       }
     },
 
     beforeRouteLeave(to, from, next) {
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
         this.confirmLoseChanges().then(async () => {
-          await this.showMainLoading();
           this.destroyEvents();
           this.discardChanges();
-          if (!this.isFormSubmitted) {
-            await this.unclaimForm(this.formId);
-          }
-          await this.hideMainLoading();
           next();
         }).catch(() => false);
       } else {
         this.destroyEvents();
         // if user is currently claiming, remove claim
-        if (this.isClaiming) {
-          this.isClaiming = false;
+        if (this.isClaimed) {
+          this.isClaimed = false;
         }
         next();
       }
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
+      next();
     },
 
     beforeRouteEnter(to, from, next) {
@@ -442,17 +473,29 @@
       await this.showMainLoading();
       // store the reference to the current form id
       this.formId = this.$route.params.formId;
-
-      this.rights.canEdit = await this.canEditForm(this.formId);
-      this.rights.canClaim = await this.canClaimForm(this.formId);
-      this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
-      await this.hideMainLoading();
+      try {
+        this.rights.canEdit = await this.canEditForm(this.formId);
+        this.rights.canClaim = await this.canClaimForm(this.formId);
+        this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
+      finally {
+        await this.hideMainLoading();
+      }
     },
 
     mounted() {
       EventBus.$emit('App:ready');
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
     }
   };
 </script>

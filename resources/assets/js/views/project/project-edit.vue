@@ -93,6 +93,8 @@
       },
 
       async update() {
+        // @note: no try-catch required here
+        // since we already do it in the form utils
         await this.updateProject({
           id: this.form.project.id,
           name: this.form.project.name,
@@ -105,50 +107,58 @@
         this.goToParentPage();
       },
 
-      async triggerLoadProjectEditInfo() {
+      async fetch() {
         await this.showMainLoading();
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProjectEditInfo(projectId);
-          EventBus.$emit('App:ready');
           this.form.project = Object.assign({}, this.viewingProject);
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options
           this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       async onLanguageUpdate() {
+        await this.showMainLoading();
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the project
-        await this.showMainLoading();
         let projectId = this.$route.params.projectId;
         await this.loadProjectEditInfo(projectId);
         await this.hideMainLoading();
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        vm.triggerLoadProjectEditInfo();
+        vm.fetch();
       });
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
+      EventBus.$emit('App:ready');
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
     }
   };
 </script>

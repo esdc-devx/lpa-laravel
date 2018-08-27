@@ -1,13 +1,13 @@
 <template>
-  <div class="project-view content">
+  <div class="project content">
     <el-row>
       <el-col>
-        <process-current-bar :data="project" type="project"/>
+        <process-current-bar :data="viewingProject" type="project"/>
       </el-col>
     </el-row>
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <project-info :project="project"/>
+        <project-info :project="viewingProject"/>
       </el-col>
       <el-col :span="6" v-if="canBeVisible">
         <el-card shadow="never" class="project-actions">
@@ -44,7 +44,7 @@
   let namespace = 'projects';
 
   export default {
-    name: 'project-view',
+    name: 'project',
 
     components: { ProcessCurrentBar, ProjectInfo },
 
@@ -63,15 +63,7 @@
 
     data() {
       return {
-        processDefinitionPermissions: {},
-        project: {
-          organizational_unit: {
-            director: {}
-          },
-          state: {},
-          created_by: {},
-          updated_by: {}
-        }
+        processDefinitionPermissions: {}
       };
     },
 
@@ -95,17 +87,23 @@
         }).then(async () => {
           await this.showMainLoading();
           try {
-            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.project.id });
+            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.viewingProject.id });
             this.notifySuccess({
               message: this.trans('components.notice.message.process_started', { name: processName })
             });
             let projectId = this.$route.params.projectId;
             this.$router.push(`${projectId}/process/${response.process_instance.id}`);
-          } catch ({ response }) {
-            // on error, re-fetch the info just to be in-sync
-            this.fetch();
+          } catch (e) {
+            if (e.response) {
+              // on error, re-fetch the info just to be in-sync
+              this.fetch();
+            } else {
+              throw e;
+            }
           }
-          await this.hideMainLoading();
+          finally {
+            await this.hideMainLoading();
+          }
         }).catch(() => false);
       },
 
@@ -122,29 +120,36 @@
         }
       },
 
-      async fetch() {
+      async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         try {
           let projectId = this.$route.params.projectId;
-          await this.loadProject(projectId);
+          // @note: project info is loaded in the router's beforeEnter
+          // do not reload the project info on page load
+          if (!isInitialLoad) {
+            await this.loadProject(projectId);
+          }
           await this.loadProcessDefinitions('project');
-          this.project = Object.assign({}, this.viewingProject);
           this.getProcessDefinitionPermissions();
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       async onLanguageUpdate() {
-        await this.fetch();
+        this.fetch(false);
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
@@ -156,7 +161,11 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
     }
   };
 </script>
@@ -165,7 +174,7 @@
   @import '~@sass/abstracts/vars';
   @import '~@sass/abstracts/mixins/helpers';
 
-  .project-view {
+  .project {
     margin: 0 auto;
 
     .project-actions {

@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Exceptions\InsufficientPrivilegesException;
+use App\Exceptions\OperationDeniedException;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\User\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
@@ -23,7 +25,7 @@ class ProcessInstanceFormPolicy
 
         // Ensure that form is not already claimed by someone else.
         if (! is_null($processInstanceForm->currentEditor)) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         // Admin users can claim the form from this point.
@@ -33,22 +35,22 @@ class ProcessInstanceFormPolicy
 
         // Ensure that user have the right roles.
         if (! $user->hasRole('process-contributor')) {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure that user is part of candidate editor organizational unit.
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure that current form state is valid.
         if (! in_array($processInstanceForm->state->name_key, ['unlocked', 'rejected'])) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         // Ensure that process instance state is active.
         if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
-            return false;
+            throw new OperationDeniedException();
         }
 
         return true;
@@ -70,7 +72,7 @@ class ProcessInstanceFormPolicy
             return true;
         }
 
-        return false;
+        throw new OperationDeniedException();
     }
 
     /**
@@ -86,12 +88,12 @@ class ProcessInstanceFormPolicy
 
         // Ensure the form is claimed.
         if (is_null($processInstanceForm->currentEditor)) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         // Ensure current editor is the same as the user making the request.
         if (! $processInstanceForm->currentEditor->is($user)) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         // Admin users can edit the form from this point.
@@ -101,17 +103,17 @@ class ProcessInstanceFormPolicy
 
         // Ensure that user have the right roles.
         if (! $user->hasRole('process-contributor')) {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure that user is part of candidate editor organizational unit.
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure that process instance state is active.
         if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
-            return false;
+            throw new OperationDeniedException();
         }
 
         return true;
@@ -128,19 +130,24 @@ class ProcessInstanceFormPolicy
     {
         // Ensure that current form state is valid.
         if (! in_array($processInstanceForm->state->name_key, ['unlocked', 'rejected'])) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         $processInstanceForm->load('currentEditor');
 
         // Ensure the form is claimed.
         if (is_null($processInstanceForm->currentEditor)) {
-            return false;
+            throw new OperationDeniedException();
         }
 
         // Ensure current editor is the same as the user making the request.
         if (! $processInstanceForm->currentEditor->is($user)) {
-            return false;
+            throw new OperationDeniedException();
+        }
+
+        // Ensure that process instance state is active.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+            throw new OperationDeniedException();
         }
 
         // Admin users can edit the form from this point.
@@ -150,17 +157,12 @@ class ProcessInstanceFormPolicy
 
         // Ensure that user have the right roles.
         if (! $user->hasRole('process-contributor')) {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         // Ensure that user is part of candidate editor organizational unit.
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
-            return false;
-        }
-
-        // Ensure that process instance state is active.
-        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
-            return false;
+            throw new InsufficientPrivilegesException();
         }
 
         return true;

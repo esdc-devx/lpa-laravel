@@ -127,51 +127,63 @@
         this.goToParentPage();
       },
 
-      async triggerLoadUserInfo() {
+      async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         let userId = this.$route.params.userId;
         try {
-          await this.loadUserEditInfo(userId);
-          EventBus.$emit('App:ready');
+          // @note: project info is loaded in the router's beforeEnter
+          // do not reload the project info on page load
+          if (!isInitialLoad) {
+            await this.loadUserEditInfo(userId);
+          }
           this.form.user = Object.assign({}, this.viewingUser);
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options
           this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
           this.form.user.roles = _.map(this.viewingUser.roles, 'id');
-        } catch(e) {
-          this.$router.replace(`/${this.language}/${HttpStatusCodes.NOT_FOUND}`);
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
         }
-        await this.hideMainLoading();
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       async onLanguageUpdate() {
+        await this.showMainLoading();
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the user
-        await this.showMainLoading();
         let userId = this.$route.params.userId;
         await this.loadUserEditInfo(userId);
         await this.hideMainLoading();
       }
     },
 
-    beforeRouteLeave(to, from, next) {
-      // Destroy any events we might be listening
-      // so that they do not get called while being on another page
-      EventBus.$off('Store:languageUpdate', this.onLanguageUpdate);
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate();
       next();
     },
 
     beforeRouteEnter(to, from, next) {
       next(vm => {
-        vm.triggerLoadUserInfo();
+        vm.fetch();
       });
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.onLanguageUpdate);
+      EventBus.$emit('App:ready');
+      // @note: hide the loading that was shown
+      // in the router's beforeEnter
+      this.$nextTick(async () => {
+        await this.hideMainLoading();
+      });
     }
   };
 </script>

@@ -107,21 +107,17 @@ export default {
         if (errorNotif) {
           errorNotif.close();
         }
-      } catch({ response }) {
-        if (response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
-          this.manageBackendErrors(response.data.errors);
+      } catch (e) {
+        if (e.response && e.response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
+          this.manageBackendErrors(e.response.data.errors);
           if (this.options.hasTabsToValidate) {
             this.showRefreshErrorNotif();
           }
-        } else if (response.status === HttpStatusCodes.BAD_REQUEST) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.bad_request')
-          });
-        } else if (response.status === HttpStatusCodes.SERVER_ERROR) {
-          this.notifyError({
-            message: Vue.prototype.trans('errors.server_error')
-          });
+        } else {
+          throw e;
         }
+      }
+      finally {
         this.isSubmitting = false;
       }
     },
