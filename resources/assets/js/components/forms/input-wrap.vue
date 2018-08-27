@@ -267,8 +267,12 @@
       onDiscardChanges() {
         this.currentTextValue = this.value;
         this.currentNumberValue = this.value;
-        this.$refs.input.value = this.currentTextValue;
-        this.$refs.inputNumber.value = this.currentNumberValue;
+        if (this.$refs.input) {
+          this.$refs.input.value = this.currentTextValue;
+        }
+        if (this.$refs.inputNumber) {
+          this.$refs.inputNumber.value = this.currentNumberValue;
+        }
       }
     },
 
