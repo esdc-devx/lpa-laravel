@@ -2,8 +2,8 @@
   <div class="input-wrap">
     <div :class="[`el-${type}`, { 'is-disabled': isInputDisabled }]">
       <!--
-        v-text will be setting the value for textareas
-        whereas :value will set the value for input text
+        due to the fact that v-model and :value are equivalents,
+        we need to specify that value here will be a prop on the element itself
       -->
       <component
         ref="input"
@@ -11,8 +11,7 @@
         v-bind="$attrs"
         :is="type"
         :class="[`el-${type}__inner`, { 'is-error': verrors.has(name) }]"
-        v-text="currentTextValue"
-        :value="currentTextValue"
+        :value.prop="currentTextValue"
         :disabled="isInputDisabled"
         :name="name"
         :maxlength="charsLimit"
@@ -122,7 +121,7 @@
         // without relying on the parent to get it
         currentTextValue: this.value,
         currentNumberValue: this.value,
-        innerTextValue: this.value
+        currentTextValue: this.value
       };
     },
 
@@ -130,7 +129,7 @@
       charCount() {
         // based on our internal text value and not the value instead
         // so that we get an instant feedback on the UI
-        return (this.innerTextValue || '').length;
+        return (this.currentTextValue || '').length;
       },
       charsLimit() {
         return this.maxlength;
@@ -173,7 +172,7 @@
             this.$refs.input.value = null;
           }
           // nullify our internal text value
-          this.innerTextValue = null;
+          this.currentTextValue = null;
           // notify the parent
           this.updateValue(null);
         }
@@ -191,7 +190,7 @@
       onInput(e) {
         let value = e.target.value;
         // update our internal value so that the charCount can keep track of the count
-        this.innerTextValue = value;
+        this.currentTextValue = value;
         this.updateValue(value);
       },
 
