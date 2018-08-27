@@ -120,8 +120,7 @@
         // this allows us to keep the count internally
         // without relying on the parent to get it
         currentTextValue: this.value,
-        currentNumberValue: this.value,
-        currentTextValue: this.value
+        currentNumberValue: this.value
       };
     },
 
