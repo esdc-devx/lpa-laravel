@@ -198,33 +198,10 @@
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
               .then(async () => {
-                await this.showMainLoading();
                 this.discardChanges();
-                try {
-                  await this.unclaimForm(this.formId);
-                } catch (e) {
-                  // Exception handled by interceptor
-                  if (!e.response) {
-                    throw e;
-                  }
-                }
-                finally {
-                  await this.hideMainLoading();
-                }
               }).catch(() => false);
           } else {
-            await this.showMainLoading();
-            try {
-              await this.unclaimForm(this.formId);
-            } catch (e) {
-              // Exception handled by interceptor
-              if (!e.response) {
-                throw e;
-              }
-            }
-            finally {
-              await this.hideMainLoading();
-            }
+            this.discardChanges();
           }
         }
       },
@@ -296,7 +273,8 @@
           }).catch(() => false);
       },
 
-      discardChanges() {
+      async discardChanges() {
+        await this.showMainLoading();
         let formWasDirty = this.isFormDirty;
 
         this.formData = _.cloneDeep(this.originalFormData);
@@ -315,6 +293,22 @@
           this.notifyInfo({
             message: this.trans('components.notice.message.changes_discarded')
           });
+        }
+
+        // remove ownership on form
+        try {
+          if (!this.isFormSubmitted) {
+            await this.unclaimForm(this.formId);
+          }
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
+        }
+        finally {
+          this.isSaving = false;
+          await this.hideMainLoading();
         }
 
         // wait until data has been synced through components
@@ -347,21 +341,7 @@
           });
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-            await this.showMainLoading();
             this.discardChanges();
-            // remove ownership on form
-            try {
-              await this.unclaimForm(this.formId);
-            } catch (e) {
-              // Exception handled by interceptor
-              if (!e.response) {
-                throw e;
-              }
-            }
-            finally {
-              this.isSaving = false;
-              await this.hideMainLoading();
-            }
           } else {
             throw e;
           }
@@ -384,17 +364,6 @@
           message: this.trans('components.notice.message.form_submitted')
         });
         this.goToParentPage();
-      },
-
-      setupStage() {
-        this.$nextTick(() => {
-          // we need to wait until the dom is ready
-          // so that we have access to the tabs panes
-          if (this.$refs.tabs.$children[0].panes) {
-            // tabsLength needs to be zero-based
-            this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
-          }
-        });
       },
 
       async triggerLoadProject() {
@@ -438,20 +407,20 @@
         }
       },
 
+      setupStage() {
+        this.$nextTick(() => {
+          // we need to wait until the dom is ready
+          // so that we have access to the tabs panes
+          if (this.$refs.tabs.$children[0].panes) {
+            // tabsLength needs to be zero-based
+            this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
+          }
+        });
+      },
+
       beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
-          await this.showMainLoading();
-          try {
-            await this.unclaimForm(this.formId);
-          } catch (e) {
-            // Exception handled by interceptor
-            if (!e.response) {
-              throw e;
-            }
-          }
-          finally {
-            await this.hideMainLoading();
-          }
+          this.discardChanges();
           callback();
         }).catch(() => false);
       },
@@ -470,20 +439,8 @@
     beforeRouteLeave(to, from, next) {
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
         this.confirmLoseChanges().then(async () => {
-          await this.showMainLoading();
           this.destroyEvents();
           this.discardChanges();
-          if (!this.isFormSubmitted) {
-            try {
-              await this.unclaimForm(this.formId);
-            } catch (e) {
-              // Exception handled by interceptor
-              if (!e.response) {
-                throw e;
-              }
-            }
-          }
-          await this.hideMainLoading();
           next();
         }).catch(() => false);
       } else {
