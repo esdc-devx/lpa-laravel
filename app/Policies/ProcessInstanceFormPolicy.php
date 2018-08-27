@@ -145,6 +145,11 @@ class ProcessInstanceFormPolicy
             throw new OperationDeniedException();
         }
 
+        // Ensure that process instance state is active.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+            throw new OperationDeniedException();
+        }
+
         // Admin users can edit the form from this point.
         if ($user->isAdmin()) {
             return true;
@@ -158,11 +163,6 @@ class ProcessInstanceFormPolicy
         // Ensure that user is part of candidate editor organizational unit.
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
             throw new InsufficientPrivilegesException();
-        }
-
-        // Ensure that process instance state is active.
-        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
-            throw new OperationDeniedException();
         }
 
         return true;
