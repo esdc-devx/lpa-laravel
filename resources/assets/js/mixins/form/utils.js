@@ -109,7 +109,7 @@ export default {
         }
       } catch (e) {
         if (e.response && e.response.status === HttpStatusCodes.UNPROCESSABLE_ENTITY) {
-          this.manageBackendErrors(response.data.errors);
+          this.manageBackendErrors(e.response.data.errors);
           if (this.options.hasTabsToValidate) {
             this.showRefreshErrorNotif();
           }

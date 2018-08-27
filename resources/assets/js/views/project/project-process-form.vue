@@ -269,11 +269,11 @@
       onCancel() {
         this.confirmLoseChanges()
           .then(() => {
-            this.discardChanges();
+            this.discardChanges(false);
           }).catch(() => false);
       },
 
-      async discardChanges() {
+      async discardChanges(shouldUnclaim = true) {
         await this.showMainLoading();
         let formWasDirty = this.isFormDirty;
 
@@ -297,7 +297,9 @@
 
         // remove ownership on form
         try {
-          if (!this.isFormSubmitted) {
+          // No need to unclaim the form if it was submitted
+          // since the backend will automatically unclaim it.
+          if (!this.isFormSubmitted && shouldUnclaim) {
             await this.unclaimForm(this.formId);
           }
         } catch (e) {
@@ -359,10 +361,12 @@
         // since we already do it in the form utils
         await this.submitForm({ formId: this.formId, form: this.formData });
         EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-        this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.form_submitted')
         });
+        // sets the flag so that we do not unclaim the form after submitting it
+        // since the backend will automatically unclaim it.
+        this.isFormSubmitted = true;
         this.goToParentPage();
       },
 
