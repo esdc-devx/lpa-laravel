@@ -201,19 +201,8 @@
                 this.discardChanges();
               }).catch(() => false);
           } else {
-            await this.showMainLoading();
-            // remove ownership on form
-            try {
-              await this.unclaimForm(this.formId);
-            } catch (e) {
-              // Exception handled by interceptor
-              if (!e.response) {
-                throw e;
-              }
-            }
-            finally {
-              await this.hideMainLoading();
-            }
+            // discard without confirming
+            this.discardChanges();
           }
         }
       },
@@ -287,11 +276,13 @@
 
       async discardChanges(shouldUnclaim = true) {
         await this.showMainLoading();
-        let formWasDirty = this.isFormDirty;
+        let formWasDirty = false;
 
-        this.formData = _.cloneDeep(this.originalFormData);
-
-        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+        if (this.isFormDirty) {
+          formWasDirty = true;
+          this.formData = _.cloneDeep(this.originalFormData);
+          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+        }
 
         // reset the fields states
         // so that we get a pristine form
@@ -300,12 +291,6 @@
           this.resetFieldsState();
           this.resetErrors();
         });
-
-        if (formWasDirty) {
-          this.notifyInfo({
-            message: this.trans('components.notice.message.changes_discarded')
-          });
-        }
 
         // remove ownership on form
         try {
@@ -329,6 +314,12 @@
         this.$nextTick(() => {
           EventBus.$emit('FormEntity:discardChanges');
         });
+
+        if (formWasDirty) {
+          this.notifyInfo({
+            message: this.trans('components.notice.message.changes_discarded')
+          });
+        }
       },
 
       storeOriginalFormData(data) {
