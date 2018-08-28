@@ -380,14 +380,14 @@
         await this.loadProcessInstance(processId);
       },
 
-      async triggerLoadProcessInstanceForm() {
-        let response = await this.loadProcessInstanceForm(this.formId);
-        this.storeOriginalFormData(response);
-        this.formData = _.cloneDeep(this.originalFormData);
-      },
-
-      async triggerLoadProcessFormInfo() {
-        await this.loadProcessInstanceForm(this.formId);
+      async triggerLoadProcessInstanceForm(isInitialLoad) {
+        let silent = !isInitialLoad ? true : false;
+        let response = await this.loadProcessInstanceForm({ formId: this.formId, silent });
+        // Do not reload the data from the server if we don't need to
+        if (!silent) {
+          this.storeOriginalFormData(response);
+          this.formData = _.cloneDeep(this.originalFormData);
+        }
       },
 
       async fetch(isInitialLoad = true) {
@@ -395,7 +395,7 @@
         try {
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
-          await this.triggerLoadProcessInstanceForm();
+          await this.triggerLoadProcessInstanceForm(isInitialLoad);
           if (isInitialLoad) {
             this.formComponent = this.viewingFormInfo.definition.name_key;
             this.setupStage();

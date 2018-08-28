@@ -56,9 +56,12 @@ export default {
       return response.data.data;
     },
 
-    async loadInstanceForm({ commit }, formId) {
+    async loadInstanceForm({ commit }, { formId, silent = false }) {
       let response = await ProcessAPI.getInstanceForm(formId);
-      commit('setViewingForm', _.omit(response.data.data, 'form_data'));
+      // Do not reload the data from the server if we don't need to
+      if (!silent) {
+        commit('setViewingForm', _.omit(response.data.data, 'form_data'));
+      }
       commit('setViewingFormInfo', response.data.data);
       return response.data.data.form_data;
     },
