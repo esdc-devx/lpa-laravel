@@ -31,9 +31,13 @@
             <el-header class="form-header-details">
               <i class="el-icon-lpa-form"></i>
               {{ viewingFormInfo.definition.name }}
+              <!--
+                Switch disabled based on rights or if we are loading,
+                to prevent spam while there is already a request sent
+              -->
               <el-switch
                 v-if="hasRole('process-contributor') || hasRole('admin')"
-                :disabled="!rights.canClaim && !rights.canUnclaim"
+                :disabled="!rights.canClaim && !rights.canUnclaim || isMainLoading"
                 class="claim"
                 active-color="#13ce66"
                 v-model="isClaimed"
@@ -142,6 +146,7 @@
     computed: {
       ...mapGetters({
         language: 'language',
+        isMainLoading: 'isMainLoading',
         shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
         hasRole: 'users/hasRole',
         isCurrentEditor: 'users/isCurrentEditor',
@@ -274,52 +279,54 @@
           }).catch(() => false);
       },
 
-      async discardChanges(shouldUnclaim = true) {
-        await this.showMainLoading();
-        let formWasDirty = false;
+      discardChanges(shouldUnclaim = true) {
+        this.$helpers.debounceAction(async () => {
+          await this.showMainLoading();
+          let formWasDirty = false;
 
-        if (this.isFormDirty) {
-          formWasDirty = true;
-          this.formData = _.cloneDeep(this.originalFormData);
-          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-        }
-
-        // reset the fields states
-        // so that we get a pristine form
-        // but wait until dom is refreshed before resetting the fields state
-        this.$nextTick(() => {
-          this.resetFieldsState();
-          this.resetErrors();
-        });
-
-        // remove ownership on form
-        try {
-          // No need to unclaim the form if it was submitted
-          // since the backend will automatically unclaim it.
-          if (!this.isFormSubmitted && shouldUnclaim) {
-            await this.unclaimForm(this.formId);
+          if (this.isFormDirty) {
+            formWasDirty = true;
+            this.formData = _.cloneDeep(this.originalFormData);
+            EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           }
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-        finally {
-          this.isSaving = false;
-          await this.hideMainLoading();
-        }
 
-        // wait until data has been synced through components
-        this.$nextTick(() => {
-          EventBus.$emit('FormEntity:discardChanges');
-        });
-
-        if (formWasDirty) {
-          this.notifyInfo({
-            message: this.trans('components.notice.message.changes_discarded')
+          // reset the fields states
+          // so that we get a pristine form
+          // but wait until dom is refreshed before resetting the fields state
+          this.$nextTick(() => {
+            this.resetFieldsState();
+            this.resetErrors();
           });
-        }
+
+          // remove ownership on form
+          try {
+            // No need to unclaim the form if it was submitted
+            // since the backend will automatically unclaim it.
+            if (!this.isFormSubmitted && shouldUnclaim) {
+              await this.unclaimForm(this.formId);
+            }
+            // wait until data has been synced through components
+            this.$nextTick(() => {
+              EventBus.$emit('FormEntity:discardChanges');
+            });
+
+            if (formWasDirty) {
+              this.notifyInfo({
+                message: this.trans('components.notice.message.changes_discarded')
+              });
+            }
+          } catch (e) {
+            // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
+          }
+          finally {
+            this.$nextTick(async () => {
+              await this.hideMainLoading();
+            });
+          }
+        });
       },
 
       storeOriginalFormData(data) {
@@ -347,6 +354,7 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             this.discardChanges();
+            this.isSaving = false;
           } else {
             throw e;
           }
