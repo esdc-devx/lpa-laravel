@@ -201,7 +201,19 @@
                 this.discardChanges();
               }).catch(() => false);
           } else {
-            this.discardChanges();
+            await this.showMainLoading();
+            // remove ownership on form
+            try {
+              await this.unclaimForm(this.formId);
+            } catch (e) {
+              // Exception handled by interceptor
+              if (!e.response) {
+                throw e;
+              }
+            }
+            finally {
+              await this.hideMainLoading();
+            }
           }
         }
       },
