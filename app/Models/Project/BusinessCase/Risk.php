@@ -7,7 +7,7 @@ use App\Models\BaseModel;
 class Risk extends BaseModel
 {
     protected $fillable = [
-        'business_case_id', 'risk_type_id', 'risk_impact_level_id', 'risk_probability_level_id', 'rationale'
+        'business_case_id', 'risk_type_id', 'risk_type_other', 'risk_impact_level_id', 'risk_probability_level_id', 'rationale'
     ];
 
     public $timestamps = false;
