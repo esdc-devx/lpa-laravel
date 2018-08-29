@@ -168,6 +168,19 @@ export const mutations = {
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {
     state.isMainLoading = isShown;
+    // Workaround until this is properly fixed by ElementUI
+    // https://github.com/ElemeFE/element/issues/8894
+    // Everytime a loading mask is hidden (!isShown)
+    // this basically wait until the next rendering is done,
+    // give us 1sec of buffer so that we don't alter the loading's mask's display
+    // and force hide the loading mask so that there is no leftover on IE11 that would block the entire UI.
+    Vue.nextTick(() => {
+      _.delay(() => {
+        if (!isShown) {
+          document.querySelector('.content-wrap .el-loading-mask').style['display'] = 'none';
+        }
+      }, 1000);
+    });
   },
 
   [types.MAIN_LOADING_COUNT](state, count) {
