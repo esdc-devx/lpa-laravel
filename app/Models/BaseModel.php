@@ -48,11 +48,12 @@ class BaseModel extends Model
     {
         foreach ($relationships as $relationship) {
             // Check if there is some data for the relationship.
-            if ($attribute = $data[snake_case($relationship)] ?? null) {
+            $key = snake_case($relationship);
+            if (isset($data[$key])) {
                 $ids = [];
+                $attribute = $data[$key];
                 $relationClass = class_basename($this->{$relationship}());
                 $relatedModelClass = get_class($this->{$relationship}()->getRelated());
-
                 // Create or update all related models and store their ids to
                 // synchronize them (if necessary).
                 foreach ($attribute as $item) {
