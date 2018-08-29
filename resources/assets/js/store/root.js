@@ -180,7 +180,7 @@ export const mutations = {
           document.querySelector('.content-wrap .el-loading-mask').style['display'] = 'none';
         }
       }, 1000);
-    })
+    });
   },
 
   [types.MAIN_LOADING_COUNT](state, count) {
