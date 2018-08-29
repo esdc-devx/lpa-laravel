@@ -159,18 +159,7 @@
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
           if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            let _isCurrentEditor = this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
-
-            if (_isCurrentEditor) {
-              // @note: since we are in a computed property, we cannot use the normal async-await
-              // because vuejs doesn't support it.
-              this.canSubmitForm(this.$route.params.formId).then(allowed => {
-                this.rights.canSubmit = allowed;
-              }).catch(e => {
-                // Exception handled by interceptor
-              });
-            }
-            return _isCurrentEditor;
+            return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
           }
           return false;
         },
@@ -317,7 +306,10 @@
             }
           } catch (e) {
             // Exception handled by interceptor
-            if (!e.response) {
+            if (e.response) {
+              // reload rights since we are unsynced
+              this.getRights();
+            } else {
               throw e;
             }
           }
@@ -431,6 +423,26 @@
         });
       },
 
+      async getRights() {
+        let _isCurrentEditor = this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
+        try {
+          if (_isCurrentEditor) {
+            this.rights.canSubmit = await this.canSubmitForm(this.formId);
+          }
+          this.rights.canEdit = await this.canEditForm(this.formId);
+          this.rights.canClaim = await this.canClaimForm(this.formId);
+          this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
+        }
+        finally {
+          await this.hideMainLoading();
+        }
+      },
+
       beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
           this.discardChanges();
@@ -440,6 +452,7 @@
 
       onLanguageUpdate() {
         this.fetch(false);
+        this.getRights();
       },
 
       destroyEvents() {
@@ -482,19 +495,7 @@
       await this.showMainLoading();
       // store the reference to the current form id
       this.formId = this.$route.params.formId;
-      try {
-        this.rights.canEdit = await this.canEditForm(this.formId);
-        this.rights.canClaim = await this.canClaimForm(this.formId);
-        this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
-      finally {
-        await this.hideMainLoading();
-      }
+      this.getRights();
     },
 
     mounted() {
