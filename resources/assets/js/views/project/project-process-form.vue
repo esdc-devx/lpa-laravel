@@ -146,7 +146,6 @@
         hasRole: 'users/hasRole',
         isCurrentEditor: 'users/isCurrentEditor',
         viewingProcess: 'processes/viewing',
-        viewingForm: 'processes/viewingForm',
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
 
@@ -320,8 +319,7 @@
       },
 
       storeOriginalFormData(data) {
-        // deep copy so that we don't alter the store's data
-        this.originalFormData = _.cloneDeep(data);
+        this.originalFormData = data;
       },
 
       async onSave() {
@@ -381,10 +379,9 @@
       },
 
       async triggerLoadProcessInstanceForm(isInitialLoad) {
-        let silent = !isInitialLoad ? true : false;
-        let response = await this.loadProcessInstanceForm({ formId: this.formId, silent });
+        let response = await this.loadProcessInstanceForm(this.formId);
         // Do not reload the data from the server if we don't need to
-        if (!silent) {
+        if (isInitialLoad) {
           this.storeOriginalFormData(response);
           this.formData = _.cloneDeep(this.originalFormData);
         }

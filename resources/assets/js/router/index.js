@@ -284,7 +284,7 @@ const routes = [
         store.dispatch('showMainLoading');
         await store.dispatch('projects/loadProject', to.params.projectId);
         await store.dispatch('processes/loadInstance', to.params.processId);
-        await store.dispatch('processes/loadInstanceForm', { formId: to.params.formId });
+        await store.dispatch('processes/loadInstanceForm', to.params.formId);
         next();
       } catch (e) {
         // Exception handled by interceptor

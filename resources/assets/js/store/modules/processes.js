@@ -14,7 +14,6 @@ export default {
       updated_by: {},
       steps: []
     },
-    viewingForm: {},
     viewingFormInfo: {
       state: {},
       organizational_unit: {},
@@ -32,10 +31,6 @@ export default {
 
     viewing(state) {
       return state.viewing;
-    },
-
-    viewingForm(state) {
-      return state.viewingForm;
     },
 
     viewingFormInfo(state) {
@@ -56,12 +51,8 @@ export default {
       return response.data.data;
     },
 
-    async loadInstanceForm({ commit }, { formId, silent = false }) {
+    async loadInstanceForm({ commit }, formId) {
       let response = await ProcessAPI.getInstanceForm(formId);
-      // Do not reload the data from the server if we don't need to
-      if (!silent) {
-        commit('setViewingForm', _.omit(response.data.data, 'form_data'));
-      }
       commit('setViewingFormInfo', response.data.data);
       return response.data.data.form_data;
     },
@@ -135,10 +126,6 @@ export default {
       // set to default in case there is no process yet
       viewing = viewing || state.viewing;
       state.viewing = viewing;
-    },
-
-    setViewingForm(state, viewingForm) {
-      state.viewingForm = viewingForm;
     },
 
     setViewingFormInfo(state, viewingFormInfo) {
