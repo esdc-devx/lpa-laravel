@@ -179,8 +179,7 @@ export default {
         // finally update the flags, which also updates the opposite flags
         // (i.e: valid-invalid, dirty-pristine)
         field.setFlags({
-          valid: !! fieldName.length,
-          dirty: true
+          valid: !! fieldErrors.length
         });
       }
 
