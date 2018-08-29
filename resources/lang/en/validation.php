@@ -133,6 +133,7 @@ return [
         'learners_benefits.*.learners_benefit_type_id'            => 'Type',
         'learners_benefits.*.learners_benefit_type_other'         => 'Other',
         'risks.*.risk_type_id'                                    => 'Risk',
+        'learning_product_type'                                   => 'Learning Product Type',
     ],
 
 ];

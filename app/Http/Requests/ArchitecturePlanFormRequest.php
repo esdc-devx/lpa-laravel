@@ -35,15 +35,20 @@ class ArchitecturePlanFormRequest extends ProcessInstanceFormDataRequest
         if ($this->submitted()) {
             $validator->after(function ($validator) {
                 // Ensure there is only one planned product of the same type.
-                $productIds = collect([]);
-                foreach ($this->planned_products as $key => $plannedProduct) {
-                    $productId = "{$plannedProduct['type_id']}.{$plannedProduct['sub_type_id']}";
-                    if ($productIds->contains($productId)) {
-                        $validator->errors()->add("planned_products.$key.type_id", __('validation.custom.planned_products.unique'));
-                        continue;
+                collect($this->planned_products)->mapToGroups(function ($product, $index) {
+                    return ["{$product['type_id']}.{$product['sub_type_id']}" => $index];
+                })
+                ->each(function ($grouped) use ($validator) {
+                    // If combination of type and sub-type id has more than one item, flag them as invalid.
+                    if ($grouped->count() > 1) {
+                        $grouped->each(function ($key) use ($validator) {
+                            $validator->errors()->add(
+                                "planned_products.$key.type_id",
+                                __('validation.distinct', ['attribute' => __('validation.attributes.learning_product_type')])
+                            );
+                        });
                     }
-                    $productIds->push($productId);
-                }
+                });
             });
         }
     }
