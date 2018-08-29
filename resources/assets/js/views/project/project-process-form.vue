@@ -322,9 +322,7 @@
             }
           }
           finally {
-            this.$nextTick(async () => {
-              await this.hideMainLoading();
-            });
+            await this.hideMainLoading();
           }
         });
       },
