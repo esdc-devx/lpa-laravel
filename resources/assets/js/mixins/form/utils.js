@@ -92,11 +92,11 @@ export default {
       });
     },
 
-    showRefreshErrorNotif() {
+    async showRefreshErrorNotif() {
       if (errorNotif) {
         errorNotif.close();
       }
-      errorNotif = this.notifyError({
+      errorNotif = await this.notifyError({
         message: this.trans('components.notice.message.validation_failure', { num: this.verrors.items.length })
       });
     },
