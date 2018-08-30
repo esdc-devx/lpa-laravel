@@ -150,7 +150,7 @@
         isMainLoading: 'isMainLoading',
         shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
         hasRole: 'users/hasRole',
-        isCurrentEditor: 'users/isCurrentEditor',
+        isCurrentUser: 'users/isCurrentUser',
         viewingProcess: 'processes/viewing',
         viewingForm: 'processes/viewingForm',
         viewingFormInfo: 'processes/viewingFormInfo'
@@ -159,10 +159,7 @@
       isClaimed: {
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
-          if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            return this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
-          }
-          return false;
+          return this.isCurrentUser(this.viewingFormInfo.current_editor);
         },
         // update the value server side
         async set(val) {
@@ -171,6 +168,9 @@
             await this.showMainLoading();
             try {
               await this.claimForm(this.formId);
+              if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
+                this.rights.canSubmit = await this.canSubmitForm(this.formId);
+              }
             } catch (e) {
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
                 // reload the process_instance_form data since we are unsynced
@@ -307,7 +307,7 @@
             }
           } catch (e) {
             // Exception handled by interceptor
-            if (e.response) {
+            if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
               // reload rights since we are unsynced
               this.getRights();
             } else {
@@ -405,9 +405,8 @@
       },
 
       async getRights() {
-        let _isCurrentEditor = this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
         try {
-          if (_isCurrentEditor) {
+          if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
             this.rights.canSubmit = await this.canSubmitForm(this.formId);
           }
           this.rights.canEdit = await this.canEditForm(this.formId);
@@ -433,7 +432,6 @@
 
       onLanguageUpdate() {
         this.fetch(false);
-        this.getRights();
       },
 
       destroyEvents() {
