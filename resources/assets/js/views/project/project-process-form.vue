@@ -151,7 +151,6 @@
         hasRole: 'users/hasRole',
         isCurrentEditor: 'users/isCurrentEditor',
         viewingProcess: 'processes/viewing',
-        viewingForm: 'processes/viewingForm',
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
 
@@ -328,8 +327,7 @@
       },
 
       storeOriginalFormData(data) {
-        // deep copy so that we don't alter the store's data
-        this.originalFormData = _.cloneDeep(data);
+        this.originalFormData = data;
       },
 
       async onSave() {
@@ -389,14 +387,13 @@
         await this.loadProcessInstance(processId);
       },
 
-      async triggerLoadProcessInstanceForm() {
+      async triggerLoadProcessInstanceForm(isInitialLoad) {
         let response = await this.loadProcessInstanceForm(this.formId);
-        this.storeOriginalFormData(response);
-        this.formData = _.cloneDeep(this.originalFormData);
-      },
-
-      async triggerLoadProcessFormInfo() {
-        await this.loadProcessInstanceForm(this.formId);
+        // Do not reload the data from the server if we don't need to
+        if (isInitialLoad) {
+          this.storeOriginalFormData(response);
+          this.formData = _.cloneDeep(this.originalFormData);
+        }
       },
 
       async fetch(isInitialLoad = true) {
@@ -404,7 +401,7 @@
         try {
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
-          await this.triggerLoadProcessInstanceForm();
+          await this.triggerLoadProcessInstanceForm(isInitialLoad);
           if (isInitialLoad) {
             this.formComponent = this.viewingFormInfo.definition.name_key;
             this.setupStage();
