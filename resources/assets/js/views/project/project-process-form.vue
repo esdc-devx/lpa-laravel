@@ -124,11 +124,12 @@
 
     data() {
       return {
+        projectId: null,
+        processId: null,
         formId: null,
         options: {
           hasTabsToValidate: true
         },
-        originalFormData: {},
         formData: {},
         activeIndex: '0',
         tabsLength: 0,
@@ -173,7 +174,7 @@
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
                 // reload the process_instance_form data since we are unsynced
                 try {
-                  await this.triggerLoadProcessInstanceForm();
+                  await this.loadProcessInstanceForm(this.formId);
                 } catch (e) {
                   // Exception handled by interceptor
                   if (!e.response) {
@@ -274,7 +275,7 @@
 
           if (this.isFormDirty) {
             formWasDirty = true;
-            this.formData = _.cloneDeep(this.originalFormData);
+            this.restoreFormData();
             EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           }
 
@@ -318,17 +319,16 @@
         });
       },
 
-      storeOriginalFormData(data) {
-        this.originalFormData = data;
+      restoreFormData() {
+        // deep copy so that we don't alter the store's data
+        this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
       },
 
       async onSave() {
         this.isSaving = true;
         try {
-          let newData = _.cloneDeep(this.formData);
-          let response = await this.saveForm({ formId: this.formId, form: newData });
+          await this.saveForm({ formId: this.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-          this.storeOriginalFormData(response);
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -369,34 +369,17 @@
         this.goToParentPage();
       },
 
-      async triggerLoadProject() {
-        let projectId = this.$route.params.projectId;
-        await this.loadProject(projectId);
-      },
-
-      async triggerLoadProcessInstance() {
-        let processId = this.$route.params.processId;
-        await this.loadProcessInstance(processId);
-      },
-
-      async triggerLoadProcessInstanceForm(isInitialLoad) {
-        let response = await this.loadProcessInstanceForm(this.formId);
-        // Do not reload the data from the server if we don't need to
-        if (isInitialLoad) {
-          this.storeOriginalFormData(response);
-          this.formData = _.cloneDeep(this.originalFormData);
-        }
-      },
-
       async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         try {
-          await this.triggerLoadProject();
-          await this.triggerLoadProcessInstance();
-          await this.triggerLoadProcessInstanceForm(isInitialLoad);
           if (isInitialLoad) {
+            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
             this.formComponent = this.viewingFormInfo.definition.name_key;
             this.setupStage();
+          } else {
+            await this.loadProject(this.projectId);
+            await this.loadProcessInstance(this.processId);
+            await this.loadProcessInstanceForm(this.formId);
           }
         } catch (e) {
           // Exception handled by interceptor
@@ -491,6 +474,8 @@
     async created() {
       await this.showMainLoading();
       // store the reference to the current form id
+      this.projectId = this.$route.params.projectId;
+      this.processId = this.$route.params.processId;
       this.formId = this.$route.params.formId;
       this.getRights();
     },
