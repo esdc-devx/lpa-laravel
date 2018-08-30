@@ -160,13 +160,29 @@ export default {
     },
 
     manageBackendErrors(errors) {
-      let fieldBag;
       for (let fieldName in errors) {
-        fieldBag = errors[fieldName];
-        for (let j = 0; j < fieldBag.length; j++) {
-          this.verrors.add({field: fieldName, msg: fieldBag[j]});
-        }
+        // gives us an error in the ErrorBag-item format
+        const fieldErrors = errors[fieldName].map(msg => {
+          return { field: fieldName, msg };
+        });
+        // get me the first field that has this name.
+        const field = this.$validator.fields.find({ name: fieldName });
+
+        // then for that field, make a correlation on the id of the error and the field
+        // and add the error to our Error Bag
+        fieldErrors.forEach(error => {
+          // we can access the id using field.id
+          error.id = field.id;
+          this.verrors.add(error);
+        });
+
+        // finally update the flags, which also updates the opposite flags
+        // (i.e: valid-invalid, dirty-pristine)
+        field.setFlags({
+          valid: !! fieldErrors.length
+        });
       }
+
       this.focusOnError();
     },
 
