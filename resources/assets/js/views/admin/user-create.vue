@@ -128,7 +128,7 @@
           this.inUserList = _.map(users, 'name');
           callback(users);
         } catch (e) {
-          this.$notifyError({
+          this.notifyError({
             message: 'Unable to retrieve users.'
           });
           this.$log.error(`[user-create][querySearchAsync] ${e}`);
