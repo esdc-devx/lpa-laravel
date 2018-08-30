@@ -275,7 +275,8 @@
 
           if (this.isFormDirty) {
             formWasDirty = true;
-            this.restoreFormData();
+            // deep copy so that we don't alter the store's data
+            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
             EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           }
 
@@ -317,11 +318,6 @@
             await this.hideMainLoading();
           }
         });
-      },
-
-      restoreFormData() {
-        // deep copy so that we don't alter the store's data
-        this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
       },
 
       async onSave() {
@@ -373,6 +369,7 @@
         await this.showMainLoading();
         try {
           if (isInitialLoad) {
+            // deep copy so that we don't alter the store's data
             this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
             this.formComponent = this.viewingFormInfo.definition.name_key;
             this.setupStage();
