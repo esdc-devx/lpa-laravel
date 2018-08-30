@@ -124,11 +124,12 @@
 
     data() {
       return {
+        projectId: null,
+        processId: null,
         formId: null,
         options: {
           hasTabsToValidate: true
         },
-        originalFormData: {},
         formData: {},
         activeIndex: '0',
         tabsLength: 0,
@@ -149,7 +150,7 @@
         isMainLoading: 'isMainLoading',
         shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
         hasRole: 'users/hasRole',
-        isCurrentEditor: 'users/isCurrentEditor',
+        isCurrentUser: 'users/isCurrentUser',
         viewingProcess: 'processes/viewing',
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
@@ -157,21 +158,7 @@
       isClaimed: {
         get() {
           // @todo: create loaded flags so that we know when the data has been loaded
-          if (this.viewingFormInfo.current_editor && this.viewingFormInfo.current_editor.username) {
-            let _isCurrentEditor = this.isCurrentEditor(this.viewingFormInfo.current_editor.username);
-
-            if (_isCurrentEditor) {
-              // @note: since we are in a computed property, we cannot use the normal async-await
-              // because vuejs doesn't support it.
-              this.canSubmitForm(this.$route.params.formId).then(allowed => {
-                this.rights.canSubmit = allowed;
-              }).catch(e => {
-                // Exception handled by interceptor
-              });
-            }
-            return _isCurrentEditor;
-          }
-          return false;
+          return this.isCurrentUser(this.viewingFormInfo.current_editor);
         },
         // update the value server side
         async set(val) {
@@ -180,11 +167,14 @@
             await this.showMainLoading();
             try {
               await this.claimForm(this.formId);
+              if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
+                this.rights.canSubmit = await this.canSubmitForm(this.formId);
+              }
             } catch (e) {
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
                 // reload the process_instance_form data since we are unsynced
                 try {
-                  await this.triggerLoadProcessInstanceForm();
+                  await this.loadProcessInstanceForm(this.formId);
                 } catch (e) {
                   // Exception handled by interceptor
                   if (!e.response) {
@@ -285,7 +275,8 @@
 
           if (this.isFormDirty) {
             formWasDirty = true;
-            this.formData = _.cloneDeep(this.originalFormData);
+            // deep copy so that we don't alter the store's data
+            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
             EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           }
 
@@ -316,7 +307,10 @@
             }
           } catch (e) {
             // Exception handled by interceptor
-            if (!e.response) {
+            if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+              // reload rights since we are unsynced
+              this.getRights();
+            } else {
               throw e;
             }
           }
@@ -326,17 +320,11 @@
         });
       },
 
-      storeOriginalFormData(data) {
-        this.originalFormData = data;
-      },
-
       async onSave() {
         this.isSaving = true;
         try {
-          let newData = _.cloneDeep(this.formData);
-          let response = await this.saveForm({ formId: this.formId, form: newData });
+          await this.saveForm({ formId: this.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-          this.storeOriginalFormData(response);
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -377,34 +365,18 @@
         this.goToParentPage();
       },
 
-      async triggerLoadProject() {
-        let projectId = this.$route.params.projectId;
-        await this.loadProject(projectId);
-      },
-
-      async triggerLoadProcessInstance() {
-        let processId = this.$route.params.processId;
-        await this.loadProcessInstance(processId);
-      },
-
-      async triggerLoadProcessInstanceForm(isInitialLoad) {
-        let response = await this.loadProcessInstanceForm(this.formId);
-        // Do not reload the data from the server if we don't need to
-        if (isInitialLoad) {
-          this.storeOriginalFormData(response);
-          this.formData = _.cloneDeep(this.originalFormData);
-        }
-      },
-
       async fetch(isInitialLoad = true) {
         await this.showMainLoading();
         try {
-          await this.triggerLoadProject();
-          await this.triggerLoadProcessInstance();
-          await this.triggerLoadProcessInstanceForm(isInitialLoad);
           if (isInitialLoad) {
+            // deep copy so that we don't alter the store's data
+            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
             this.formComponent = this.viewingFormInfo.definition.name_key;
             this.setupStage();
+          } else {
+            await this.loadProject(this.projectId);
+            await this.loadProcessInstance(this.processId);
+            await this.loadProcessInstanceForm(this.formId);
           }
         } catch (e) {
           // Exception handled by interceptor
@@ -426,6 +398,25 @@
             this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
           }
         });
+      },
+
+      async getRights() {
+        try {
+          if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
+            this.rights.canSubmit = await this.canSubmitForm(this.formId);
+          }
+          this.rights.canEdit = await this.canEditForm(this.formId);
+          this.rights.canClaim = await this.canClaimForm(this.formId);
+          this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
+        }
+        finally {
+          await this.hideMainLoading();
+        }
       },
 
       beforeLogout(callback) {
@@ -478,20 +469,10 @@
     async created() {
       await this.showMainLoading();
       // store the reference to the current form id
+      this.projectId = this.$route.params.projectId;
+      this.processId = this.$route.params.processId;
       this.formId = this.$route.params.formId;
-      try {
-        this.rights.canEdit = await this.canEditForm(this.formId);
-        this.rights.canClaim = await this.canClaimForm(this.formId);
-        this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
-      finally {
-        await this.hideMainLoading();
-      }
+      this.getRights();
     },
 
     mounted() {

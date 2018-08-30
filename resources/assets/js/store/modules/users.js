@@ -49,9 +49,9 @@ export default {
       };
     },
 
-    isCurrentEditor(state) {
-      return function (username) {
-        return state.current.username === username;
+    isCurrentUser(state) {
+      return function (user) {
+        return !! (user && state.current.username === user.username);
       };
     },
 
