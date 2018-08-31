@@ -3,7 +3,7 @@
     <div :class="[`el-${type}`, { 'is-disabled': isInputDisabled }]">
       <!--
         due to the fact that v-model and :value are equivalents,
-        we need to specify that value here will be a prop on the element itself
+        we need to specify that value here will be a .prop on the element itself
       -->
       <component
         ref="input"
@@ -15,7 +15,7 @@
         :disabled="isInputDisabled"
         :name="name"
         :maxlength="charsLimit"
-        @input="onInput"
+        @input="currentTextValue = $event.target.value"
         v-autosize>
       </component>
       <div v-else class="el-input-number">
@@ -112,23 +112,46 @@
         type: Number,
         default: -Infinity
       },
-      value: String | Number
+      value: String | Number,
+      precision: {
+        type: Number,
+        validator(val) {
+          return val >= 0 && val === parseInt(val, 10);
+        }
+      }
     },
 
     data() {
       return {
         // this allows us to keep the count internally
         // without relying on the parent to get it
-        currentTextValue: this.value,
-        currentNumberValue: this.value
+        currentNumberValue: this.value,
+        innerTextValue: this.value
       };
     },
 
     computed: {
+      // We do not want to be refering to the value passed as prop
+      // for the get here since doing so will only update the value of the input
+      // once the event is emitted.
+      // Thus, we create another variable (innerTextValue) which will be evaluated when
+      // the value changed (see watch), which gives us the ability to modify a local value (innerTextValue)
+      // without relying explicetly on the value prop itself.
+      // Also, this allows us to see the counter change as we type.
+      currentTextValue: {
+        get() {
+          return this.innerTextValue;
+        },
+        set(val) {
+          // update our internal value so that the charCount can keep track of the count
+          this.innerTextValue = val;
+          this.onInput(val);
+        }
+      },
       charCount() {
         // based on our internal text value and not the value instead
         // so that we get an instant feedback on the UI
-        return (this.currentTextValue || '').length;
+        return (this.innerTextValue || '').length;
       },
       charsLimit() {
         return this.maxlength;
@@ -162,7 +185,7 @@
     },
 
     watch: {
-      '$attrs.disabled': function(isDisabled) {
+      '$attrs.disabled': function (isDisabled) {
         if (isDisabled) {
           // check if we are dealing with an input tag,
           // and reset input value when it is disabled
@@ -175,6 +198,12 @@
           // notify the parent
           this.updateValue(null);
         }
+      },
+      // watch the value and set it to our internal variable because we get it async
+      value: function (val) {
+        if (this.type === 'input') {
+          this.innerTextValue = val;
+        }
       }
     },
 
@@ -186,11 +215,8 @@
         });
       },
 
-      onInput(e) {
-        let value = e.target.value;
-        // update our internal value so that the charCount can keep track of the count
-        this.currentTextValue = value;
-        this.updateValue(value);
+      onInput(val) {
+        this.updateValue(val);
       },
 
       // Input Number methods
@@ -199,7 +225,7 @@
         return parseFloat(parseFloat(Number(num).toFixed(precision)));
       },
       getPrecision(value) {
-        if (value === undefined) return 0;
+        if (value === undefined || value === null) return 0;
         const valueString = value.toString();
         const dotPosition = valueString.indexOf('.');
         let precision = 0;
@@ -257,11 +283,7 @@
       // we cannot make their values reactives
       // so we have to manually reassign them
       onDiscardChanges() {
-        this.currentTextValue = this.value;
         this.currentNumberValue = this.value;
-        if (this.$refs.input) {
-          this.$refs.input.value = this.currentTextValue;
-        }
         if (this.$refs.inputNumber) {
           this.$refs.inputNumber.value = this.currentNumberValue;
         }

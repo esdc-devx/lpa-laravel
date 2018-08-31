@@ -29,8 +29,10 @@
           <div class="form-header">
             <el-header></el-header>
             <el-header class="form-header-details">
-              <i class="el-icon-lpa-form"></i>
-              {{ viewingFormInfo.definition.name }}
+              <div class="form-name">
+                <i class="el-icon-lpa-form"></i>
+                {{ viewingFormInfo.definition.name }}
+              </div>
               <!--
                 Switch disabled based on rights or if we are loading,
                 to prevent spam while there is already a request sent
@@ -280,12 +282,9 @@
             EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           }
 
-          // reset the fields states
-          // so that we get a pristine form
-          // but wait until dom is refreshed before resetting the fields state
+          // wait until data has been synced through components
           this.$nextTick(() => {
-            this.resetFieldsState();
-            this.resetErrors();
+            EventBus.$emit('FormEntity:discardChanges');
           });
 
           // remove ownership on form
@@ -295,10 +294,6 @@
             if (!this.isFormSubmitted && shouldUnclaim) {
               await this.unclaimForm(this.formId);
             }
-            // wait until data has been synced through components
-            this.$nextTick(() => {
-              EventBus.$emit('FormEntity:discardChanges');
-            });
 
             if (formWasDirty) {
               this.notifyInfo({
@@ -315,6 +310,13 @@
             }
           }
           finally {
+            // reset the fields states
+            // so that we get a pristine form
+            // but wait until dom is refreshed before resetting the fields state
+            this.$nextTick(() => {
+              this.resetFieldsState();
+              this.resetErrors();
+            });
             await this.hideMainLoading();
           }
         });
@@ -587,12 +589,11 @@
             margin-right: 5px;
             @include svg(form, $--color-white);
           }
-          .claim {
-            justify-content: flex-end;
+          .form-name {
             flex: 1;
-            .el-switch__label {
-              color: $--color-white;
-            }
+          }
+          .claim .el-switch__label {
+            color: $--color-white;
           }
         }
       }
