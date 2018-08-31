@@ -452,6 +452,11 @@
         if (this.isClaimed) {
           this.isClaimed = false;
         }
+        // this make sure to reset the flag "shouldConfirmBeforeLeaving"
+        this.$nextTick(() => {
+          this.resetFieldsState();
+          this.resetErrors();
+        });
         next();
       }
     },
