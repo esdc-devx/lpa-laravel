@@ -126,7 +126,8 @@
         // this allows us to keep the count internally
         // without relying on the parent to get it
         currentNumberValue: this.value,
-        innerTextValue: this.value
+        innerTextValue: this.value,
+        isDiscarding: false
       };
     },
 
@@ -185,23 +186,24 @@
     },
 
     watch: {
+      // this controls what we do when the input gets disabled by its parent
       '$attrs.disabled': function (isDisabled) {
-        if (isDisabled) {
+        if (isDisabled && !this.isDiscarding) {
           // check if we are dealing with an input tag,
           // and reset input value when it is disabled
           // as we cannot make a <component> tag reactive
           if (this.type === 'input') {
             this.$refs.input.value = null;
+            // nullify our internal text value
+            this.currentTextValue = null;
+            // notify the parent
+            this.updateValue(null);
           }
-          // nullify our internal text value
-          this.currentTextValue = null;
-          // notify the parent
-          this.updateValue(null);
         }
       },
       // watch the value and set it to our internal variable because we get it async
       value: function (val) {
-        if (this.type === 'input') {
+        if (this.type === 'input' || this.type === 'textarea') {
           this.innerTextValue = val;
         }
       }
@@ -283,10 +285,11 @@
       // we cannot make their values reactives
       // so we have to manually reassign them
       onDiscardChanges() {
-        this.currentNumberValue = this.value;
         if (this.$refs.inputNumber) {
+          this.currentNumberValue = this.value;
           this.$refs.inputNumber.value = this.currentNumberValue;
         }
+        this.isDiscarding = true;
       }
     },
 
