@@ -10,9 +10,9 @@ let errorNotif;
 export default {
   computed: {
     isFormDirty() {
-      let formHasErrors = Object.keys(this.vfields).some(key => this.vfields[key].dirty);
+      let formHasDirtyFields = Object.keys(this.vfields).some(key => this.vfields[key].dirty);
 
-      return formHasErrors || this.fieldsAddedOrRemoved;
+      return formHasDirtyFields || this.fieldsAddedOrRemoved;
     },
 
     isFormPristine() {

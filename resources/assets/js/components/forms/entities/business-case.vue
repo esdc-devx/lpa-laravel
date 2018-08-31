@@ -533,19 +533,6 @@
       }
     },
 
-    watch: {
-      'form.expected_annual_participant_number': {
-        immediate: true,
-        handler(value) {
-          // this handle the fact that we receive null from the server
-          // and that the component converts null to 0,
-          // which produces a form dirty: null !== 0
-          value = value === null ? undefined : value;
-          this.form.expected_annual_participant_number = value;
-        }
-      }
-    },
-
     methods: {
       ...mapActions([
         'showMainLoading',
