@@ -502,7 +502,9 @@
         this.destroyEvents();
         // if user is currently claiming, remove claim
         if (this.isClaimed) {
-          await this.unclaimForm(this.formId);
+          // just change the value here and let the reactivity take care
+          // of what it should do if user is no longer the editor.
+          this.isClaimed = false;
         }
         // this make sure to reset the flag "shouldConfirmBeforeLeaving"
         this.$nextTick(() => {

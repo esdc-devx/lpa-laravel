@@ -90,6 +90,12 @@
       }
     },
 
+    watch: {
+      value: function () {
+        this.prepareGroups();
+      }
+    },
+
     data() {
       return {
         expandAll: true
@@ -132,16 +138,8 @@
       }
     },
 
-    beforeDestroy() {
-      EventBus.$off('FormEntity:discardChanges', this.prepareGroups);
-    },
-
     created() {
       this.prepareGroups();
-    },
-
-    mounted() {
-      EventBus.$on('FormEntity:discardChanges', this.prepareGroups);
     }
   };
 </script>

@@ -198,6 +198,7 @@
             this.currentTextValue = null;
             // notify the parent
             this.updateValue(null);
+            this.isDiscarding = false;
           }
         }
       },
@@ -276,21 +277,15 @@
         if (typeof newVal === 'number' && this.precision !== undefined) {
           newVal = this.toPrecision(newVal, this.precision);
         }
-        if (newVal >= this.max) newVal = this.max;
-        if (newVal <= this.min) newVal = this.min;
+        // if the value is null, do not modify it
+        if (newVal >= this.max && !_.isNull(newVal)) newVal = this.max;
+        if (newVal <= this.min && !_.isNull(newVal)) newVal = this.min;
 
         this.currentNumberValue = newVal;
         this.$refs.inputNumber.value = this.currentNumberValue;
         this.updateValue(newVal);
       },
-      // Because of a limitation of Vuejs regarding custom components that have DOM elements inside,
-      // we cannot make their values reactives
-      // so we have to manually reassign them
       onDiscardChanges() {
-        if (this.$refs.inputNumber) {
-          this.currentNumberValue = this.value;
-          this.$refs.inputNumber.value = this.currentNumberValue;
-        }
         this.isDiscarding = true;
       }
     },
