@@ -182,9 +182,8 @@
               }
             } catch (e) {
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-                // reload the process_instance_form data since we are unsynced
                 try {
-                  await this.loadProcessInstanceForm(this.formId);
+                  await this.refreshData();
                 } catch (e) {
                   // Exception handled by interceptor
                   if (!e.response) {
@@ -314,7 +313,7 @@
             // Exception handled by interceptor
             if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
               // reload rights since we are unsynced
-              this.getRights();
+              await this.refreshData();
             } else {
               throw e;
             }
