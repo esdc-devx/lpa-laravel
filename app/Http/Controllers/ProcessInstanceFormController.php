@@ -53,7 +53,6 @@ class ProcessInstanceFormController extends APIController
      * Remove current process instance form editor.
      *
      * @param  ProcessInstanceForm $processInstanceForm
-     * @param  User $editor
      * @return \Illuminate\Http\Response
      */
     public function release(ProcessInstanceForm $processInstanceForm)
