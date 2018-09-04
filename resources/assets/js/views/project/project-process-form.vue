@@ -474,7 +474,7 @@
         }
       },
 
-      async beforeLogout(callback) {
+      beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
           this.discardChanges();
           callback();
