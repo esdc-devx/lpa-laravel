@@ -8,10 +8,8 @@
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
         <el-form-item :label="trans('entities.general.full_name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
           <el-autocomplete
-            id="name"
-            name="name"
+            name="username"
             :data-vv-as="trans('entities.general.full_name')"
-            ref="name"
             popper-class="name-autocomplete"
             v-validate="nameRules"
             v-model="form.name"
@@ -26,7 +24,7 @@
               </div>
             </template>
           </el-autocomplete>
-          <form-error name="name"></form-error>
+          <form-error name="username"></form-error>
         </el-form-item>
 
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
@@ -151,20 +149,6 @@
           message: this.trans('components.notice.message.created', { name: this.form.name })
         });
         this.goToParentPage();
-      },
-
-      manageBackendErrors(errors) {
-        let fieldBag;
-        for (let fieldName in errors) {
-          fieldBag = errors[fieldName];
-          for (let j = 0; j < fieldBag.length; j++) {
-            // since we are dealing with a username while sending to the backend,
-            // we need to map the username to the name so that the name field has the error
-            // and not the username field which doesn't exist
-            this.verrors.add({field: fieldName === 'username' ? 'name' : fieldName, msg: fieldBag[j]});
-          }
-        }
-        this.focusOnError();
       },
 
       async triggerLoadUserCreateInfo() {
