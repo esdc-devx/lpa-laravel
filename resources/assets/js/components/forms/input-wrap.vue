@@ -205,6 +205,8 @@
       value: function (val) {
         if (this.type === 'input' || this.type === 'textarea') {
           this.innerTextValue = val;
+        } else if (this.type === 'number') {
+          this.currentNumberValue = val;
         }
       }
     },

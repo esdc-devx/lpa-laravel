@@ -13,7 +13,14 @@
           </dl>
           <dl>
             <dt>{{ trans('entities.form.current_editor') }}</dt>
-            <dd>{{ viewingFormInfo.current_editor ? viewingFormInfo.current_editor.name : trans('entities.general.na') }}</dd>
+            <dd>
+              {{
+                viewingFormInfo.current_editor ?
+                viewingFormInfo.current_editor.name :
+                trans('entities.general.na')
+              }}
+              <el-button @click="onReleaseForm" class="release-form" type="danger" size="mini" v-if="viewingFormInfo.current_editor && hasRole('admin')" :disabled="!rights.canReleaseForm" icon="el-icon-close" circle></el-button>
+            </dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
@@ -140,7 +147,8 @@
           canEdit: false,
           canClaim: false,
           canUnclaim: false,
-          canSubmit: false
+          canSubmit: false,
+          canReleaseForm: false
         },
         isFormSubmitted: false
       }
@@ -245,8 +253,10 @@
         canClaimForm: 'processes/canClaimForm',
         canUnclaimForm: 'processes/canUnclaimForm',
         canSubmitForm: 'processes/canSubmitForm',
+        canReleaseForm: 'processes/canReleaseForm',
         saveForm: 'processes/saveForm',
-        submitForm: 'processes/submitForm'
+        submitForm: 'processes/submitForm',
+        releaseForm: 'processes/releaseForm'
       }),
 
       prevTabIndex() {
@@ -322,6 +332,32 @@
         });
       },
 
+      getCurrentEditorUsername() {
+        return this.viewingFormInfo.current_editor ? this.viewingFormInfo.current_editor.username : null;
+      },
+
+      onReleaseForm() {
+        this.confirmReleaseForm().then(async () => {
+          try {
+            await this.releaseForm({
+              formId: this.formId,
+              username: this.getCurrentEditorUsername()
+            });
+            await this.refreshData();
+            this.notifySuccess({
+              message: this.trans('components.notice.message.form_released')
+            });
+          } catch (e) {
+            // Exception handled by interceptor
+            if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+              await this.refreshData();
+            } else {
+              throw e;
+            }
+          }
+        }).catch(() => false);
+      },
+
       async onSave() {
         this.isSaving = true;
         try {
@@ -339,7 +375,8 @@
           });
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-            this.discardChanges();
+            await this.refreshData();
+            this.discardChanges(false);
             this.isSaving = false;
           } else {
             throw e;
@@ -353,18 +390,30 @@
         }).catch(() => false);
       },
 
+      async refreshData() {
+        this.getRights();
+        await this.fetch(false);
+        // deep copy so that we don't alter the store's data
+        this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
+      },
+
       async triggerSubmitForm() {
-        // @note: no try-catch required here
-        // since we already do it in the form utils
-        await this.submitForm({ formId: this.formId, form: this.formData });
-        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-        this.notifySuccess({
-          message: this.trans('components.notice.message.form_submitted')
-        });
-        // sets the flag so that we do not unclaim the form after submitting it
-        // since the backend will automatically unclaim it.
-        this.isFormSubmitted = true;
-        this.goToParentPage();
+        try {
+          await this.submitForm({ formId: this.formId, form: this.formData });
+          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+          this.notifySuccess({
+            message: this.trans('components.notice.message.form_submitted')
+          });
+          // sets the flag so that we do not unclaim the form after submitting it
+          // since the backend will automatically unclaim it.
+          this.isFormSubmitted = true;
+          this.goToParentPage();
+        } catch (e) {
+          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            await this.refreshData();
+            this.discardChanges(false);
+          }
+        }
       },
 
       async fetch(isInitialLoad = true) {
@@ -410,6 +459,10 @@
           this.rights.canEdit = await this.canEditForm(this.formId);
           this.rights.canClaim = await this.canClaimForm(this.formId);
           this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
+          this.rights.canReleaseForm = await this.canReleaseForm({
+            formId: this.formId,
+            username: this.getCurrentEditorUsername()
+          });
         } catch (e) {
           // Exception handled by interceptor
           if (!e.response) {
@@ -421,7 +474,7 @@
         }
       },
 
-      beforeLogout(callback) {
+      async beforeLogout(callback) {
         this.confirmLoseChanges().then(async () => {
           this.discardChanges();
           callback();
@@ -439,7 +492,7 @@
       }
     },
 
-    beforeRouteLeave(to, from, next) {
+    async beforeRouteLeave(to, from, next) {
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
         this.confirmLoseChanges().then(async () => {
           this.destroyEvents();
@@ -450,7 +503,7 @@
         this.destroyEvents();
         // if user is currently claiming, remove claim
         if (this.isClaimed) {
-          this.isClaimed = false;
+          await this.unclaimForm(this.formId);
         }
         // this make sure to reset the flag "shouldConfirmBeforeLeaving"
         this.$nextTick(() => {
@@ -503,6 +556,11 @@
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
+
+    button.release-form {
+      padding: 2px;
+      margin-left: 10px;
+    }
 
     .el-tabs {
       position: absolute;

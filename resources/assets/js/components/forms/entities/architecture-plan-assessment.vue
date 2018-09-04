@@ -209,9 +209,6 @@
     async created() {
       await this.showMainLoading();
       this.fetch();
-      // load all the form fields with data passed in
-      // create a new copy without reference so that we don't alter the original values
-      this.form = _.cloneDeep(this.formData);
       await this.hideMainLoading();
     },
 

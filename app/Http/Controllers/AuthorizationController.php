@@ -101,7 +101,7 @@ class AuthorizationController extends APIController
      */
     public function releaseProcessInstanceForm(ProcessInstanceForm $processInstanceForm)
     {
-        $editor = User::find(request()->get('editor'));
+        $editor = User::where('username', request()->get('editor'))->first();
 
         return $this->respond([
             'allowed' => auth()->user()->can('release', [$processInstanceForm, $editor])

@@ -58,7 +58,7 @@ class ProcessInstanceFormController extends APIController
      */
     public function release(ProcessInstanceForm $processInstanceForm)
     {
-        $editor = User::find(request()->get('editor'));
+        $editor = User::where('username', request()->get('editor'))->first();
         $this->authorize('release', [$processInstanceForm, $editor]);
 
         return $this->respond(

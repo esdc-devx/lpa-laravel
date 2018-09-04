@@ -8,6 +8,7 @@ return [
     'start'    => 'Démarrer',
     'cancel'   => 'Annuler',
     'submit'   => 'Soumettre',
+    'release'  => 'Relâcher',
     'create'   => 'Créer',
     'update'   => 'Mettre à jour',
     'delete'   => 'Supprimer',

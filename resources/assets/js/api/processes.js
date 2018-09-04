@@ -34,6 +34,10 @@ export default {
     return axios.put(`process-instance-forms/${formId}/edit`, form);
   },
 
+  releaseForm(formId, username) {
+    return axios.put(`process-instance-forms/${formId}/release?editor=${username}`);
+  },
+
   submitForm(formId, form) {
     return axios.put(`process-instance-forms/${formId}/submit`, form);
   },
@@ -56,5 +60,9 @@ export default {
 
   canSubmitForm(formId) {
     return axios.get(`authorization/process-instance-form/submit/${formId}`);
+  },
+
+  canReleaseForm(formId, username) {
+    return axios.get(`authorization/process-instance-form/release/${formId}?editor=${username}`);
   }
 };

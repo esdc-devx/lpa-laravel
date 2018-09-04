@@ -8,6 +8,7 @@ return [
     'start'    => 'Start',
     'cancel'   => 'Cancel',
     'submit'   => 'Submit',
+    'release'  => 'Release',
     'create'   => 'Create',
     'update'   => 'Update',
     'delete'   => 'Delete',
