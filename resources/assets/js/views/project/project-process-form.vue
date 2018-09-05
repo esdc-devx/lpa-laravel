@@ -378,10 +378,6 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             await this.refreshData();
-            this.$nextTick(() => {
-              // make childrens react on discarding changes
-              EventBus.$emit('FormEntity:discardChanges');
-            });
             this.isSaving = false;
           } else {
             throw e;
@@ -443,12 +439,6 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             await this.refreshData();
-            this.$nextTick(() => {
-              // make childrens react on discarding changes
-              EventBus.$emit('FormEntity:discardChanges');
-              // make form section groups react and repopulate themselves
-              EventBus.$emit('FormEntity:resetFormSectionGroup');
-            });
           }
         }
       },
