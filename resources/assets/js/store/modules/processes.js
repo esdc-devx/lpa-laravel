@@ -91,6 +91,10 @@ export default {
       return response.data.data.form_data;
     },
 
+    async releaseForm({ commit }, { formId, username }) {
+      await ProcessAPI.releaseForm(formId, username);
+    },
+
     async canCancelProcess({ commit }, processId) {
       let response = await ProcessAPI.canCancelProcess(processId);
       return response.data.data.allowed;
@@ -113,6 +117,11 @@ export default {
 
     async canSubmitForm({ commit }, formId) {
       let response = await ProcessAPI.canSubmitForm(formId);
+      return response.data.data.allowed;
+    },
+
+    async canReleaseForm({ commit }, { formId, username }) {
+      let response = await ProcessAPI.canReleaseForm(formId, username);
       return response.data.data.allowed;
     }
   },

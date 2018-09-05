@@ -93,6 +93,19 @@ export default {
     });
   },
 
+  confirmReleaseForm() {
+    return new Promise((resolve, reject) => {
+      this._confirm({
+        title: this.trans('components.notice.title.release_form'),
+        message: this.trans('components.notice.message.release_form'),
+        action: 'release',
+        confirmButtonClass: 'el-button--warning',
+        thenCallback: resolve,
+        catchCallback: reject
+      });
+    });
+  },
+
   confirmCancelProcess() {
     return new Promise((resolve, reject) => {
       this._confirm({

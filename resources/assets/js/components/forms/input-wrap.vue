@@ -126,8 +126,7 @@
         // this allows us to keep the count internally
         // without relying on the parent to get it
         currentNumberValue: this.value,
-        innerTextValue: this.value,
-        isDiscarding: false
+        innerTextValue: this.value
       };
     },
 
@@ -188,7 +187,7 @@
     watch: {
       // this controls what we do when the input gets disabled by its parent
       '$attrs.disabled': function (isDisabled) {
-        if (isDisabled && !this.isDiscarding) {
+        if (isDisabled) {
           // check if we are dealing with an input tag,
           // and reset input value when it is disabled
           // as we cannot make a <component> tag reactive
@@ -205,6 +204,8 @@
       value: function (val) {
         if (this.type === 'input' || this.type === 'textarea') {
           this.innerTextValue = val;
+        } else if (this.type === 'number') {
+          this.currentNumberValue = val;
         }
       }
     },
@@ -274,31 +275,14 @@
         if (typeof newVal === 'number' && this.precision !== undefined) {
           newVal = this.toPrecision(newVal, this.precision);
         }
-        if (newVal >= this.max) newVal = this.max;
-        if (newVal <= this.min) newVal = this.min;
+        // if the value is null, do not modify it
+        if (newVal >= this.max && !_.isNull(newVal)) newVal = this.max;
+        if (newVal <= this.min && !_.isNull(newVal)) newVal = this.min;
 
         this.currentNumberValue = newVal;
         this.$refs.inputNumber.value = this.currentNumberValue;
         this.updateValue(newVal);
-      },
-      // Because of a limitation of Vuejs regarding custom components that have DOM elements inside,
-      // we cannot make their values reactives
-      // so we have to manually reassign them
-      onDiscardChanges() {
-        if (this.$refs.inputNumber) {
-          this.currentNumberValue = this.value;
-          this.$refs.inputNumber.value = this.currentNumberValue;
-        }
-        this.isDiscarding = true;
       }
-    },
-
-    beforeDestroy() {
-      EventBus.$off('FormEntity:discardChanges', this.onDiscardChanges);
-    },
-
-    mounted() {
-      EventBus.$on('FormEntity:discardChanges', this.onDiscardChanges);
     }
   };
 </script>

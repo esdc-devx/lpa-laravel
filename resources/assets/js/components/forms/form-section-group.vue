@@ -133,7 +133,7 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('FormEntity:discardChanges', this.prepareGroups);
+      EventBus.$off('FormEntity:resetFormSectionGroup', this.prepareGroups);
     },
 
     created() {
@@ -141,7 +141,7 @@
     },
 
     mounted() {
-      EventBus.$on('FormEntity:discardChanges', this.prepareGroups);
+      EventBus.$on('FormEntity:resetFormSectionGroup', this.prepareGroups);
     }
   };
 </script>
