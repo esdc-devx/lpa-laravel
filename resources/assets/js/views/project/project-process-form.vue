@@ -349,9 +349,6 @@
               message: this.trans('components.notice.message.form_released')
             });
             await this.refreshData();
-            this.$nextTick(() => {
-              EventBus.$emit('FormEntity:resetFormSectionGroup');
-            });
           } catch (e) {
             // Exception handled by interceptor
             if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
@@ -400,8 +397,10 @@
 
       async refreshData() {
         this.getRights();
-        await this.loadProcessInstanceForm(this.formId);
         let formWasDirty = this.isFormDirty;
+        let oldUpdatedDate = _.cloneDeep(this.viewingFormInfo.updated_at);
+        await this.loadProcessInstanceForm(this.formId);
+
         // deep copy so that we don't alter the store's data
         this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
         this.$nextTick(() => {
@@ -409,11 +408,9 @@
           EventBus.$emit('FormEntity:discardChanges');
           // make form section groups react and repopulate themselves
           EventBus.$emit('FormEntity:resetFormSectionGroup');
-        });
-        // reset the fields states
-        // so that we get a pristine form
-        // but wait until dom is refreshed before resetting the fields state
-        this.$nextTick(() => {
+          // reset the fields states
+          // so that we get a pristine form
+          // but wait until dom is refreshed before resetting the fields state
           this.resetFieldsState();
           this.resetErrors();
         });
@@ -424,9 +421,12 @@
             message: this.trans('components.notice.message.changes_discarded')
           });
         }
-        this.notifyInfo({
-          message: this.trans('components.notice.message.data_refreshed')
-        });
+        // check if updated data was fetched
+        if (oldUpdatedDate !== this.formData.updated_at) {
+          this.notifyInfo({
+            message: this.trans('components.notice.message.data_refreshed')
+          });
+        }
       },
 
       async triggerSubmitForm() {

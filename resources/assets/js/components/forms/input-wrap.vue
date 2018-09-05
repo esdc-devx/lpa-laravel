@@ -198,7 +198,6 @@
             this.currentTextValue = null;
             // notify the parent
             this.updateValue(null);
-            this.isDiscarding = false;
           }
         }
       },
@@ -287,6 +286,9 @@
       },
       onDiscardChanges() {
         this.isDiscarding = true;
+        this.$nextTick(() => {
+          this.isDiscarding = false;
+        });
       }
     },
 
