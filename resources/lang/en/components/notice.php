@@ -31,6 +31,7 @@ return [
         'form_released'           => 'The form has been released.',
         'submit_form'             => 'Do you want to submit the form?',
         'release_form'            => 'The Current Editor will lose all unsaved data if you release the form now. Do you want to release the form anyway?',
+        'data_refreshed'          => 'The form data has been refreshed.',
         'language_toggle'         => 'Changing the language will reset the table filters. Do you want to continue?',
         'delete_project'          => 'You are about to delete the project named "<b>:name</b>" (<b>LPA #: :id</b>) and all its related information. Do you want to continue?',
         'start_process'           => 'Do you want to start the <b>:process_name</b> process for the current project?',

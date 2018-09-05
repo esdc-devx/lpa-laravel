@@ -284,6 +284,7 @@
           await this.showMainLoading();
           let formWasDirty = false;
 
+          // if form is dirty, reset the form data
           if (this.isFormDirty) {
             formWasDirty = true;
             // deep copy so that we don't alter the store's data
@@ -291,9 +292,11 @@
             EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           }
 
-          // wait until data has been synced through components
           this.$nextTick(() => {
+            // make childrens react on discarding changes
             EventBus.$emit('FormEntity:discardChanges');
+            // make form section groups react and repopulate themselves
+            EventBus.$emit('FormEntity:resetFormSectionGroup');
           });
 
           // remove ownership on form
@@ -312,7 +315,7 @@
           } catch (e) {
             // Exception handled by interceptor
             if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-              // reload rights since we are unsynced
+              // reload rights since we are potentially unsynced
               await this.refreshData();
             } else {
               throw e;
@@ -342,9 +345,12 @@
               formId: this.formId,
               username: this.getCurrentEditorUsername()
             });
-            await this.refreshData();
             this.notifySuccess({
               message: this.trans('components.notice.message.form_released')
+            });
+            await this.refreshData();
+            this.$nextTick(() => {
+              EventBus.$emit('FormEntity:resetFormSectionGroup');
             });
           } catch (e) {
             // Exception handled by interceptor
@@ -375,7 +381,10 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             await this.refreshData();
-            this.discardChanges(false);
+            this.$nextTick(() => {
+              // make childrens react on discarding changes
+              EventBus.$emit('FormEntity:discardChanges');
+            });
             this.isSaving = false;
           } else {
             throw e;
@@ -391,9 +400,33 @@
 
       async refreshData() {
         this.getRights();
-        await this.fetch(false);
+        await this.loadProcessInstanceForm(this.formId);
+        let formWasDirty = this.isFormDirty;
         // deep copy so that we don't alter the store's data
         this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
+        this.$nextTick(() => {
+          // make childrens react on discarding changes
+          EventBus.$emit('FormEntity:discardChanges');
+          // make form section groups react and repopulate themselves
+          EventBus.$emit('FormEntity:resetFormSectionGroup');
+        });
+        // reset the fields states
+        // so that we get a pristine form
+        // but wait until dom is refreshed before resetting the fields state
+        this.$nextTick(() => {
+          this.resetFieldsState();
+          this.resetErrors();
+        });
+
+        if (formWasDirty) {
+          // when user was kicked out of a form
+          this.notifyInfo({
+            message: this.trans('components.notice.message.changes_discarded')
+          });
+        }
+        this.notifyInfo({
+          message: this.trans('components.notice.message.data_refreshed')
+        });
       },
 
       async triggerSubmitForm() {
@@ -410,7 +443,12 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             await this.refreshData();
-            this.discardChanges(false);
+            this.$nextTick(() => {
+              // make childrens react on discarding changes
+              EventBus.$emit('FormEntity:discardChanges');
+              // make form section groups react and repopulate themselves
+              EventBus.$emit('FormEntity:resetFormSectionGroup');
+            });
           }
         }
       },
@@ -559,7 +597,7 @@
     flex-direction: column;
 
     button.release-form {
-      padding: 2px;
+      padding: 0;
       margin-left: 10px;
     }
 

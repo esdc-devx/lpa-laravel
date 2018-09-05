@@ -90,12 +90,6 @@
       }
     },
 
-    watch: {
-      value: function () {
-        this.prepareGroups();
-      }
-    },
-
     data() {
       return {
         expandAll: true
@@ -138,8 +132,16 @@
       }
     },
 
+    beforeDestroy() {
+      EventBus.$off('FormEntity:resetFormSectionGroup', this.prepareGroups);
+    },
+
     created() {
       this.prepareGroups();
+    },
+
+    mounted() {
+      EventBus.$on('FormEntity:resetFormSectionGroup', this.prepareGroups);
     }
   };
 </script>

@@ -31,6 +31,7 @@ return [
         'form_released'           => 'Le formulaire a été relâché.',
         'submit_form'             => 'Voulez-vous soumettre le formulaire?',
         'release_form'            => 'L\'éditeur actuel perdra toutes les données non-sauvegardées si vous relâchez le formulaire maintenant. Voulez-vous tout de même relâcher ce formulaire?',
+        'data_refreshed'          => 'Les données du formulaire ont été actualisées.',
         'language_toggle'         => 'Changer la langue réinitialisera les filtres du tableau. Voulez-vous poursuivre?',
         'delete_project'          => 'Vous vous apprêtez à supprimer le projet intitulé «&nbsp;<b>:name</b>&nbsp;» (<b>No.&nbsp;APA&nbsp;:&nbsp;:id</b>) ainsi que toutes ses informations associées. Voulez-vous poursuivre?',
         'start_process'           => 'Voulez-vous démarrer le processus <b>:process_name</b> pour le projet courant?',
