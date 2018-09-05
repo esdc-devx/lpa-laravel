@@ -394,7 +394,7 @@
       async refreshData() {
         this.getRights();
         let formWasDirty = this.isFormDirty;
-        let oldUpdatedDate = _.cloneDeep(this.viewingFormInfo.updated_at);
+        let oldUpdatedDate = this.viewingFormInfo.updated_at;
         await this.loadProcessInstanceForm(this.formId);
 
         // deep copy so that we don't alter the store's data
