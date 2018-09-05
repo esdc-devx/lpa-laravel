@@ -126,8 +126,7 @@
         // this allows us to keep the count internally
         // without relying on the parent to get it
         currentNumberValue: this.value,
-        innerTextValue: this.value,
-        isDiscarding: false
+        innerTextValue: this.value
       };
     },
 
@@ -188,7 +187,7 @@
     watch: {
       // this controls what we do when the input gets disabled by its parent
       '$attrs.disabled': function (isDisabled) {
-        if (isDisabled && !this.isDiscarding) {
+        if (isDisabled) {
           // check if we are dealing with an input tag,
           // and reset input value when it is disabled
           // as we cannot make a <component> tag reactive
@@ -283,21 +282,7 @@
         this.currentNumberValue = newVal;
         this.$refs.inputNumber.value = this.currentNumberValue;
         this.updateValue(newVal);
-      },
-      onDiscardChanges() {
-        this.isDiscarding = true;
-        this.$nextTick(() => {
-          this.isDiscarding = false;
-        });
       }
-    },
-
-    beforeDestroy() {
-      EventBus.$off('FormEntity:discardChanges', this.onDiscardChanges);
-    },
-
-    mounted() {
-      EventBus.$on('FormEntity:discardChanges', this.onDiscardChanges);
     }
   };
 </script>
