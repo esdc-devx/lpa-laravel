@@ -1,0 +1,104 @@
+import LearningProductAPI from '@api/learning-products';
+import { helpers } from '@/helpers.js';
+
+export default {
+  namespaced: true,
+
+  state: {
+    // project being viewed
+    viewing: {
+      name: ''
+    },
+    all: [],
+    organizationalUnits: []
+  },
+
+  getters: {
+    all(state) {
+      return state.all;
+    },
+
+    viewing(state) {
+      return state.viewing;
+    },
+
+    organizationalUnits(state) {
+      return state.organizationalUnits;
+    }
+  },
+
+  actions: {
+    // async loadProjectCreateInfo({ commit }) {
+    //   let response = await ProjectsAPI.getProjectCreateInfo();
+    //   commit('setOrganizationalUnits', response.data.data.organizational_units);
+    //   return response.data.data;
+    // },
+
+    // async loadProjectEditInfo({ commit }, id) {
+    //   let response = await ProjectsAPI.getProjectEditInfo(id);
+    //   commit('setViewing', response.data.data.project);
+    //   commit('setOrganizationalUnits', response.data.data.organizational_units);
+    //   return response.data.data;
+    // },
+
+    async loadLearningProducts({ commit, dispatch }) {
+      let response = await LearningProductAPI.getLearningProducts();
+      commit('setLearningProducts', response.data.data.learning_products);
+      return response.data.data.learning_products;
+    }
+
+    // async loadProject({ commit }, id) {
+    //   let response = await ProjectsAPI.getProject(id);
+    //   commit('setViewing', response.data.data.project);
+    //   return response.data.data;
+    // },
+
+    // async canCreateProject({ commit }) {
+    //   let response = await ProjectsAPI.canCreateProject();
+    //   return response.data.data.allowed;
+    // },
+
+    // async canEditProject({ commit }, id) {
+    //   let response = await ProjectsAPI.canEditProject(id);
+    //   return response.data.data.allowed;
+    // },
+
+    // async canDeleteProject({ commit }, id) {
+    //   let response = await ProjectsAPI.canDeleteProject(id);
+    //   return response.data.data.allowed;
+    // },
+
+    // async canStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
+    //   let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
+    //   return response.data.data.allowed;
+    // },
+
+    // async create({ commit }, project) {
+    //   let response = await ProjectsAPI.create(project);
+    //   commit('setViewing', response.data.data);
+    //   return response.data.data;
+    // },
+
+    // async update({ commit }, project) {
+    //   await ProjectsAPI.update(project);
+    // },
+
+    // async delete({ commit }, id) {
+    //   await ProjectsAPI.delete(id);
+    // }
+  },
+
+  mutations: {
+    setLearningProducts(state, learningProducts) {
+      state.all = learningProducts;
+    },
+
+    setViewing(state, learningProduct) {
+      state.viewing = learningProduct;
+    },
+
+    setOrganizationalUnits(state, organizationalUnits) {
+      state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
+    }
+  }
+};
