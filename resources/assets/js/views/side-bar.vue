@@ -52,6 +52,12 @@
             icon: 'el-icon-lpa-projects',
             classes: '',
             index: '/projects'
+          },
+          {
+            text: this.trans('base.navigation.learning_products'),
+            icon: 'el-icon-lpa-learning-product',
+            classes: '',
+            index: '/learning-products'
           }
         ];
       }
