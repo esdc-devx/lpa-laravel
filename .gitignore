@@ -21,5 +21,6 @@ npm-debug.log
 yarn-error.log
 .env
 .vs
+.phpunit.result.cache
 *.sublime-project
 *.sublime-workspace
