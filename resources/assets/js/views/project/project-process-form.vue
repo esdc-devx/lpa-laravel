@@ -418,7 +418,7 @@
           });
         }
         // check if updated data was fetched
-        if (oldUpdatedDate !== this.formData.updated_at) {
+        if (oldUpdatedDate !== this.viewingFormInfo.updated_at) {
           this.notifyInfo({
             message: this.trans('components.notice.message.data_refreshed')
           });
