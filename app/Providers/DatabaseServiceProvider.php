@@ -27,7 +27,7 @@ class DatabaseServiceProvider extends ServiceProvider
     public function register()
     {
         // Log database queries with their execution time.
-        if (config('app.log_db_queries')) {
+        if (config('logging.log_db_queries')) {
             logger('-- ' . request()->path() . ' --');
             DB::listen(function ($query) {
                 logger($query->sql, [
