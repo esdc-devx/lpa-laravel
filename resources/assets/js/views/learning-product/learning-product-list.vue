@@ -18,7 +18,7 @@
       <el-table-column
         sortable="custom"
         prop="id"
-        min-width="8"
+        min-width="12"
         :label="trans('entities.general.lpa_num')">
         <template slot-scope="scope">
           {{ scope.row.id | LPANumFilter }}
@@ -27,13 +27,13 @@
       <el-table-column
         sortable="custom"
         prop="name"
-        min-width="20"
+        min-width="36"
         :label="trans('entities.general.name')">
       </el-table-column>
       <el-table-column
         sortable="custom"
         prop="type"
-        min-width="10"
+        min-width="20"
         :label="trans('entities.learning_product.type')"
         :filters="typeFilters">
       </el-table-column>
@@ -42,13 +42,13 @@
         column-key="organizational_unit"
         :filters="orgUnitFilters"
         prop="organizational_unit"
-        min-width="20"
+        min-width="25"
         :label="$tc('entities.general.organizational_units')">
       </el-table-column>
       <el-table-column
         sortable="custom"
         prop="updated_at"
-        min-width="10"
+        min-width="13"
         :label="trans('entities.general.updated')">
       </el-table-column>
       <el-table-column
@@ -56,7 +56,7 @@
         column-key="state"
         :filters="getColumnFilters(this.normalizedList, 'state')"
         prop="state"
-        min-width="8"
+        min-width="14"
         :label="trans('entities.general.status')">
       </el-table-column>
       <el-table-column
@@ -64,7 +64,7 @@
         column-key="current_process"
         :filters="getColumnFilters(this.normalizedList, 'current_process')"
         prop="current_process"
-        min-width="13"
+        min-width="21"
         :label="trans('entities.process.current')">
       </el-table-column>
     </data-tables>
@@ -79,7 +79,7 @@
   import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
 
-  let namespace = 'learning_products';
+  let namespace = 'learningProducts';
 
   export default {
     name: 'learning-product-list',
@@ -120,7 +120,7 @@
 
       viewLearningProduct(learningProduct) {
         this.scrollToTop();
-        this.$router.push(`${namespace}/${learningProduct.id}`);
+        this.$router.push(`learning-products/${learningProduct.id}`);
       },
 
       onHeaderClick(col, e) {
