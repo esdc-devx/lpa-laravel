@@ -2,8 +2,8 @@
 
 return [
     'general'                 => 'General exception. Please contact your administrator.',
-    'not_found'               => 'Not Found',
-    'forbidden'               => 'Insufficient privileges.',
+    'not_found'               => 'Page Not Found',
+    'forbidden'               => 'Insufficient privileges',
     'bad_request'             => 'Bad request. Please refresh your page.',
     'server_error'            => 'Server error. Please refresh your page.',
     'insufficient_privileges' => 'You no longer have the necessary authorizations to perform this operation. Contact your LPA administrator for more details.',
