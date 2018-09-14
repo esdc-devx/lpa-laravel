@@ -1,0 +1,19 @@
+<?php
+
+use App\Models\Project\ArchitecturePlan\ArchitecturePlanAssessment;
+use Faker\Generator as Faker;
+
+$factory->define(ArchitecturePlanAssessment::class, function (Faker $faker) {
+
+    return [
+        'is_process_cancelled' => false,
+        'assessment_date'      => $faker->dateTimeThisMonth('now')->format('Y-m-d H:i:s'),
+        'assessments'          => [
+            [
+                'process_form_decision_id' => 1,
+                'comment'                  => $faker->paragraph(),
+            ]
+        ],
+    ];
+
+});

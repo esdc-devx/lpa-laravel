@@ -107,4 +107,9 @@ class User extends BaseModel implements
 
         return false;
     }
+
+    public function scopeAdmin($query)
+    {
+        return $query->where('username', config('auth.admin.username'));
+    }
 }

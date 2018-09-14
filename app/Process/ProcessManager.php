@@ -15,8 +15,9 @@ use Illuminate\Support\Facades\DB;
 
 class ProcessManager {
 
+    use UsesProcessInstance;
+
     protected $camunda;
-    protected $processInstance;
     protected $processStates = [];
     protected $processTasks = [];
     protected $processInstanceFormsData;
@@ -33,7 +34,7 @@ class ProcessManager {
      * @param  App\Models\BaseModel $entity
      * @return App\Models\Process\ProcessInstance
      */
-    public function startProcessInstance($processDefinition, $entity)
+    public function startProcess($processDefinition, $entity)
     {
         // Make sure no process are currently running.
         if ($entity->currentProcess) {
@@ -98,7 +99,7 @@ class ProcessManager {
 
                 // Create process instance form entries from process definition.
                 foreach ($step['forms'] as $form) {
-                    $processInstanceForm = ProcessInstanceForm::create([
+                    $processInstanceForm = ProcessInstanceForm::create([                        
                         'process_form_id'          => $form->id,
                         'process_instance_step_id' => $processInstanceStep->id,
                         'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
@@ -146,42 +147,6 @@ class ProcessManager {
         }
 
         DB::commit();
-        return $this;
-    }
-
-    /**
-     * Return current process instance being loaded.
-     *
-     * @return ProcessInstance
-     */
-    public function getProcessInstance()
-    {
-        return $this->processInstance;
-    }
-
-    /**
-     * Load a process instance to work with.
-     *
-     * @param  mixed $processInstance
-     * @return $this
-     */
-    public function load($processInstance)
-    {
-        // Load process instance from id.
-        if (is_numeric($processInstance)) {
-            $processInstance = ProcessInstance::findOrFail($processInstance);
-        }
-        // Load process instance from engine process instance id.
-        elseif (is_string($processInstance)) {
-            $processInstance = ProcessInstance::where('engine_process_instance_id', $processInstance)->firstOrFail();
-        }
-        // Ensure argument passed is an instance of process instance model.
-        elseif (! $processInstance instanceof ProcessInstance) {
-            throw new \Exception('Could not load process instance. Invalid argument provided.');
-        }
-
-        $this->processInstance = $processInstance;
-
         return $this;
     }
 

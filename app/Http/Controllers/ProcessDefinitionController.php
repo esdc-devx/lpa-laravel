@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Process\ProcessDefinition;
+use Process;
 
 class ProcessDefinitionController extends APIController
 {
@@ -30,7 +31,7 @@ class ProcessDefinitionController extends APIController
         $entity = entity($processDefinition->entity_type)->findOrFail(request()->get('entity_id'));
         $this->authorize('start-process', [$entity, $processDefinition]);
         return $this->respond([
-            'process_instance' => \Process::startProcessInstance($processDefinition, $entity)->getProcessInstance()
+            'process_instance' => Process::startProcess($processDefinition, $entity)->getProcessInstance()
         ]);
     }
 }

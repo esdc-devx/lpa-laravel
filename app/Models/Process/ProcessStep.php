@@ -11,6 +11,11 @@ class ProcessStep extends LocalizableModel
 
     public $timestamps = false;
 
+    public function definition()
+    {
+        return $this->belongsTo(ProcessDefinition::class, 'process_definition_id');
+    }
+
     public function forms()
     {
         return $this->hasMany(ProcessForm::class);

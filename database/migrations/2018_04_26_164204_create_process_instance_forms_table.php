@@ -14,7 +14,7 @@ class CreateProcessInstanceFormsTable extends Migration
     public function up()
     {
         Schema::create('process_instance_forms', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('id');            
             $table->unsignedInteger('process_form_id')->nullable();
             $table->unsignedInteger('process_instance_step_id');
             $table->unsignedInteger('state_id')->nullable();
@@ -23,7 +23,7 @@ class CreateProcessInstanceFormsTable extends Migration
             $table->string('engine_task_id')->unique()->index()->nullable();
             $table->auditable();
             $table->timestamps();
-
+            
             $table->referenceOn('process_form_id', 'process_forms');
             $table->referenceOn('process_instance_step_id', 'process_instance_steps')->onDelete('cascade');
             $table->referenceOn('state_id', 'states')->onDelete('set null');
