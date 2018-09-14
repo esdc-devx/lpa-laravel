@@ -80,7 +80,7 @@ class Start extends BaseCommand
     protected function resolveFormKey()
     {
         if ($formKey = $this->option('form')) {
-            // Ensure form exists an is part of process definition.
+            // Ensure form exists and is part of process definition.
             if (! ($processForm = ProcessForm::getByKey($formKey)->first())) {
                 return $this->error('Unsupported form: ' . $this->option('form'));
             }
