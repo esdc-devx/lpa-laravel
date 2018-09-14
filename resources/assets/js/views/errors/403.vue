@@ -6,14 +6,14 @@
       </el-col>
     </el-row>
     <el-row type="flex" justify="center" :gutter="18">
-      <el-col class="owl-wrap" :span="18">
+      <el-col class="icon-divider" :span="18">
         <i class="el-icon el-icon-lpa-owl-403"></i>
       </el-col>
     </el-row>
     <el-row type="flex" justify="center" :gutter="14">
       <el-col :span="14">
         <p v-html="trans('pages.403.instruction')"></p>
-        <el-button @click="goToPage('home')" round><i class="el-icon-back"></i>{{ trans('base.navigation.back_to_home') }}</el-button>
+        <el-button @click="goToPage('home')"><i class="el-icon-back"></i>{{ trans('base.navigation.back_to_home') }}</el-button>
       </el-col>
     </el-row>
   </div>
@@ -53,5 +53,5 @@
 </script>
 
 <style lang="scss">
-@import '~@sass/base/error';
+@import '~@sass/pages/error';
 </style>

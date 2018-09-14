@@ -23,25 +23,4 @@
       font-weight: bold;
     }
   }
-
-  .owl-wrap {
-    position: relative;
-    text-align: center;
-    &:before, &:after {
-      content: '';
-      width: calc(50% - #{$svg-icons-size-x-large / 2});
-      height: 1px;
-      background-color: $--color-primary;
-      @include vertical-center(absolute);
-    }
-    &:before {
-      left: 0;
-    }
-    &:after {
-      right: 0;
-    }
-    i.el-icon {
-      @include size($svg-icons-size-x-large);
-    }
-  }
 }

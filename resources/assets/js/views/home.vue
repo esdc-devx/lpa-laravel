@@ -7,8 +7,8 @@
       </el-col>
     </el-row>
     <el-row type="flex" justify="center" :gutter="18">
-      <el-col class="owl-wrap" :span="18">
-        <i class="el-icon-lpa-owl"></i>
+      <el-col class="icon-divider" :span="18">
+        <i class="el-icon el-icon-lpa-owl"></i>
       </el-col>
     </el-row>
     <el-row type="flex" justify="center" :gutter="14">
@@ -69,7 +69,7 @@
 <style lang="scss">
   @import '~@sass/abstracts/vars';
   @import '~@sass/abstracts/mixins/helpers';
-
+  
   .home {
     // since there is no breadcrumbs bar on the home page,
     // make sure the content is at the top
@@ -86,27 +86,6 @@
     h2 {
       font-size: 3rem;
       margin-bottom: 0;
-    }
-
-    .owl-wrap {
-      position: relative;
-      text-align: center;
-      &:before, &:after {
-        content: '';
-        width: calc(50% - #{$svg-icons-size-large / 2});
-        height: 1px;
-        background-color: $--color-primary;
-        @include vertical-center(absolute);
-      }
-      &:before {
-        left: 0;
-      }
-      &:after {
-        right: 0;
-      }
-      i.el-icon-lpa-owl {
-        @include size($svg-icons-size-large);
-      }
     }
 
     .actions {
