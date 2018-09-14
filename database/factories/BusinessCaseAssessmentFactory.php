@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Process\ProcessFormDecision;
 use App\Models\Project\BusinessCase\BusinessCaseAssessment;
 use Faker\Generator as Faker;
 
@@ -7,7 +8,7 @@ $factory->define(BusinessCaseAssessment::class, function (Faker $faker) {
 
     static $decision;
 
-    if (!$decision) {
+    if (! $decision) {
         $decision = ProcessFormDecision::getByKey('approved')->first();
     }
 
