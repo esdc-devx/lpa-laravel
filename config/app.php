@@ -222,12 +222,14 @@ return [
         'View'         => Illuminate\Support\Facades\View::class,
 
         // Custom facades.
-        'Adldap'   => Adldap\Laravel\Facades\Adldap::class,
-        'Nestable' => Nestable\Facades\NestableService::class,
-        'Process'  => App\Process\ProcessManagerFacade::class,
+        'Adldap'         => Adldap\Laravel\Facades\Adldap::class,
+        'Nestable'       => Nestable\Facades\NestableService::class,
+        'Process'        => App\Support\Facades\ProcessManager::class,
+        'ProcessFactory' => App\Support\Facades\ProcessFactory::class,
     ],
 
     // Used to resolve model class from a string, usually stored into the database or as a route parameter.
+    // @note: Instead of maintaining this list manually, we could possibly read from a seperate cached file, which could be generated from an artisan command (i.e. app:generate-entities-map).
     'entity_types' => [
         'architecture-plan'            => App\Models\Project\ArchitecturePlan\ArchitecturePlan::class,
         'architecture-plan-assessment' => App\Models\Project\ArchitecturePlan\ArchitecturePlanAssessment::class,
@@ -244,6 +246,8 @@ return [
         'planned-product'              => App\Models\Project\ArchitecturePlan\ArchitecturePlan::class,
         'potential-solution-type'      => App\Models\Project\BusinessCase\PotentialSolutionType::class,
         'process-form-decision'        => App\Models\Process\ProcessFormDecision::class,
+        'process-instance'             => App\Models\Process\ProcessInstance::class,
+        'process-instance-form'        => App\Models\Process\ProcessInstanceForm::class,
         'project'                      => App\Models\Project\Project::class,
         'request-source'               => App\Models\Project\BusinessCase\RequestSource::class,
         'risk-type'                    => App\Models\Project\BusinessCase\RiskType::class,

@@ -1,4 +1,20 @@
 <?php
+if (!function_exists('entity_class')) {
+    /**
+     * Return entity class path from entity type string.
+     *
+     * @param  string $entityTypeKey
+     * @return string
+     */
+    function entity_class($entityTypeKey)
+    {
+        if ($entityTypeClass = config('app.entity_types')[$entityTypeKey] ?? null) {
+            return $entityTypeClass;
+        }
+        throw new \Illuminate\Database\Eloquent\ModelNotFoundException();
+    }
+}
+
 if (!function_exists('entity')) {
     /**
      * Resolve an entity from its entity type string.
@@ -8,10 +24,7 @@ if (!function_exists('entity')) {
      */
     function entity($entityTypeKey)
     {
-        if ($entityTypeClass = config('app.entity_types')[$entityTypeKey] ?? null) {
-            return resolve($entityTypeClass);
-        }
-        throw new \Illuminate\Database\Eloquent\ModelNotFoundException();
+        return resolve(entity_class($entityTypeKey));
     }
 }
 

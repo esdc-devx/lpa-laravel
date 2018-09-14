@@ -50,10 +50,6 @@ class Configure extends BaseCommand
      */
     public function handle()
     {
-        // Set app language to english since language is not defined when running
-        // scripts from command line.
-        app()->setLocale('en');
-
         if ($this->option('yes') || $this->confirm('Configure groups?')) {
             $this->configureGroups();
         }

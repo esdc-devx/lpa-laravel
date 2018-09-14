@@ -2,7 +2,10 @@
 
 namespace App\Console;
 
+use App\Models\User\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 
 class BaseCommand extends Command
@@ -14,6 +17,14 @@ class BaseCommand extends Command
      */
     public function __construct()
     {
+        // Login as admin when running commands.
+        if (Schema::hasTable('users') && $admin = User::admin()->first()) {
+            Auth::login($admin);
+        }
+
+        // Set default language since it is not defined when running commands.
+        app()->setLocale(config('app.fallback_locale'));
+
         parent::__construct();
     }
 
