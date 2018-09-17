@@ -2,8 +2,8 @@
 
 return [
     'general'                 => 'Execption générale. Contactez votre administrateur.',
-    'not_found'               => 'Non trouvé',
-    'forbidden'               => 'Autorisations insuffisantes.',
+    'not_found'               => 'Page non trouvée',
+    'forbidden'               => 'Autorisations insuffisantes',
     'bad_request'             => 'Mauvaise requête. Rafraichissez votre page.',
     'server_error'            => 'Erreur serveur. Rafraichissez votre page.',
     'insufficient_privileges' => 'Vous ne disposez plus des autorisations nécessaires pour effectuer cette opération. Communiquez avec votre administrateur de l\'APA pour plus de détails.',
