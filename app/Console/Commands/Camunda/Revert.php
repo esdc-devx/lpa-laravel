@@ -9,8 +9,9 @@ class Revert extends BaseCommand
 {
     use ExecutesDatabaseScripts;
 
+    //@note: Possibly add an optional parameter for revert filename.
     protected $signature = 'camunda:revert {--yes}';
-    protected $description = 'Revert Camunda database to its initial state.';
+    protected $description = 'Revert Camunda database to a given snapshot.';
     protected $camunda;
 
     /**
@@ -36,7 +37,8 @@ class Revert extends BaseCommand
 
             // Ensure a database revert file exists before doing anything.
             if (! Storage::exists($this->camunda->config('app.storage.revert'))) {
-                return $this->error('Could not locate any database revert file.');
+                $revertFile = str_replace('\\', '/', storage_path('app/' . $this->camunda->config('app.storage.revert')));
+                return $this->error("Could not locate Camunda database revert file [$revertFile].");
             }
 
             // Drop all existing tables.
