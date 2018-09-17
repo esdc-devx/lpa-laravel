@@ -18,7 +18,15 @@ return [
     // Application configurations.
     'app' => [
         'user_model' => 'App\Models\User\User',
-        'storage'    => 'camunda', //-> /storage/app/camunda
+        'storage'    => [
+            'create' => [
+                'camunda/mysql/create/mysql_engine_7.9.0.sql',
+                'camunda/mysql/create/mysql_identity_7.9.0.sql',
+                'camunda/mysql/create/mysql_init_7.9.0.sql',
+            ],
+            'revert'     => 'camunda/mysql/revert/camunda_revert.sql',
+            'deployment' => 'camunda/deployments',
+        ],
         'groups'     => [
             'admin' => 'camunda-admin',
             'user'  => 'lpa-user'
