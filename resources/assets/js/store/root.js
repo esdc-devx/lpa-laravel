@@ -176,8 +176,9 @@ export const mutations = {
     // and force hide the loading mask so that there is no leftover on IE11 that would block the entire UI.
     Vue.nextTick(() => {
       _.delay(() => {
-        if (!isShown) {
-          document.querySelector('.content-wrap .el-loading-mask').style['display'] = 'none';
+        let documentLoadingMask = document.querySelector('.content-wrap .el-loading-mask');
+        if (!isShown && documentLoadingMask) {
+          documentLoadingMask.style['display'] = 'none';
         }
       }, 1000);
     });

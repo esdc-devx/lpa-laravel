@@ -2,39 +2,20 @@
 
 namespace App\Console\Commands\Camunda;
 
-use \Exception;
-use \PDOException;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use App\Console\BaseCommand;
+use Storage;
 
 class Revert extends BaseCommand
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+    use ExecutesDatabaseScripts;
+
+    //@note: Possibly add an optional parameter for revert filename.
     protected $signature = 'camunda:revert {--yes}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Revert database to its initial state.';
-
-    /**
-     * Camunda service.
-     *
-     * @var App\Camunda\Camunda
-     */
+    protected $description = 'Revert Camunda database to a given snapshot.';
     protected $camunda;
 
     /**
-     * Execute a series of actions to configure Camunda
-     * on a fresh installed server.
+     * Create a new command instance.
      *
      * @return void
      */
@@ -42,31 +23,6 @@ class Revert extends BaseCommand
     {
         $this->camunda = resolve('App\Camunda\Camunda');
         parent::__construct();
-    }
-
-    protected function getScript(string $path)
-    {
-        try {
-            return Storage::get("{$this->camunda->config('app.storage')}/mysql/$path");
-        }
-        // Handle file not found exception.
-        catch (FileNotFoundException $e) {
-            $path = storage_path("app/{$e->getMessage()}");
-            throw new Exception("File {$path} could not be found.");
-        }
-    }
-
-    protected function executeScript(string $script)
-    {
-        try {
-            DB::connection('camunda')->unprepared(
-                $this->getScript($script)
-            );
-        }
-        // Handle any database exceptions.
-        catch (PDOException $e) {
-            throw new Exception('An error occured while executing mysql script. Check logs for more details.');
-        }
     }
 
     /**
@@ -78,14 +34,19 @@ class Revert extends BaseCommand
     {
         // Drop all database tables.
         if ($this->option('yes') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
-            $this->line('Dropping all database tables...');
-            $this->executeScript('drop/mysql_engine_7.8.0.sql');
-            $this->executeScript('drop/mysql_identity_7.8.0.sql');
-            $this->info('All tables dropped.');
+
+            // Ensure a database revert file exists before doing anything.
+            if (! Storage::exists($this->camunda->config('app.storage.revert'))) {
+                $revertFile = str_replace('\\', '/', storage_path('app/' . $this->camunda->config('app.storage.revert')));
+                return $this->error("Could not locate Camunda database revert file [$revertFile].");
+            }
+
+            // Drop all existing tables.
+            $this->dropDatabaseTables();
 
             // Revert database from sql dump file.
             $this->newline('Reverting database...');
-            $this->executeScript('revert/camunda_revert.sql');
+            $this->executeScript($this->camunda->config('app.storage.revert'));
             $this->info('Database reverted.');
 
             $this->success('Camunda database was reverted successfully.');
