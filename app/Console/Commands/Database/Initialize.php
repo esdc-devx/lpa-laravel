@@ -3,23 +3,12 @@
 namespace App\Console\Commands\Database;
 
 use App\Console\BaseCommand;
-use Illuminate\Support\Facades\Schema;
+use Schema;
 
-class Revert extends BaseCommand
+class Initialize extends BaseCommand
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'db:revert {--yes}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Revert database to its initial state.';
+    protected $signature = 'db:init {--force} {--populate}';
+    protected $description = 'Creates all tables and run database seeds.';
 
     /**
      * Create a new command instance.
@@ -38,8 +27,8 @@ class Revert extends BaseCommand
      */
     public function handle()
     {
-        // Drop all database tables.
-        if ($this->option('yes') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
+        if ($this->option('force') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
+            // Drop all database tables.
             $this->line('Dropping all database tables...');
             Schema::dropAllTables();
             $this->info('Tables dropped successfully.');
@@ -52,6 +41,11 @@ class Revert extends BaseCommand
             $this->newline('Seeding database...');
             $this->call('db:seed');
             $this->info('Database seeded successfully.');
+
+            // If populate option is on, run command to insert some fake data.
+            if ($this->option('populate')) {
+                $this->call('db:populate');
+            }
 
             // Done.
             $this->success('Database was reverted successfully.');
