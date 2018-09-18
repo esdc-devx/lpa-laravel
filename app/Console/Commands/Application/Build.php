@@ -12,7 +12,7 @@ use ZipArchive;
 class Build extends BaseCommand
 {
 
-    protected $signature = 'app:build {env=dev} {--yes} {--package}';
+    protected $signature = 'app:build {env=dev} {--force} {--package}';
     protected $description = 'Build application, update version and create an archive file ready to be deployed on a server.';
 
     // Files and folders to be included into the package file.
@@ -74,24 +74,24 @@ class Build extends BaseCommand
         $this->info("Version: {$this->gitVersionTag}");
 
         // Confirm if we want to create a new version file to be compiled during JS compiling operation.
-        if ($this->option('yes') || $this->confirm('Create new version file?')) {
+        if ($this->option('force') || $this->confirm('Create new version file?')) {
             $this->createVersionFile();
         }
 
         // Confirm if we want to install npm packages.
-        if ($this->option('yes') || $this->confirm('Install npm packages?')) {
+        if ($this->option('force') || $this->confirm('Install npm packages?')) {
             $this->newline('Installing npm packages...');
             exec('npm install');
         }
 
         // Confirm if we want to install Composer packages.
-        if ($this->option('yes') || $this->confirm('Install Composer packages?')) {
+        if ($this->option('force') || $this->confirm('Install Composer packages?')) {
             $this->newline('Installing Composer packages...');
             exec('composer install');
         }
 
         // Bundle javascript files.
-        if ($this->option('yes') || $this->confirm('Bundle javascript files?')) {
+        if ($this->option('force') || $this->confirm('Bundle javascript files?')) {
             $this->newline('Bundling application javascript files...');
             exec('npm run ' . $this->argument('env'));
         }

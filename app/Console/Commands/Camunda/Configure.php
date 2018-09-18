@@ -15,7 +15,7 @@ class Configure extends BaseCommand
      *
      * @var string
      */
-    protected $signature = 'camunda:configure {--yes}';
+    protected $signature = 'camunda:configure {--force}';
 
     /**
      * The console command description.
@@ -50,15 +50,15 @@ class Configure extends BaseCommand
      */
     public function handle()
     {
-        if ($this->option('yes') || $this->confirm('Configure groups?')) {
+        if ($this->option('force') || $this->confirm('Configure groups?')) {
             $this->configureGroups();
         }
 
-        if ($this->option('yes') || $this->confirm('Configure authorization?')) {
+        if ($this->option('force') || $this->confirm('Configure authorization?')) {
             $this->configureAuthorizations();
         }
 
-        if ($this->option('yes') || $this->confirm('Deploy processes?')) {
+        if ($this->option('force') || $this->confirm('Deploy processes?')) {
             $this->deployProcesses();
         }
 
@@ -89,7 +89,7 @@ class Configure extends BaseCommand
 
         // Proceed with groups creation.
         try {
-            if ($this->option('yes') || $this->confirm('This will create or replace all groups with these. Do you wish to continue?')) {
+            if ($this->option('force') || $this->confirm('This will create or replace all groups with these. Do you wish to continue?')) {
                 $this->camunda->groups()->deleteAll();
                 foreach ($data as $group) {
                     $this->camunda->groups()->create([
