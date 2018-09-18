@@ -6,7 +6,7 @@ use App\Console\BaseCommand;
 
 class Install extends BaseCommand
 {
-    protected $signature = 'app:install {--yes} {--populate}';
+    protected $signature = 'app:install {--force} {--populate}';
     protected $description = 'Install and configure application.';
 
     /**
@@ -26,13 +26,13 @@ class Install extends BaseCommand
      */
     public function handle()
     {
-        if ($this->option('yes') || $this->confirm('You are about to install the application, do you wish to continue?')) {
+        if ($this->option('force') || $this->confirm('You are about to install the application, do you wish to continue?')) {
             // If bypass option is on, setup argument for all other commands.
-            $bypass = $this->option('yes') ? ['--yes' => true] : [];
+            $bypass = $this->option('force') ? ['--force' => true] : [];
 
             $this->newline('Generating application keys...');
             $this->call('key:generate');
-            $this->call('passport:keys', ['--force' => true]);
+            $this->call('passport:keys', $bypass);
 
             $this->newline('Initializing Camunda...');
             $this->call('camunda:init', $bypass);
@@ -42,7 +42,7 @@ class Install extends BaseCommand
 
             $this->newline('Configuring Camunda...');
             $this->call('camunda:configure', $bypass);
-            
+
             // If populate option is passed, generate fake data.
             if ($this->option('populate')) {
                 $this->call('db:populate');

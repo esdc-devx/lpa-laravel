@@ -7,7 +7,7 @@ use Schema;
 
 class Initialize extends BaseCommand
 {
-    protected $signature = 'db:init {--yes} {--populate}';
+    protected $signature = 'db:init {--force} {--populate}';
     protected $description = 'Creates all tables and run database seeds.';
 
     /**
@@ -27,7 +27,7 @@ class Initialize extends BaseCommand
      */
     public function handle()
     {
-        if ($this->option('yes') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
+        if ($this->option('force') || $this->confirm('You are about to drop all database tables, do you wish to continue?')) {
             // Drop all database tables.
             $this->line('Dropping all database tables...');
             Schema::dropAllTables();
