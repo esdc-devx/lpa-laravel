@@ -6,7 +6,7 @@ use App\Console\BaseCommand;
 
 class Install extends BaseCommand
 {
-    protected $signature = 'app:install {--yes}';
+    protected $signature = 'app:install {--yes} {--populate}';
     protected $description = 'Install and configure application.';
 
     /**
@@ -42,6 +42,11 @@ class Install extends BaseCommand
 
             $this->newline('Configuring Camunda...');
             $this->call('camunda:configure', $bypass);
+            
+            // If populate option is passed, generate fake data.
+            if ($this->option('populate')) {
+                $this->call('db:populate');
+            }
 
             $this->success('Application was installed successfully.');
         }
