@@ -18,4 +18,9 @@ class OrganizationalUnit extends ListableModel
     {
         return $this->belongsTo(User::class, 'director');
     }
+
+    public function scopeLearningProductOwners($query)
+    {
+        $query->where('owner', true);
+    }
 }

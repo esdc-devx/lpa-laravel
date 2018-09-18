@@ -22,4 +22,15 @@ trait UsesKeyNameField
         }
         return $query->where($where);
     }
+
+    /**
+     * Return the id from name_key field value.
+     *
+     * @param  string $key
+     * @return int
+     */
+    public static function getIdFromKey($key)
+    {
+        return static::getByKey($key)->first()->id;
+    }
 }

@@ -2,10 +2,31 @@
 
 namespace App\Support;
 
+use App\Models\OrganizationalUnit;
+use App\Models\User\User;
 use Faker\Provider\Base;
 
 class CustomFaker extends Base
 {
+    static $learningProductOwnerIds;
+    static $userIds;
+
+    public function randomUserId()
+    {
+        if (! static::$userIds) {
+            static::$userIds = User::pluck('id');
+        }
+        return static::$userIds->random();
+    }
+
+    public function randomLearningProductOwnerId()
+    {
+        if (! static::$learningProductOwnerIds) {
+            static::$learningProductOwnerIds = OrganizationalUnit::learningProductOwners()->pluck('id');
+        }
+        return static::$learningProductOwnerIds->random();
+    }
+
     public function costCenter()
     {
         $letter = chr(64 + rand(0, 26));

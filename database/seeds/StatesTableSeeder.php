@@ -45,6 +45,63 @@ class StatesTableSeeder extends Seeder
                     'name_fr'  => 'Complété',
                 ],
             ],
+            'course' => [
+                [
+                    'name_key' => 'new',
+                    'name_en'  => 'New',
+                    'name_fr'  => 'Nouveau',
+                ],
+                [
+                    'name_key' => 'designed',
+                    'name_en'  => 'Designed',
+                    'name_fr'  => 'Conçu',
+                ],
+                [
+                    'name_key' => 'developed',
+                    'name_en'  => 'Developed',
+                    'name_fr'  => 'Développé',
+                ],
+                [
+                    'name_key' => 'communications-reviewed',
+                    'name_en'  => 'Communications Reviewed',
+                    'name_fr'  => 'Communications Révisées',
+                ],
+                [
+                    'name_key' => 'deployed',
+                    'name_en'  => 'Deployed',
+                    'name_fr'  => 'Deployé',
+                ],
+                [
+                    'name_key' => 'published',
+                    'name_en'  => 'Published',
+                    'name_fr'  => 'Publié',
+                ],
+                [
+                    'name_key' => 'end-of-life',
+                    'name_en'  => 'End-of-Life',
+                    'name_fr'  => 'En fin de vie',
+                ],
+                [
+                    'name_key' => 'discontinued',
+                    'name_en'  => 'Discontinued',
+                    'name_fr'  => 'Discontinué',
+                ],
+                [
+                    'name_key' => 'suspended',
+                    'name_en'  => 'Suspended',
+                    'name_fr'  => 'Suspendu',
+                ],
+                [
+                    'name_key' => 'cancelled',
+                    'name_en'  => 'Cancelled',
+                    'name_fr'  => 'Annulé',
+                ],
+                [
+                    'name_key' => 'archived',
+                    'name_en'  => 'Archived',
+                    'name_fr'  => 'Archivé',
+                ],
+            ],
             'process-instance' => [
                 [
                     'name_key' => 'active',
@@ -73,8 +130,8 @@ class StatesTableSeeder extends Seeder
                 ],
                 [
                     'name_key' => 'cancelled',
-                    'name_en' => 'Cancelled',
-                    'name_fr' => 'Annulé',
+                    'name_en'  => 'Cancelled',
+                    'name_fr'  => 'Annulé',
                 ],
             ],
             'process-step' => [
@@ -117,8 +174,8 @@ class StatesTableSeeder extends Seeder
                 ],
                 [
                     'name_key' => 'rejected',
-                    'name_en' => 'Requires Adjustments',
-                    'name_fr' => 'Nécessite des ajustements',
+                    'name_en'  => 'Requires Adjustments',
+                    'name_fr'  => 'Nécessite des ajustements',
                 ],
                 [
                     'name_key' => 'done',

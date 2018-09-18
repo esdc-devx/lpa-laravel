@@ -12,7 +12,8 @@
         "itsgoingd/clockwork": "2.3",
         "laravel/framework": "5.6.38",
         "laravel/passport": "6.0.7",
-        "laravel/tinker": "1.0.7"
+        "laravel/tinker": "1.0.7",
+        "nanigans/single-table-inheritance": "0.8.2"
     },
     "require-dev": {
         "filp/whoops": "2.2.1",

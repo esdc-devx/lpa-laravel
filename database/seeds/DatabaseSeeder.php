@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             UserTableSeeder::class,
             OrganizationalUnitTableSeeder::class,
             StatesTableSeeder::class,
-            ProjectTableSeeder::class,
             ProcessProjectApprovalSeeder::class,
             RequestSourceTableSeeder::class,
             PotentialSolutionTypeTableSeeder::class,
@@ -34,6 +33,8 @@ class DatabaseSeeder extends Seeder
             RiskProbabilityLevelTableSeeder::class,
             ProcessFormDecisionTableSeeder::class,
             LearningProductTypeTableSeeder::class,
+            ProjectTableSeeder::class,
+            LearningProductTableSeeder::class,
         ]);
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
