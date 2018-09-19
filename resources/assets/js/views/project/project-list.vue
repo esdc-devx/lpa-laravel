@@ -110,12 +110,6 @@
         this.headerClick(col, e);
       },
 
-      scrollToTop() {
-        document.querySelectorAll('.el-main')[0].scrollTop = 0;
-        // IE11 scroll to top
-        document.querySelectorAll('.content-wrap')[0].scrollTop = 0
-      },
-
       async triggerLoadProjects() {
         await this.showMainLoading();
         try {
@@ -160,10 +154,6 @@
 <style lang="scss">
   @import '~@sass/abstracts/vars';
   .project-list {
-    .el-table__row {
-      cursor: pointer;
-    }
-
     .el-tag {
       height: auto;
       white-space: normal;

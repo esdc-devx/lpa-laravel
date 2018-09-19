@@ -21,7 +21,8 @@ export default {
         name: ''
       },
       current_editor: {}
-    }
+    },
+    viewingHistory: []
   },
 
   getters: {
@@ -35,6 +36,10 @@ export default {
 
     viewingFormInfo(state) {
       return state.viewingFormInfo;
+    },
+
+    viewingHistory(state) {
+      return state.viewingHistory;
     }
   },
 
@@ -49,6 +54,12 @@ export default {
       let response = await ProcessAPI.getInstance(processId);
       commit('setViewing', response.data.data.process_instance);
       return response.data.data;
+    },
+
+    async loadHistory({ commit }, { entityType, entityId }) {
+      let response = await ProcessAPI.getHistory(entityType, entityId);
+      commit('setViewingHistory', response.data.data.process_instances);
+      return response.data.data.process_instances;
     },
 
     async loadInstanceForm({ commit }, formId) {
@@ -140,6 +151,11 @@ export default {
     setViewingFormInfo(state, viewingFormInfo) {
       viewingFormInfo = viewingFormInfo || state.viewingFormInfo;
       state.viewingFormInfo = viewingFormInfo;
+    },
+
+    setViewingHistory(state, viewingHistory) {
+      viewingHistory = viewingHistory || state.viewingHistory;
+      state.viewingHistory = viewingHistory;
     },
 
     setCurrentEditor(state, currentEditor) {
