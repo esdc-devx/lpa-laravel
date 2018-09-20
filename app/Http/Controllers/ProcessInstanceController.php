@@ -13,7 +13,7 @@ class ProcessInstanceController extends APIController
      */
     public function index()
     {
-        $processInstances = ProcessInstance::with('definition', 'state');
+        $processInstances = ProcessInstance::with('definition', 'state', 'createdBy', 'updatedBy');
 
         // Filter on entity type.
         if ($entityType = request()->get('entity_type')) {

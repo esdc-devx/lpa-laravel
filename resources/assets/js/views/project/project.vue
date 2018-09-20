@@ -36,33 +36,42 @@
             <data-tables
               ref="table"
               :search-def="{show: false}"
-              :data="normalizedList"
+              :data="dataTables.processesHistory.normalizedList"
               :pagination-def="paginationDef"
               :custom-filters="customFilters"
               @filter-change="onFilterChange"
-              @current-page-change="scrollToTop"
               @row-click="viewProcess"
               :sort-method="$helpers.localeSort">
               <el-table-column
                 prop="definition.name"
                 sortable="custom"
-                :filters="getColumnFilters(this.normalizedList, 'name')"
+                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'name')"
                 :label="trans('entities.general.name')">
               </el-table-column>
               <el-table-column
                 prop="created_at"
                 sortable="custom"
                 :label="trans('entities.process.started')">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.created_at }}</span>
+                  <br>
+                  <span>{{ scope.row.created_by.name }}</span>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="updated_at"
                 sortable="custom"
                 :label="trans('entities.general.updated')">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.updated_at }}</span>
+                  <br>
+                  <span>{{ scope.row.updated_by.name }}</span>
+                </template>
               </el-table-column>
               <el-table-column
                 prop="state"
                 sortable="custom"
-                :filters="getColumnFilters(this.normalizedList, 'state')"
+                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'state')"
                 :label="trans('entities.general.status')">
               </el-table-column>
             </data-tables>
@@ -79,7 +88,6 @@
   import EventBus from '@/event-bus.js';
   import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
-  import HttpStatusCodes from '@axios/http-status-codes';
   import ProcessCurrentBar from '@components/process-current-bar.vue';
   import ProjectInfo from '@components/project-info.vue';
 
@@ -109,8 +117,14 @@
     data() {
       return {
         processDefinitionPermissions: {},
-        normalizedList: [],
-        normalizedListAttrs: ['id', 'entity_id', 'definition.name', 'created_at', 'updated_at', 'state.name']
+        dataTables: {
+          processesHistory: {
+            normalizedList: [],
+            normalizedListAttrs: [
+              'id', 'entity_id', 'definition.name', 'created_at', 'updated_at', 'created_by', 'updated_by', 'state.name'
+            ]
+          }
+        }
       };
     },
 
@@ -126,7 +140,6 @@
       }),
 
       viewProcess(process) {
-        this.scrollToTop();
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
@@ -185,8 +198,8 @@
           await this.loadProcessDefinitions('project');
           await this.loadProcessHistory({ entityType: 'project', entityId: projectId });
 
-          this.normalizedList = _.map(this.viewingHistory, process => {
-            let normProcess = _.pick(process, this.normalizedListAttrs);
+          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
+            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
             normProcess.state = normProcess.state.name;
             normProcess.name = normProcess.definition.name;
             return normProcess;

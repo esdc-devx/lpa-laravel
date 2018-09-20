@@ -154,8 +154,7 @@ export default {
     },
 
     setViewingHistory(state, viewingHistory) {
-      viewingHistory = viewingHistory || state.viewingHistory;
-      state.viewingHistory = viewingHistory;
+      state.viewingHistory = viewingHistory || state.viewingHistory;
     },
 
     setCurrentEditor(state, currentEditor) {
