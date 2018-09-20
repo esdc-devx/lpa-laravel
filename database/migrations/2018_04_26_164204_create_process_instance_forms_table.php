@@ -26,9 +26,9 @@ class CreateProcessInstanceFormsTable extends Migration
 
             $table->referenceOn('process_form_id', 'process_forms');
             $table->referenceOn('process_instance_step_id', 'process_instance_steps')->onDelete('cascade');
-            $table->referenceOn('state_id', 'states')->onDelete('set null');
-            $table->referenceOn('organizational_unit_id', 'organizational_units')->onDelete('set null');
-            $table->referenceOn('current_editor', 'users')->onDelete('set null');
+            $table->referenceOn('state_id', 'states');
+            $table->referenceOn('organizational_unit_id', 'organizational_units');
+            $table->referenceOn('current_editor', 'users');
         });
     }
 

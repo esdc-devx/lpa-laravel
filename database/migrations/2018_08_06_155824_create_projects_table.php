@@ -30,13 +30,13 @@ class CreateProjectsTable extends Migration
             $table->timestamps();
 
             // Foreign keys.
-            $table->referenceOn('organizational_unit_id', 'organizational_units')->onDelete('set null');
-            $table->referenceOn('state_id', 'states')->onDelete('set null');
-            $table->referenceOn('process_instance_id', 'process_instances')->onDelete('set null');
-            $table->referenceOn('business_case_id', 'business_cases')->onDelete('set null');
-            $table->referenceOn('business_case_assessment_id', 'business_case_assessments')->onDelete('set null');
-            $table->referenceOn('architecture_plan_id', 'architecture_plans')->onDelete('set null');
-            $table->referenceOn('architecture_plan_assessment_id', 'architecture_plan_assessments')->onDelete('set null');
+            $table->referenceOn('organizational_unit_id', 'organizational_units');
+            $table->referenceOn('state_id', 'states');
+            $table->referenceOn('process_instance_id', 'process_instances');
+            $table->referenceOn('business_case_id', 'business_cases');
+            $table->referenceOn('business_case_assessment_id', 'business_case_assessments');
+            $table->referenceOn('architecture_plan_id', 'architecture_plans');
+            $table->referenceOn('architecture_plan_assessment_id', 'architecture_plan_assessments');
         });
     }
 
