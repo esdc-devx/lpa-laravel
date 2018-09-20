@@ -14,6 +14,10 @@ export default {
     return axios.get(`process-instances/${entityId}`);
   },
 
+  getHistory(entityType, entityId) {
+    return axios.get(`process-instances/?entity_type=${entityType}&entity_id=${entityId}`);
+  },
+
   getInstanceForm(formId) {
     return axios.get(`process-instance-forms/${formId}`);
   },

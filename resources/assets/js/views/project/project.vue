@@ -28,6 +28,57 @@
         </el-card>
       </el-col>
     </el-row>
+    <el-row>
+      <el-col>
+        <el-tabs type="border-card">
+          <el-tab-pane>
+            <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
+            <data-tables
+              ref="table"
+              :search-def="{show: false}"
+              :data="dataTables.processesHistory.normalizedList"
+              :pagination-def="paginationDef"
+              :custom-filters="customFilters"
+              @filter-change="onFilterChange"
+              @row-click="viewProcess"
+              :sort-method="$helpers.localeSort">
+              <el-table-column
+                prop="definition.name"
+                sortable="custom"
+                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'name')"
+                :label="trans('entities.general.name')">
+              </el-table-column>
+              <el-table-column
+                prop="created_at"
+                sortable="custom"
+                :label="trans('entities.process.started')">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.created_at }}</span>
+                  <br>
+                  <span>{{ scope.row.created_by.name }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="updated_at"
+                sortable="custom"
+                :label="trans('entities.general.updated')">
+                <template slot-scope="scope">
+                  <span>{{ scope.row.updated_at }}</span>
+                  <br>
+                  <span>{{ scope.row.updated_by.name }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="state"
+                sortable="custom"
+                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'state')"
+                :label="trans('entities.general.status')">
+              </el-table-column>
+            </data-tables>
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -35,9 +86,8 @@
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
-
-  import HttpStatusCodes from '@axios/http-status-codes';
-
+  import PageUtils from '@mixins/page/utils.js';
+  import TableUtils from '@mixins/table/utils.js';
   import ProcessCurrentBar from '@components/process-current-bar.vue';
   import ProjectInfo from '@components/project-info.vue';
 
@@ -46,6 +96,8 @@
   export default {
     name: 'project',
 
+    mixins: [ PageUtils, TableUtils ],
+
     components: { ProcessCurrentBar, ProjectInfo },
 
     computed: {
@@ -53,7 +105,8 @@
         language: 'language',
         hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
-        definitions: `processes/definitions`
+        definitions: `processes/definitions`,
+        viewingHistory: 'processes/viewingHistory'
       }),
 
       canBeVisible() {
@@ -63,7 +116,15 @@
 
     data() {
       return {
-        processDefinitionPermissions: {}
+        processDefinitionPermissions: {},
+        dataTables: {
+          processesHistory: {
+            normalizedList: [],
+            normalizedListAttrs: [
+              'id', 'entity_id', 'definition.name', 'created_at', 'updated_at', 'created_by', 'updated_by', 'state.name'
+            ]
+          }
+        }
       };
     },
 
@@ -74,8 +135,13 @@
         loadProject: `${namespace}/loadProject`,
         canStartProcess: `${namespace}/canStartProcess`,
         loadProcessDefinitions: `processes/loadDefinitions`,
-        startProcess: `processes/start`
+        startProcess: `processes/start`,
+        loadProcessHistory: 'processes/loadHistory'
       }),
+
+      viewProcess(process) {
+        this.$router.push(`${process.entity_id}/process/${process.id}`);
+      },
 
       triggerStartProcess(processName, processNameKey) {
         // confirm the intention to start a process first
@@ -130,6 +196,15 @@
             await this.loadProject(projectId);
           }
           await this.loadProcessDefinitions('project');
+          await this.loadProcessHistory({ entityType: 'project', entityId: projectId });
+
+          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
+            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
+            normProcess.state = normProcess.state.name;
+            normProcess.name = normProcess.definition.name;
+            return normProcess;
+          });
+
           this.getProcessDefinitionPermissions();
         } catch (e) {
           // Exception handled by interceptor
@@ -218,6 +293,19 @@
           }
         }
       }
+    }
+
+    .el-tabs__item {
+      font-weight: bold;
+    }
+
+    .el-pagination {
+      padding: 20px;
+      margin-bottom: 0;
+    }
+
+    .sc-table .pagination-wrap {
+      margin-top: 0;
     }
   }
 </style>

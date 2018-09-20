@@ -8,4 +8,5 @@ return [
     'status'  => 'Process Status',
     'view'    => 'View Process',
     'step'    => 'Step :num',
+    'history' => 'Processes History',
 ];
