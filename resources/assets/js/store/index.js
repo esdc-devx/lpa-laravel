@@ -13,6 +13,7 @@ import { state, getters, actions, mutations } from './root';
 import projects from './modules/projects.js';
 import processes from './modules/processes.js';
 import users from './modules/users.js';
+import learningProducts from './modules/learning-products.js';
 
 Vue.use(Vuex);
 
@@ -24,7 +25,8 @@ export default new Vuex.Store({
   modules: {
     projects,
     processes,
-    users
+    users,
+    learningProducts
   },
   // https://vuex.vuejs.org/en/strict.html
   strict: process.env.NODE_ENV !== 'production'

@@ -2,24 +2,25 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Config from '@/config';
 
-import Home               from '@/views/home.vue';
-import Profile            from '@/views/profile.vue';
-import ProjectList        from '@/views/project/project-list.vue';
-import ProjectView        from '@/views/project/project.vue';
-import ProjectEdit        from '@/views/project/project-edit.vue';
-import ProjectCreate      from '@/views/project/project-create.vue';
-import ProjectProcess     from '@/views/project/project-process.vue';
-import ProjectProcessForm from '@/views/project/project-process-form.vue';
-import AdminDashboard     from '@/views/admin/dashboard.vue';
-import UserList           from '@/views/admin/user-list.vue';
-import UserCreate         from '@/views/admin/user-create.vue';
-import UserEdit           from '@/views/admin/user-edit.vue';
-import NotFound           from '@/views/errors/404.vue';
-import Forbidden          from '@/views/errors/403.vue';
+import Home                 from '@/views/home.vue';
+import Profile              from '@/views/profile.vue';
+import ProjectList          from '@/views/project/project-list.vue';
+import ProjectView          from '@/views/project/project.vue';
+import ProjectEdit          from '@/views/project/project-edit.vue';
+import ProjectCreate        from '@/views/project/project-create.vue';
+import ProjectProcess       from '@/views/project/project-process.vue';
+import ProjectProcessForm   from '@/views/project/project-process-form.vue';
+import LearningProductList  from '@/views/learning-product/learning-product-list.vue';
+import AdminDashboard       from '@/views/admin/dashboard.vue';
+import UserList             from '@/views/admin/user-list.vue';
+import UserCreate           from '@/views/admin/user-create.vue';
+import UserEdit             from '@/views/admin/user-edit.vue';
+import NotFound             from '@/views/errors/404.vue';
+import Forbidden            from '@/views/errors/403.vue';
 
-import LoadStatus         from '@/store/load-status-constants';
-import store              from '@/store/';
-import HttpStatusCodes    from '@axios/http-status-codes';
+import LoadStatus           from '@/store/load-status-constants';
+import store                from '@/store/';
+import HttpStatusCodes      from '@axios/http-status-codes';
 
 Vue.use(Router);
 
@@ -292,6 +293,17 @@ const routes = [
           throw e;
         }
       }
+    }
+  },
+  {
+    path: '/:lang/learning-products',
+    name: 'learning-products',
+    component: LearningProductList,
+    meta: {
+      title() {
+        return this.trans('base.navigation.learning_products');
+      },
+      breadcrumbs: () => 'learning-products'
     }
   },
   {

@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Database;
 
 use App\Console\BaseCommand;
+use PopulateSeeder;
 
 class Populate extends BaseCommand
 {
@@ -26,9 +27,9 @@ class Populate extends BaseCommand
      */
     public function handle()
     {
-        $this->info('Populating fake data...');
-        $this->call('db:seed', [
-            '--class' => 'ProjectTableSeeder',
-        ]);
+        $this->newline('Populating fake data...');
+
+        // Run PopulateSeeder class to create fake data.
+        resolve(PopulateSeeder::class)->run();
     }
 }
