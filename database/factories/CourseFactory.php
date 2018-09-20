@@ -31,6 +31,8 @@ $factory->define(Course::class, function (Faker $faker) {
         'sub_type_id'            => $subTypeIds->random(),
         'organizational_unit_id' => $faker->randomLearningProductOwnerId(),
         'state_id'               => $stateId,
+        'primary_contact'        => $faker->randomUserId(),
+        'manager'                => $faker->randomUserId(),
         'created_by'             => $faker->randomUserId(),
         'updated_by'             => $faker->randomUserId(),
     ];

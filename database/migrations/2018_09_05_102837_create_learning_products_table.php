@@ -23,6 +23,8 @@ class CreateLearningProductsTable extends Migration
             $table->unsignedInteger('project_id')->nullable();
             $table->unsignedInteger('state_id')->nullable();
             $table->unsignedInteger('process_instance_id')->unique()->nullable();
+            $table->unsignedInteger('primary_contact')->nullable();
+            $table->unsignedInteger('manager')->nullable();
 
             // Audit and timestamps.
             $table->auditable();
@@ -36,6 +38,8 @@ class CreateLearningProductsTable extends Migration
             $table->referenceOn('project_id', 'projects')->onDelete('cascade');
             $table->referenceOn('type_id', 'learning_product_types');
             $table->referenceOn('sub_type_id', 'learning_product_types');
+            $table->referenceOn('primary_contact', 'users');
+            $table->referenceOn('manager', 'users');
         });
     }
 
