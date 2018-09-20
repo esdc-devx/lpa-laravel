@@ -17,7 +17,6 @@ class DatabaseSeeder extends Seeder
             UserTableSeeder::class,
             OrganizationalUnitTableSeeder::class,
             StatesTableSeeder::class,
-            ProjectTableSeeder::class,
             ProcessProjectApprovalSeeder::class,
             RequestSourceTableSeeder::class,
             PotentialSolutionTypeTableSeeder::class,
