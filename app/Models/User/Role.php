@@ -3,7 +3,6 @@
 namespace App\Models\User;
 
 use App\Models\ListableModel;
-use App\Models\Traits\UsesKeyNameField;
 
 class Role extends ListableModel
 {

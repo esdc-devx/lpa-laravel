@@ -9,7 +9,7 @@ class Initialize extends BaseCommand
 {
     use ExecutesDatabaseScripts;
 
-    protected $signature = 'camunda:init {--yes}';
+    protected $signature = 'camunda:init {--force}';
     protected $description = 'Initialize Camunda database.';
     protected $camunda;
 
@@ -31,7 +31,7 @@ class Initialize extends BaseCommand
      */
     public function handle()
     {
-        if ($this->option('yes') || $this->confirm('You are about to initialize Camunda database, do you wish to continue?')) {
+        if ($this->option('force') || $this->confirm('You are about to initialize Camunda database, do you wish to continue?')) {
             // Ensure no tables exists in database.
             $this->dropDatabaseTables();
 

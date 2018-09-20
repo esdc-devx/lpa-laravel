@@ -4,7 +4,10 @@
   .cell {
     word-break: normal;
   }
+  .el-table__row {
+    cursor: pointer;
+  }
   th, td {
-    padding: 6px;
+    padding: 10px;
   }
 }

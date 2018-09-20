@@ -23,11 +23,15 @@ Route::middleware('auth:api')->group(function () {
     // Project resource routes.
     Route::resource('projects', 'ProjectController');
 
+    // Learning Products resource routes.
+    Route::resource('learning-products', 'LearningProductController');
+
     // Process definition routes.
     Route::get('process-definitions/{entityType}', 'ProcessDefinitionController@show')->name('process-definitions.show');
     Route::post('process-definitions/{processDefinition}', 'ProcessDefinitionController@startProcess')->name('process-definitions.start-process');
 
     // Process instance routes.
+    Route::get('process-instances', 'ProcessInstanceController@index')->name('process-instances.index');
     Route::get('process-instances/{id}', 'ProcessInstanceController@show')->name('process-instances.show');
     Route::put('process-instances/{id}/cancel', 'ProcessInstanceController@cancel')->name('process-instances.cancel');
 

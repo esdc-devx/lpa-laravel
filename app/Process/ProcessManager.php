@@ -99,7 +99,7 @@ class ProcessManager {
 
                 // Create process instance form entries from process definition.
                 foreach ($step['forms'] as $form) {
-                    $processInstanceForm = ProcessInstanceForm::create([                        
+                    $processInstanceForm = ProcessInstanceForm::create([
                         'process_form_id'          => $form->id,
                         'process_instance_step_id' => $processInstanceStep->id,
                         'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
@@ -331,6 +331,9 @@ class ProcessManager {
      */
     protected function resolveStates()
     {
+        // Make sure previous states are cleared.
+        $this->processStates = [];
+
         // Retrieve all states and re-key collection for easier reference during mapping.
         $states = State::all()->keyBy(function($item) {
             return $item->entity_type . '.' . $item->name_key;
@@ -378,10 +381,11 @@ class ProcessManager {
      */
     protected function resolveTasks()
     {
+        // Make sure previous tasks are cleared.
+        $this->processTasks = [];
+
         // Retrieve all organizational units and re-key collection for easier reference during mapping.
-        $organizationalUnits = OrganizationalUnit::all()->keyBy(function ($item) {
-            return $item->name_key;
-        });
+        $organizationalUnits = OrganizationalUnit::all()->keyBy('name_key');
 
         // Get all tasks for current process.
         $tasks = $this->camunda->tasks()->for($this->processInstance);

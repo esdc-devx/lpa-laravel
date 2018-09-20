@@ -5,7 +5,7 @@ export default {
   namespaced: true,
 
   state: {
-    // project being viewed
+    // learning product being viewed
     viewing: {
       name: ''
     },

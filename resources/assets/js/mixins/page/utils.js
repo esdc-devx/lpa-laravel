@@ -1,5 +1,11 @@
 export default {
   methods: {
+    scrollToTop() {
+      document.querySelectorAll('.el-main')[0].scrollTop = 0;
+      // IE11 scroll to top
+      document.querySelectorAll('.content-wrap')[0].scrollTop = 0
+    },
+
     goToPage(routeName) {
       this.$helpers.debounceAction(() => {
         let currentParams = this.$router.currentRoute.params;

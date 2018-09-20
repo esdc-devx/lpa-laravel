@@ -8,4 +8,5 @@ return [
     'status'  => 'État du processus',
     'view'    => 'Voir le processus',
     'step'    => 'Étape :num',
+    'history' => 'Historique des processus',
 ];
