@@ -19,7 +19,8 @@ class Project extends BaseModel
     use SoftDeletes, UsesUserAudit, HasProcesses;
 
     protected $hidden = [
-        'organizational_unit_id', 'state_id', 'business_case_id', 'process_instance_id'
+        'organizational_unit_id', 'state_id', 'process_instance_id',
+        'business_case_id', 'business_case_assessment_id', 'architecture_plan_id', 'architecture_plan_assessment_id',
     ];
 
     protected $dates = [
