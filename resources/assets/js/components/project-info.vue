@@ -137,10 +137,9 @@
         }
       }
       dl {
-        width: 25%;
+        flex-basis: 25%;
         &:first-of-type {
           flex-basis: 100%;
-          margin-bottom: 10px;
         }
       }
 

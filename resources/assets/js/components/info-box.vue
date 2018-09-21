@@ -32,6 +32,8 @@
       dl {
         padding-right: 20px;
         margin-top: 0px;
+        margin-bottom: 10px;
+        flex-grow: 0;
         box-sizing: border-box;
         dt {
           font-weight: bold;

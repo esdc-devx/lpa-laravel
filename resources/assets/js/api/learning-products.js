@@ -5,4 +5,8 @@ export default {
   getLearningProducts() {
     return axios.get(`learning-products`);
   },
+
+  getLearningProduct(id) {
+    return axios.get(`learning-products/${id}`);
+  },
 };

@@ -10,7 +10,7 @@ export default {
       name: ''
     },
     all: [],
-    organizationalUnits: []
+    //organizationalUnits: []
   },
 
   getters: {
@@ -22,16 +22,34 @@ export default {
       return state.viewing;
     },
 
-    organizationalUnits(state) {
-      return state.organizationalUnits;
-    }
+    // organizationalUnits(state) {
+    //   return state.organizationalUnits;
+    // }
   },
 
   actions: {
     async loadLearningProducts({ commit, dispatch }) {
       let response = await LearningProductAPI.getLearningProducts();
       commit('setLearningProducts', response.data.data.learning_products);
-    }
+    },
+
+    async loadLearningProduct({ commit }, id) {
+      let response = await LearningProductAPI.getLearningProduct(id);
+      commit('setViewing', response.data.data.learning_product);
+      return response.data.data;
+    },
+
+    // async canEditLearningProduct({ commit }, id) {
+    //   //let response = await LearningProductAPI.canEdit(id);
+    //   //return response.data.data.allowed;
+    //   return false;
+    // },
+
+    // async canDeleteLearningProduct({ commit }, id) {
+    //   // let response = await LearningProductAPI.canDelete(id);
+    //   // return response.data.data.allowed;
+    //   return false;
+    // },
   },
 
   mutations: {
@@ -43,8 +61,8 @@ export default {
       state.viewing = learningProduct;
     },
 
-    setOrganizationalUnits(state, organizationalUnits) {
-      state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
-    }
+    // setOrganizationalUnits(state, organizationalUnits) {
+    //   state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
+    // }
   }
 };
