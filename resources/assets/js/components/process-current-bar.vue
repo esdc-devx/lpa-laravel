@@ -1,7 +1,7 @@
 <template>
   <div class="process-current-bar">
     <ul class="process-current-bar-list">
-      <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans(`entities['${entityTypeSnakeCase}'].status`) }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.state.name }}</span></li>
+      <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans(`entities.${type}.status`) }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.state.name }}</span></li>
       <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans('entities.process.current') }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.current_process ? dataProp.current_process.definition.name : trans('entities.general.na') }}</span></li>
     </ul>
     <div class="controls">
@@ -22,12 +22,9 @@
       dataProp() {
         return this.data;
       },
-      entityTypeSnakeCase() {
-        return _.snakeCase(this.type);
-      },
       entityTypeCamelCase() {
         return _.camelCase(this.type);
-      },
+      }
     },
 
     methods: {

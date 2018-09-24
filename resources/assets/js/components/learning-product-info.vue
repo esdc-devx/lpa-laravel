@@ -18,7 +18,7 @@
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.type') }}</dt>
-        <dd>{{ learningProductProp.type.name }} {{ listTokenSeparator }} {{ learningProductProp.sub_type.name }}</dd>
+        <dd>{{ learningProductProp.type.name, learningProductProp.sub_type.name | learningProductTypeSubTypeFilter }}</dd>
       </dl>
       <dl>
         <dt>{{ $tc('entities.general.organizational_units') }}</dt>
@@ -50,7 +50,6 @@
   import { mapGetters, mapActions } from 'vuex';
   import InfoBox from '@components/info-box.vue';
   import PageUtils from '@mixins/page/utils.js';
-  import Constants from '@/constants';
 
   let namespace = 'learningProducts';
 
@@ -65,7 +64,6 @@
 
     data() {
       return {
-        listTokenSeparator: Constants.LIST_TOKEN_SEPARATOR,
         // rights: {
         //   canEdit: false,
         //   canDelete: false
@@ -150,6 +148,7 @@
       }
       dl {
         flex-basis: 25%;
+        max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
       }
 
       .el-card__header > div {

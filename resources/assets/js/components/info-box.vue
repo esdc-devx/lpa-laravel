@@ -22,19 +22,17 @@
     .el-card__body {
       display: flex;
       flex-flow: wrap;
+      padding: 15px 10px;
+      align-content: space-between;
       > * {
         display: flex;
         flex-direction: column;
-        flex: 1;
         justify-content: flex-start;
-        margin-bottom: 0;
+        padding: 5px 10px;
+        margin: 0px;
+        box-sizing: border-box;
       }
       dl {
-        padding-right: 20px;
-        margin-top: 0px;
-        margin-bottom: 10px;
-        flex-grow: 0;
-        box-sizing: border-box;
         dt {
           font-weight: bold;
         }

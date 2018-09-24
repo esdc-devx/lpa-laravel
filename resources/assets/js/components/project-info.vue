@@ -138,8 +138,10 @@
       }
       dl {
         flex-basis: 25%;
+        max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
         &:first-of-type {
           flex-basis: 100%;
+          max-width: 100%;
         }
       }
 

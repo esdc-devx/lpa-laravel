@@ -13,6 +13,7 @@ Vue.use(VueI18n);
  * @return {String}        Return the formatted string
  */
 Vue.prototype.trans = (string, args) => {
+  string = string.replace('-', '_'); // Standardized resource path to snake-case while keeping the dot separators between tokens.
   let value = _.get(window.i18n.messages[window.i18n.locale], string, string);
 
   if (string === value) {

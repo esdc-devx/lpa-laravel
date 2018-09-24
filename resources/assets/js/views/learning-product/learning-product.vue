@@ -132,7 +132,7 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadLearningProduct: `${namespace}/loadProject`,
+        loadLearningProduct: `${namespace}/loadLearningProduct`,
         // canStartProcess: `${namespace}/canStartProcess`,
         // loadProcessDefinitions: `processes/loadDefinitions`,
         // startProcess: `processes/start`,
@@ -193,7 +193,7 @@
           // @note: project info is loaded in the router's beforeEnter
           // do not reload the project info on page load
           if (!isInitialLoad) {
-            await this.loadlearningProduct(learningProductId);
+            await this.loadLearningProduct(learningProductId);
           }
           // await this.loadProcessDefinitions('learning-product');
           // await this.loadProcessHistory({ entityType: 'learning-product', entityId: learningProductId });
