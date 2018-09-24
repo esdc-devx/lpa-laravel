@@ -132,7 +132,7 @@
       ...mapActions({
         showMainLoading: 'showMainLoading',
         hideMainLoading: 'hideMainLoading',
-        loadLearningProduct: `${namespace}/loadLearningProduct`,
+        loadLearningProduct: `${namespace}/loadLearningProduct`
         // canStartProcess: `${namespace}/canStartProcess`,
         // loadProcessDefinitions: `processes/loadDefinitions`,
         // startProcess: `processes/start`,
