@@ -141,7 +141,7 @@
             let normLearningProduct = _.pick(learningProduct, this.normalizedListAttrs);
             normLearningProduct.organizational_unit = normLearningProduct.organizational_unit.name;
             normLearningProduct.state = normLearningProduct.state.name;
-            normLearningProduct.type = normLearningProduct.type.name + " / " + normLearningProduct.sub_type.name;
+            normLearningProduct.type = this.$options.filters.learningProductTypeSubTypeFilter(normLearningProduct.type.name, normLearningProduct.sub_type.name);
             // @todo: change to real property instead
             normLearningProduct.current_process = normLearningProduct.current_process && normLearningProduct.current_process.definition ? normLearningProduct.current_process.definition.name : this.trans('entities.general.na');
             return normLearningProduct;

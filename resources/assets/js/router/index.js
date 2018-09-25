@@ -11,6 +11,7 @@ import ProjectCreate        from '@/views/project/project-create.vue';
 import ProjectProcess       from '@/views/project/project-process.vue';
 import ProjectProcessForm   from '@/views/project/project-process-form.vue';
 import LearningProductList  from '@/views/learning-product/learning-product-list.vue';
+import LearningProductView  from '@/views/learning-product/learning-product.vue';
 import AdminDashboard       from '@/views/admin/dashboard.vue';
 import UserList             from '@/views/admin/user-list.vue';
 import UserCreate           from '@/views/admin/user-create.vue';
@@ -304,6 +305,29 @@ const routes = [
         return this.trans('base.navigation.learning_products');
       },
       breadcrumbs: () => 'learning-products'
+    }
+  },
+  {
+    path: '/:lang/learning-products/:learningProductId(\\d+)',
+    name: 'learning-product',
+    component: LearningProductView,
+    meta: {
+      title: () => `${store.getters['learningProducts/viewing'].name}`,
+      breadcrumbs: () => 'learning-products/learning-product'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        // @note: corresponding hideMainLoading will be done
+        // in the component itself
+        store.dispatch('showMainLoading');
+        await store.dispatch('learningProducts/loadLearningProduct', to.params.learningProductId);
+        next();
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
     }
   },
   {

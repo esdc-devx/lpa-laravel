@@ -1,7 +1,7 @@
 <template>
   <div class="process-current-bar">
     <ul class="process-current-bar-list">
-      <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans(`entities['${entityType}'].status`) }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.state.name }}</span></li>
+      <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans(`entities.${type}.status`) }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.state.name }}</span></li>
       <li class="process-current-bar-list-item"><span class="process-current-bar-list-item-label">{{ trans('entities.process.current') }}</span> <span class="process-current-bar-list-item-value">{{ dataProp.current_process ? dataProp.current_process.definition.name : trans('entities.general.na') }}</span></li>
     </ul>
     <div class="controls">
@@ -11,6 +11,8 @@
 </template>
 
 <script>
+  import _ from 'lodash';
+
   export default {
     name: 'process-current-bar',
 
@@ -20,14 +22,14 @@
       dataProp() {
         return this.data;
       },
-      entityType() {
-        return this.type;
+      entityTypeCamelCase() {
+        return _.camelCase(this.type);
       }
     },
 
     methods: {
       continueToProcess(processId) {
-        let id = this.$route.params[`${this.entityType}Id`];
+        let id = this.$route.params[`${this.entityTypeCamelCase}Id`];
         this.$router.push(`${id}/process/${processId}`);
       }
     }

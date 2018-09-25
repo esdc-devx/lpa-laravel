@@ -286,7 +286,10 @@
         margin: 0;
         display: inline-block;
       }
-
+      dl, .controls {
+        flex-basis: 20%;
+        max-width: 20%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
+      }  
       .controls {
         margin-bottom: 0;
         align-items: flex-end;

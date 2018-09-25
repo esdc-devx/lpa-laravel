@@ -50,7 +50,12 @@ class LearningProductController extends APIController
      */
     public function show(LearningProduct $learningProduct)
     {
-        //
+        return $this->respond([
+            'learning_product' => $learningProduct->load([
+                'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition', 'currentProcess.state',
+                'primaryContact', 'manager', 'createdBy', 'updatedBy',
+            ])
+        ]);
     }
 
     /**
