@@ -439,6 +439,8 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             await this.refreshData();
+          } else {
+            throw e;
           }
         }
       },
