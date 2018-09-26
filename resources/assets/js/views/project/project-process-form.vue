@@ -591,6 +591,13 @@
       margin-left: 10px;
     }
 
+    .info-box {
+      dl {
+        flex-basis: 25%;
+        max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
+      }  
+    }
+
     .el-tabs {
       position: absolute;
       // fixes the height of the tab list when there are less tabs than content
