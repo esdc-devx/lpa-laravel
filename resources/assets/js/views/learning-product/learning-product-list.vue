@@ -1,8 +1,8 @@
 <template>
   <div class="learning-product-list content">
-    <!-- <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
+    <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
-    </div> -->
+    </div>
 
     <data-tables
       ref="table"
