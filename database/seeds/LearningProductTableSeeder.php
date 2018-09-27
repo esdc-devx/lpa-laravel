@@ -20,14 +20,16 @@ class LearningProductTableSeeder extends Seeder
         // Fetch all project that were previously approved with their planned products.
         Project::whereState('approved')->with('architecturePlan.plannedProducts')->get()
             ->each(function ($project) {
-                // For each planned products, create a learning product.
+                // For each planned product types, create a random number of learning products.
                 $project->architecturePlan->plannedProducts->each(function ($product) use ($project) {
                     $productType = LearningProductType::find($product->type_id)->name_key;
-                    factory(entity_class($productType), $product->quantity)->create([
-                        'sub_type_id'            => $product->sub_type_id,
-                        'project_id'             => $project->id,
-                        'organizational_unit_id' => $project->organizational_unit_id,
-                    ]);
+                    if ($quantity = rand(0, $product->quantity)) {
+                        factory(entity_class($productType), $quantity)->create([
+                            'sub_type_id'            => $product->sub_type_id,
+                            'project_id'             => $project->id,
+                            'organizational_unit_id' => $project->organizational_unit_id,
+                        ]);
+                    }
                 });
             });
     }

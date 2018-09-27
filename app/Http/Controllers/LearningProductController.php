@@ -2,11 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LearningProductFormRequest;
 use App\Models\LearningProduct\LearningProduct;
+use App\Models\OrganizationalUnit;
+use App\Models\Project\Project;
+use App\Repositories\LearningProductRepository;
 use Illuminate\Http\Request;
 
 class LearningProductController extends APIController
 {
+    protected $learningProducts;
+
+    public function __construct(LearningProductRepository $learningProducts)
+    {
+        $this->learningProducts = $learningProducts;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,10 +25,12 @@ class LearningProductController extends APIController
      */
     public function index()
     {
+        $learningProducts = LearningProduct::with([
+            'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition'
+        ])->get();
+
         return $this->respond([
-            'learning_products' => LearningProduct::with([
-                'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition'
-            ])->get()
+            'learning_products' => $learningProducts,
         ]);
     }
 
@@ -28,18 +41,34 @@ class LearningProductController extends APIController
      */
     public function create()
     {
-        //
+        $this->authorize('create', LearningProduct::class);
+
+        // Get learning product owners organizational unit for user.
+        $organizationalUnits = OrganizationalUnit::getLearningProductOwnersFor(auth()->user());
+
+        // Fetch projects available for learning product creation.
+        $projects = Project::availableForLearningProductCreation()
+            ->map(function ($project) {
+                return $project->only(['id', 'name', 'organizational_unit_id', 'available_learning_product_types']);
+            })->values();
+
+        return $this->respond([
+            'projects'             => $projects,
+            'organizational_units' => $organizationalUnits,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  LearningProductFormRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(LearningProductFormRequest $request)
     {
-        //
+        return $this->respond(
+            $this->learningProducts->create($request->all())
+        );
     }
 
     /**

@@ -23,4 +23,24 @@ class OrganizationalUnit extends ListableModel
     {
         $query->where('owner', true);
     }
+
+    /**
+     * Get all learning product owners organizational units
+     * for a specific user.
+     *
+     * @param  App\Models\User\User $user
+     * @return Illuminate\Support\Collection
+     */
+    public static function getLearningProductOwnersFor($user)
+    {
+        // If user is admin, return all available choices.
+        if ($user->isAdmin()) {
+            return static::learningProductOwners()->get();
+        }
+
+        // Return organizational units of type owner for user.
+        return $user->organizationalUnits->filter(function ($organizationalUnit) {
+            return $organizationalUnit->owner == true;
+        });
+    }
 }
