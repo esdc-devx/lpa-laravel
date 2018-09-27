@@ -377,7 +377,8 @@
           });
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-            await this.refreshData();
+            this.discardChanges(true);
+            this.getRights();
             this.isSaving = false;
           } else {
             throw e;
@@ -438,7 +439,8 @@
           this.goToParentPage();
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-            await this.refreshData();
+            this.discardChanges(true);
+            this.getRights();
           }
         }
       },
