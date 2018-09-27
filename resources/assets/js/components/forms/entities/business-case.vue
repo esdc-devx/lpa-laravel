@@ -487,6 +487,8 @@
   import ElTreeWrap from '../el-tree-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
+  import ListsAPI from '@api/lists';
+
   export default {
     name: 'business-case',
 
@@ -546,20 +548,20 @@
 
       async fetch() {
         await this.showMainLoading();
-        let response = await axios.get('lists?include[]=request-source&include[]=potential-solution-type&include[]=government-priority&include[]=timeframe&include[]=community&include[]=departmental-benefit-type&include[]=learners-benefit-type&include[]=maintenance-fund&include[]=salary-fund&include[]=internal-resource&include[]=risk-type&include[]=risk-impact-level&include[]=risk-probability-level');
-        this.requestSourceList = response.data.data['request-source'];
-        this.governmentPrioritiesList = response.data.data['government-priority'];
-        this.potentialSolutionTypesList = response.data.data['potential-solution-type'];
-        this.timeframeList = response.data.data['timeframe'];
-        this.communitiesList = response.data.data['community'];
-        this.departmentalBenefitTypeList = response.data.data['departmental-benefit-type'];
-        this.learnersBenefitTypeList = response.data.data['learners-benefit-type'];
-        this.maintenanceFundList = response.data.data['maintenance-fund'];
-        this.salaryFundList = response.data.data['salary-fund'];
-        this.internalResourceList = response.data.data['internal-resource'];
-        this.riskTypeList = response.data.data['risk-type'];
-        this.impactLevelList = response.data.data['risk-impact-level'];
-        this.probabilityLevelList = response.data.data['risk-probability-level'];
+        let lists = await ListsAPI.getLists(['request-source','potential-solution-type', 'government-priority', 'timeframe', 'community', 'departmental-benefit-type', 'learners-benefit-type', 'maintenance-fund','salary-fund','internal-resource','risk-type','risk-impact-level','risk-probability-level']);
+        this.requestSourceList = lists['request-source'];
+        this.governmentPrioritiesList = lists['government-priority'];
+        this.potentialSolutionTypesList = lists['potential-solution-type'];
+        this.timeframeList = lists['timeframe'];
+        this.communitiesList = lists['community'];
+        this.departmentalBenefitTypeList = lists['departmental-benefit-type'];
+        this.learnersBenefitTypeList = lists['learners-benefit-type'];
+        this.maintenanceFundList = lists['maintenance-fund'];
+        this.salaryFundList = lists['salary-fund'];
+        this.internalResourceList = lists['internal-resource'];
+        this.riskTypeList = lists['risk-type'];
+        this.impactLevelList = lists['risk-impact-level'];
+        this.probabilityLevelList = lists['risk-probability-level'];
         await this.hideMainLoading();
       },
 
