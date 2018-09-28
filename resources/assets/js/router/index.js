@@ -102,9 +102,7 @@ function proceed(to, from, next) {
 function setLanguage(to) {
   let lang = to.params.lang;
   if (lang && lang !== store.getters.language) {
-    store.dispatch('setLanguage', lang).then(() => {
-      store.dispatch('hideMainLoading');
-    });
+    store.dispatch('setLanguage', lang);
   }
 }
 
@@ -176,9 +174,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         let canCreateProject = await store.dispatch('projects/canCreateProject');
         if (canCreateProject) {
           next();
@@ -203,9 +198,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         await store.dispatch('projects/loadProject', to.params.projectId);
         next();
       } catch (e) {
@@ -228,9 +220,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         let canEditProject = await store.dispatch(
           'projects/canEditProject',
           to.params.projectId
@@ -258,9 +247,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         await store.dispatch('projects/loadProject', to.params.projectId);
         await store.dispatch('processes/loadInstance', to.params.processId);
         next();
@@ -282,9 +268,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         await store.dispatch('projects/loadProject', to.params.projectId);
         await store.dispatch('processes/loadInstance', to.params.processId);
         await store.dispatch('processes/loadInstanceForm', to.params.formId);
@@ -318,9 +301,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         await store.dispatch('learningProducts/loadLearningProduct', to.params.learningProductId);
         next();
       } catch (e) {
@@ -403,9 +383,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         await store.dispatch('users/loadUserEditInfo', to.params.userId);
         next();
       } catch (e) {

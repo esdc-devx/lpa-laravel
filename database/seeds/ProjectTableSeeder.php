@@ -15,7 +15,7 @@ class ProjectTableSeeder extends Seeder
         Project::truncate();
 
         factory(Project::class, 50)->create()
-            ->take(5)->each(function($project) {
+            ->take(10)->each(function($project) {
                 // Complete Project Approval process for the first 5 projects.
                 ProcessFactory::startProcess('project-approval', $project)->complete();
             });

@@ -12,21 +12,6 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
-     * Get executed before each action.
-     *
-     * @param  User $user | Current user.
-     * @param  string $ability | Current action (update, create, delete, etc.).
-     * @return void
-     */
-    public function before($user, $ability)
-    {
-        // Deny any action if users is not admin.
-        if (! $user->isAdmin()) {
-            throw new InsufficientPrivilegesException();
-        }
-    }
-
-    /**
      * Determine whether the user can search models.
      *
      * @param  User $user
@@ -53,6 +38,10 @@ class UserPolicy
      * @return mixed
      */
     public function create(User $user) {
+        if (! $user->isAdmin()) {
+            throw new InsufficientPrivilegesException();
+        }
+
         return true;
     }
 
@@ -64,6 +53,10 @@ class UserPolicy
      * @return mixed
      */
     public function update(User $user, User $model) {
+        if (! $user->isAdmin()) {
+            throw new InsufficientPrivilegesException();
+        }
+
         // Prevent any update operations on system admin account.
         if (strcasecmp($model->username, config('auth.admin.username')) === 0) {
             throw new OperationDeniedException();
@@ -79,6 +72,10 @@ class UserPolicy
      * @return mixed
      */
     public function delete(User $user) {
+        if (! $user->isAdmin()) {
+            throw new InsufficientPrivilegesException();
+        }
+
         return true;
     }
 }

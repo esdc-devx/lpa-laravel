@@ -53,6 +53,7 @@
   import FormSectionGroup from '../form-section-group';
   import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
+  import ListsAPI from '@api/lists';
 
   export default {
     name: 'architecture-plan',
@@ -86,11 +87,6 @@
     },
 
     methods: {
-      ...mapActions([
-        'showMainLoading',
-        'hideMainLoading'
-      ]),
-
       onTypeChange(value) {
         let type = value[0];
         let subType = value[1];
@@ -104,10 +100,7 @@
       },
 
       async fetch() {
-        await this.showMainLoading();
-        let response = await axios.get('lists?include[]=learning-product-type');
-        this.typeList = response.data.data['learning-product-type'];
-        await this.hideMainLoading();
+        this.typeList = await ListsAPI.getList('learning-product-type');
       }
     },
 
@@ -116,9 +109,7 @@
     },
 
     async created() {
-      await this.showMainLoading();
       this.fetch();
-      await this.hideMainLoading();
     },
 
     mounted() {

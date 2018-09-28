@@ -104,8 +104,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         loadUsers: `${namespace}/loadUsers`
       }),
 
@@ -155,12 +153,10 @@
       },
 
       async fetch(page) {
-        await this.showMainLoading();
         this.$parent.$el.scrollTop = 0;
         page = _.isUndefined(page) ? this.currentPage : page;
         await this.loadUsers(page);
         this.parseUsers();
-        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {

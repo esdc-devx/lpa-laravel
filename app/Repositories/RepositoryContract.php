@@ -43,27 +43,18 @@ interface RepositoryContract
     /**
      * Get instance of model by column
      *
-     * @param  mixed $term search term
      * @param  string $column column to search
+     * @param  mixed $term search term
      */
-    public function getItemByColumn($term, $column = 'slug');
+    public function getItemByColumn($column, $term);
 
     /**
      * Get instance of model by column
      *
+     * @param  string $column column to search
      * @param  mixed $term search term
-     * @param  string $column column to search
      */
-    public function getCollectionByColumn($term, $column = 'slug');
-
-    /**
-     * Get item by id or column
-     *
-     * @param  mixed $term id or term
-     * @param  string $column column to search
-     */
-    public function getActively($term, $column = 'slug');
-
+    public function getCollectionByColumn($column, $term);
 
     /**
      * Create new using mass assignment

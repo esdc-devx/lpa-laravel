@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Project\Project;
 use App\Policies\ProjectPolicy;
+use App\Rules\UserBelongsToLearningProductOwnerOrganizationalUnit;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -36,23 +37,7 @@ class ProjectFormRequest extends FormRequest
     {
         return [
             'name'                => 'required|max:175|unique:projects,name,' . $this->project,
-            'organizational_unit' => 'required|exists:organizational_units,id|in:' . $this->validOrganizationalUnitChoices(),
+            'organizational_unit' => ['required', new UserBelongsToLearningProductOwnerOrganizationalUnit],
         ];
-    }
-
-    /**
-     * Return a list of valid organizational unit ids based on
-     * user role and his own organizational units.
-     *
-     * @return string
-     */
-    public function validOrganizationalUnitChoices()
-    {
-        $validOrganizationalUnitIds = resolve('App\Repositories\OrganizationalUnitRepository')
-            ->getOwnersFor($this->user())
-            ->keyBy('id')
-            ->toArray();
-
-        return join(',', array_keys($validOrganizationalUnitIds));
     }
 }

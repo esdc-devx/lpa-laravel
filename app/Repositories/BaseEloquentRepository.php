@@ -125,17 +125,17 @@ abstract class BaseEloquentRepository implements RepositoryContract
     /**
      * Get instance of model by column
      *
-     * @param  mixed $term search term
      * @param  string $column column to search
+     * @param  mixed $term search term
      * @return \Illuminate\Database\Eloquent\Model
      */
-    public function getItemByColumn($term, $column = 'slug')
+    public function getItemByColumn($column, $term)
     {
         $query = function () use ($term, $column) {
             return $this->model
                 ->with($this->requiredRelationships)
                 ->where($column, '=', $term)
-                ->firstOrFail();
+                ->first();
         };
         return $this->doQuery($query);
     }
@@ -143,11 +143,11 @@ abstract class BaseEloquentRepository implements RepositoryContract
     /**
      * Get instance of model by column
      *
-     * @param  mixed $term search term
      * @param  string $column column to search
+     * @param  mixed $term search term
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getCollectionByColumn($term, $column = 'slug')
+    public function getCollectionByColumn($column, $term)
     {
         $query = function () use ($term, $column) {
             return $this->model
@@ -156,21 +156,6 @@ abstract class BaseEloquentRepository implements RepositoryContract
                 ->get();
         };
         return $this->doQuery($query);
-    }
-
-    /**
-     * Get item by id or column
-     *
-     * @param  mixed $term id or term
-     * @param  string $column column to search
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function getActively($term, $column = 'slug')
-    {
-        if (is_numeric($term)) {
-            return $this->getById($term);
-        }
-        return $this->getItemByColumn($term, $column);
     }
 
     /**

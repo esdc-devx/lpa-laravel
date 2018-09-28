@@ -99,8 +99,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         updateUser: `${namespace}/update`,
         loadUserEditInfo: `${namespace}/loadUserEditInfo`
       }),
@@ -128,7 +126,6 @@
       },
 
       async fetch(isInitialLoad = true) {
-        await this.showMainLoading();
         let userId = this.$route.params.userId;
         try {
           // @note: project info is loaded in the router's beforeEnter
@@ -147,13 +144,9 @@
             throw e;
           }
         }
-        finally {
-          await this.hideMainLoading();
-        }
       },
 
       async onLanguageUpdate() {
-        await this.showMainLoading();
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
@@ -161,7 +154,6 @@
         // only reload the dropdowns, not the user
         let userId = this.$route.params.userId;
         await this.loadUserEditInfo(userId);
-        await this.hideMainLoading();
       }
     },
 
@@ -179,11 +171,6 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
     }
   };
 </script>
