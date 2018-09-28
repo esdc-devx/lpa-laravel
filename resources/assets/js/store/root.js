@@ -7,7 +7,7 @@ import axios from '@axios/interceptor';
 import * as types from './mutations-types';
 import Config from '@/config';
 
-let interval = 0;
+import Constants from '@/constants.js';
 
 export const state = {
   language: Config.DEFAULT_LANG,
@@ -101,12 +101,12 @@ export const actions = {
   },
 
   hideMainLoading({ commit }, context) {
-    interval = setTimeout(() => {
+    setTimeout(() => {
       if (state.mainLoadingCount === 1) {
         commit(types.TOGGLE_MAIN_LOADING, false);
       } 
       commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount - 1);
-    }, 100);
+    }, Constants.DELAY_HIDE_MAIN_LOADING);
   },
 
   confirmBeforeLanguageChange({ commit }, context) {
