@@ -53,6 +53,7 @@
   import FormSectionGroup from '../form-section-group';
   import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
+  import ListsAPI from '@api/lists';
 
   export default {
     name: 'architecture-plan',
@@ -105,8 +106,7 @@
 
       async fetch() {
         await this.showMainLoading();
-        let response = await axios.get('lists?include[]=learning-product-type');
-        this.typeList = response.data.data['learning-product-type'];
+        this.typeList = await ListsAPI.getList('learning-product-type');
         await this.hideMainLoading();
       }
     },
