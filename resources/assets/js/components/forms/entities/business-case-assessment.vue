@@ -133,6 +133,8 @@
   import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
+  import ListsAPI from '@api/lists';
+
   export default {
     name: 'business-case-assessment',
 
@@ -170,11 +172,6 @@
     },
 
     methods: {
-      ...mapActions([
-        'showMainLoading',
-        'hideMainLoading'
-      ]),
-
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
@@ -194,10 +191,7 @@
       },
 
       async fetch() {
-        await this.showMainLoading();
-        let response = await axios.get('lists?include[]=process-form-decision');
-        this.processFormDecisionList = response.data.data['process-form-decision'];
-        await this.hideMainLoading();
+        this.processFormDecisionList = await ListsAPI.getList('process-form-decision');
       },
     },
 
@@ -206,9 +200,7 @@
     },
 
     async created() {
-      await this.showMainLoading();
       this.fetch();
-      await this.hideMainLoading();
     },
 
     mounted() {

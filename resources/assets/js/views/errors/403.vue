@@ -35,19 +35,8 @@
       ])
     },
 
-    methods: {
-      ...mapActions({
-        hideMainLoading: 'hideMainLoading'
-      })
-    },
-
     mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
     }
   };
 </script>
