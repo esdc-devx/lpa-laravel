@@ -84,8 +84,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         createProject: `${namespace}/create`,
         loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
       }),
@@ -107,9 +105,7 @@
       },
 
       async fetch() {
-        await this.showMainLoading();
         await this.loadProjectCreateInfo();
-        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {
@@ -130,11 +126,6 @@
 
     async mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
       await this.fetch();
       this.autofocus('name');
     }

@@ -87,11 +87,6 @@
     },
 
     methods: {
-      ...mapActions([
-        'showMainLoading',
-        'hideMainLoading'
-      ]),
-
       onTypeChange(value) {
         let type = value[0];
         let subType = value[1];
@@ -105,9 +100,7 @@
       },
 
       async fetch() {
-        await this.showMainLoading();
         this.typeList = await ListsAPI.getList('learning-product-type');
-        await this.hideMainLoading();
       }
     },
 
@@ -116,9 +109,7 @@
     },
 
     async created() {
-      await this.showMainLoading();
       this.fetch();
-      await this.hideMainLoading();
     },
 
     mounted() {

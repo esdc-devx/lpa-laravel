@@ -96,8 +96,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         loadProjects: `${namespace}/loadProjects`
       }),
 
@@ -111,7 +109,6 @@
       },
 
       async triggerLoadProjects() {
-        await this.showMainLoading();
         try {
           await this.loadProjects();
           this.normalizedList = _.map(this.projects, project => {
@@ -127,9 +124,6 @@
           if (!e.response) {
             throw e;
           }
-        }
-        finally {
-          await this.hideMainLoading();
         }
       },
 

@@ -174,7 +174,6 @@
         async set(val) {
           // claiming
           if (val) {
-            await this.showMainLoading();
             try {
               await this.claimForm(this.formId);
               if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
@@ -194,9 +193,7 @@
                 throw e;
               }
             }
-            finally {
-              await this.hideMainLoading();
-            }
+
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
@@ -240,8 +237,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         confirmBeforeLeaving: 'confirmBeforeLeaving',
         loadProject: `${namespace}/loadProject`,
         loadProcessInstance: 'processes/loadInstance',
@@ -281,7 +276,6 @@
 
       discardChanges(shouldUnclaim = true) {
         this.$helpers.debounceAction(async () => {
-          await this.showMainLoading();
           let formWasDirty = false;
 
           // if form is dirty, reset the form data
@@ -329,7 +323,6 @@
               this.resetFieldsState();
               this.resetErrors();
             });
-            await this.hideMainLoading();
           }
         });
       },
@@ -448,7 +441,6 @@
       },
 
       async fetch(isInitialLoad = true) {
-        await this.showMainLoading();
         try {
           if (isInitialLoad) {
             // deep copy so that we don't alter the store's data
@@ -465,9 +457,6 @@
           if (!e.response) {
             throw e;
           }
-        }
-        finally {
-          await this.hideMainLoading();
         }
       },
 
@@ -499,9 +488,6 @@
           if (!e.response) {
             throw e;
           }
-        }
-        finally {
-          await this.hideMainLoading();
         }
       },
 
@@ -560,7 +546,6 @@
     },
 
     async created() {
-      await this.showMainLoading();
       // store the reference to the current form id
       this.projectId = this.$route.params.projectId;
       this.processId = this.$route.params.processId;
@@ -570,11 +555,6 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
       EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
     }
   };
