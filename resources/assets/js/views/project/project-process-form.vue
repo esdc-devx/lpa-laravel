@@ -441,6 +441,8 @@
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             this.discardChanges(true);
             this.getRights();
+          } else {
+            throw e;
           }
         }
       },
@@ -591,6 +593,13 @@
     button.release-form {
       padding: 0;
       margin-left: 10px;
+    }
+
+    .info-box {
+      dl {
+        flex-basis: 25%;
+        max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
+      }  
     }
 
     .el-tabs {
