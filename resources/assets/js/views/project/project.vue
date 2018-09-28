@@ -130,8 +130,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         loadProject: `${namespace}/loadProject`,
         canStartProcess: `${namespace}/canStartProcess`,
         loadProcessDefinitions: `processes/loadDefinitions`,
@@ -151,7 +149,6 @@
             process_name: processName
           })
         }).then(async () => {
-          await this.showMainLoading();
           try {
             let response = await this.startProcess({ nameKey: processNameKey, entityId: this.viewingProject.id });
             this.notifySuccess({
@@ -166,9 +163,6 @@
             } else {
               throw e;
             }
-          }
-          finally {
-            await this.hideMainLoading();
           }
         }).catch(() => false);
       },
@@ -187,7 +181,6 @@
       },
 
       async fetch(isInitialLoad = true) {
-        await this.showMainLoading();
         try {
           let projectId = this.$route.params.projectId;
           // @note: project info is loaded in the router's beforeEnter
@@ -212,9 +205,6 @@
             throw e;
           }
         }
-        finally {
-          await this.hideMainLoading();
-        }
       },
 
       async onLanguageUpdate() {
@@ -236,11 +226,6 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
     }
   };
 </script>

@@ -113,8 +113,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         loadLearningProducts: `${namespace}/loadLearningProducts`
       }),
 
@@ -134,7 +132,6 @@
       },
 
       async triggerLoadLearningProducts() {
-        await this.showMainLoading();
         try {
           await this.loadLearningProducts();
           this.normalizedList = _.map(this.learningProducts, learningProduct => {
@@ -151,9 +148,6 @@
           if (!e.response) {
             throw e;
           }
-        }
-        finally {
-          await this.hideMainLoading();
         }
       },
 

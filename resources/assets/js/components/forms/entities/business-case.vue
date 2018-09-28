@@ -536,18 +536,12 @@
     },
 
     methods: {
-      ...mapActions([
-        'showMainLoading',
-        'hideMainLoading'
-      ]),
-
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
       },
 
       async fetch() {
-        await this.showMainLoading();
         let lists = await ListsAPI.getLists([
           'request-source',
           'potential-solution-type',
@@ -576,7 +570,6 @@
         this.riskTypeList = lists['risk-type'];
         this.impactLevelList = lists['risk-impact-level'];
         this.probabilityLevelList = lists['risk-probability-level'];
-        await this.hideMainLoading();
       },
 
       bindCheckboxes() {
@@ -592,10 +585,8 @@
     },
 
     async created() {
-      await this.showMainLoading();
       this.fetch();
       this.bindCheckboxes();
-      await this.hideMainLoading();
     },
 
     mounted() {

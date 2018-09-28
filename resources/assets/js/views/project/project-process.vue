@@ -155,8 +155,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         loadProject: 'projects/loadProject',
         loadProcessInstance: `${namespace}/loadInstance`,
         cancelProcessInstance: `${namespace}/cancelInstance`,
@@ -193,7 +191,6 @@
 
       onCancelProcess() {
         this.confirmCancelProcess().then(async () => {
-          await this.showMainLoading();
           try {
             let response = await this.cancelProcessInstance(this.processId);
             this.notifySuccess({
@@ -207,9 +204,6 @@
             if (!e.response) {
               throw e;
             }
-          }
-          finally {
-            await this.hideMainLoading();
           }
         }).catch(() => false);
       },
@@ -227,7 +221,6 @@
       },
 
       async fetch() {
-        await this.showMainLoading();
         try {
           await this.triggerLoadProject();
           await this.triggerLoadProcessInstance();
@@ -236,9 +229,6 @@
           if (!e.response) {
             throw e;
           }
-        }
-        finally {
-          await this.hideMainLoading();
         }
       }
     },
@@ -264,11 +254,6 @@
 
     mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
     }
   };
 </script>

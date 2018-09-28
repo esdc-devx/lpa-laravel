@@ -7,6 +7,8 @@ import axios from '@axios/interceptor';
 import * as types from './mutations-types';
 import Config from '@/config';
 
+let interval = 0;
+
 export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
@@ -92,25 +94,19 @@ export const actions = {
   // component fetch is done, showMainLoadingCount = 0 => hideMainLoading
   showMainLoading({ commit, state }, context) {
     // grab the actual mainLoadingCount value and increase it
-    let count = state.mainLoadingCount + 1;
-    commit(types.MAIN_LOADING_COUNT, count);
-    commit(types.TOGGLE_MAIN_LOADING, true);
+    if (state.mainLoadingCount === 0) {
+      commit(types.TOGGLE_MAIN_LOADING, true);
+    }
+    commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount + 1);
   },
 
   hideMainLoading({ commit }, context) {
-    let countSupposedToBe = state.mainLoadingCount - 1;
-    // grab the actual mainLoadingCount value and decrease it
-    let count = (state.mainLoadingCount - 1) < 0 ? 0 : state.mainLoadingCount - 1;
-    commit(types.MAIN_LOADING_COUNT, count);
-    if (count === 0) {
-      // only hide the main loading if the count is equal to 0
-      // meaning that we hit the last showMainLoading call
-      commit(types.TOGGLE_MAIN_LOADING, false);
-    // check if we have hideLoading leftovers
-    }
-    if (countSupposedToBe < 0) {
-      Vue.$log.warn(`Too many calls to hideMainLoading.`);
-    }
+    interval = setTimeout(() => {
+      if (state.mainLoadingCount === 1) {
+        commit(types.TOGGLE_MAIN_LOADING, false);
+      } 
+      commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount - 1);
+    }, 100);
   },
 
   confirmBeforeLanguageChange({ commit }, context) {
@@ -168,20 +164,6 @@ export const mutations = {
 
   [types.TOGGLE_MAIN_LOADING](state, isShown) {
     state.isMainLoading = isShown;
-    // Workaround until this is properly fixed by ElementUI
-    // https://github.com/ElemeFE/element/issues/8894
-    // Everytime a loading mask is hidden (!isShown)
-    // this basically wait until the next rendering is done,
-    // give us 1sec of buffer so that we don't alter the loading's mask's display
-    // and force hide the loading mask so that there is no leftover on IE11 that would block the entire UI.
-    Vue.nextTick(() => {
-      _.delay(() => {
-        let documentLoadingMask = document.querySelector('.content-wrap .el-loading-mask');
-        if (!isShown && documentLoadingMask) {
-          documentLoadingMask.style['display'] = 'none';
-        }
-      }, 1000);
-    });
   },
 
   [types.MAIN_LOADING_COUNT](state, count) {

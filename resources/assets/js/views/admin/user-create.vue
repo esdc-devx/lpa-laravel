@@ -108,8 +108,6 @@
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         searchUser: `${namespace}/search`,
         createUser: `${namespace}/create`,
         loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
@@ -152,9 +150,7 @@
       },
 
       async triggerLoadUserCreateInfo() {
-        await this.showMainLoading();
         await this.loadUserCreateInfo();
-        await this.hideMainLoading();
       },
 
       async onLanguageUpdate() {

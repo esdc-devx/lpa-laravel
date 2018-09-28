@@ -172,11 +172,6 @@
     },
 
     methods: {
-      ...mapActions([
-        'showMainLoading',
-        'hideMainLoading'
-      ]),
-
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
@@ -196,9 +191,7 @@
       },
 
       async fetch() {
-        await this.showMainLoading();
         this.processFormDecisionList = await ListsAPI.getList('process-form-decision');
-        await this.hideMainLoading();
       },
     },
 
@@ -207,9 +200,7 @@
     },
 
     async created() {
-      await this.showMainLoading();
       this.fetch();
-      await this.hideMainLoading();
     },
 
     mounted() {
