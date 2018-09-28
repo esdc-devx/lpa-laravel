@@ -548,7 +548,21 @@
 
       async fetch() {
         await this.showMainLoading();
-        let lists = await ListsAPI.getLists(['request-source','potential-solution-type', 'government-priority', 'timeframe', 'community', 'departmental-benefit-type', 'learners-benefit-type', 'maintenance-fund','salary-fund','internal-resource','risk-type','risk-impact-level','risk-probability-level']);
+        let lists = await ListsAPI.getLists([
+          'request-source',
+          'potential-solution-type',
+          'government-priority',
+          'timeframe',
+          'community',
+          'departmental-benefit-type',
+          'learners-benefit-type',
+          'maintenance-fund',
+          'salary-fund',
+          'internal-resource',
+          'risk-type',
+          'risk-impact-level',
+          'risk-probability-level'
+        ]);
         this.requestSourceList = lists['request-source'];
         this.governmentPrioritiesList = lists['government-priority'];
         this.potentialSolutionTypesList = lists['potential-solution-type'];

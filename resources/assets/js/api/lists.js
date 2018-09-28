@@ -4,34 +4,30 @@ import store from '@/store';
 
 export default {
 
-  //
-  // Returns the content of a single list in an array.
-  //
+  /**
+   * Get the content of a single list.
+   * @param {string} listName
+   * @return {collection} - The requested list content.
+   */
   async getList(listName) {
-    return await axios.get('lists/'+listName).then(function(response){
+    return await axios.get('lists/' + listName).then(function(response) {
       return response.data.data;
     });
   },
 
-  //
-  // Return the content of multiple lists in an indexed JSON
-  //
-  async getLists(listNamesArray) {
-    
-    let parameters = '';
-    let listNumber = listNamesArray.length;
-    let i;
-    
-    // Build the request parameters list.
-    for (i = 0; i < listNumber; i++) {
-        if (i > 0){
-            parameters += '&';  
-        } 
-        parameters += 'include[]='+listNamesArray[i];
-    }
-
-    return await axios.get('lists?'+parameters).then(function(response){
-        return response.data.data;
+  /**
+   * Get the content of multiple lists at once.
+   * @param {array} listNames - An array of list names.
+   * @return {object} - The requested lists content.
+   */
+  async getLists(listNames) {
+    return await axios.get('lists', { 
+      params: { 
+        include: listNames 
+      } 
+    })
+    .then(function(response) {
+      return response.data.data;
     });
   }
 

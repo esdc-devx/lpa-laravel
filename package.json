@@ -24,6 +24,7 @@
     "element-ui": "2.4.6",
     "es6-promise": "4.2.4",
     "lodash": "4.17.10",
+    "qs": "6.5.2",
     "vee-validate": "2.0.9",
     "vue": "2.5.17",
     "vue-data-tables": "3.2.0",
