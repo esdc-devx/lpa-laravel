@@ -152,7 +152,7 @@
           try {
             let response = await this.startProcess({ nameKey: processNameKey, entityId: this.viewingProject.id });
             this.notifySuccess({
-              message: this.trans('components.notice.message.process_started', { name: processName })
+              message: this.trans('components.notice.message.process_started')
             });
             let projectId = this.$route.params.projectId;
             this.$router.push(`${projectId}/process/${response.process_instance.id}`);

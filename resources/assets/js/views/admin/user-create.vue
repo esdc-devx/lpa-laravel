@@ -144,7 +144,7 @@
         await this.createUser(_.omit(this.form, 'name'));
         this.isSubmitting = false;
         this.notifySuccess({
-          message: this.trans('components.notice.message.created', { name: this.form.name })
+          message: this.trans('components.notice.message.user_created')
         });
         this.goToParentPage();
       },

@@ -86,10 +86,7 @@
       deleteProjectConfirm() {
         this.confirmDelete({
           title: this.trans('components.notice.title.delete_project'),
-          message: this.trans('components.notice.message.delete_project', {
-            name: this.project.name,
-            id: this.$options.filters.LPANumFilter(this.project.id)
-          })
+          message: this.trans('components.notice.message.delete_project')
         }).then(async () => {
           try {
             await this.deleteProject(this.project.id);
