@@ -72,7 +72,10 @@ class ProjectPolicy
         }
 
         if ($user->isAdmin()) {
-            // @todo: Ensure that project has no child learning products.
+            // Ensure that project has no child learning products.
+            if ($project->learningProducts->isNotEmpty()) {
+                throw new OperationDeniedException();
+            }
             return true;
         }
 

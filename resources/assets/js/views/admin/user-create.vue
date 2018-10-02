@@ -6,26 +6,17 @@
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
-        <el-form-item :label="trans('entities.general.full_name')" for="name" :class="['is-required', {'is-error': verrors.collect('name').length }]" prop="name">
-          <el-autocomplete
+        <el-form-item-wrap
+          :label="trans('entities.general.full_name')"
+          prop="username"
+          required>
+          <user-search
             name="username"
-            :data-vv-as="trans('entities.general.full_name')"
-            popper-class="name-autocomplete"
-            v-validate="nameRules"
-            v-model="form.name"
-            :fetch-suggestions="querySearchAsync"
-            :trigger-on-focus="false"
-            valueKey="name"
-            @select="handleSelect">
-            <template slot-scope="props">
-              <div class="autocomplete-popper-inner-wrap" :title="props.item.name">
-                <div class="value">{{ props.item.name }}</div>
-                <span class="link">{{ props.item.email }}</span>
-              </div>
-            </template>
-          </el-autocomplete>
+            :label="trans('entities.general.full_name')"
+            v-bind:value.sync="form.user">
+          </user-search>
           <form-error name="username"></form-error>
-        </el-form-item>
+        </el-form-item-wrap>
 
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits" prop="organizational_units">
           <el-select-wrap
@@ -63,8 +54,10 @@
 
   import EventBus from '@/event-bus.js';
 
+  import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import FormError from '@components/forms/error.vue';
+  import UserSearch from '@components/forms/user-search';
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
 
@@ -77,32 +70,23 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { FormError, ElSelectWrap },
+    components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 
     computed: {
       ...mapGetters({
         language: 'language',
         organizationalUnits: `${namespace}/organizationalUnits`,
         roles: `${namespace}/roles`
-      }),
-
-      nameRules() {
-        return {
-          required: true,
-          in: this.inUserList
-        };
-      }
+      })
     },
 
     data() {
       return {
         form: {
-          name: '',
-          username: '',
+          user: {},
           organizational_units: [],
           roles: []
-        },
-        inUserList: []
+        }
       }
     },
 
@@ -113,38 +97,19 @@
         loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
       }),
 
-      search(name) {
-        return this.searchUser(name);
-      },
-
-      async querySearchAsync(queryString, callback) {
-        let users;
-        try {
-          users = await this.search(queryString);
-          this.inUserList = _.map(users, 'name');
-          callback(users);
-        } catch (e) {
-          this.notifyError({
-            message: 'Unable to retrieve users.'
-          });
-          this.$log.error(`[user-create][querySearchAsync] ${e}`);
-        }
-      },
-
-      handleSelect(item) {
-        this.form.username = item.username;
-      },
-
       // Form handlers
       onSubmit() {
         this.submit(this.create);
       },
 
       async create() {
-        await this.createUser(_.omit(this.form, 'name'));
+        let formData = Object.assign({}, this.form);
+        formData.username = this.form.user.username;
+        await this.createUser(formData);
+
         this.isSubmitting = false;
         this.notifySuccess({
-          message: this.trans('components.notice.message.created', { name: this.form.name })
+          message: this.trans('components.notice.message.created', { name: this.form.user.name })
         });
         this.goToParentPage();
       },
@@ -199,24 +164,6 @@
       }
       .el-autocomplete, .el-select {
         width: 100%;
-      }
-    }
-  }
-  .el-autocomplete-suggestion.name-autocomplete {
-    li {
-      line-height: 20px;
-      padding: 7px 10px;
-
-      .autocomplete-popper-inner-wrap {
-        overflow: hidden;
-        .value {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        .link {
-          font-size: 12px;
-          color: #b4b4b4;
-        }
       }
     }
   }

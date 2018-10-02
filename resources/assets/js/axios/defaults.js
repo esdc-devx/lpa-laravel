@@ -8,7 +8,7 @@ import '@/locale';
 let defaultLang = Config.DEFAULT_LANG;
 
 const defaults = {
-  
+
   baseURL: '/' + defaultLang + '/api',
 
   // buff to 20s to be sure that when on slow connections we are still capable of loading data
@@ -24,7 +24,10 @@ const defaults = {
 
   paramsSerializer: function (params) {
     return Qs.stringify(params, {arrayFormat: 'brackets'})
-  }
+  },
+
+  // Show main loading by default on every requests.
+  showMainLoading: true
 };
 
 // Register the CSRF Token as a common header with Axios so that

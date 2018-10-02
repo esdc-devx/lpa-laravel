@@ -6,34 +6,6 @@
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
-
-        <el-form-item-wrap
-          :label="trans('entities.learning_product.parent_project')"
-          prop="parent_project"
-          required>
-          <el-select-wrap
-            v-model="form.parent_project"
-            filterable
-            name="parent_project"
-            :data-vv-as="trans('entities.learning_product.parent_project')"
-            v-validate="'required'"
-            :options="projects"
-          />
-        </el-form-item-wrap>
-
-        <el-form-item-wrap
-          :label="$tc('entities.general.organizational_units')"
-          prop="organizational_unit"
-          required>
-          <el-select-wrap
-            v-model="form.organizational_unit"
-            name="organizational_unit"
-            :data-vv-as="$tc('entities.general.organizational_units')"
-            v-validate="'required'"
-            :options="organizationalUnits"
-          />
-        </el-form-item-wrap>
-
         <el-form-item-wrap
           :label="trans('entities.general.name')"
           prop="name"
@@ -49,44 +21,72 @@
           </input-wrap>
         </el-form-item-wrap>
 
-        <!-- <el-form-item-wrap
+        <el-form-item-wrap
+          :label="$tc('entities.general.organizational_units')"
+          prop="organizational_unit_id"
+          required>
+          <el-select-wrap
+            v-model="form.organizational_unit_id"
+            name="organizational_unit_id"
+            :data-vv-as="$tc('entities.general.organizational_units')"
+            v-validate="'required'"
+            :options="organizationalUnits"
+          />
+        </el-form-item-wrap>
+
+        <el-form-item-wrap
+          :label="trans('entities.learning_product.parent_project')"
+          prop="project_id"
+          required>
+          <el-select-wrap
+            v-model="form.project_id"
+            filterable
+            name="project_id"
+            :data-vv-as="trans('entities.learning_product.parent_project')"
+            v-validate="'required'"
+            :options="projects"
+          />
+        </el-form-item-wrap>
+
+        <el-form-item-wrap
           :label="trans('entities.learning_product.type')"
           prop="type_id"
           required>
           <el-cascader
-            v-model="typeModel"
+            v-model="learningProductType"
             name="type_id"
+            :clearable=true
             element-loading-spinner="el-icon-loading"
             v-validate="'required'"
             :data-vv-as="trans('entities.learning_product.type')"
-            :options="typeList"
+            :options="learningProductTypeList"
             :props="typeOptions">
           </el-cascader>
-          <form-error :name="type_id"></form-error>
-        </el-form-item-wrap> -->
+          <form-error name="type_id"></form-error>
+        </el-form-item-wrap>
 
-        <el-form-item-wrap 
-          :label="trans('entities.learning_product.manager')" 
-          prop="manager" 
+        <el-form-item-wrap
+          :label="trans('entities.learning_product.manager')"
+          prop="manager"
           required>
-          <el-autocomplete
+          <user-search
             name="manager"
-            :data-vv-as="trans('entities.learning_product.manager')"
-            popper-class="name-autocomplete"
-            v-validate="nameRules"
-            v-model="form.manager"
-            :fetch-suggestions="querySearchAsync"
-            :trigger-on-focus="false"
-            valueKey="name"
-            @select="handleSelect">
-            <template slot-scope="props">
-              <div class="autocomplete-popper-inner-wrap" :title="props.item.name">
-                <div class="value">{{ props.item.name }}</div>
-                <span class="link">{{ props.item.email }}</span>
-              </div>
-            </template>
-          </el-autocomplete>
+            :label="trans('entities.learning_product.manager')"
+            v-bind:value.sync="form.manager">
+          </user-search>
           <form-error name="manager"></form-error>
+        </el-form-item-wrap>
+
+        <el-form-item-wrap
+          :label="trans('entities.learning_product.primary_contact')"
+          prop="primary_contact"
+          required>
+          <user-search
+            name="primary_contact"
+            :label="trans('entities.learning_product.primary_contact')"
+            v-bind:value.sync="form.primary_contact">
+          </user-search>
+          <form-error name="primary_contact"></form-error>
         </el-form-item-wrap>
 
         <el-form-item class="form-footer">
@@ -108,7 +108,10 @@
 
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
+  import UserSearch from '@components/forms/user-search';
   import InputWrap from '@components/forms/input-wrap';
+
+  import ListsAPI from '@api/lists';
 
   let namespace = 'learningProducts';
 
@@ -119,96 +122,74 @@
 
     mixins: [ FormUtils, PageUtils ],
 
-    components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
+    components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
+
+    watch: {
+      learningProductType: function(value) {
+        // Update learning product type and sub type id when interacting with cascader control.
+        this.form.type_id = value[0];
+        this.form.sub_type_id = value[1];
+      },
+
+      'form.project_id': function(projectId) {
+        let project = _.find(this.projects, { id: projectId });
+        let availableProductTypes = _.cloneDeep(project.available_learning_product_types);
+
+        // If a learning product type was entered beforehand, clear its value.
+        if (this.learningProductType.length !== 0) {
+          this.learningProductType = [];
+        }
+
+        // Update learning product type list when updating the project
+        // to only enable the available learning product types.
+        _.forEach(this.learningProductTypeList, productType => {
+          _.forEach(productType.children, productSubType => {
+            productSubType.disabled = true;
+            _.forEach(availableProductTypes, (availableProductType, index) => {
+              if (availableProductType.sub_type_id === productSubType.id) {
+                productSubType.disabled = false;
+                availableProductTypes.slice(index, 1);
+              }
+            });
+          });
+        });
+      }
+    },
 
     computed: {
       ...mapGetters({
         language: 'language',
         viewingLearningProduct: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`
-      }),
-
-      // typeModel: {
-      //   get() {
-      //     // make sure to not return an array of nulls here
-      //     // since vee-validate would think that it is a valide value
-      //     if (!_.isNumber(this.form.type_id) && !_.isNumber(this.form.sub_type_id)) {
-      //       return null;
-      //     }
-      //     return [this.form.type_id, this.form.sub_type_id];
-      //   },
-      //   set(value) {
-      //     let typeId = value[0];
-      //     let subTypeId = value[1];
-
-      //     [this.form.type_id, this.form.sub_type_id] = [typeId, subTypeId];
-      //   }
-      // },
-
-      // typeList: {
-      //   get() {
-      //     return this.projects ? this.projects[0].available_learning_product_types : [];
-      //   }
-      // },
-
-      nameRules() {
-        return {
-          required: true,
-          in: this.inUserList
-        }
-      }
+      })
     },
 
     data() {
       return {
         form: {
-          parent_project: null,
+          project_id: null,
           name: '',
-          organizational_unit: null,
+          organizational_unit_id: null,
           type_id: null,
           sub_type_id: null,
-          primary_contact: null,
-          manager: null
+          manager: {},
+          primary_contact: {}
         },
         projects: [],
-        // typeOptions: {
-        //   label: 'name',
-        //   value: 'id'
-        // },
-        inUserList: []
+        learningProductTypeList: [],
+        learningProductType: [],
+        typeOptions: {
+          label: 'name',
+          value: 'id'
+        }
       }
     },
 
     methods: {
       ...mapActions({
-        showMainLoading: 'showMainLoading',
-        hideMainLoading: 'hideMainLoading',
         createLearningProduct: `${namespace}/create`,
-        loadLearningProductCreateInfo: `${namespace}/loadLearningProductCreateInfo`,
-        searchUser: `users/search`,
+        loadLearningProductCreateInfo: `${namespace}/loadLearningProductCreateInfo`
       }),
-
-      search(name) {
-        return this.searchUser(name);
-      },
-
-      async querySearchAsync(queryString, callback) {
-        let users;
-        try {
-          users = await this.search(queryString);
-          this.inUserList = _.map(users, 'name');
-          callback(users);
-        } catch (e) {
-          this.notifyError({
-            message: 'Unable to retrieve users.'
-          });
-          this.$log.error(`[learning-product-create][querySearchAsync] ${e}`);
-        }
-      },
-
-      handleSelect(item) {
-        this.form.manager = item.username;
-      },
 
       // Form handlers
       async onSubmit() {
@@ -216,20 +197,41 @@
       },
 
       async create() {
-        // @note: no try-catch required here
-        // since we already do it in the form utils
-        await this.createLearningProduct(this.form);
+        // Update form data before submission to only submit usernames.
+        let formData = Object.assign({}, this.form);
+        formData.manager = this.form.manager.username;
+        formData.primary_contact = this.form.primary_contact.username;
+        await this.createLearningProduct(formData);
+
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.created', { name: this.form.name })
         });
+
         this.$router.push(`/${this.language}/learning-products/${this.viewingLearningProduct.id}`);
       },
+
+      // Remove children attribute when empty and disable all terms by default.
+      formatLearningProductList(formattedList) {
+        _.forEach(formattedList, item => {
+          _.forEach(item.children, itemSub => {
+            itemSub.disabled = true;
+            if (itemSub.children && itemSub.children.length === 0) {
+              delete itemSub.children;
+            }
+          });
+        });
+        return formattedList;
+      },
+
       async fetch() {
-        await this.showMainLoading();
+        this.learningProductTypeList = this.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
         let response = await this.loadLearningProductCreateInfo();
         this.projects = response.projects;
-        await this.hideMainLoading();
+        // Add LPA number to each project name.
+        _.forEach(this.projects, project => {
+          project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
+        });
       },
 
       async onLanguageUpdate() {
@@ -250,11 +252,6 @@
 
     async mounted() {
       EventBus.$emit('App:ready');
-      // @note: hide the loading that was shown
-      // in the router's beforeEnter
-      this.$nextTick(async () => {
-        await this.hideMainLoading();
-      });
       await this.fetch();
       this.autofocus('name');
     }
@@ -295,24 +292,9 @@
         width: 100%;
       }
     }
-  }
-
-  .el-autocomplete-suggestion.name-autocomplete {
-    li {
-      line-height: 20px;
-      padding: 7px 10px;
-
-      .autocomplete-popper-inner-wrap {
-        overflow: hidden;
-        .value {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        .link {
-          font-size: 12px;
-          color: #b4b4b4;
-        }
-      }
+    .el-cascader {
+      width: 35%;
+      min-width: 400px;
     }
   }
 </style>

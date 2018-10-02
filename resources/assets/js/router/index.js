@@ -323,9 +323,6 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        // @note: corresponding hideMainLoading will be done
-        // in the component itself
-        store.dispatch('showMainLoading');
         let canCreateLearningProduct = await store.dispatch('learningProducts/canCreateLearningProduct');
         if (canCreateLearningProduct) {
           next();
