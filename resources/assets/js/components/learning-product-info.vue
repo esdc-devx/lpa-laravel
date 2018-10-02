@@ -3,10 +3,10 @@
     <info-box>
       <div slot="header">
         <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProductProp.name }}</h2>
-        <!-- <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
+        <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
+          <!-- <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button> -->
           <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteWrapper()" plain><i class="el-icon-lpa-delete"></i></el-button>
-        </div> -->
+        </div>
       </div>
       <dl>
         <dt>{{ trans('entities.general.lpa_num') }}</dt>
@@ -64,10 +64,10 @@
 
     data() {
       return {
-        // rights: {
-        //   canEdit: false,
-        //   canDelete: false
-        // }
+        rights: {
+          // canEdit: false,
+          canDelete: false
+        }
       };
     },
 
@@ -83,44 +83,50 @@
     },
 
     methods: {
-      // ...mapActions({
-      //   deleteLearningProduct: `${namespace}/deleteLearningProduct`,
-      //   canEditLearningProduct: `${namespace}/canEditLearningProduct`,
-      //   canDeleteLearningProduct: `${namespace}/canDeleteLearningProduct`
-      // }),
+      ...mapActions({
+        deleteLearningProduct: `${namespace}/delete`,
+        // canEditLearningProduct: `${namespace}/canEdit`,
+        canDeleteLearningProduct: `${namespace}/canDelete`
+      }),
 
       // edit() {
       //   this.$router.push(`${this.learningProduct.id}/edit`);
       // },
 
-      // deleteWrapper() {
-      //   this.confirmDelete({
-      //     title: this.trans('components.notice.title.delete_learning_product'),
-      //     message: this.trans('components.notice.message.delete_learning_product', {
-      //       name: this.learningProduct.name,
-      //       id: this.$options.filters.LPANumFilter(this.learningProduct.id)
-      //     })
-      //   }).then(async () => {
-      //     try {
-      //       await this.deleteLearningProduct(this.learningProduct.id);
-      //       this.notifySuccess({
-      //         message: this.trans('components.notice.message.learning_product_deleted')
-      //       });
-      //       this.goToParentPage();
-      //     } catch (e) {
-      //       // Exception handled by interceptor
-      //       if (!e.response) {
-      //         throw e;
-      //       }
-      //     }
-      //   }).catch(() => false);
-      // }
+      deleteWrapper() {
+        this.confirmDelete({
+          title: this.trans('components.notice.title.delete_learning_product'),
+          message: this.trans('components.notice.message.delete_learning_product', {
+            name: this.learningProduct.name,
+            id: this.$options.filters.LPANumFilter(this.learningProduct.id)
+          })
+        }).then(async () => {
+          try {
+            await this.deleteLearningProduct(this.learningProduct.id);
+            this.notifySuccess({
+              message: this.trans('components.notice.message.learning_product_deleted')
+            });
+            this.goToParentPage();
+          } catch (e) {
+            if (e.response) { // Exception handled by interceptor
+              // Page out of sync: Refresh autorizations and ask for a page refresh.
+              this.getAuthorizations();
+              this.$emit('appOutOfSync');
+            } else { // Retrow
+              throw e;
+            }
+          }
+        }).catch(() => false);
+      },
+
+      async getAuthorizations() {
+        // this.rights.canEdit = await this.canEditLearningProduct(this.learningProduct.id);
+        this.rights.canDelete = await this.canDeleteLearningProduct(this.learningProduct.id);
+      }
     },
 
-    async created() {
-      let learningProductId = this.$route.params.learningProductId;
-      // this.rights.canEdit = await this.canEditLearningProduct(learningProductId);
-      // this.rights.canDelete = await this.canDeleteLearningProduct(learningProductId);
+    created() {
+      this.getAuthorizations();
     }
   };
 </script>

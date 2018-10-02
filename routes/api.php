@@ -63,4 +63,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/process-instance-form/release/{processInstanceForm}', 'AuthorizationController@releaseProcessInstanceForm')->name('authorization.process-instance-form.release');
     Route::get('authorization/process-instance-form/edit/{processInstanceForm}', 'AuthorizationController@editProcessInstanceForm')->name('authorization.process-instance-form.edit');
     Route::get('authorization/process-instance-form/submit/{processInstanceForm}', 'AuthorizationController@submitProcessInstanceForm')->name('authorization.process-instance-form.submit');
+
+    // Learning Product authorization routes.
+    Route::get('authorization/learning-product/delete/{learningProduct}', 'AuthorizationController@deleteLearningProduct')->name('authorization.learning-product.delete');
 });

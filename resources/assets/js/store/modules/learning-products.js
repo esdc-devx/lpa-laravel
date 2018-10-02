@@ -29,27 +29,23 @@ export default {
 
   actions: {
     async loadLearningProducts({ commit, dispatch }) {
-      let response = await LearningProductAPI.getLearningProducts();
-      commit('setLearningProducts', response.data.data.learning_products);
+      let learningProducts = await LearningProductAPI.getLearningProducts();
+      commit('setLearningProducts', learningProducts);
     },
 
     async loadLearningProduct({ commit }, id) {
-      let response = await LearningProductAPI.getLearningProduct(id);
-      commit('setViewing', response.data.data.learning_product);
-      return response.data.data;
+      let learningProduct = await LearningProductAPI.getLearningProduct(id);
+      commit('setViewing', learningProduct);
     },
 
-    // async canEditLearningProduct({ commit }, id) {
-    //   //let response = await LearningProductAPI.canEdit(id);
-    //   //return response.data.data.allowed;
-    //   return false;
-    // },
+    async canDelete({ commit }, id) {
+      let autorization = await LearningProductAPI.canDelete(id);
+      return autorization;
+    },
 
-    // async canDeleteLearningProduct({ commit }, id) {
-    //   // let response = await LearningProductAPI.canDelete(id);
-    //   // return response.data.data.allowed;
-    //   return false;
-    // },
+    async delete({ commit }, id) {
+      await LearningProductAPI.delete(id);
+    }
   },
 
   mutations: {

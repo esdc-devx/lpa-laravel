@@ -6,6 +6,7 @@ use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Project\Project;
+use App\Models\LearningProduct\LearningProduct;
 use App\Models\User\User;
 
 class AuthorizationController extends APIController
@@ -131,4 +132,16 @@ class AuthorizationController extends APIController
             'allowed' => auth()->user()->can('submit', $processInstanceForm)
         ]);
     }
+
+    /**
+     * Authorize learning product deletion.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteLearningProduct(LearningProduct $learningProduct){
+        return $this->respond([
+            'allowed' => auth()->user()->can('delete', $learningProduct)
+        ]);
+    }
+
 }

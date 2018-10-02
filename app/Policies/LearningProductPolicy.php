@@ -59,6 +59,26 @@ class LearningProductPolicy
      */
     public function delete(User $user, LearningProduct $learningProduct)
     {
-        //
+        // Ensure that project has no running processes.
+        if ($learningProduct->currentProcess) {
+            throw new OperationDeniedException();
+        }
+
+        if ($user->isAdmin()) {
+            // @todo: Ensure that project has no child learning products.
+            return true;
+        }
+
+        // Ensure that user is part of the project's organizational unit.
+        if (! $user->belongsToOrganizationalUnit($learningProduct->organizationalUnit)) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        // Ensure that project is still new.
+        if (! $learningProduct->state->name_key === 'new') {
+            throw new OperationDeniedException();
+        }
+
+        return true;
     }
 }
