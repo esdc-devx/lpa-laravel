@@ -2,7 +2,6 @@
 
 use App\Models\OrganizationalUnit;
 use App\Repositories\UserRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Seeder;
 
 class OrganizationalUnitTableSeeder extends Seeder
@@ -147,15 +146,7 @@ class OrganizationalUnitTableSeeder extends Seeder
         // Generate Organization Units.
         foreach ($this->data() as $organizationalUnit) {
             // Get or create user to be set as director for organizational unit.
-            try {
-                $director = $this->users->getItemByColumn($organizationalUnit['director_username'], 'username');
-            }
-            // If user does not exist, create it.
-            catch (ModelNotFoundException $e) {
-                $director = $this->users->create([
-                    'username' => $organizationalUnit['director_username']
-                ]);
-            }
+            $director = $this->users->findOrCreate($organizationalUnit['director_username']);
 
             OrganizationalUnit::create([
                 'owner'    => $organizationalUnit['owner'],

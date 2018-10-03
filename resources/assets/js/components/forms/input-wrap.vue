@@ -298,6 +298,8 @@
       display: flex;
     }
     .char-count {
+      position: absolute;
+      right: 0;
       color: $--color-text-secondary;
     }
     .el-form-item__error {

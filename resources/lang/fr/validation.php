@@ -136,6 +136,10 @@ return [
         'planned_products' => [
             'unique' => 'Il ne doit pas y avoir plus d\'un produit de ce type.',
         ],
+        'learning_product' => [
+            'invalid_project' => 'Ce projet n\'est plus disponible.',
+            'invalid_type' => 'Ce type n\'est plus disponible.',
+        ],
     ],
 
     /*
@@ -151,6 +155,7 @@ return [
 
     'attributes' => [
         'organizational_unit'                                     => 'Unité organisationnelle',
+        'organizational_unit_id'                                  => 'Unité organisationnelle',
         'departmental_benefits.*.rationale'                       => 'Justification',
         'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
         'departmental_benefits.*.departmental_benefit_type_other' => 'Autre',

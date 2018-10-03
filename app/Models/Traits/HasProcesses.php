@@ -42,6 +42,10 @@ trait HasProcesses
 
     public function scopeWhereState($query, $stateKey)
     {
-        $query->where('state_id', State::getIdFromKey(static::getEntityType() . '.' . $stateKey));
+        $stateIds = State::where('entity_type', static::getEntityType())
+            ->whereIn('name_key', collect($stateKey))
+            ->get()->pluck('id');
+
+        $query->whereIn('state_id', $stateIds);
     }
 }

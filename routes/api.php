@@ -54,6 +54,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/project/delete/{project}', 'AuthorizationController@deleteProject')->name('authorization.project.delete');
     Route::get('authorization/project/{project}/start-process/{processDefinition}', 'AuthorizationController@startProjectProcess')->name('authorization.project.start-process');
 
+    // Learning Product authorization routes.
+    Route::get('authorization/learning-product/create', 'AuthorizationController@createLearningProduct')->name('authorization.learning-product.create');
+
     // Process instance authorization routes.
     Route::get('authorization/process-instance/cancel/{processInstance}', 'AuthorizationController@cancelProcessInstance')->name('authorization.process-instance.cancel');
 

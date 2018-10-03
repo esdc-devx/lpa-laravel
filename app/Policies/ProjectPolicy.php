@@ -4,26 +4,14 @@ namespace App\Policies;
 
 use App\Exceptions\InsufficientPrivilegesException;
 use App\Exceptions\OperationDeniedException;
-use App\Models\User\User;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Project\Project;
+use App\Models\User\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ProjectPolicy
 {
     use HandlesAuthorization;
-
-    /**
-     * Helper function which validates that user is part of project's organizational unit.
-     *
-     * @param  User $user
-     * @param  Project $project
-     * @return boolean
-     */
-    protected function userOwnProject(User $user, Project $project)
-    {
-        return $user->organizationalUnits->firstWhere('id', $project->organizationalUnit->id) !== null;
-    }
 
     /**
      * Get executed before each action.
@@ -63,7 +51,7 @@ class ProjectPolicy
         }
 
         // Ensure that user has the right role and is part of the project's organizational unit.
-        if (! $user->hasRole('owner') || ! $this->userOwnProject($user, $project)) {
+        if (! $user->hasRole('owner') || ! $user->belongsToOrganizationalUnit($project->organizationalUnit)) {
             throw new InsufficientPrivilegesException();
         }
 
@@ -84,12 +72,15 @@ class ProjectPolicy
         }
 
         if ($user->isAdmin()) {
-            // @todo: Ensure that project has no child learning products.
+            // Ensure that project has no child learning products.
+            if ($project->learningProducts->isNotEmpty()) {
+                throw new OperationDeniedException();
+            }
             return true;
         }
 
         // Ensure that user is part of the project's organizational unit.
-        if (! $this->userOwnProject($user, $project)) {
+        if (! $user->belongsToOrganizationalUnit($project->organizationalUnit)) {
             throw new InsufficientPrivilegesException();
         }
 
@@ -112,7 +103,7 @@ class ProjectPolicy
     public function startProcess(User $user, Project $project, ProcessDefinition $processDefinition)
     {
         // Ensure that user is part of the project's organizational unit.
-        if (! $user->isAdmin() && ! $this->userOwnProject($user, $project)) {
+        if (! $user->isAdmin() && ! $user->belongsToOrganizationalUnit($project->organizationalUnit)) {
             throw new InsufficientPrivilegesException();
         }
 
