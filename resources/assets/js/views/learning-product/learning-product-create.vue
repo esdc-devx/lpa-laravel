@@ -41,6 +41,7 @@
           <el-select-wrap
             v-model="form.project_id"
             filterable
+            :clearable=true
             name="project_id"
             :data-vv-as="trans('entities.learning_product.parent_project')"
             v-validate="'required'"
@@ -55,14 +56,16 @@
           <el-cascader
             v-model="learningProductType"
             name="type_id"
+            :disabled="!projectSelected"
             :clearable=true
             element-loading-spinner="el-icon-loading"
             v-validate="'required'"
             :data-vv-as="trans('entities.learning_product.type')"
             :options="learningProductTypeList"
-            :props="typeOptions">
+            :props="learningProductTypeOptions">
           </el-cascader>
           <form-error name="type_id"></form-error>
+
         </el-form-item-wrap>
 
         <el-form-item-wrap
@@ -72,7 +75,7 @@
           <user-search
             name="manager"
             :label="trans('entities.learning_product.manager')"
-            v-bind:value.sync="form.manager">
+            v-bind:user.sync="form.manager">
           </user-search>
           <form-error name="manager"></form-error>
         </el-form-item-wrap>
@@ -84,7 +87,7 @@
           <user-search
             name="primary_contact"
             :label="trans('entities.learning_product.primary_contact')"
-            v-bind:value.sync="form.primary_contact">
+            v-bind:user.sync="form.primary_contact">
           </user-search>
           <form-error name="primary_contact"></form-error>
         </el-form-item-wrap>
@@ -132,6 +135,14 @@
       },
 
       'form.project_id': function(projectId) {
+        if (!projectId) {
+          this.projectSelected = false;
+          this.learningProductType = [];
+          return;
+        }
+
+        this.projectSelected = true;
+
         let project = _.find(this.projects, { id: projectId });
         let availableProductTypes = _.cloneDeep(project.available_learning_product_types);
 
@@ -140,15 +151,15 @@
           this.learningProductType = [];
         }
 
-        // Update learning product type list when updating the project
+        // Update learning product type list when selecting a project
         // to only enable the available learning product types.
         _.forEach(this.learningProductTypeList, productType => {
           _.forEach(productType.children, productSubType => {
             productSubType.disabled = true;
             _.forEach(availableProductTypes, (availableProductType, index) => {
-              if (availableProductType.sub_type_id === productSubType.id) {
+              if (availableProductType && availableProductType.sub_type_id === productSubType.id) {
                 productSubType.disabled = false;
-                availableProductTypes.slice(index, 1);
+                availableProductTypes.splice(index, 1);
               }
             });
           });
@@ -172,16 +183,17 @@
           organizational_unit_id: null,
           type_id: null,
           sub_type_id: null,
-          manager: {},
+          manager: { name:'Francis Mawn', username: 'FMAWN' },
           primary_contact: {}
         },
         projects: [],
         learningProductTypeList: [],
         learningProductType: [],
-        typeOptions: {
+        learningProductTypeOptions: {
           label: 'name',
           value: 'id'
-        }
+        },
+        projectSelected: false
       }
     },
 
@@ -212,8 +224,8 @@
       },
 
       // Remove children attribute when empty and disable all terms by default.
-      formatLearningProductList(formattedList) {
-        _.forEach(formattedList, item => {
+      formatLearningProductList(list) {
+        _.forEach(list, item => {
           _.forEach(item.children, itemSub => {
             itemSub.disabled = true;
             if (itemSub.children && itemSub.children.length === 0) {
@@ -221,7 +233,7 @@
             }
           });
         });
-        return formattedList;
+        return list;
       },
 
       async fetch() {
@@ -294,7 +306,6 @@
     }
     .el-cascader {
       width: 35%;
-      min-width: 400px;
     }
   }
 </style>

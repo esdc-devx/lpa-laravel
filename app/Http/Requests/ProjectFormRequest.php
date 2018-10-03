@@ -4,7 +4,8 @@ namespace App\Http\Requests;
 
 use App\Models\Project\Project;
 use App\Policies\ProjectPolicy;
-use App\Rules\UserBelongsToLearningProductOwnerOrganizationalUnit;
+use App\Rules\OrganizationalUnitIsLearningProductOwner;
+use App\Rules\UserBelongsToOrganizationalUnit;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -37,7 +38,7 @@ class ProjectFormRequest extends FormRequest
     {
         return [
             'name'                => 'required|max:175|unique:projects,name,' . $this->project,
-            'organizational_unit' => ['required', new UserBelongsToLearningProductOwnerOrganizationalUnit],
+            'organizational_unit' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace App\Rules;
 use App\Models\OrganizationalUnit;
 use Illuminate\Contracts\Validation\Rule;
 
-class UserBelongsToLearningProductOwnerOrganizationalUnit implements Rule
+class UserBelongsToOrganizationalUnit implements Rule
 {
     protected $attribute;
 
@@ -30,8 +30,7 @@ class UserBelongsToLearningProductOwnerOrganizationalUnit implements Rule
     {
         $this->attribute = $attribute;
 
-        return OrganizationalUnit::getLearningProductOwnersFor(auth()->user())->pluck('id')
-            ->contains($value);
+        return auth()->user()->isAdmin() || auth()->user()->organizationalUnits->contains($value);
     }
 
     /**

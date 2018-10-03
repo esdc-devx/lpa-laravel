@@ -4,7 +4,8 @@ namespace App\Http\Requests;
 
 use App\Models\LearningProduct\LearningProduct;
 use App\Models\Project\Project;
-use App\Rules\UserBelongsToLearningProductOwnerOrganizationalUnit;
+use App\Rules\OrganizationalUnitIsLearningProductOwner;
+use App\Rules\UserBelongsToOrganizationalUnit;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -38,7 +39,7 @@ class LearningProductFormRequest extends FormRequest
         return [
             'project_id'             => 'required|integer',
             'name'                   => 'required|max:175|unique:learning_products,name,' . $this->learningProduct,
-            'organizational_unit_id' => ['required', new UserBelongsToLearningProductOwnerOrganizationalUnit],
+            'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
             'type_id'                => 'required|integer',
             'sub_type_id'            => 'required|integer',
             'primary_contact'        => 'required|string',

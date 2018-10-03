@@ -2,7 +2,8 @@
   <div class="user-search">
     <el-autocomplete
       :name="name"
-      v-model="value.name"
+      :disabled="disabled"
+      v-model="user.name"
       v-validate="'required'"
       :data-vv-as="label"
       popper-class="user-autocomplete"
@@ -10,6 +11,7 @@
       :trigger-on-focus="false"
       valueKey="name"
       @select="handleSelect"
+      @focus="onFocus"
       @blur="onBlur">
       <template slot-scope="props">
         <div class="autocomplete-popper-inner-wrap" :title="props.item.name">
@@ -39,33 +41,32 @@ export default {
       type: String,
       required: true
     },
-    isLoading: {
-      type: Boolean,
-      default: false
-    },
     disabled: {
       type: Boolean,
       default: false
     },
-    value: {
+    user: {
       type: Object,
-      default: { name: ''}
+      default: { name: '' }
     },
-    label:{
+    label: {
       type: String,
-      default: '[Unknown]'
+      default: ''
     }
   },
 
-  computed: {
-    userListNames() {
-      return _.map(this.userList, (user) => user.name.toLowerCase());
+  watch: {
+    userList: function(value) {
+      let clone = _.cloneDeep(this.userList);
+      this.userListNames = _.map(clone, (user) => user.name.toLowerCase());
     }
   },
 
   data() {
     return {
-      userList: []
+      userList: [],
+      userListNames: [],
+      focused: false
     };
   },
 
@@ -78,31 +79,40 @@ export default {
       if (queryString) {
         this.userList = await this.searchUser(queryString);
       }
-      callback(this.userList);
+      callback(_.cloneDeep(this.userList));
+    },
+
+    validateNameInput() {
+      if (this.user.name) {
+        // Check if name entered exists, if so select the matched user.
+        let index = this.userListNames.indexOf(this.user.name.toLowerCase());
+        return this.handleSelect(index !== -1 ? this.userList[index] : {});
+      }
+      return this.handleSelect({});
+    },
+
+    onFocus(event) {
+      this.focused = true;
     },
 
     onBlur(event) {
-      if (this.value.name) {
-        // Check if value entered exists when focusing out of the field, if so
-        // select the matched user.
-        let index = this.userListNames.indexOf(this.value.name.toLowerCase());
-        if (index !== -1) {
-          return this.handleSelect(this.userList[index]);
-        }
-        return this.handleSelect({});
-      }
+      this.focused = false;
+      _.delay(() => {
+        if (this.focused) return;
+        this.validateNameInput();
+      }, 1000);
     },
 
-    handleSelect(item) {
-      this.$emit('update:value', item);
+    handleSelect(user) {
+      this.$emit('update:user', user);
     }
   },
 
   created() {
     // If component is created with an initial value, add it the
     // the list of valid users.
-    if (this.value) {
-      this.userList.push(this.value);
+    if (this.user.name) {
+      this.userList.push(Object.assign({}, this.user));
     }
   }
 }
@@ -112,7 +122,6 @@ export default {
   .user-search {
     .el-autocomplete {
       width: 35%;
-      min-width: 400px;
     }
   }
 

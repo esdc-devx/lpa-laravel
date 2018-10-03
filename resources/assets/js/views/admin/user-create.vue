@@ -13,7 +13,7 @@
           <user-search
             name="username"
             :label="trans('entities.general.full_name')"
-            v-bind:value.sync="form.user">
+            v-bind:user.sync="form.user">
           </user-search>
           <form-error name="username"></form-error>
         </el-form-item-wrap>
