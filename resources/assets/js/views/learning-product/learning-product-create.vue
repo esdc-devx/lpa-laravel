@@ -65,7 +65,6 @@
             :props="learningProductTypeOptions">
           </el-cascader>
           <form-error name="type_id"></form-error>
-
         </el-form-item-wrap>
 
         <el-form-item-wrap
@@ -160,6 +159,7 @@
               if (availableProductType && availableProductType.sub_type_id === productSubType.id) {
                 productSubType.disabled = false;
                 availableProductTypes.splice(index, 1);
+                return false;
               }
             });
           });
@@ -183,7 +183,7 @@
           organizational_unit_id: null,
           type_id: null,
           sub_type_id: null,
-          manager: { name:'Francis Mawn', username: 'FMAWN' },
+          manager: {},
           primary_contact: {}
         },
         projects: [],

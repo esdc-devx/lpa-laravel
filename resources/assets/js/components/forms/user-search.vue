@@ -55,17 +55,9 @@ export default {
     }
   },
 
-  watch: {
-    userList: function(value) {
-      let clone = _.cloneDeep(this.userList);
-      this.userListNames = _.map(clone, (user) => user.name.toLowerCase());
-    }
-  },
-
   data() {
     return {
       userList: [],
-      userListNames: [],
       focused: false
     };
   },
@@ -85,7 +77,7 @@ export default {
     validateNameInput() {
       if (this.user.name) {
         // Check if name entered exists, if so select the matched user.
-        let index = this.userListNames.indexOf(this.user.name.toLowerCase());
+        let index = _.findIndex(this.userList, (user) => { return user.name.toLowerCase() == this.user.name.toLowerCase(); });
         return this.handleSelect(index !== -1 ? this.userList[index] : {});
       }
       return this.handleSelect({});
