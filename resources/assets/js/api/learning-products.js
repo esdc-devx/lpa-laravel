@@ -2,23 +2,38 @@ import _ from 'lodash';
 import axios from '@axios/interceptor';
 
 export default {
-  getLearningProducts() {
-    return axios.get(`learning-products`);
+
+  async getLearningProducts() {
+    let response = await axios.get(`learning-products`);
+    return response.data.data.learning_products;
   },
 
-  getLearningProduct(id) {
-    return axios.get(`learning-products/${id}`);
+  async getLearningProduct(id) {
+    let response = await axios.get(`learning-products/${id}`);
+    return response.data.data.learning_product;
   },
 
-  getLearningProductCreateInfo() {
-    return axios.get('learning-products/create');
+  async getCreateInfo() {
+    let response = await axios.get('learning-products/create');
+    return response.data.data;
   },
 
-  canCreateLearningProduct() {
-    return axios.get('authorization/learning-product/create');
+  async canCreate() {
+    let response = await axios.get('authorization/learning-product/create');
+    return response.data.data.allowed;
   },
 
-  create(learningProduct) {
-    return axios.post('learning-products', learningProduct);
-  }
+  async create(learningProduct) {
+    let response = await axios.post('learning-products', learningProduct);
+    return response.data.data;
+  },
+
+  async canDelete(id) {
+    let response = await axios.get(`authorization/learning-product/delete/${id}`);
+    return response.data.data.allowed;
+  },
+
+  async delete(id) {
+    await axios.delete(`learning-products/${id}`);
+  },
 };

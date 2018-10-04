@@ -29,31 +29,39 @@ export default {
 
   actions: {
     async loadLearningProducts({ commit, dispatch }) {
-      let response = await LearningProductAPI.getLearningProducts();
-      commit('setLearningProducts', response.data.data.learning_products);
+      let learningProducts = await LearningProductAPI.getLearningProducts();
+      commit('setLearningProducts', learningProducts);
     },
 
     async loadLearningProduct({ commit }, id) {
-      let response = await LearningProductAPI.getLearningProduct(id);
-      commit('setViewing', response.data.data.learning_product);
-      return response.data.data;
+      let learningProduct = await LearningProductAPI.getLearningProduct(id);
+      commit('setViewing', learningProduct);
     },
 
     async loadLearningProductCreateInfo({ commit }) {
-      let response = await LearningProductAPI.getLearningProductCreateInfo();
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      return response.data.data;
+      let learningProductCreateInfo = await LearningProductAPI.getCreateInfo();
+      commit('setOrganizationalUnits', learningProductCreateInfo.organizational_units);
+      return learningProductCreateInfo;
     },
 
     async canCreateLearningProduct({ commit }) {
-      let response = await LearningProductAPI.canCreateLearningProduct();
-      return response.data.data.allowed;
+      let autorization = await LearningProductAPI.canCreate();
+      return autorization;
     },
 
     async create({ commit }, learningProduct) {
-      let response = await LearningProductAPI.create(learningProduct);
-      commit('setViewing', response.data.data);
-      return response.data.data;
+      let newLearningProduct = await LearningProductAPI.create(learningProduct);
+      commit('setViewing', newLearningProduct);
+      return newLearningProduct;
+    },
+
+    async canDelete({ commit }, id) {
+      let autorization = await LearningProductAPI.canDelete(id);
+      return autorization;
+    },
+
+    async delete({ commit }, id) {
+      await LearningProductAPI.delete(id);
     },
   },
 

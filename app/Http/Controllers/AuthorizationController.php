@@ -134,7 +134,18 @@ class AuthorizationController extends APIController
     }
 
     /**
-     * Authorize learning product creation.
+     * Authorize learning product deletion.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteLearningProduct(LearningProduct $learningProduct)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('delete', $learningProduct)
+        ]);
+    }
+
+    /** Authorize learning product creation.
      *
      * @return \Illuminate\Http\JsonResponse
      */

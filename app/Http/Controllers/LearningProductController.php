@@ -121,6 +121,13 @@ class LearningProductController extends APIController
      */
     public function destroy(LearningProduct $learningProduct)
     {
-        //
+        $this->authorize('delete', $learningProduct);
+
+        return $this->respond([
+            'deleted' => $learningProduct->delete(),
+        ]);
     }
+
+
+
 }
