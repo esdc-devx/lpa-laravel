@@ -99,7 +99,7 @@
         await this.createProject(this.form);
         this.isSubmitting = false;
         this.notifySuccess({
-          message: this.trans('components.notice.message.created', { name: this.form.name })
+          message: this.trans('components.notice.message.project_created')
         });
         this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
       },

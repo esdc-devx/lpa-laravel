@@ -109,7 +109,7 @@
 
         this.isSubmitting = false;
         this.notifySuccess({
-          message: this.trans('components.notice.message.created', { name: this.form.user.name })
+          message: this.trans('components.notice.message.user_created')
         });
         this.goToParentPage();
       },
