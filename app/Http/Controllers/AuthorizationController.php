@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\LearningProduct\LearningProduct;
 use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
@@ -129,6 +130,29 @@ class AuthorizationController extends APIController
     {
         return $this->respond([
             'allowed' => auth()->user()->can('submit', $processInstanceForm)
+        ]);
+    }
+
+    /**
+     * Authorize learning product deletion.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteLearningProduct(LearningProduct $learningProduct)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('delete', $learningProduct)
+        ]);
+    }
+
+    /** Authorize learning product creation.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createLearningProduct()
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('create', LearningProduct::class)
         ]);
     }
 }

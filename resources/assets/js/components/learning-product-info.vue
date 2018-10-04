@@ -2,127 +2,129 @@
   <div class="learning-product-info">
     <info-box>
       <div slot="header">
-        <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProductProp.name }}</h2>
-        <!-- <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
+        <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProduct.name }}</h2>
+        <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
+          <!-- <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button> -->
           <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteWrapper()" plain><i class="el-icon-lpa-delete"></i></el-button>
-        </div> -->
+        </div>
       </div>
       <dl>
         <dt>{{ trans('entities.general.lpa_num') }}</dt>
-        <dd>{{ learningProductProp.id | LPANumFilter }}</dd>
+        <dd>{{ learningProduct.id | LPANumFilter }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.parent_project') }}</dt>
-        <dd><router-link :to="'/' + language + '/projects/' + learningProductProp.project_id">{{ learningProductProp.project_id | LPANumFilter }}</router-link></dd>
+        <dd><router-link :to="'/' + language + '/projects/' + learningProduct.project_id">{{ learningProduct.project_id | LPANumFilter }}</router-link></dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.type') }}</dt>
-        <dd>{{ learningProductProp.type.name, learningProductProp.sub_type.name | learningProductTypeSubTypeFilter }}</dd>
+        <dd>{{ learningProduct.type.name, learningProduct.sub_type.name | learningProductTypeSubTypeFilter }}</dd>
       </dl>
       <dl>
         <dt>{{ $tc('entities.general.organizational_units') }}</dt>
-        <dd>{{ learningProductProp.organizational_unit.name }}</dd>
+        <dd>{{ learningProduct.organizational_unit.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.manager') }}</dt>
-        <dd>{{ learningProductProp.manager.name }}</dd>
+        <dd>{{ learningProduct.manager.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.primary_contact') }}</dt>
-        <dd>{{ learningProductProp.primary_contact.name }}</dd>
+        <dd>{{ learningProduct.primary_contact.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.created') }}</dt>
-        <dd>{{ learningProductProp.created_by.name }}</dd>
-        <dd>{{ learningProductProp.created_at }}</dd>
+        <dd>{{ learningProduct.created_by.name }}</dd>
+        <dd>{{ learningProduct.created_at }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.updated') }}</dt>
-        <dd>{{ learningProductProp.updated_by.name }}</dd>
-        <dd>{{ learningProductProp.updated_at }}</dd>
+        <dd>{{ learningProduct.updated_by.name }}</dd>
+        <dd>{{ learningProduct.updated_at }}</dd>
       </dl>
     </info-box>
   </div>
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
-  import InfoBox from '@components/info-box.vue';
-  import PageUtils from '@mixins/page/utils.js';
+import { mapGetters, mapActions } from 'vuex';
+import HttpStatusCodes from '@axios/http-status-codes';
+import InfoBox from '@components/info-box.vue';
+import PageUtils from '@mixins/page/utils.js';
 
-  let namespace = 'learningProducts';
+let namespace = 'learningProducts';
 
-  export default {
-    name: 'learning-product-info',
+export default {
+  name: 'learning-product-info',
 
-    components: { InfoBox },
+  components: { InfoBox },
 
-    mixins: [ PageUtils ],
+  mixins: [ PageUtils ],
 
-    props: [ 'learningProduct' ],
-
-    data() {
-      return {
-        // rights: {
-        //   canEdit: false,
-        //   canDelete: false
-        // }
-      };
-    },
-
-    computed: {
-      ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole'
-      }),
-
-      learningProductProp() {
-        return this.learningProduct;
-      }
-    },
-
-    methods: {
-      // ...mapActions({
-      //   deleteLearningProduct: `${namespace}/deleteLearningProduct`,
-      //   canEditLearningProduct: `${namespace}/canEditLearningProduct`,
-      //   canDeleteLearningProduct: `${namespace}/canDeleteLearningProduct`
-      // }),
-
-      // edit() {
-      //   this.$router.push(`${this.learningProduct.id}/edit`);
-      // },
-
-      // deleteWrapper() {
-      //   this.confirmDelete({
-      //     title: this.trans('components.notice.title.delete_learning_product'),
-      //     message: this.trans('components.notice.message.delete_learning_product', {
-      //       name: this.learningProduct.name,
-      //       id: this.$options.filters.LPANumFilter(this.learningProduct.id)
-      //     })
-      //   }).then(async () => {
-      //     try {
-      //       await this.deleteLearningProduct(this.learningProduct.id);
-      //       this.notifySuccess({
-      //         message: this.trans('components.notice.message.learning_product_deleted')
-      //       });
-      //       this.goToParentPage();
-      //     } catch (e) {
-      //       // Exception handled by interceptor
-      //       if (!e.response) {
-      //         throw e;
-      //       }
-      //     }
-      //   }).catch(() => false);
-      // }
-    },
-
-    async created() {
-      let learningProductId = this.$route.params.learningProductId;
-      // this.rights.canEdit = await this.canEditLearningProduct(learningProductId);
-      // this.rights.canDelete = await this.canDeleteLearningProduct(learningProductId);
+  props: {
+    learningProduct: {
+      type: Object,
+      required: true
     }
-  };
+  },
+
+  data() {
+    return {
+      rights: {
+        // canEdit: false,
+        canDelete: false
+      }
+    };
+  },
+
+  computed: {
+    ...mapGetters({
+      language: 'language',
+      hasRole: 'users/hasRole'
+    })
+  },
+
+  methods: {
+    ...mapActions({
+      deleteLearningProduct: `${namespace}/delete`,
+      // canEditLearningProduct: `${namespace}/canEdit`,
+      canDeleteLearningProduct: `${namespace}/canDelete`
+    }),
+
+    // edit() {
+    //   this.$router.push(`${this.learningProduct.id}/edit`);
+    // },
+
+    deleteWrapper() {
+      this.confirmDelete({
+        title: this.trans('components.notice.title.delete_learning_product'),
+        message: this.trans('components.notice.message.delete_learning_product')
+      }).then(async () => {
+        try {
+          await this.deleteLearningProduct(this.learningProduct.id);
+          this.notifySuccess({
+            message: this.trans('components.notice.message.learning_product_deleted')
+          });
+          this.goToParentPage();
+          } catch (e) {
+            // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
+          }
+      }).catch(() => false);
+    },
+
+    async getAuthorizations() {
+      // this.rights.canEdit = await this.canEditLearningProduct(this.learningProduct.id);
+      this.rights.canDelete = await this.canDeleteLearningProduct(this.learningProduct.id);
+    }
+  },
+
+  created() {
+    this.getAuthorizations();
+  }
+};
 </script>
 
 <style lang="scss">

@@ -2,7 +2,8 @@
 
 namespace App\Models\LearningProduct;
 
-use App\Events\ProcessEntityDeleted;
+use App\Events\LearningProductCreated;
+use App\Events\LearningProductDeleted;
 use App\Models\BaseModel;
 use App\Models\Project\Project;
 use App\Models\Traits\HasProcesses;
@@ -42,6 +43,11 @@ class LearningProduct extends BaseModel
 
     protected $dates = [
         'deleted_at',
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => LearningProductCreated::class,
+        'deleted' => LearningProductDeleted::class,
     ];
 
     public function type()

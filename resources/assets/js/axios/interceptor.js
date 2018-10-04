@@ -20,11 +20,15 @@ Object.assign(axios.defaults, axiosDefaults);
 // General Request Processing
 axios.interceptors.request.use(
   config => {
-    store.dispatch('showMainLoading'); // Show Main loading animation before sending any request.
+    if (config.showMainLoading) {
+      store.dispatch('showMainLoading'); // Show Main loading animation before sending any request.
+    }
     return config;
-  }, 
+  },
   error => {
-    store.dispatch('hideMainLoading'); // Hide Main loading animation upon request processing error.
+    if (error.request.config.showMainLoading) {
+      store.dispatch('hideMainLoading'); // Hide Main loading animation upon request processing error.
+    }
     Vue.$log.debug(error);
     return Promise.reject(error);
   }
@@ -33,14 +37,18 @@ axios.interceptors.request.use(
 // General Response Processing
 axios.interceptors.response.use(
   response => {
-    store.dispatch('hideMainLoading'); // Hide Main loading animation after receiving a response.
+    if (response.config.showMainLoading) {
+      store.dispatch('hideMainLoading'); // Hide Main loading animation after receiving a response.
+    }
     return response;
-  }, 
+  },
   error => {
-    store.dispatch('hideMainLoading'); // Hide Main loading animation upon response processing error.
-
     let trans = Vue.prototype.trans;
     let response = error.response;
+
+    if (response.config.showMainLoading) {
+      store.dispatch('hideMainLoading'); // Hide Main loading animation upon response processing error.
+    }
 
     // if the response is undefined, we likely got a timeout
     if (!response) {
@@ -95,7 +103,7 @@ axios.interceptors.response.use(
         Vue.$log.error(`[axios][interceptor]: ${errorMessage}`);
       }
     }
-    
+
     return Promise.reject(error);
   });
 

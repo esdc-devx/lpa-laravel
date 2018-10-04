@@ -24,7 +24,10 @@ export default {
   },
 
   search(name) {
-    return axios.get(`users/search?name=${name}`);
+    return axios.get('users/search', {
+      showMainLoading: false,
+      params: { name: name }
+    });
   },
 
   update(user) {

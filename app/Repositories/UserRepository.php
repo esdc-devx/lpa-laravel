@@ -2,11 +2,12 @@
 
 namespace App\Repositories;
 
+use Adldap;
+use Adldap\Models\ModelDoesNotExistException;
 use App\Events\UserSaved;
-use App\Models\User\User;
 use App\Http\Resources\UserLdap;
-use Adldap\Laravel\Facades\Adldap;
-use Illuminate\Support\Facades\DB;
+use App\Models\User\User;
+use DB;
 
 class UserRepository extends BaseEloquentRepository
 {
@@ -42,14 +43,30 @@ class UserRepository extends BaseEloquentRepository
      * Retrieve user in active directory from its username.
      *
      * @param  string $username
-     * @return Adldap\Models\User|null
+     * @return Adldap\Models\User
      */
     public function getUserFromLdap($username)
     {
         // @todo: Move logic to a more generic search ldap method.
-        return Adldap::search()
-            ->where(['samaccountname' => $username])
-            ->first();
+        if ($user = Adldap::search()->where(['samaccountname' => $username])->first()) {
+            return $user;
+        }
+        throw new ModelDoesNotExistException();
+    }
+
+    /**
+     * Fetch or create user if it doesn't exists.
+     *
+     * @param  string $username
+     * @return User
+     */
+    public function findOrCreate($username)
+    {
+        if (! $user = $this->getItemByColumn('username', $username)) {
+            $user = $this->create(['username' => $username]);
+        }
+
+        return $user;
     }
 
     /**

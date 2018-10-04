@@ -136,6 +136,10 @@ return [
         'planned_products' => [
             'unique' => 'There cannot be more than one product of this type.',
         ],
+        'learning_product' => [
+            'invalid_project' => 'This project is no longer available.',
+            'invalid_type' => 'This type is no longer available.',
+        ],
     ],
 
     /*
@@ -150,7 +154,9 @@ return [
     */
 
     'attributes' => [
+        // @refactor: Should always use organizational_unit_id.
         'organizational_unit'                                     => 'Organizational Unit',
+        'organizational_unit_id'                                  => 'Organizational Unit',
         'departmental_benefits.*.rationale'                       => 'Rationale',
         'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
         'departmental_benefits.*.departmental_benefit_type_other' => 'Other',
