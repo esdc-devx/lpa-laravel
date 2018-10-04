@@ -65,7 +65,7 @@ export default {
     learningProduct: {
       type: Object,
       required: true
-    },
+    }
   },
 
   data() {
@@ -81,7 +81,7 @@ export default {
     ...mapGetters({
       language: 'language',
       hasRole: 'users/hasRole'
-    }),
+    })
   },
 
   methods: {
@@ -106,17 +106,12 @@ export default {
             message: this.trans('components.notice.message.learning_product_deleted')
           });
           this.goToParentPage();
-        } catch (e) {
-          if (e.response) { // Exception pre-handled by interceptor
-            if (e.response.status === HttpStatusCodes.FORBIDDEN){
-              // Refresh autorizations and report failure to parent component.
-              this.getAuthorizations();
-              this.$emit('learning-product-info:operation-denied');
+          } catch (e) {
+            // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
             }
-          } else { // Retrow
-            throw e;
           }
-        }
       }).catch(() => false);
     },
 
