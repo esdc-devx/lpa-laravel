@@ -8,7 +8,7 @@ return [
         'error'           => 'Erreur',
     ],
     'title'   => [
-        'delete_learning_product' => 'Delete a Learning Product',
+        'delete_learning_product' => 'Supprimer le produit d\'apprentissage',
         'delete_project'          => 'Supprimer le projet',
         'pending_changes'         => 'Changements en attente',
         'submit_form'             => 'Soumettre le formulaire',

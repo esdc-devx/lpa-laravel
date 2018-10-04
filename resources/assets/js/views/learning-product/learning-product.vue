@@ -7,7 +7,7 @@
     </el-row>
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <learning-product-info :learningProduct="viewingLearningProduct" v-on:appOutOfSync="fetch(false)"/>
+        <learning-product-info :learningProduct="viewingLearningProduct" v-on:learning-product-info:operation-denied="fetch(false)"/>
       </el-col>
     </el-row>
   </div>
@@ -33,7 +33,7 @@
       ...mapGetters({
         language: 'language',
         hasRole: 'users/hasRole',
-        viewingLearningProduct: `${namespace}/viewing`,
+        viewingLearningProduct: `${namespace}/viewing`
       }),
 
       canBeVisible() {
