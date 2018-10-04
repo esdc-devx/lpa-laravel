@@ -2,10 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Adldap\Models\ModelDoesNotExistException;
 use App\Models\User\User;
 use Gate;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UserFormRequest extends FormRequest
 {
@@ -59,10 +60,13 @@ class UserFormRequest extends FormRequest
      *
      * @return bool
      */
-    protected function userNotFoundInLdap()
+    protected function userFoundInLdap()
     {
-        return resolve('App\Repositories\UserRepository')
-            ->getUserFromLdap($this->username) === null;
+        try {
+            return resolve('App\Repositories\UserRepository')->getUserFromLdap($this->username) !== null;
+        } catch (ModelDoesNotExistException $e) {
+            return false;
+        }
     }
 
     /**
@@ -77,7 +81,7 @@ class UserFormRequest extends FormRequest
             // Custom rules for user creation.
             case 'POST':
                 $validator->after(function ($validator) {
-                    if ($this->userNotFoundInLdap()) {
+                    if (! $this->userFoundInLdap()) {
                         $validator->errors()->add('username', __('validation.custom.username.not-found'));
                     }
                 });

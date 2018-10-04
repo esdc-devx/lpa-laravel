@@ -79,11 +79,14 @@ class LearningProductController extends APIController
      */
     public function show(LearningProduct $learningProduct)
     {
+        // Load all the required relationship for display.
+        $learningProduct->load([
+            'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition', 'currentProcess.state',
+            'primaryContact', 'manager', 'createdBy', 'updatedBy',
+        ]);
+
         return $this->respond([
-            'learning_product' => $learningProduct->load([
-                'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition', 'currentProcess.state',
-                'primaryContact', 'manager', 'createdBy', 'updatedBy',
-            ])
+            'learning_product' => $learningProduct,
         ]);
     }
 

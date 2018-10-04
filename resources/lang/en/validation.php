@@ -154,6 +154,7 @@ return [
     */
 
     'attributes' => [
+        // @refactor: Should always use organizational_unit_id.
         'organizational_unit'                                     => 'Organizational Unit',
         'organizational_unit_id'                                  => 'Organizational Unit',
         'departmental_benefits.*.rationale'                       => 'Rationale',

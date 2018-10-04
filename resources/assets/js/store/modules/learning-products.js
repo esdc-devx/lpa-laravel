@@ -10,7 +10,7 @@ export default {
       name: ''
     },
     all: [],
-    //organizationalUnits: []
+    organizationalUnits: []
   },
 
   getters: {
@@ -22,9 +22,9 @@ export default {
       return state.viewing;
     },
 
-    // organizationalUnits(state) {
-    //   return state.organizationalUnits;
-    // }
+    organizationalUnits(state) {
+      return state.organizationalUnits;
+    }
   },
 
   actions: {
@@ -38,6 +38,23 @@ export default {
       commit('setViewing', learningProduct);
     },
 
+    async loadLearningProductCreateInfo({ commit }) {
+      let learningProductCreateInfo = await LearningProductAPI.getCreateInfo();
+      commit('setOrganizationalUnits', learningProductCreateInfo.organizational_units);
+      return learningProductCreateInfo;
+    },
+
+    async canCreateLearningProduct({ commit }) {
+      let autorization = await LearningProductAPI.canCreate();
+      return autorization;
+    },
+
+    async create({ commit }, learningProduct) {
+      let newLearningProduct = await LearningProductAPI.create(learningProduct);
+      commit('setViewing', newLearningProduct);
+      return newLearningProduct;
+    },
+
     async canDelete({ commit }, id) {
       let autorization = await LearningProductAPI.canDelete(id);
       return autorization;
@@ -45,7 +62,7 @@ export default {
 
     async delete({ commit }, id) {
       await LearningProductAPI.delete(id);
-    }
+    },
   },
 
   mutations: {
@@ -57,8 +74,8 @@ export default {
       state.viewing = learningProduct;
     },
 
-    // setOrganizationalUnits(state, organizationalUnits) {
-    //   state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
-    // }
+    setOrganizationalUnits(state, organizationalUnits) {
+      state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
+    }
   }
 };

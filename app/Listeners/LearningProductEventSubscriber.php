@@ -67,7 +67,7 @@ class LearningProductEventSubscriber
         }
 
         // All learning products were created, update state to active full.
-        if ($this->project->learningProducts->count() >= $this->project->architecturePlan->plannedProducts->sum('quantity')) {
+        if ($this->project->learningProducts->count() == $this->project->architecturePlan->plannedProducts->sum('quantity')) {
             return State::getByKey('project.active-full')->first();
         }
     }
