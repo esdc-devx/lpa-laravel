@@ -25,12 +25,18 @@ class LearningProductController extends APIController
      */
     public function index()
     {
+
         $learningProducts = LearningProduct::with([
             'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition'
-        ])->get();
+        ]);
+
+        // Filter on specific project.
+        if ($projectId = request()->get('project_id')) {
+            $learningProducts->where('project_id', $projectId);
+        }
 
         return $this->respond([
-            'learning_products' => $learningProducts,
+            'learning_products' => $learningProducts->get(),
         ]);
     }
 

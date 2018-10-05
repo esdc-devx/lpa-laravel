@@ -8,6 +8,11 @@ export default {
     return response.data.data.learning_products;
   },
 
+  async getProjectLearningProducts(projectId) {
+    let response = await axios.get(`learning-products/?project_id=${projectId}`);
+    return response.data.data.learning_products;
+  },
+
   async getLearningProduct(id) {
     let response = await axios.get(`learning-products/${id}`);
     return response.data.data.learning_product;

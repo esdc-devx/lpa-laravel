@@ -10,7 +10,8 @@ export default {
       name: ''
     },
     all: [],
-    organizationalUnits: []
+    organizationalUnits: [],
+    projectLearningProducts: []
   },
 
   getters: {
@@ -24,6 +25,10 @@ export default {
 
     organizationalUnits(state) {
       return state.organizationalUnits;
+    },
+
+    projectLearningProducts(state) {
+      return state.projectLearningProducts;
     }
   },
 
@@ -31,6 +36,11 @@ export default {
     async loadLearningProducts({ commit, dispatch }) {
       let learningProducts = await LearningProductAPI.getLearningProducts();
       commit('setLearningProducts', learningProducts);
+    },
+
+    async loadProjectLearningProducts({ commit }, projectId) {
+      let projectLearningProducts = await LearningProductAPI.getProjectLearningProducts(projectId);
+      commit('setProjectLearningProducts', projectLearningProducts);
     },
 
     async loadLearningProduct({ commit }, id) {
@@ -76,6 +86,11 @@ export default {
 
     setOrganizationalUnits(state, organizationalUnits) {
       state.organizationalUnits = organizationalUnits.sort((a, b) => helpers.localeSort(a, b, 'name'));
-    }
+    },
+
+    setProjectLearningProducts(state, projectLearningProducts) {
+      state.projectLearningProducts = projectLearningProducts;
+    },
+    
   }
 };

@@ -24,6 +24,25 @@ export default {
       'confirmBeforeLanguageChange'
     ]),
 
+    /**
+     * Scroll the current page up. Called when navigating from one table page to the other. 
+     */
+    scrollToTop() {
+      document.querySelectorAll('.el-main')[0].scrollTop = 0;
+      // IE11 scroll to top
+      document.querySelectorAll('.content-wrap')[0].scrollTop = 0
+    },
+
+    /**
+     * Sort table header filter options in alphabetical order.
+     * @param {Array} data 
+     * @param {String} column 
+     */
+    sortFilterEntries(data, column) {
+      return this.getColumnFilters(data, column)
+                 .sort((a, b) => this.$helpers.localeSort(a, b, 'text'));
+    },
+
     // handle click on sortable and filterable columns
     // since ElementUI has no behavior when clicking a column that has both methods
     headerClick(col, e) {

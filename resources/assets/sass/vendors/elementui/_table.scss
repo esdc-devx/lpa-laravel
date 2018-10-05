@@ -11,3 +11,15 @@
     padding: 10px;
   }
 }
+
+// Data tables specific styles
+.sc-table {
+  .el-pagination {
+    padding: 20px;
+    margin-bottom: 0;
+  }
+
+  .pagination-wrap {
+    margin-top: 0;
+  }
+}
