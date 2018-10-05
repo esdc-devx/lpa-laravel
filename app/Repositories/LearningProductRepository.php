@@ -51,11 +51,9 @@ class LearningProductRepository extends BaseEloquentRepository
      */
     public function create(array $data)
     {
-        // Wrap the creation process within a database transaction
-        // to ensure easy rollback in case something goes wrong.
-        DB::beginTransaction();
-
         try {
+            DB::beginTransaction();
+
             // Resolve product type model class from type id.
             $this->model = $this->resolveModel($data['type_id']);
 
@@ -89,6 +87,29 @@ class LearningProductRepository extends BaseEloquentRepository
      */
     public function update($id, array $data = [])
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            // Resolve product type model class from type id.
+            $this->model = $this->resolveModel($this->getById($id)->type_id);
+
+            $learningProduct = $this->model->whereId($id)->update(
+                array_merge($data, [
+                    'primary_contact' => $this->users->findOrCreate($data['primary_contact'])->id,
+                    'manager'         => $this->users->findOrCreate($data['manager'])->id,
+                    'updated_by'      => auth()->user()->id,
+                ])
+            );
+        }
+        // Rollback transaction if any exceptions occurs.
+        catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+
+        DB::commit();
+
+        // Return updated learning product.
+        return $learningProduct;
     }
 }

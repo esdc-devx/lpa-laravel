@@ -62,6 +62,15 @@ export default {
     };
   },
 
+  watch: {
+    user: function(val) {
+      // When user value changes, make sure its been added to the list of valid users.
+      if (!_.isEmpty(val) && this.userList.length == 0) {
+        this.userList.push(Object.assign({}, this.user));
+      }
+    }
+  },
+
   methods: {
     ...mapActions({
       searchUser: 'users/search',
@@ -97,14 +106,6 @@ export default {
 
     handleSelect(user) {
       this.$emit('update:user', user);
-    }
-  },
-
-  created() {
-    // If component is created with an initial value, add it the
-    // the list of valid users.
-    if (this.user.name) {
-      this.userList.push(Object.assign({}, this.user));
     }
   }
 }
