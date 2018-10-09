@@ -25,7 +25,7 @@
 
 <script>
 
-import { mapActions } from 'vuex';
+import UsersAPI from '@api/users';
 
 export default {
   name: 'user-search',
@@ -62,23 +62,36 @@ export default {
     };
   },
 
+  watch: {
+    user: function(val) {
+      // When user value changes, make sure it's been added to the list of valid users.
+      if (!_.isEmpty(val) && this.userList.length == 0) {
+        this.userList.push(Object.assign({}, this.user));
+      }
+    }
+  },
+
   methods: {
-    ...mapActions({
-      searchUser: 'users/search',
-    }),
+    async searchUser(userName) {
+      let response = await UsersAPI.search(userName);
+      this.userList = response;
+      if (!this.focused) {
+        this.validateNameInput();
+      }
+    },
 
     async querySearchAsync(queryString, callback) {
       if (queryString) {
-        this.userList = await this.searchUser(queryString);
+        await this.searchUser(queryString);
       }
-      callback(_.cloneDeep(this.userList));
+      callback(this.userList);
     },
 
     validateNameInput() {
       if (this.user.name) {
         // Check if name entered exists, if so select the matched user.
         let index = _.findIndex(this.userList, (user) => { return user.name.toLowerCase() == this.user.name.toLowerCase(); });
-        return this.handleSelect(index !== -1 ? this.userList[index] : {});
+        return this.handleSelect(index !== -1 ? _.cloneDeep(this.userList[index]) : {});
       }
       return this.handleSelect({});
     },
@@ -89,22 +102,14 @@ export default {
 
     onBlur(event) {
       this.focused = false;
-      _.delay(() => {
-        if (this.focused) return;
-        this.validateNameInput();
-      }, 1000);
+      // Search and validate user input when leaving field.
+      if (this.user.name) {
+        this.searchUser(this.user.name);
+      }
     },
 
     handleSelect(user) {
       this.$emit('update:user', user);
-    }
-  },
-
-  created() {
-    // If component is created with an initial value, add it the
-    // the list of valid users.
-    if (this.user.name) {
-      this.userList.push(Object.assign({}, this.user));
     }
   }
 }

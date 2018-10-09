@@ -36,4 +36,19 @@ export default {
   async delete(id) {
     await axios.delete(`learning-products/${id}`);
   },
+
+  async canEdit(id) {
+    let response = await axios.get(`authorization/learning-product/edit/${id}`);
+    return response.data.data.allowed;
+  },
+
+  async getEditInfo(id) {
+    let response = await axios.get(`learning-products/${id}/edit`);
+    return response.data.data;
+  },
+
+  async update(id, data) {
+    let response = await axios.put(`learning-products/${id}`, data);
+    return response.data.data;
+  }
 };

@@ -23,11 +23,12 @@ export default {
     return axios.post('users', user);
   },
 
-  search(name) {
-    return axios.get('users/search', {
+  async search(name) {
+    let response = await axios.get('users/search', {
       showMainLoading: false,
       params: { name: name }
     });
+    return response.data.data;
   },
 
   update(user) {

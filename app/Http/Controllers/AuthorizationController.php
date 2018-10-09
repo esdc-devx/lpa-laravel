@@ -145,7 +145,8 @@ class AuthorizationController extends APIController
         ]);
     }
 
-    /** Authorize learning product creation.
+    /**
+     * Authorize learning product creation.
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -153,6 +154,18 @@ class AuthorizationController extends APIController
     {
         return $this->respond([
             'allowed' => auth()->user()->can('create', LearningProduct::class)
+        ]);
+    }
+
+    /**
+     * Authorize learning product edition.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editLearningProduct(LearningProduct $learningProduct)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('update', $learningProduct)
         ]);
     }
 }

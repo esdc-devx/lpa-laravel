@@ -24,7 +24,7 @@ class LearningProductFormRequest extends FormRequest
                 return Gate::authorize('create', LearningProduct::class);
 
             case 'PUT':
-                return Gate::authorize('update', LearningProduct::find($this->learningProduct));
+                return Gate::authorize('update', LearningProduct::findOrFail($this->learningProduct));
         }
         return false;
     }
@@ -36,15 +36,29 @@ class LearningProductFormRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'project_id'             => 'required|integer',
-            'name'                   => 'required|max:175|unique:learning_products,name,' . $this->learningProduct,
-            'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
-            'type_id'                => 'required|integer',
-            'sub_type_id'            => 'required|integer',
-            'primary_contact'        => 'required|string',
-            'manager'                => 'required|string',
-        ];
+        // Defer to LearningProductPolicy class to handle authorization.
+        switch ($this->method()) {
+            // Create validation rules.
+            case 'POST':
+                return [
+                    'project_id'             => 'required|integer',
+                    'name'                   => 'required|max:175|unique:learning_products,name',
+                    'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
+                    'type_id'                => 'required|integer',
+                    'sub_type_id'            => 'required|integer',
+                    'primary_contact'        => 'required|string',
+                    'manager'                => 'required|string',
+                ];
+
+            // Update validation rules.
+            case 'PUT':
+                return [
+                    'name'                   => 'required|max:175|unique:learning_products,name,' . $this->learningProduct,
+                    'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
+                    'primary_contact'        => 'required|string',
+                    'manager'                => 'required|string',
+                ];
+        }
     }
 
     /**

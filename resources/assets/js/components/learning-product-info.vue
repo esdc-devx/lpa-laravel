@@ -4,7 +4,7 @@
       <div slot="header">
         <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProduct.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <!-- <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button> -->
+          <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
           <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteWrapper()" plain><i class="el-icon-lpa-delete"></i></el-button>
         </div>
       </div>
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       rights: {
-        // canEdit: false,
+        canEdit: false,
         canDelete: false
       }
     };
@@ -87,13 +87,13 @@ export default {
   methods: {
     ...mapActions({
       deleteLearningProduct: `${namespace}/delete`,
-      // canEditLearningProduct: `${namespace}/canEdit`,
+      canEditLearningProduct: `${namespace}/canEdit`,
       canDeleteLearningProduct: `${namespace}/canDelete`
     }),
 
-    // edit() {
-    //   this.$router.push(`${this.learningProduct.id}/edit`);
-    // },
+    edit() {
+      this.$router.push(`${this.learningProduct.id}/edit`);
+    },
 
     deleteWrapper() {
       this.confirmDelete({
@@ -116,7 +116,7 @@ export default {
     },
 
     async getAuthorizations() {
-      // this.rights.canEdit = await this.canEditLearningProduct(this.learningProduct.id);
+      this.rights.canEdit = await this.canEditLearningProduct(this.learningProduct.id);
       this.rights.canDelete = await this.canDeleteLearningProduct(this.learningProduct.id);
     }
   },
