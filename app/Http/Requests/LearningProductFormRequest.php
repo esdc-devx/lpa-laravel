@@ -24,7 +24,7 @@ class LearningProductFormRequest extends FormRequest
                 return Gate::authorize('create', LearningProduct::class);
 
             case 'PUT':
-                return Gate::authorize('update', LearningProduct::find($this->learningProduct));
+                return Gate::authorize('update', LearningProduct::findOrFail($this->learningProduct));
         }
         return false;
     }

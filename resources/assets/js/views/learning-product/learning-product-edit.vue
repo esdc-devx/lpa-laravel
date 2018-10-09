@@ -69,7 +69,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapMutations } from 'vuex';
+  import { mapActions } from 'vuex';
 
   import EventBus from '@/event-bus.js';
   import FormUtils from '@mixins/form/utils.js';
@@ -79,7 +79,6 @@
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import UserSearch from '@components/forms/user-search';
   import InputWrap from '@components/forms/input-wrap';
-
   import LearningProductAPI from '@api/learning-products';
 
   let namespace = 'learningProducts';
@@ -93,12 +92,6 @@
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
 
-    computed: {
-      ...mapGetters({
-        language: 'language',
-        viewingLearningProduct: `${namespace}/viewing`
-      })
-    },
 
     data() {
       return {
@@ -114,8 +107,8 @@
     },
 
     methods: {
-      ...mapMutations({
-        setViewing: `${namespace}/setViewing`
+      ...mapActions({
+        loadLearningProductEditInfo: `${namespace}/loadLearningProductEditInfo`
       }),
 
       async onSubmit() {
@@ -141,12 +134,10 @@
       async fetch() {
         try {
           // Load form information.
-          let editInfo = await LearningProductAPI.getEditInfo(this.learningProductId);
-          this.form = editInfo.learning_product;
+          let editInfo = await this.loadLearningProductEditInfo(this.learningProductId);
+          this.form = _.cloneDeep(editInfo.learning_product);
           this.organizationalUnits = editInfo.organizational_units;
 
-          // Update current learning product to reflect its name in the breadcrumb.
-          this.setViewing(_.cloneDeep(editInfo.learning_product));
         } catch (e) {
           // Exception handled by interceptor
           if (!e.response) {
@@ -162,7 +153,8 @@
         this.resetErrors();
 
         // Re-fetch organizational unit list and update the dropdown values.
-        this.organizationalUnits = await LearningProductAPI.getEditInfo(this.learningProductId).organizational_units;
+        let response = await this.loadLearningProductEditInfo(this.learningProductId);
+        this.organizationalUnits = response.organizational_units;
       }
     },
 
@@ -172,10 +164,13 @@
       next();
     },
 
-    async mounted() {
-      EventBus.$emit('App:ready');
+    async created() {
       this.learningProductId = this.$route.params.learningProductId;
       await this.fetch();
+    },
+
+    mounted() {
+      EventBus.$emit('App:ready');
     }
   };
 </script>

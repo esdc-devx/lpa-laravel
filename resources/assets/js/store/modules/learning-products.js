@@ -67,6 +67,12 @@ export default {
     async canEdit({ commit }, id) {
       let autorization = await LearningProductAPI.canEdit(id);
       return autorization;
+    },
+
+    async loadLearningProductEditInfo({ commit }, id) {
+      let response = await LearningProductAPI.getEditInfo(id);
+      commit('setViewing', response.learning_product);
+      return response;
     }
   },
 
