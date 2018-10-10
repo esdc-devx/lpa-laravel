@@ -12,7 +12,7 @@ import Constants from '@/constants.js';
 export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
-  shouldConfirmBeforeLanguageChange: false,
+  filteredDataTableList: [],
   shouldConfirmBeforeLeaving: false,
   isAdminBarShown: false,
   isAppLoading: false,
@@ -45,13 +45,6 @@ export const getters = {
     return state.mainLoadingCount;
   },
 
-  shouldConfirmBeforeLanguageChange(state) {
-    return state.shouldConfirmBeforeLanguageChange;
-  },
-
-  shouldConfirmBeforeLeaving(state) {
-    return state.shouldConfirmBeforeLeaving;
-  }
 };
 
 export const actions = {
@@ -107,10 +100,6 @@ export const actions = {
       } 
       commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount - 1);
     }, Constants.DELAY_HIDE_MAIN_LOADING);
-  },
-
-  confirmBeforeLanguageChange({ commit }, context) {
-    commit(types.SHOULD_CONFIRM_BEFORE_LANGUAGE_CHANGE, context);
   },
 
   confirmBeforeLeaving({ commit }, context) {
@@ -170,11 +159,20 @@ export const mutations = {
     state.mainLoadingCount = count;
   },
 
-  [types.SHOULD_CONFIRM_BEFORE_LANGUAGE_CHANGE](state, val) {
-    state.shouldConfirmBeforeLanguageChange = val;
-  },
-
   [types.SHOULD_CONFIRM_BEFORE_LEAVING](state, val) {
     state.shouldConfirmBeforeLeaving = val;
+  },
+
+  addFilteredDataTable(state, dataTableName) {
+    if (_.indexOf(state.filteredDataTableList, dataTableName) === -1) {
+      state.filteredDataTableList.push(dataTableName);
+    } 
+  },
+
+  deleteFilteredDataTable(state, dataTableName) {
+    let index = _.indexOf(state.filteredDataTableList, dataTableName);
+    if (index !== -1) {
+      state.filteredDataTableList.splice(index, 1);
+    } 
   }
 };

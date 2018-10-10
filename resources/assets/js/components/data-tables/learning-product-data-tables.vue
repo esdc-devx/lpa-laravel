@@ -76,10 +76,10 @@
   export default {
     name: 'learning-product-data-tables',
 
-    mixins: [TableUtils ],
+    mixins: [ TableUtils ],
 
     props: {
-      data : {
+      data: {
         type: Array,
         required: true,
         default: () => []
@@ -109,7 +109,7 @@
           // @todo: change to real property instead
           normLearningProduct.current_process = normLearningProduct.current_process && normLearningProduct.current_process.definition ? normLearningProduct.current_process.definition.name : this.trans('entities.general.na');
           return normLearningProduct;
-        })
+        });
       },
 
       orgUnitFilters() {

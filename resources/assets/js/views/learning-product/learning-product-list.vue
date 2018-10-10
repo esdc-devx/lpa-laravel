@@ -4,8 +4,7 @@
       <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
     </div>
     <learning-product-data-tables
-     :data="learningProducts">
-    </learning-product-data-tables>
+     :data="learningProducts" />
   </div>
 </template>
 

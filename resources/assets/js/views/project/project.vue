@@ -32,7 +32,7 @@
       <el-col>
         <el-tabs type="border-card">
           <el-tab-pane>
-            <span slot="label"><i class="el-icon el-icon-lpa-learning-product"></i> {{ trans('base.navigation.learning_products') }}</span>
+            <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
             <learning-product-data-tables 
               :data="projectLearningProducts" />
           </el-tab-pane>
@@ -294,7 +294,7 @@
     }
   }
 
-  .el-icon-lpa-learning-product {
+  .el-icon-lpa-learning-product.tab-icon {
     @include svg(learning-product, $--color-primary);
   }
 </style>
