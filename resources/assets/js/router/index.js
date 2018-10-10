@@ -13,6 +13,7 @@ import ProjectProcessForm      from '@/views/project/project-process-form.vue';
 import LearningProductList     from '@/views/learning-product/learning-product-list.vue';
 import LearningProductView     from '@/views/learning-product/learning-product.vue';
 import LearningProductCreate   from '@/views/learning-product/learning-product-create.vue';
+import LearningProductEdit     from '@/views/learning-product/learning-product-edit.vue';
 import AdminDashboard          from '@/views/admin/dashboard.vue';
 import UserList                from '@/views/admin/user-list.vue';
 import UserCreate              from '@/views/admin/user-create.vue';
@@ -323,8 +324,37 @@ const routes = [
     },
     beforeEnter: async (to, from, next) => {
       try {
-        let canCreateLearningProduct = await store.dispatch('learningProducts/canCreateLearningProduct');
+        let canCreateLearningProduct = await store.dispatch('learningProducts/canCreate');
         if (canCreateLearningProduct) {
+          next();
+        } else {
+          router.replace({ name: 'forbidden', params: { '0': to.path } });
+        }
+      } catch (e) {
+        // Exception handled by interceptor
+        if (!e.response) {
+          throw e;
+        }
+      }
+    }
+  },
+  {
+    path: '/:lang/learning-products/:learningProductId(\\d+)/edit',
+    name: 'learning-product-edit',
+    component: LearningProductEdit,
+    meta: {
+      title() {
+        return this.trans('base.navigation.edit');
+      },
+      breadcrumbs: () => 'learning-products/learning-product/learning-product-edit'
+    },
+    beforeEnter: async (to, from, next) => {
+      try {
+        let canEditLearningProduct = await store.dispatch(
+          'learningProducts/canEdit',
+          to.params.learningProductId
+        );
+        if (canEditLearningProduct) {
           next();
         } else {
           router.replace({ name: 'forbidden', params: { '0': to.path } });

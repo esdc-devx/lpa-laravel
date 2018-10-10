@@ -30,6 +30,7 @@ return [
         'language_toggle'          => 'Changing the language will reset the table filters. Do you want to continue?',
         'learning_product_created' => 'The learning product has been created.',
         'learning_product_deleted' => 'The learning product has been deleted.',
+        'learning_product_updated' => 'The learning product has been updated.',
         'pending_changes'          => 'Changes have not been saved yet. Do you want to discard those changes?',
         'process_cancelled'        => 'The process has been cancelled.',
         'process_started'          => 'The process has been started.',

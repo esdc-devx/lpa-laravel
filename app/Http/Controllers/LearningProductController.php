@@ -80,7 +80,7 @@ class LearningProductController extends APIController
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\LearningProduct\LearningProduct  $learningProduct
+     * @param  LearningProduct  $learningProduct
      * @return \Illuminate\Http\Response
      */
     public function show(LearningProduct $learningProduct)
@@ -99,30 +99,51 @@ class LearningProductController extends APIController
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\LearningProduct\LearningProduct  $learningProduct
+     * @param  LearningProduct  $learningProduct
      * @return \Illuminate\Http\Response
      */
     public function edit(LearningProduct $learningProduct)
     {
-        //
+        $this->authorize('update', $learningProduct);
+
+        // Load all the required relationship for edition.
+        $learningProduct->load(['organizationalUnit', 'manager', 'primaryContact']);
+
+        // Get learning product owners organizational unit for user.
+        $organizationalUnits = OrganizationalUnit::getLearningProductOwnersFor(auth()->user());
+
+        return $this->respond([
+            'learning_product'     => $learningProduct,
+            'organizational_units' => $organizationalUnits,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\LearningProduct\LearningProduct  $learningProduct
+     * @param  LearningProductFormRequest $request
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LearningProduct $learningProduct)
+    public function update(LearningProductFormRequest $request, $id)
     {
-        //
+        // Ensure that user cannot update any other attributes.
+        $data = $request->only([
+            'name',
+            'organizational_unit_id',
+            'manager',
+            'primary_contact',
+        ]);
+
+        return $this->respond(
+            $this->learningProducts->update($id, $data)
+        );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\LearningProduct\LearningProduct  $learningProduct
+     * @param  LearningProduct  $learningProduct
      * @return \Illuminate\Http\Response
      */
     public function destroy(LearningProduct $learningProduct)
@@ -133,7 +154,4 @@ class LearningProductController extends APIController
             'deleted' => $learningProduct->delete(),
         ]);
     }
-
-
-
 }

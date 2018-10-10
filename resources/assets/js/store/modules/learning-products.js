@@ -54,7 +54,7 @@ export default {
       return learningProductCreateInfo;
     },
 
-    async canCreateLearningProduct({ commit }) {
+    async canCreate({ commit }) {
       let autorization = await LearningProductAPI.canCreate();
       return autorization;
     },
@@ -73,6 +73,17 @@ export default {
     async delete({ commit }, id) {
       await LearningProductAPI.delete(id);
     },
+
+    async canEdit({ commit }, id) {
+      let autorization = await LearningProductAPI.canEdit(id);
+      return autorization;
+    },
+
+    async loadLearningProductEditInfo({ commit }, id) {
+      let response = await LearningProductAPI.getEditInfo(id);
+      commit('setViewing', response.learning_product);
+      return response;
+    }
   },
 
   mutations: {

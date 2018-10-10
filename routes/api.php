@@ -24,7 +24,10 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('projects', 'ProjectController');
 
     // Learning Products resource routes.
-    Route::resource('learning-products', 'LearningProductController');
+    Route::resource('learning-products', 'LearningProductController', [
+        // Override default parameters formatting so that they use camelcase.
+        'parameters' => ['learning-products' => 'learningProduct']
+    ]);
 
     // Process definition routes.
     Route::get('process-definitions/{entityType}', 'ProcessDefinitionController@show')->name('process-definitions.show');
@@ -57,6 +60,7 @@ Route::middleware('auth:api')->group(function () {
     // Learning Product authorization routes.
     Route::get('authorization/learning-product/create', 'AuthorizationController@createLearningProduct')->name('authorization.learning-product.create');
     Route::get('authorization/learning-product/delete/{learningProduct}', 'AuthorizationController@deleteLearningProduct')->name('authorization.learning-product.delete');
+    Route::get('authorization/learning-product/edit/{learningProduct}', 'AuthorizationController@editLearningProduct')->name('authorization.learning-product.edit');
 
     // Process instance authorization routes.
     Route::get('authorization/process-instance/cancel/{processInstance}', 'AuthorizationController@cancelProcessInstance')->name('authorization.process-instance.cancel');
@@ -67,5 +71,5 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/process-instance-form/release/{processInstanceForm}', 'AuthorizationController@releaseProcessInstanceForm')->name('authorization.process-instance-form.release');
     Route::get('authorization/process-instance-form/edit/{processInstanceForm}', 'AuthorizationController@editProcessInstanceForm')->name('authorization.process-instance-form.edit');
     Route::get('authorization/process-instance-form/submit/{processInstanceForm}', 'AuthorizationController@submitProcessInstanceForm')->name('authorization.process-instance-form.submit');
-    
+
 });

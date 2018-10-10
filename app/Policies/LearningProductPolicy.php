@@ -47,7 +47,16 @@ class LearningProductPolicy
      */
     public function update(User $user, LearningProduct $learningProduct)
     {
-        //
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Ensure that user has the right role and is part of the learning product's organizational unit.
+        if (! $user->hasRole('owner') || ! $user->belongsToOrganizationalUnit($learningProduct->organizationalUnit)) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        return true;
     }
 
     /**
