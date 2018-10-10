@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters, mapActions, mapState } from 'vuex';
 
   import EventBus from '@/event-bus';
   import Config from '@/config.js';
@@ -56,6 +56,9 @@
         hasRole: 'users/hasRole',
         shouldConfirmBeforeLanguageChange: 'shouldConfirmBeforeLanguageChange',
         shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
+      }),
+      ...mapState({
+        filteredDataTableList: state => state.filteredDataTableList
       })
     },
 
@@ -124,13 +127,28 @@
       },
 
       setLanguage() {
-        if (this.shouldConfirmBeforeLanguageChange) {
-          EventBus.$emit('TopBar:beforeLanguageUpdate', this.doSetLanguage);
+        if (this.filteredDataTableList.length !== 0) {
+          this.$confirm(
+            this.trans('components.notice.message.language_toggle'),
+            this.trans('components.notice.type.warning'),
+            {
+              type: 'warning',
+              confirmButtonText: this.trans('base.actions.continue'),
+              confirmButtonClass: 'el-button--warning',
+              cancelButtonText: this.trans('base.actions.cancel'),
+              dangerouslyUseHTMLString: true
+            }
+          )
+          .then(() => {
+            EventBus.$emit('TopBar:ResetDataTableFilters');
+            this.doSetLanguage();
+          })
+          .catch(() => false);
         } else {
           this.doSetLanguage();
         }
       },
-
+        
       async doSetLanguage() {
         // @todo: we probably should hide the app entirely
         // to avoid seeing bouncing texts

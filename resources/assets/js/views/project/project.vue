@@ -32,6 +32,11 @@
       <el-col>
         <el-tabs type="border-card">
           <el-tab-pane>
+            <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
+            <learning-product-data-tables 
+              :data="projectLearningProducts" />
+          </el-tab-pane>
+          <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
             <data-tables
               ref="table"
@@ -90,6 +95,7 @@
   import TableUtils from '@mixins/table/utils.js';
   import ProcessCurrentBar from '@components/process-current-bar.vue';
   import ProjectInfo from '@components/project-info.vue';
+  import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
 
   let namespace = 'projects';
 
@@ -98,7 +104,7 @@
 
     mixins: [ PageUtils, TableUtils ],
 
-    components: { ProcessCurrentBar, ProjectInfo },
+    components: { ProcessCurrentBar, ProjectInfo, LearningProductDataTables },
 
     computed: {
       ...mapGetters({
@@ -106,7 +112,8 @@
         hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
         definitions: `processes/definitions`,
-        viewingHistory: 'processes/viewingHistory'
+        viewingHistory: 'processes/viewingHistory',
+        projectLearningProducts: 'learningProducts/projectLearningProducts'
       }),
 
       canBeVisible() {
@@ -134,11 +141,16 @@
         canStartProcess: `${namespace}/canStartProcess`,
         loadProcessDefinitions: `processes/loadDefinitions`,
         startProcess: `processes/start`,
-        loadProcessHistory: 'processes/loadHistory'
+        loadProcessHistory: 'processes/loadHistory',
+        loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
       }),
 
       viewProcess(process) {
         this.$router.push(`${process.entity_id}/process/${process.id}`);
+      },
+
+      onHeaderClick(col, e) {
+        this.headerClick(col, e);
       },
 
       triggerStartProcess(processName, processNameKey) {
@@ -198,6 +210,7 @@
             return normProcess;
           });
 
+          await this.loadProjectLearningProducts(projectId);
           this.getProcessDefinitionPermissions();
         } catch (e) {
           // Exception handled by interceptor
@@ -279,18 +292,9 @@
         }
       }
     }
+  }
 
-    .el-tabs__item {
-      font-weight: bold;
-    }
-
-    .el-pagination {
-      padding: 20px;
-      margin-bottom: 0;
-    }
-
-    .sc-table .pagination-wrap {
-      margin-top: 0;
-    }
+  .el-icon-lpa-learning-product.tab-icon {
+    @include svg(learning-product, $--color-primary);
   }
 </style>

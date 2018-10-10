@@ -1,9 +1,10 @@
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 
 import Constants from '@/constants.js';
 import EventBus from '@/event-bus.js';
 
 export default {
+
   data() {
     return {
       filters: {},
@@ -24,6 +25,30 @@ export default {
       'confirmBeforeLanguageChange'
     ]),
 
+    ...mapMutations([
+      'addFilteredDataTable',
+      'deleteFilteredDataTable'
+    ]),
+
+    /**
+     * Scroll the current page up. Called when navigating from one table page to the other. 
+     */
+    scrollToTop() {
+      document.querySelectorAll('.el-main')[0].scrollTop = 0;
+      // IE11 scroll to top
+      document.querySelectorAll('.content-wrap')[0].scrollTop = 0
+    },
+
+    /**
+     * Sort table header filter options in alphabetical order.
+     * @param {Array} data 
+     * @param {String} column 
+     */
+    sortFilterEntries(data, column) {
+      return this.getColumnFilters(data, column)
+                 .sort((a, b) => this.$helpers.localeSort(a, b, 'text'));
+    },
+
     // handle click on sortable and filterable columns
     // since ElementUI has no behavior when clicking a column that has both methods
     headerClick(col, e) {
@@ -38,22 +63,23 @@ export default {
 
     /**
      * Called upon changing the filters on a column
-     * @param Object filters - column's filters
+     * @param Object columFilters - column's filters
      */
-    onFilterChange(filters) {
+    onFilterChange(columFilters) {
       // store the current filter changed
       // since _.keys and _.values return an array and that we are only dealing with 1 applied filter at a time,
       // just take the first and only one index
-      let filter = _.values(filters)[0];
+      let filter = _.values(columFilters)[0];
       if (filter.length) {
-        // let the store know that it should make the user confirm before leaving the page
-        this.confirmBeforeLanguageChange(true);
         // apply filter
-        this.filters[_.keys(filters)[0]] = _.values(filters)[0];
+        this.filters[_.keys(columFilters)[0]] = _.values(columFilters)[0];
       } else {
         // filter removed
-        delete this.filters[_.keys(filters)[0]];
+        delete this.filters[_.keys(columFilters)[0]];
       }
+
+      // If there are active filters, make sure to prompt the user before changing the page language.
+      this[_.isEmpty(this.filters) ? 'deleteFilteredDataTable' : 'addFilteredDataTable'](this.$options.name);
 
       // reset custom filters so that we can rebuild them
       this.customFilters = [];
@@ -68,48 +94,25 @@ export default {
     /**
      * Called when toggling language in order to reset the filters on confirmation
      */
-    beforeLanguageUpdate(updateLanguage) {
+    resetFilters() {
       // if no filters are set, just proceed updating the language
-      if (!_.values(this.filters).length) {
-        updateLanguage();
-        return;
-      }
-
-      this.$confirm(
-        this.trans('components.notice.message.language_toggle'),
-        this.trans('components.notice.type.warning'),
-        {
-          type: 'warning',
-          confirmButtonText: this.trans('base.actions.continue'),
-          confirmButtonClass: 'el-button--warning',
-          cancelButtonText: this.trans('base.actions.cancel'),
-          dangerouslyUseHTMLString: true
-        }
-      )
-      .then(() => {
-        // reset the confirmation flag
-        this.confirmBeforeLanguageChange(false);
-        // reset the sorting and filtering
+      if (!_.isEmpty(this.filters)) {
         this.filters = {};
         this.customFilters = [];
         this.$refs.table.$refs.elTable.clearFilter();
-        updateLanguage();
-      })
-      .catch(() => false);
+        this.deleteFilteredDataTable(this.$options.name);
+      }
     }
-  },
-
-  beforeRouteLeave(to, from, next) {
-    // Destroy any events we might be listening
-    // so that they do not get called while being on another page
-    EventBus.$off('TopBar:beforeLanguageUpdate', this.beforeLanguageUpdate);
-    next();
   },
 
   mounted() {
     // fix pagination styling since vue-data-tables doesn't support  passing 'background as property
     this.$refs.table.$el.querySelector('.el-pagination').classList.add('is-background');
+    EventBus.$on('TopBar:ResetDataTableFilters', this.resetFilters);
+  },
 
-    EventBus.$on('TopBar:beforeLanguageUpdate', this.beforeLanguageUpdate);
+  beforeDestroy() {
+    EventBus.$off('TopBar:ResetDataTableFilters', this.resetFilters);
+    this.deleteFilteredDataTable(this.$options.name);
   }
 };
