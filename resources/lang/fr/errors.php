@@ -2,7 +2,7 @@
 
 return [
     'general'                 => 'Execption générale. Contactez votre administrateur.',
-    'not_found'               => 'Page non trouvée',
+    'not_found'               => 'Page non-trouvée',
     'forbidden'               => 'Autorisations insuffisantes',
     'bad_request'             => 'Mauvaise requête. Rafraichissez votre page.',
     'server_error'            => 'Erreur serveur. Rafraichissez votre page.',
