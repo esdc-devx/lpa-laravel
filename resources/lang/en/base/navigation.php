@@ -4,7 +4,7 @@ return [
     'app_name'                     => 'Learning Product Application',
     'home'                         => 'Home',
     'help'                         => 'Help',
-    'help_support_center'          => 'Support Center',
+    'help_support_center'          => 'Support Centre',
     'help_support_center_url'      => 'http://intranet-productdevelopment/en/lpa',
     'help_getting_started'         => 'Getting Started',
     'help_getting_started_url'     => 'http://intranet-productdevelopment/en/lpa#Gettingstarted',
