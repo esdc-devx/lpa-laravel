@@ -7,7 +7,7 @@ use App\Models\BaseModel;
 class Risk extends BaseModel
 {
     protected $fillable = [
-        'business_case_id', 'risk_type_id', 'risk_type_other', 'risk_impact_level_id', 'risk_probability_level_id', 'rationale'
+        'business_case_id', 'risk_type_id', 'risk_type_other', 'rationale'
     ];
 
     public $timestamps = false;
@@ -15,15 +15,5 @@ class Risk extends BaseModel
     public function riskType()
     {
         return $this->belongsTo(RiskType::class);
-    }
-
-    public function riskImpactLevel()
-    {
-        return $this->belongsTo(RiskImpactLevel::class);
-    }
-
-    public function riskProbabilityLevel()
-    {
-        return $this->belongsTo(RiskProbabilityLevel::class);
     }
 }

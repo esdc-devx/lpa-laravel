@@ -1,20 +1,24 @@
 <?php
 
-use App\Models\Project\BusinessCase\GovernmentPriority;
+use App\Models\Project\BusinessCase\SchoolPriority;
 use Illuminate\Database\Seeder;
 
-class GovernmentPriorityTableSeeder extends Seeder
+class SchoolPriorityTableSeeder extends Seeder
 {
     protected function data()
     {
         return [
             [
                 'name_en' => 'Delivering on Results',
-                'name_fr' => 'Exécution de résultats',
+                'name_fr' => 'Atteinte des résultats escomptés',
+            ],
+            [
+                'name_en' => 'Digital Government',
+                'name_fr' => 'Gouvernement numérique',
             ],
             [
                 'name_en' => 'Indigenous Awareness',
-                'name_fr' => 'Sensibilité à l’égard des Autochtones',
+                'name_fr' => 'Sensibilisation aux questions autochtones',
             ],
             [
                 'name_en' => 'Evidence Based Policy',
@@ -37,7 +41,7 @@ class GovernmentPriorityTableSeeder extends Seeder
                 'name_fr' => 'Diversité et inclusion',
             ],
             [
-                'name_en' => 'Healthy Workplace (V&E)',
+                'name_en' => 'Healthy and Respectful Workplace',
                 'name_fr' => 'Milieu de travail sain',
             ],
             [
@@ -46,7 +50,7 @@ class GovernmentPriorityTableSeeder extends Seeder
             ],
             [
                 'name_en' => 'Service Excellence',
-                'name_fr' => 'Excellence en matière de service',
+                'name_fr' => 'Excellence du service',
             ],
             [
                 'name_en' => 'Change Management',
@@ -54,11 +58,11 @@ class GovernmentPriorityTableSeeder extends Seeder
             ],
             [
                 'name_en' => 'Project Management',
-                'name_fr' => 'Gestion de projets',
+                'name_fr' => 'Gestion de projet',
             ],
             [
-                'name_en' => 'Gender-based Analysis',
-                'name_fr' => 'Analyse comparative entre les sexes',
+                'name_en' => 'Gender-based Analysis Plus',
+                'name_fr' => 'Analyse comparative entre les sexes plus (ACS+)',
             ],
         ];
     }
@@ -71,11 +75,11 @@ class GovernmentPriorityTableSeeder extends Seeder
     public function run()
     {
         // Truncate previous tables.
-        DB::table('government_priorities')->truncate();
-        DB::table('business_case_government_priority')->truncate();
+        DB::table('school_priorities')->truncate();
+        DB::table('business_case_school_priority')->truncate();
 
         foreach ($this->data() as $term) {
-            GovernmentPriority::create([
+            SchoolPriority::create([
                 'name_key' => str_slug($term['name_en'], '-'),
                 'name_en'  => $term['name_en'],
                 'name_fr'  => $term['name_fr'],

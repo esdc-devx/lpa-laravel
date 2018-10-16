@@ -20,11 +20,11 @@ class CreateProcessInstanceFormAssessmentsTable extends Migration
             $table->unsignedInteger('entity_id');
             $table->string('assessed_process_form');
             $table->unsignedInteger('process_form_decision_id')->nullable();
-            $table->text('comment')->nullable();
+            $table->text('comments')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
-            $table->referenceOn('process_form_decision_id', 'process_form_decisions');
+            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
+            $table->referenceOn('process_form_decision_id');
         });
     }
 

@@ -117,19 +117,6 @@ return [
             'unique'    => 'L\'utilisateur existe déjà.',
             'not-found' => 'L\'utilisateur n\'existe pas dans l\'Active Directory.'
         ],
-        //@note: To be reviewed.
-        'departmental_benefits' => [
-            'required' => 'Il doit y avoir au moins un avantage pour le ministère.'
-        ],
-        'learners_benefits' => [
-            'required' => 'Il doit y avoir au moins un avantage pour les apprenants.'
-        ],
-        'maintenance_fund_rationale' => [
-            'required_unless' => 'Vous devez inclure une justification si vous avez des fonds supplémentaires requis pour le fonctionnement et l\'entretien.',
-        ],
-        'salary_fund_rationale' => [
-            'required_unless' => 'Vous devez inclure une justification si vous avez des fonds salariaux supplémentaires requis.',
-        ],
         'risks' => [
             'required' => 'Il doit y avoir au moins un risque.',
         ],
@@ -154,16 +141,10 @@ return [
      */
 
     'attributes' => [
-        'organizational_unit'                                     => 'Unité organisationnelle',
-        'organizational_unit_id'                                  => 'Unité organisationnelle',
-        'departmental_benefits.*.rationale'                       => 'Justification',
-        'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
-        'departmental_benefits.*.departmental_benefit_type_other' => 'Autre',
-        'learners_benefits.*.rationale'                           => 'Justification',
-        'learners_benefits.*.learners_benefit_type_id'            => 'Type',
-        'learners_benefits.*.learners_benefit_type_other'         => 'Autre',
-        'risks.*.risk_type_id'                                    => 'Risque',
-        'learning_product_type'                                   => 'Type de produit d’apprentissage',
+        'organizational_unit'    => 'Unité organisationnelle',
+        'organizational_unit_id' => 'Unité organisationnelle',
+        'risks.*.risk_type_id'   => 'Risque',
+        'learning_product_type'  => 'Type de produit d’apprentissage',
     ],
 
 ];

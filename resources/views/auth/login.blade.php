@@ -26,12 +26,12 @@
             padding: 0;
         }
 
-        /*  
-         *  The following menu styling sections are inspired from styles found in the top-bar.vue. 
-         *  Since there are no router for the login page, we must make sure that the default-active 
-         *  attribute of the <el-menu> from element ui behaves the same way as if we had a router. 
+        /*
+         *  The following menu styling sections are inspired from styles found in the top-bar.vue.
+         *  Since there are no router for the login page, we must make sure that the default-active
+         *  attribute of the <el-menu> from element ui behaves the same way as if we had a router.
          *  Hence, few quirks were required: see li, .el-menu-item, .el-submenu__title
-         *   
+         *
         */
         .top-bar {
             user-select: none;
@@ -100,7 +100,7 @@
             text-decoration: none;
             font-weight: normal;
         }
-        
+
         .sub-menu .el-menu-item a:hover {
             color: white !important;
             cursor: pointer;
@@ -168,7 +168,7 @@
             <el-header height="50px">
                 <div class="top-bar">
                     <h1>{{ __('base/navigation.app_name') }}</h1>
-                    
+
                     <el-menu
                         background-color="#201e2c"
                         text-color="#fff"
@@ -178,14 +178,14 @@
                         router>
                         <el-submenu index="help-menu" popper-class="sub-menu">
                             <template slot="title">{{ __('base/navigation.help') }}</template>
-                            <el-menu-item index=""><a href="{{ __('base/navigation.help_support_center_url') }}" target="_blank">{{ __('base/navigation.help_support_center') }}</a></el-menu-item>
+                            <el-menu-item index=""><a href="{{ __('base/navigation.help_support_centre_url') }}" target="_blank">{{ __('base/navigation.help_support_centre') }}</a></el-menu-item>
                             <el-menu-item index=""><a href="{{ __('base/navigation.help_getting_started_url') }}" target="_blank">{{ __('base/navigation.help_getting_started') }}</a></el-menu-item>
                             <el-menu-item index=""><a href="{{ __('base/navigation.help_projects_url') }}" target="_blank">{{ __('base/navigation.help_projects') }}</a></el-menu-item>
                             <el-menu-item index=""><a href="{{ __('base/navigation.help_learning_products_url') }}" target="_blank">{{ __('base/navigation.help_learning_products') }}</a></el-menu-item>
                         </el-submenu>
                         <el-menu-item index="language"><a :href="'/' + toggledLocale + '/login'" class="lang">{{ __('base/navigation.language_toggle') }}</a></el-menu-item>
                     </el-menu>
-                    
+
                 </div>
             </el-header>
             <el-main>

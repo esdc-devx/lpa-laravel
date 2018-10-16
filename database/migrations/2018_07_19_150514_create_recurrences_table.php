@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTimeframesTable extends Migration
+class CreateRecurrencesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateTimeframesTable extends Migration
      */
     public function up()
     {
-        Schema::create('timeframes', function (Blueprint $table) {
+        Schema::create('recurrences', function (Blueprint $table) {
             $table->listable();
         });
     }
@@ -25,6 +25,6 @@ class CreateTimeframesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('timeframes');
+        Schema::dropIfExists('recurrences');
     }
 }

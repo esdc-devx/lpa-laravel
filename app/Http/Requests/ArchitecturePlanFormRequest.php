@@ -17,7 +17,7 @@ class ArchitecturePlanFormRequest extends ProcessInstanceFormDataRequest
                 'planned_products.*.type_id'     => 'required|integer',
                 'planned_products.*.sub_type_id' => 'required|integer',
                 'planned_products.*.quantity'    => 'required|integer|min:1|max:100',
-                'comment'                        => 'string|nullable|max:2500',
+                'comments'                       => 'string|nullable|max:2500',
             ];
         }
 

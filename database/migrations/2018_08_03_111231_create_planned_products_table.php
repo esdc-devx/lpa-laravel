@@ -21,7 +21,7 @@ class CreatePlannedProductsTable extends Migration
             $table->integer('quantity')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('architecture_plan_id', 'architecture_plans')->onDelete('cascade');
+            $table->referenceOn('architecture_plan_id')->onDelete('cascade');
             $table->referenceOn('type_id', 'learning_product_types');
             $table->referenceOn('sub_type_id', 'learning_product_types');
         });

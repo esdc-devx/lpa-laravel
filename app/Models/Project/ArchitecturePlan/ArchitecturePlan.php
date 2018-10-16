@@ -6,7 +6,7 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 
 class ArchitecturePlan extends ProcessInstanceFormDataModel
 {
-    protected $fillable = ['process_instance_form_id', 'comment'];
+    protected $fillable = ['process_instance_form_id', 'comments'];
 
     public $relationships = ['plannedProducts'];
 

@@ -19,31 +19,31 @@ class ProcessProjectApprovalSeeder extends Seeder
                 [
                     'name_key' => 'business-case',
                     'name_en'  => 'Business Case',
-                    'name_fr'  => 'Analyse de rentabilisation',
+                    'name_fr'  => 'Plan d\'affaire',
                     'forms'    => [
                         [
                             'name_key'    => 'business-case',
                             'name_en'     => 'Business Case',
-                            'name_fr'     => 'Analyse de rentabilisation',
+                            'name_fr'     => 'Plan d\'affaire',
                             'assessments' => [],
                         ],
                         [
                             'name_key'    => 'business-case-assessment',
                             'name_en'     => 'Business Case Assessment',
-                            'name_fr'     => 'Évaluation de l\'analyse de rentabilisation',
+                            'name_fr'     => 'Évaluation du plan d\'affaire',
                             'assessments' => ['business-case'],
                         ],
-                    ]
+                    ],
                 ],
                 [
                     'name_key' => 'architecture-plan',
-                    'name_en'  => 'Architecture Plan',
-                    'name_fr'  => 'Plan d\'architecture',
+                    'name_en'  => 'Planned Product List',
+                    'name_fr'  => 'Liste de produits prévus',
                     'forms'    => [
                         [
                             'name_key'    => 'architecture-plan',
-                            'name_en'     => 'Architecture Plan',
-                            'name_fr'     => 'Plan d\'architecture',
+                            'name_en'     => 'Planned Product List',
+                            'name_fr'     => 'Liste de produits prévus',
                             'assessments' => [],
                         ],
                         [
@@ -52,7 +52,7 @@ class ProcessProjectApprovalSeeder extends Seeder
                             'name_fr'     => 'Évaluation du plan d\'architecture',
                             'assessments' => ['architecture-plan'],
                         ],
-                    ]
+                    ],
                 ],
             ]
         ];

@@ -16,34 +16,25 @@ class CreateBusinessCasesTable extends Migration
         Schema::create('business_cases', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('process_instance_form_id');
-            // Business Drivers fields.
+            // Project Objective fields.
             $table->string('request_source_other')->nullable();
             $table->text('business_issue')->nullable();
-            // Proposal fields.
+            // Proposed Solution fields.
             $table->text('learning_response_strategy')->nullable();
-            $table->text('potential_solution_type_other')->nullable();
+            $table->text('short_term_learning_response')->nullable();
+            $table->text('medium_term_learning_response')->nullable();
+            $table->text('long_term_learning_response')->nullable();
             $table->boolean('is_required_training')->nullable();
-            // Timeframe fields.
-            $table->unsignedInteger('timeframe_id')->nullable();
-            $table->text('timeframe_rationale')->nullable();
-            // Audience fields.
+            // Target Audience fields.
             $table->unsignedInteger('expected_annual_participant_number')->nullable();
-            // Cost fields.
-            $table->string('cost_center')->nullable();
-            $table->unsignedInteger('maintenance_fund_id')->nullable();
-            $table->text('maintenance_fund_rationale')->nullable();
-            $table->unsignedInteger('salary_fund_id')->nullable();
-            $table->text('salary_fund_rationale')->nullable();
-            // Internal Resources fields.
-            $table->text('internal_resource_other')->nullable();
-            // Comment field.
-            $table->text('comment')->nullable();
+            // Costs and Resources fields.
+            $table->string('cost_centre')->nullable();
+            $table->string('other_operational_considerations')->nullable();
+            // Comments field.
+            $table->text('comments')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
-            $table->referenceOn('timeframe_id', 'timeframes');
-            $table->referenceOn('maintenance_fund_id', 'maintenance_funds');
-            $table->referenceOn('salary_fund_id', 'salary_funds');
+            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
         });
     }
 

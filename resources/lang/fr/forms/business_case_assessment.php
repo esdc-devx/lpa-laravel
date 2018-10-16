@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Évaluation de l\'analyse de rentabilisation',
+    'title' => 'Évaluation du plan d\'affaire',
     'tabs' => [
         'assessment' => 'Évaluation',
         // form tabs ommited, since they are dynamically added by the entity title
@@ -18,12 +18,12 @@ return [
     ],
     'process_form_decision_id' => [
         'label'       => 'Décision',
-        'description' => 'La décision relative à l\'analyse de rentabilisation.',
+        'description' => 'La décision relative au plan d\'affaire.',
     ],
-    'assessment_comment' => [
+    'assessment_comments' => [
         'label'       => 'Commentaires',
         'instruction' => 'Veuillez fournir une explication si des ajustements sont nécessaires.',
-        'description' => 'Les commentaires appuyant la décision relative à l\'analyse de rentabilisation.',
+        'description' => 'Les commentaires appuyant la décision relative au plan d\'affaire.',
     ],
     'assessment_date' => [
         'label'       => 'Date de l\'évaluation',

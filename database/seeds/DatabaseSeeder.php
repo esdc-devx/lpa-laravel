@@ -12,6 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         $this->call([
             RoleTableSeeder::class,
             UserTableSeeder::class,
@@ -19,21 +20,16 @@ class DatabaseSeeder extends Seeder
             StatesTableSeeder::class,
             ProcessProjectApprovalSeeder::class,
             RequestSourceTableSeeder::class,
-            PotentialSolutionTypeTableSeeder::class,
-            GovernmentPriorityTableSeeder::class,
+            SchoolPriorityTableSeeder::class,
             CommunitiesTableSeeder::class,
-            TimeframeTableSeeder::class,
-            DepartmentalBenefitTypeTableSeeder::class,
-            LearnersBenefitTypeTableSeeder::class,
-            MaintenanceFundTableSeeder::class,
-            SalaryFundTableSeeder::class,
+            DepartmentalResultsFrameworkIndicatorTableSeeder::class,
             InternalResourceTableSeeder::class,
+            RecurrenceTableSeeder::class,
             RiskTypeTableSeeder::class,
-            RiskImpactLevelTableSeeder::class,
-            RiskProbabilityLevelTableSeeder::class,
             ProcessFormDecisionTableSeeder::class,
             LearningProductTypeTableSeeder::class,
         ]);
+
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

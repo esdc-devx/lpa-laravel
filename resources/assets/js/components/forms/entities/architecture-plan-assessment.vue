@@ -98,23 +98,23 @@
         />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.architecture_plan_assessment.assessment_comment.label')"
-        prop="assessment_comment"
+        :label="trans('forms.architecture_plan_assessment.assessment_comments.label')"
+        prop="assessment_comments"
         :required="item.process_form_decision_id === 2">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.architecture_plan_assessment.assessment_comment.description')">
+            :description="trans('forms.architecture_plan_assessment.assessment_comments.description')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.architecture_plan_assessment.assessment_comment.instruction') }}
+            {{ trans('forms.architecture_plan_assessment.assessment_comments.instruction') }}
           </span>
         </span>
         <input-wrap
-          v-model="item.comment"
+          v-model="item.comments"
           :disabled="form.is_process_cancelled"
           v-validate="{ required: item.process_form_decision_id === 2 }"
-          :data-vv-as="trans('forms.architecture_plan_assessment.assessment_comment.label')"
-          name="assessment_comment"
+          :data-vv-as="trans('forms.architecture_plan_assessment.assessment_comments.label')"
+          name="assessment_comments"
           maxlength="2500"
           type="textarea">
         </input-wrap>
@@ -183,7 +183,7 @@
           this.form.process_cancellation_rationale = null;
           this.form.assessments.forEach(assessment => {
             assessment.process_form_decision_id = null;
-            assessment.comment = null;
+            assessment.comments = null;
           });
         } else {
           this.form.process_cancellation_rationale = null;

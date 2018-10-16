@@ -9,24 +9,28 @@ class RequestSourceTableSeeder extends Seeder
     {
         return [
             [
-                'name_en' => 'Product Evergreening',
-                'name_fr' => 'Mise à jour en continu du produit',
+                'name_en' => 'Change in Policy',
+                'name_fr' => 'Changement de la politique',
             ],
             [
-                'name_en' => 'Organization Unit Initiative',
-                'name_fr' => 'Initiative de l’unité organisationnelle',
+                'name_en' => 'Lifecycle Plan',
+                'name_fr' => 'Gestion du cycle de vie des produits',
+            ],
+            [
+                'name_en' => 'Central Agency Request',
+                'name_fr' => 'Demande des organismes centraux',
+            ],
+            [
+                'name_en' => 'Emerging Priority',
+                'name_fr' => 'Priorité émergente',
             ],
             [
                 'name_en' => 'Technical Issue',
                 'name_fr' => 'Problème technique',
             ],
             [
-                'name_en' => 'Change in Policy',
-                'name_fr' => 'Changement de politique',
-            ],
-            [
-                'name_en' => 'OCHRO or PCO request',
-                'name_fr' => 'Demande du BDPRH ou du BCP',
+                'name_en' => 'Compliance Issue',
+                'name_fr' => 'Enjeu de conformité',
             ],
         ];
     }

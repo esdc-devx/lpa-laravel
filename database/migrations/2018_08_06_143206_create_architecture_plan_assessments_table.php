@@ -22,7 +22,7 @@ class CreateArchitecturePlanAssessmentsTable extends Migration
             $table->text('process_cancellation_rationale')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
+            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
         });
     }
 

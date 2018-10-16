@@ -20,9 +20,9 @@ class CreateProcessInstanceStepsTable extends Migration
             $table->unsignedInteger('state_id')->nullable();
             $table->timestamps();
 
-            $table->referenceOn('process_step_id', 'process_steps');
-            $table->referenceOn('process_instance_id', 'process_instances')->onDelete('cascade');
-            $table->referenceOn('state_id', 'states')->onDelete('set null');
+            $table->referenceOn('process_step_id');
+            $table->referenceOn('process_instance_id')->onDelete('cascade');
+            $table->referenceOn('state_id')->onDelete('set null');
         });
     }
 

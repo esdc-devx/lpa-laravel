@@ -27,9 +27,9 @@ class CustomFaker extends Base
         return static::$learningProductOwnerIds->random();
     }
 
-    public function costCenter()
+    public function costCentre()
     {
-        $letter = chr(64 + rand(0, 26));
+        $letter = chr(64 + rand(1, 26));
         $digits = 5;
         $number = str_pad(rand(0, pow(10, $digits) - 1), $digits, '0', STR_PAD_LEFT);
         return "{$letter}{$number}";
@@ -52,6 +52,6 @@ class CustomFaker extends Base
 
     public function randomMultipleList($list)
     {
-        return array_random($list->pluck('id')->toArray(), rand(0, $list->count()));
+        return array_random($list->pluck('id')->toArray(), rand(1, $list->count()));
     }
 }

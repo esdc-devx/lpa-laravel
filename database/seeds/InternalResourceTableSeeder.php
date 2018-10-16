@@ -9,48 +9,56 @@ class InternalResourceTableSeeder extends Seeder
     {
         return [
             [
-                'name_en' => 'Faculty',
-                'name_fr' => 'Corps professoral',
+                'name_en' => 'Foundational & Specialized Learning',
+                'name_fr' => 'Apprentissage de base et spécialisé',
             ],
             [
-                'name_en' => 'Organizational Units/SMEs',
-                'name_fr' => 'Unités organisationnelles/experts',
+                'name_en' => 'Key Transitions, Leadership & Transformation',
+                'name_fr' => 'Transitions clés, transformation et leadership',
             ],
             [
-                'name_en' => 'CASE (Events)',
-                'name_fr' => 'CASE (événements)',
+                'name_en' => 'Communications & Web Management',
+                'name_fr' => 'Communications et gestion Web',
             ],
             [
-                'name_en' => 'Learning Solution Design (LSD) - Videos (Studio 2136)',
-                'name_fr' => 'Conception de solutions d’apprentissage - Vidéos (Studio 2136)',
+                'name_en' => 'GC Campus',
+                'name_fr' => 'GC Campus',
             ],
             [
-                'name_en' => 'Learning Solution Design (LSD) - Other',
-                'name_fr' => 'Conception de solutions d’apprentissage - Autre',
+                'name_en' => 'Learning Solutions',
+                'name_fr' => 'Solutions d’apprentissage',
             ],
             [
-                'name_en' => 'Communications and Marketing',
-                'name_fr' => 'Communications et marketing',
+                'name_en' => 'Faculty Management',
+                'name_fr' => 'Gestion du personnel enseignant',
             ],
             [
-                'name_en' => 'Information Technologies (IT)',
+                'name_en' => 'National Operational Planning',
+                'name_fr' => 'Planification des opérations nationales',
+            ],
+            [
+                'name_en' => 'Continuous Education',
+                'name_fr' => 'L’apprentissage continu',
+            ],
+            [
+                'name_en' => 'Registration & Learner Services',
+                'name_fr' => 'Inscription et services à l’apprenant',
+            ],
+            [
+                'name_en' => 'Event Management (CASE)',
+                'name_fr' => 'Gestion d’évènements (CASE)',
+            ],
+            [
+                'name_en' => 'NCR Integrated Delivery',
+                'name_fr' => 'Prestation intégrée dans la RCN',
+            ],
+            [
+                'name_en' => 'Regional Delivery',
+                'name_fr' => 'Prestation régionale',
+            ],
+            [
+                'name_en' => 'Information Technology (IT)',
                 'name_fr' => 'Technologie de l’information (TI)',
-            ],
-            [
-                'name_en' => 'GCcampus',
-                'name_fr' => 'GCcampus',
-            ],
-            [
-                'name_en' => 'Audio Visual - Logistic (A/V)',
-                'name_fr' => 'Audiovisuel - Logistique (A/V)',
-            ],
-            [
-                'name_en' => 'National Operations Planning (NOP)',
-                'name_fr' => 'Planification des opérations nationales (PON)',
-            ],
-            [
-                'name_en' => 'Partnerships',
-                'name_fr' => 'Partenariats',
             ],
         ];
     }

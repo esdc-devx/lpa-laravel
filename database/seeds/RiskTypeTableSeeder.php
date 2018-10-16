@@ -9,52 +9,24 @@ class RiskTypeTableSeeder extends Seeder
     {
         return [
             [
-                'name_en' => 'Budget',
-                'name_fr' => 'Budget',
+                'name_en' => 'Policy Concerns',
+                'name_fr' => 'Enjeux politiques',
             ],
             [
-                'name_en' => 'Buy-in',
-                'name_fr' => 'Appui',
+                'name_en' => 'Legal Obligations',
+                'name_fr' => 'Obligations légales',
             ],
             [
-                'name_en' => 'Change in business processes',
-                'name_fr' => 'Modification des processus d’affaires',
+                'name_en' => 'Mandatory Training',
+                'name_fr' => 'Formation obligatoire',
             ],
             [
-                'name_en' => 'Human resources/skills needed',
-                'name_fr' => 'Ressources humaines/compétences requises',
+                'name_en' => 'Department Results Framework',
+                'name_fr' => 'Cadre de résultats ministériels',
             ],
             [
-                'name_en' => 'Scope',
-                'name_fr' => 'Portée',
-            ],
-            [
-                'name_en' => 'Security/Firewalls',
-                'name_fr' => 'Sécurité/pare-feu',
-            ],
-            [
-                'name_en' => 'Technical complexity',
-                'name_fr' => 'Complexité technique',
-            ],
-            [
-                'name_en' => 'Time constraints',
-                'name_fr' => 'Contraintes de temps',
-            ],
-            [
-                'name_en' => 'Technical risk',
-                'name_fr' => 'Risque technique',
-            ],
-            [
-                'name_en' => 'Unclear roles and responsibilities with partners',
-                'name_fr' => 'Manque de clarté des rôles et des responsabilités avec les partenaires',
-            ],
-            [
-                'name_en' => 'Unstable content',
-                'name_fr' => 'Contenu instable',
-            ],
-            [
-                'name_en' => 'Various impacts on product quality or CSPS reputation',
-                'name_fr' => 'Impacts divers sur la qualité du produit ou la réputation de l’EFPC',
+                'name_en' => 'Reputation',
+                'name_fr' => 'Réputation',
             ],
         ];
     }

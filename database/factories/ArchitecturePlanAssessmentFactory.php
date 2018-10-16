@@ -18,7 +18,7 @@ $factory->define(ArchitecturePlanAssessment::class, function (Faker $faker) {
         'assessments'          => [
             [
                 'process_form_decision_id' => $decision->id,
-                'comment'                  => $faker->paragraph(),
+                'comments'                 => $faker->paragraph(),
             ],
         ],
     ];

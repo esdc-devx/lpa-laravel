@@ -1,84 +1,51 @@
 <template>
   <div class="risk">
     <el-form-item-wrap
-      :label="trans('forms.business_case.risk_type.label')"
+      :label="trans('forms.business_case.risks.risk_type.label')"
       :prop="`${fieldNamePrefix}.risk_type_id`"
       :classes="['has-other']"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.business_case.risk_type.description')">
+          :description="trans('forms.business_case.risks.risk_type.description')">
         </el-popover-wrap>
         <span class="instruction">
-          {{ trans('forms.business_case.risk_type.instruction') }}
+          {{ trans('forms.business_case.risks.risk_type.instruction') }}
         </span>
       </span>
       <el-select-other-wrap
         :modelSelect.sync="form.risk_type_id"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
-        :dataVVasSelect="trans('forms.business_case.risk_type.label')"
+        :dataVVasSelect="trans('forms.business_case.risks.risk_type.label')"
         :validateSelect="{ required: !this.isRiskTypeOther }"
         :options="data.riskTypeList"
         sorted
 
         :modelOther.sync="form.risk_type_other"
         :nameOther="`${fieldNamePrefix}.risk_type_other`"
-        :dataVVasOther="trans('forms.business_case.risk_type_other.label')"
+        :dataVVasOther="trans('forms.business_case.risks.risk_type_other.label')"
         :validateOther="{ required: this.isRiskTypeOther }"
         :isChecked.sync="isRiskTypeOther"
         maxlength="100"
       />
     </el-form-item-wrap>
     <el-form-item-wrap
-      :label="trans('forms.business_case.risk_impact_level.label')"
-      :prop="`${fieldNamePrefix}.risk_impact_level_id`"
-      required>
-      <span slot="label-addons">
-        <el-popover-wrap
-          :description="trans('forms.business_case.risk_impact_level.description')">
-        </el-popover-wrap>
-      </span>
-      <el-select-wrap
-        v-model="form.risk_impact_level_id"
-        :name="`${fieldNamePrefix}.risk_impact_level_id`"
-        :data-vv-as="trans('forms.business_case.risk_impact_level.label')"
-        v-validate="'required'"
-        :options="data.impactLevelList"
-      />
-    </el-form-item-wrap>
-    <el-form-item-wrap
-      :label="trans('forms.business_case.risk_probability_level.label')"
-      :prop="`${fieldNamePrefix}.risk_probability_level_id`"
-      required>
-      <span slot="label-addons">
-        <el-popover-wrap
-          :description="trans('forms.business_case.risk_probability_level.description')">
-        </el-popover-wrap>
-      </span>
-      <el-select-wrap
-        v-model="form.risk_probability_level_id"
-        :name="`${fieldNamePrefix}.risk_probability_level`"
-        :data-vv-as="trans('forms.business_case.risk_probability_level.label')"
-        v-validate="'required'"
-        :options="data.probabilityLevelList"
-      />
-    </el-form-item-wrap>
-    <el-form-item-wrap
-      :label="trans('forms.business_case.risk_rationale.label')"
+      :label="trans('forms.business_case.risks.risk_rationale.label')"
       :prop="`${fieldNamePrefix}.rationale`"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.business_case.risk_rationale.description')">
+          :description="trans('forms.business_case.risks.risk_rationale.description')"
+          :help="trans('forms.business_case.risks.risk_rationale.help')">
         </el-popover-wrap>
         <span class="instruction">
-          {{ trans('forms.business_case.risk_rationale.instruction') }}
+          {{ trans('forms.business_case.risks.risk_rationale.instruction') }}
         </span>
       </span>
       <input-wrap
         v-model="form.rationale"
         v-validate="'required'"
-        :data-vv-as="trans('forms.business_case.risk_rationale.label')"
+        :data-vv-as="trans('forms.business_case.risks.risk_rationale.label')"
         :name="`${fieldNamePrefix}.rationale`"
         maxlength="1250"
         type="textarea">
@@ -146,8 +113,6 @@
         // so that we know what properties to be aware of when adding a group
         defaults: {
           risk_type_id: null,
-          risk_impact_level_id: null,
-          risk_probability_level_id: null,
           rationale: null
         },
         isRiskTypeOther: false

@@ -1,10 +1,10 @@
 <template>
   <el-tabs v-bind="$attrs" @tab-click="onTabClick">
-    <el-tab-pane data-name="business_drivers">
-      <span slot="label" :class="{'is-error': errorTabs.includes('business_drivers') }">
-        {{ trans('forms.business_case.tabs.business_drivers') }}
+    <el-tab-pane data-name="project_objective">
+      <span slot="label" :class="{'is-error': errorTabs.includes('project_objective') }">
+        {{ trans('forms.business_case.tabs.project_objective') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.business_drivers') }}</h2>
+      <h2>{{ trans('forms.business_case.tabs.project_objective') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.request_sources.label')"
         prop="request_sources"
@@ -60,18 +60,19 @@
       </el-form-item-wrap>
     </el-tab-pane>
 
-    <el-tab-pane data-name="proposal">
-      <span slot="label" :class="{'is-error': errorTabs.includes('proposal') }">
-        {{ trans('forms.business_case.tabs.proposal') }}
+    <el-tab-pane data-name="proposed_solution">
+      <span slot="label" :class="{'is-error': errorTabs.includes('proposed_solution') }">
+        {{ trans('forms.business_case.tabs.proposed_solution') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.proposal') }}</h2>
+      <h2>{{ trans('forms.business_case.tabs.proposed_solution') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.learning_response_strategy.label')"
         prop="learning_response_strategy"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.learning_response_strategy.description')">
+            :description="trans('forms.business_case.learning_response_strategy.description')"
+            :help="trans('forms.business_case.learning_response_strategy.help')">
           </el-popover-wrap>
           <span class="instruction">
             {{ trans('forms.business_case.learning_response_strategy.instruction') }}
@@ -87,55 +88,89 @@
         </input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.potential_solution_types.label')"
-        prop="potential_solution_types"
-        :classes="['has-other']"
+        :label="trans('forms.business_case.short_term_learning_response.label')"
+        prop="short_term_learning_response"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.potential_solution_types.description')"
-            :help="trans('forms.business_case.potential_solution_types.help')">
+            :description="trans('forms.business_case.short_term_learning_response.description')"
+            :help="trans('forms.business_case.short_term_learning_response.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.potential_solution_types.instruction') }}
+            {{ trans('forms.business_case.short_term_learning_response.instruction') }}
           </span>
         </span>
-        <el-select-other-wrap
-          :modelSelect.sync="form.potential_solution_types"
-          nameSelect="potential_solution_types"
-          :dataVVasSelect="trans('forms.business_case.potential_solution_types.label')"
-          :validateSelect="{ required: !this.isPotentialSolutionTypesOther }"
-          :options="potentialSolutionTypesList"
-          multiple
-          sorted
-
-          :modelOther.sync="form.potential_solution_type_other"
-          nameOther="potential_solution_type_other"
-          :dataVVasOther="trans('forms.business_case.potential_solution_type_other.label')"
-          :validateOther="{ required: this.isPotentialSolutionTypesOther }"
-          :isChecked.sync="isPotentialSolutionTypesOther"
+        <input-wrap
+          v-model="form.short_term_learning_response"
+          v-validate="'required'"
+          :data-vv-as="trans('forms.business_case.short_term_learning_response.label')"
+          name="short_term_learning_response"
           maxlength="1250"
-          type="textarea"
-        />
+          type="textarea">
+        </input-wrap>
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.government_priorities.label')"
-        prop="government_priorities"
+        :label="trans('forms.business_case.medium_term_learning_response.label')"
+        prop="medium_term_learning_response"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.government_priorities.description')">
+            :description="trans('forms.business_case.medium_term_learning_response.description')"
+            :help="trans('forms.business_case.medium_term_learning_response.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.government_priorities.instruction') }}
+            {{ trans('forms.business_case.medium_term_learning_response.instruction') }}
+          </span>
+        </span>
+        <input-wrap
+          v-model="form.medium_term_learning_response"
+          v-validate="'required'"
+          :data-vv-as="trans('forms.business_case.medium_term_learning_response.label')"
+          name="medium_term_learning_response"
+          maxlength="1250"
+          type="textarea">
+        </input-wrap>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.long_term_learning_response.label')"
+        prop="long_term_learning_response"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.long_term_learning_response.description')"
+            :help="trans('forms.business_case.long_term_learning_response.help')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.long_term_learning_response.instruction') }}
+          </span>
+        </span>
+        <input-wrap
+          v-model="form.long_term_learning_response"
+          v-validate="'required'"
+          :data-vv-as="trans('forms.business_case.long_term_learning_response.label')"
+          name="long_term_learning_response"
+          maxlength="1250"
+          type="textarea">
+        </input-wrap>
+      </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.school_priorities.label')"
+        prop="school_priorities"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.school_priorities.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.school_priorities.instruction') }}
           </span>
         </span>
         <el-select-wrap
-          v-model="form.government_priorities"
-          name="government_priorities"
-          :data-vv-as="trans('forms.business_case.government_priorities.label')"
+          v-model="form.school_priorities"
+          name="school_priorities"
+          :data-vv-as="trans('forms.business_case.school_priorities.label')"
           v-validate="'required'"
-          :options="governmentPrioritiesList"
+          :options="schoolPriorityList"
           multiple
           sorted
         />
@@ -146,7 +181,8 @@
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.is_required_training.description')">
+            :description="trans('forms.business_case.is_required_training.description')"
+            :help="trans('forms.business_case.is_required_training.help')">
           </el-popover-wrap>
           <span class="instruction">
             {{ trans('forms.business_case.is_required_training.instruction') }}
@@ -164,79 +200,11 @@
       </el-form-item-wrap>
     </el-tab-pane>
 
-    <el-tab-pane data-name="timeframe">
-      <span slot="label" :class="{'is-error': errorTabs.includes('timeframe') }">
-        {{ trans('forms.business_case.tabs.timeframe') }}
+    <el-tab-pane data-name="target_audience">
+      <span slot="label" :class="{'is-error': errorTabs.includes('target_audience') }">
+        {{ trans('forms.business_case.tabs.target_audience') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.timeframe') }}</h2>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.timeframe.label')"
-        prop="timeframe_id"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.timeframe.description')"
-            :help="trans('forms.business_case.timeframe.help')">
-          </el-popover-wrap>
-        </span>
-        <el-select-wrap
-          v-model="form.timeframe_id"
-          name="timeframe_id"
-          :data-vv-as="trans('forms.business_case.timeframe.label')"
-          v-validate="'required'"
-          :options="timeframeList"
-        />
-      </el-form-item-wrap>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.timeframe_rationale.label')"
-        prop="timeframe_rationale"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.timeframe_rationale.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.timeframe_rationale.instruction') }}
-          </span>
-        </span>
-        <input-wrap
-          v-model="form.timeframe_rationale"
-          v-validate="'required'"
-          :data-vv-as="trans('forms.business_case.timeframe_rationale.label')"
-          name="timeframe_rationale"
-          maxlength="1250"
-          type="textarea">
-        </input-wrap>
-      </el-form-item-wrap>
-    </el-tab-pane>
-
-    <el-tab-pane data-name="audience">
-      <span slot="label" :class="{'is-error': errorTabs.includes('audience') }">
-        {{ trans('forms.business_case.tabs.audience') }}
-      </span>
-      <h2>{{ trans('forms.business_case.tabs.audience') }}</h2>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.communities.label')"
-        prop="communities"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.communities.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.communities.instruction') }}
-          </span>
-        </span>
-        <el-tree-wrap
-          name="communities"
-          v-model="form.communities"
-          v-validate="'required'"
-          :data-vv-as="trans('forms.business_case.communities.label')"
-          :data="communitiesList"
-          labelKey="name"
-          sorted>
-        </el-tree-wrap>
-      </el-form-item-wrap>
+      <h2>{{ trans('forms.business_case.tabs.target_audience') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.expected_annual_participant_number.label')"
         prop="expected_annual_participant_number"
@@ -257,34 +225,56 @@
           type="number">
         </input-wrap>
       </el-form-item-wrap>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.communities.label')"
+        prop="communities"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.communities.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.communities.instruction') }}
+          </span>
+        </span>
+        <el-tree-wrap
+          name="communities"
+          v-model="form.communities"
+          v-validate="'required'"
+          :data-vv-as="trans('forms.business_case.communities.label')"
+          :data="communityList"
+          labelKey="name"
+          sorted>
+        </el-tree-wrap>
+      </el-form-item-wrap>
     </el-tab-pane>
 
-    <el-tab-pane data-name="departmental_benefit">
-      <span slot="label" :class="{'is-error': errorTabs.includes('departmental_benefit') }">
-        {{ $tc('forms.business_case.tabs.departmental_benefit', 2) }}
+    <el-tab-pane data-name="departmental_results_framework">
+      <span slot="label" :class="{'is-error': errorTabs.includes('departmental_results_framework') }">
+        {{ trans('forms.business_case.tabs.departmental_results_framework') }}
       </span>
-      <form-section-group
-        v-model="form.departmental_benefits"
-        entityForm="business-case"
-        entitySection="departmental-benefit"
-        :data="{
-          departmentalBenefitTypeList
-        }"
-      />
-    </el-tab-pane>
-
-    <el-tab-pane data-name="learners_benefit">
-      <span slot="label" :class="{'is-error': errorTabs.includes('learners_benefit') }">
-        {{ $tc('forms.business_case.tabs.learners_benefit', 2) }}
-      </span>
-      <form-section-group
-        v-model="form.learners_benefits"
-        entityForm="business-case"
-        entitySection="learners-benefit"
-        :data="{
-          learnersBenefitTypeList
-        }"
-      />
+      <h2>{{ trans('forms.business_case.tabs.departmental_results_framework') }}</h2>
+      <el-form-item-wrap
+        :label="trans('forms.business_case.departmental_results_framework_indicators.label')"
+        prop="departmental_results_framework_indicators"
+        required>
+        <span slot="label-addons">
+          <el-popover-wrap
+            :description="trans('forms.business_case.departmental_results_framework_indicators.description')">
+          </el-popover-wrap>
+          <span class="instruction">
+            {{ trans('forms.business_case.departmental_results_framework_indicators.instruction') }}
+          </span>
+        </span>
+        <el-tree-wrap
+          name="departmental_results_framework_indicators"
+          v-model="form.departmental_results_framework_indicators"
+          v-validate="'required'"
+          :data-vv-as="trans('forms.business_case.departmental_results_framework_indicators.label')"
+          :data="departmentalResultsFrameworkIndicatorList"
+          labelKey="name">
+        </el-tree-wrap>
+      </el-form-item-wrap>
     </el-tab-pane>
 
     <el-tab-pane data-name="costs">
@@ -293,141 +283,50 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.costs') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.cost_center.label')"
-        prop="cost_center"
+        :label="trans('forms.business_case.cost_centre.label')"
+        prop="cost_centre"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.cost_center.description')">
+            :description="trans('forms.business_case.cost_centre.description')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.cost_center.instruction') }}
+            {{ trans('forms.business_case.cost_centre.instruction') }}
           </span>
         </span>
         <input-wrap
-          v-model="form.cost_center"
+          v-model="form.cost_centre"
           v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }"
-          :data-vv-as="trans('forms.business_case.cost_center.label')"
-          name="cost_center"
-          :placeholder="trans('forms.business_case.cost_center.hint')"
+          :data-vv-as="trans('forms.business_case.cost_centre.label')"
+          name="cost_centre"
+          :placeholder="trans('forms.business_case.cost_centre.hint')"
           v-mask="'A#####'">
         </input-wrap>
       </el-form-item-wrap>
+      <form-section-group
+        v-model="form.spendings"
+        entityForm="business-case"
+        entitySection="spending"
+        :data="{
+          internalResourceList,
+          recurrenceList
+        }" />
       <el-form-item-wrap
-        :label="trans('forms.business_case.maintenance_fund.label')"
-        prop="maintenance_fund_id"
-        required>
+        :label="trans('forms.business_case.other_operational_considerations.label')"
+        prop="other_operational_considerations">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.maintenance_fund.description')"
-            :help="trans('forms.business_case.maintenance_fund.help')">
+            :description="trans('forms.business_case.other_operational_considerations.description')">
           </el-popover-wrap>
-        </span>
-        <el-select-wrap
-          v-model="form.maintenance_fund_id"
-          name="maintenance_fund_id"
-          :data-vv-as="trans('forms.business_case.maintenance_fund.label')"
-          v-validate="'required'"
-          :options="maintenanceFundList"
-        />
-      </el-form-item-wrap>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.maintenance_fund_rationale.label')"
-        prop="maintenance_fund_rationale"
-        :required="form.maintenance_fund_id > 1">
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.maintenance_fund_rationale.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.maintenance_fund_rationale.instruction') }}
-          </span>
         </span>
         <input-wrap
-          v-model="form.maintenance_fund_rationale"
-          v-validate="{ required: form.maintenance_fund_id > 1 }"
-          :data-vv-as="trans('forms.business_case.maintenance_fund_rationale.label')"
-          name="maintenance_fund_rationale"
+          v-model="form.other_operational_considerations"
+          v-validate="''"
+          :data-vv-as="trans('forms.business_case.other_operational_considerations.label')"
+          name="other_operational_considerations"
           maxlength="1250"
           type="textarea">
         </input-wrap>
-      </el-form-item-wrap>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.salary_fund.label')"
-        prop="salary_fund"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.salary_fund.description')">
-          </el-popover-wrap>
-        </span>
-        <el-select-wrap
-          v-model="form.salary_fund_id"
-          name="salary_fund_id"
-          :data-vv-as="trans('forms.business_case.salary_fund.label')"
-          v-validate="'required'"
-          :options="salaryFundList"
-        />
-      </el-form-item-wrap>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.salary_fund_rationale.label')"
-        prop="salary_fund_rationale"
-        :required="form.salary_fund_id > 1">
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.salary_fund_rationale.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.salary_fund_rationale.instruction') }}
-          </span>
-        </span>
-        <input-wrap
-          v-model="form.salary_fund_rationale"
-          v-validate="{ required: form.salary_fund_id > 1 }"
-          :data-vv-as="trans('forms.business_case.salary_fund_rationale.label')"
-          name="salary_fund_rationale"
-          maxlength="1250"
-          type="textarea">
-        </input-wrap>
-      </el-form-item-wrap>
-    </el-tab-pane>
-
-    <el-tab-pane data-name="internal_resources">
-      <span slot="label" :class="{'is-error': errorTabs.includes('internal_resources') }">
-        {{ trans('forms.business_case.tabs.internal_resources') }}
-      </span>
-      <h2>{{ trans('forms.business_case.tabs.internal_resources') }}</h2>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.internal_resources.label')"
-        prop="internal_resources"
-        :classes="['has-other']"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.internal_resources.description')"
-            :help="trans('forms.business_case.internal_resources.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.internal_resources.instruction') }}
-          </span>
-        </span>
-        <el-select-other-wrap
-          :modelSelect.sync="form.internal_resources"
-          nameSelect="internal_resources"
-          :dataVVasSelect="trans('forms.business_case.internal_resources.label')"
-          :validateSelect="{ required: !this.isInternalResourceOther }"
-          :options="internalResourceList"
-          multiple
-          sorted
-
-          :modelOther.sync="form.internal_resource_other"
-          nameOther="internal_resource_other"
-          :dataVVasOther="trans('forms.business_case.internal_resource_other.label')"
-          :validateOther="{ required: this.isInternalResourceOther }"
-          :isChecked.sync="isInternalResourceOther"
-          maxlength="1250"
-          type="textarea"
-        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -440,31 +339,29 @@
         entityForm="business-case"
         entitySection="risk"
         :data="{
-          riskTypeList,
-          impactLevelList,
-          probabilityLevelList
+          riskTypeList
         }"
       />
     </el-tab-pane>
 
-    <el-tab-pane data-name="comment">
-      <span slot="label" :class="{'is-error': errorTabs.includes('comment') }">
-        {{ trans('forms.business_case.tabs.comment') }}
+    <el-tab-pane data-name="comments">
+      <span slot="label" :class="{'is-error': errorTabs.includes('comments') }">
+        {{ trans('forms.business_case.tabs.comments') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.comment') }}</h2>
+      <h2>{{ trans('forms.business_case.tabs.comments') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.comment.label')"
-        prop="comment">
+        :label="trans('forms.business_case.comments.label')"
+        prop="comments">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.comment.description')">
+            :description="trans('forms.business_case.comments.description')">
           </el-popover-wrap>
         </span>
         <input-wrap
-          v-model="form.comment"
+          v-model="form.comments"
           v-validate="''"
-          :data-vv-as="trans('forms.business_case.comment.label')"
-          name="comment"
+          :data-vv-as="trans('forms.business_case.comments.label')"
+          name="comments"
           maxlength="2500"
           type="textarea">
         </input-wrap>
@@ -507,20 +404,13 @@
       return {
         requestSourceList: [],
         isRequestSourceOther: false,
-        potentialSolutionTypesList: [],
-        isPotentialSolutionTypesOther: false,
-        governmentPrioritiesList: [],
-        departmentalBenefitTypeList: [],
-        learnersBenefitTypeList: [],
-        timeframeList: [],
-        communitiesList: [],
-        maintenanceFundList: [],
-        salaryFundList: [],
+        schoolPriorityList: [],
+        communityList: [],
+        departmentalResultsFrameworkIndicatorList: [],
         internalResourceList: [],
+        recurrenceList: [],
         isInternalResourceOther: false,
-        riskTypeList: [],
-        impactLevelList: [],
-        probabilityLevelList: []
+        riskTypeList: []
       }
     },
 
@@ -542,39 +432,24 @@
       },
 
       async fetch() {
-        let lists = await ListsAPI.getLists([
+        await ListsAPI.getLists([
           'request-source',
-          'potential-solution-type',
-          'government-priority',
-          'timeframe',
+          'school-priority',
           'community',
-          'departmental-benefit-type',
-          'learners-benefit-type',
-          'maintenance-fund',
-          'salary-fund',
+          'departmental-results-framework-indicator',
           'internal-resource',
-          'risk-type',
-          'risk-impact-level',
-          'risk-probability-level'
-        ]);
-        this.requestSourceList = lists['request-source'];
-        this.governmentPrioritiesList = lists['government-priority'];
-        this.potentialSolutionTypesList = lists['potential-solution-type'];
-        this.timeframeList = lists['timeframe'];
-        this.communitiesList = lists['community'];
-        this.departmentalBenefitTypeList = lists['departmental-benefit-type'];
-        this.learnersBenefitTypeList = lists['learners-benefit-type'];
-        this.maintenanceFundList = lists['maintenance-fund'];
-        this.salaryFundList = lists['salary-fund'];
-        this.internalResourceList = lists['internal-resource'];
-        this.riskTypeList = lists['risk-type'];
-        this.impactLevelList = lists['risk-impact-level'];
-        this.probabilityLevelList = lists['risk-probability-level'];
+          'recurrence',
+          'risk-type'
+        ])
+        .then(lists => {
+          _.forEach(lists, (list, key) => {
+            this[`${_.camelCase(key)}List`] = list;
+          });
+        });
       },
 
       bindCheckboxes() {
         this.isRequestSourceOther = !!this.form.request_source_other;
-        this.isPotentialSolutionTypesOther = !!this.form.potential_solution_type_other;
         this.isInternalResourceOther = !!this.form.internal_resource_other;
       }
     },

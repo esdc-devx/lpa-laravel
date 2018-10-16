@@ -20,7 +20,7 @@
           </el-submenu>
           <el-submenu index="help-menu" popper-class="sub-menu">
             <template slot="title">{{ trans('base.navigation.help') }}</template>
-            <el-menu-item index=""><a :href="trans('base.navigation.help_support_center_url')" target="_blank">{{ trans('base.navigation.help_support_center') }}</a></el-menu-item>
+            <el-menu-item index=""><a :href="trans('base.navigation.help_support_centre_url')" target="_blank">{{ trans('base.navigation.help_support_centre') }}</a></el-menu-item>
             <el-menu-item index=""><a :href="trans('base.navigation.help_getting_started_url')" target="_blank">{{ trans('base.navigation.help_getting_started') }}</a></el-menu-item>
             <el-menu-item index=""><a :href="trans('base.navigation.help_projects_url')" target="_blank">{{ trans('base.navigation.help_projects') }}</a></el-menu-item>
             <el-menu-item index=""><a :href="trans('base.navigation.help_learning_products_url')" target="_blank">{{ trans('base.navigation.help_learning_products') }}</a></el-menu-item>
@@ -148,7 +148,7 @@
           this.doSetLanguage();
         }
       },
-        
+
       async doSetLanguage() {
         // @todo: we probably should hide the app entirely
         // to avoid seeing bouncing texts
