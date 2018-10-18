@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             OrganizationalUnitTableSeeder::class,
             StatesTableSeeder::class,
             ProcessProjectApprovalSeeder::class,
-            RequestSourceTableSeeder::class,
+            RequestOriginTableSeeder::class,
             SchoolPriorityTableSeeder::class,
             CommunitiesTableSeeder::class,
             DepartmentalResultsFrameworkIndicatorTableSeeder::class,

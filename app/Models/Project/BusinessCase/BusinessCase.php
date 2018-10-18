@@ -8,8 +8,8 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 class BusinessCase extends ProcessInstanceFormDataModel
 {
     protected $fillable = [
-        'process_instance_form_id', 'request_source_other', 'business_issue',
-        'learning_response_strategy', 'short_term_learning_response', 'medium_term_learning_response', 'long_term_learning_response', 'is_required_training',
+        'process_instance_form_id', 'request_origin_other', 'business_issue',
+        'short_term_learning_response', 'medium_term_learning_response', 'long_term_learning_response', 'is_required_training',
         'expected_annual_participant_number', 'cost_centre', 'other_operational_considerations',
         'comments',
     ];
@@ -17,14 +17,14 @@ class BusinessCase extends ProcessInstanceFormDataModel
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
         // Multiple choice lists.
-        'requestSources', 'schoolPriorities', 'communities', 'departmentalResultsFrameworkIndicators',
+        'requestOrigins', 'schoolPriorities', 'communities', 'departmentalResultsFrameworkIndicators',
         // Complex data.
         'spendings', 'risks',
     ];
 
-    public function requestSources()
+    public function requestOrigins()
     {
-        return $this->belongsToMany(RequestSource::class);
+        return $this->belongsToMany(RequestOrigin::class);
     }
 
     public function schoolPriorities()
@@ -55,7 +55,7 @@ class BusinessCase extends ProcessInstanceFormDataModel
     public function saveFormData(array $data)
     {
         $this->syncRelationships($data, [
-            'requestSources',
+            'requestOrigins',
             'schoolPriorities',
             'communities',
             'departmentalResultsFrameworkIndicators',

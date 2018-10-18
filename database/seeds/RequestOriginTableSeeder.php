@@ -1,9 +1,9 @@
 <?php
 
-use App\Models\Project\BusinessCase\RequestSource;
+use App\Models\Project\BusinessCase\RequestOrigin;
 use Illuminate\Database\Seeder;
 
-class RequestSourceTableSeeder extends Seeder
+class RequestOriginTableSeeder extends Seeder
 {
     protected function data()
     {
@@ -43,11 +43,11 @@ class RequestSourceTableSeeder extends Seeder
     public function run()
     {
         // Truncate previous tables.
-        DB::table('request_sources')->truncate();
-        DB::table('business_case_request_source')->truncate();
+        DB::table('request_origins')->truncate();
+        DB::table('business_case_request_origin')->truncate();
 
         foreach ($this->data() as $term) {
-            RequestSource::create([
+            RequestOrigin::create([
                 'name_key' => str_slug($term['name_en'], '-'),
                 'name_en'  => $term['name_en'],
                 'name_fr'  => $term['name_fr'],

@@ -6,33 +6,33 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.project_objective') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.request_sources.label')"
-        prop="request_sources"
+        :label="trans('forms.business_case.request_origins.label')"
+        prop="request_origins"
         :classes="['has-other']"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.business_case.request_sources.description')"
-            :help="trans('forms.business_case.request_sources.help')">
+            :description="trans('forms.business_case.request_origins.description')"
+            :help="trans('forms.business_case.request_origins.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.business_case.request_sources.instruction') }}
+            {{ trans('forms.business_case.request_origins.instruction') }}
           </span>
         </span>
         <el-select-other-wrap
-          :modelSelect.sync="form.request_sources"
-          nameSelect="request_sources"
-          :dataVVasSelect="trans('forms.business_case.request_sources.label')"
-          :validateSelect="{ required: !this.isRequestSourceOther }"
-          :options="requestSourceList"
+          :modelSelect.sync="form.request_origins"
+          nameSelect="request_origins"
+          :dataVVasSelect="trans('forms.business_case.request_origins.label')"
+          :validateSelect="{ required: !this.isRequestOriginOther }"
+          :options="requestOriginList"
           multiple
           sorted
 
-          :modelOther.sync="form.request_source_other"
-          nameOther="request_source_other"
-          :dataVVasOther="trans('forms.business_case.request_source_other.label')"
-          :validateOther="{ required: this.isRequestSourceOther }"
-          :isChecked.sync="isRequestSourceOther"
+          :modelOther.sync="form.request_origin_other"
+          nameOther="request_origin_other"
+          :dataVVasOther="trans('forms.business_case.request_origin_other.label')"
+          :validateOther="{ required: this.isRequestOriginOther }"
+          :isChecked.sync="isRequestOriginOther"
           maxlength="100"
         />
       </el-form-item-wrap>
@@ -65,28 +65,6 @@
         {{ trans('forms.business_case.tabs.proposed_solution') }}
       </span>
       <h2>{{ trans('forms.business_case.tabs.proposed_solution') }}</h2>
-      <el-form-item-wrap
-        :label="trans('forms.business_case.learning_response_strategy.label')"
-        prop="learning_response_strategy"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.learning_response_strategy.description')"
-            :help="trans('forms.business_case.learning_response_strategy.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.learning_response_strategy.instruction') }}
-          </span>
-        </span>
-        <input-wrap
-          v-model="form.learning_response_strategy"
-          v-validate="'required'"
-          :data-vv-as="trans('forms.business_case.learning_response_strategy.label')"
-          name="learning_response_strategy"
-          maxlength="2500"
-          type="textarea">
-        </input-wrap>
-      </el-form-item-wrap>
       <el-form-item-wrap
         :label="trans('forms.business_case.short_term_learning_response.label')"
         prop="short_term_learning_response"
@@ -153,6 +131,13 @@
           type="textarea">
         </input-wrap>
       </el-form-item-wrap>
+    </el-tab-pane>
+
+    <el-tab-pane data-name="school_priorities">
+      <span slot="label" :class="{'is-error': errorTabs.includes('school_priorities') }">
+        {{ trans('forms.business_case.tabs.school_priorities') }}
+      </span>
+      <h2>{{ trans('forms.business_case.tabs.school_priorities') }}</h2>
       <el-form-item-wrap
         :label="trans('forms.business_case.school_priorities.label')"
         prop="school_priorities"
@@ -307,6 +292,7 @@
         v-model="form.spendings"
         entityForm="business-case"
         entitySection="spending"
+        :min=1
         :data="{
           internalResourceList,
           recurrenceList
@@ -402,8 +388,8 @@
 
     data() {
       return {
-        requestSourceList: [],
-        isRequestSourceOther: false,
+        requestOriginList: [],
+        isRequestOriginOther: false,
         schoolPriorityList: [],
         communityList: [],
         departmentalResultsFrameworkIndicatorList: [],
@@ -433,7 +419,7 @@
 
       async fetch() {
         await ListsAPI.getLists([
-          'request-source',
+          'request-origin',
           'school-priority',
           'community',
           'departmental-results-framework-indicator',
@@ -449,7 +435,7 @@
       },
 
       bindCheckboxes() {
-        this.isRequestSourceOther = !!this.form.request_source_other;
+        this.isRequestOriginOther = !!this.form.request_origin_other;
         this.isInternalResourceOther = !!this.form.internal_resource_other;
       }
     },

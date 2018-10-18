@@ -46,20 +46,14 @@ return [
         'instruction' => 'Please select the priorities that apply to your project.',
         'description' => 'The list of School priorities addressed by this project.',
     ],
-    'request_sources' => [
-        'label'       => 'Origin of the Request',
+    'request_origins' => [
+        'label'       => 'Origins of the Request',
         'instruction' => 'Why are you submitting this project?',
         'description' => 'The circumstances leading to the creation or modification of this project.',
         'help'        => 'For example: Was there a change in policy that requires a learning product transformation? Was there a new Government of Canada priority that needs to be addressed by learning products?',
     ],
-    'request_source_other' => [
-        'label'       => 'Other Request Sources',
-    ],
-    'learning_response_strategy' => [
-        'label'       => 'Learning Response Strategy',
-        'instruction' => 'Please provide a high-level overview of your short term, medium term and long term learning response strategy.',
-        'description' => 'The proposed learning response strategy overview for each timeframe (short, medium and long term response).',
-        'help'        => 'For example: In the short term, 2 events are planned. In the medium term, 3 videos are planned.',
+    'request_origin_other' => [
+        'label'       => 'Other Origins of the Request',
     ],
     'is_required_training' => [
         'label'       => 'Required Training / Part of Certification',
@@ -123,7 +117,7 @@ return [
     'risks' => [
         'risk_type' => [
             'label'       => 'Risk',
-            'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
+            'instruction' => 'Please indicate all risks for the School if this project does not go ahead.',
             'description' => 'The description of a known constraint, risk or issue affecting the project.',
         ],
         'risk_type_other' => [

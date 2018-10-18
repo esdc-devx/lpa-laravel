@@ -47,7 +47,7 @@ class CustomFaker extends Base
 
     public function randomList($list)
     {
-        return $this->numberBetween(1, $list->count());
+        return array_random($list->pluck('id')->toArray());
     }
 
     public function randomMultipleList($list)

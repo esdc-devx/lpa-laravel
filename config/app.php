@@ -248,7 +248,7 @@ return [
         'process-instance-form'                    => App\Models\Process\ProcessInstanceForm::class,
         'project'                                  => App\Models\Project\Project::class,
         'recurrence'                               => App\Models\Project\BusinessCase\Recurrence::class,
-        'request-source'                           => App\Models\Project\BusinessCase\RequestSource::class,
+        'request-origin'                           => App\Models\Project\BusinessCase\RequestOrigin::class,
         'risk-type'                                => App\Models\Project\BusinessCase\RiskType::class,
         'role'                                     => App\Models\User\Role::class,
         'school-priority'                          => App\Models\Project\BusinessCase\SchoolPriority::class,

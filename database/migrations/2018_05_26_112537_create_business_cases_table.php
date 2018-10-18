@@ -17,13 +17,13 @@ class CreateBusinessCasesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('process_instance_form_id');
             // Project Objective fields.
-            $table->string('request_source_other')->nullable();
+            $table->string('request_origin_other')->nullable();
             $table->text('business_issue')->nullable();
             // Proposed Solution fields.
-            $table->text('learning_response_strategy')->nullable();
             $table->text('short_term_learning_response')->nullable();
             $table->text('medium_term_learning_response')->nullable();
             $table->text('long_term_learning_response')->nullable();
+            // School Priorities fields.
             $table->boolean('is_required_training')->nullable();
             // Target Audience fields.
             $table->unsignedInteger('expected_annual_participant_number')->nullable();

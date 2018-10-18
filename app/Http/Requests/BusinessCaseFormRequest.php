@@ -13,10 +13,9 @@ class BusinessCaseFormRequest extends ProcessInstanceFormDataRequest
     {
         if ($this->submitted()) {
             return [
-                'request_sources'                           => 'required_without:request_source_other|array',
-                'request_source_other'                      => 'nullable|string|max:100',
+                'request_origin'                            => 'required_without:request_origin_other|array',
+                'request_origin_other'                      => 'nullable|string|max:100',
                 'business_issue'                            => 'required|string|max:1250',
-                'learning_response_strategy'                => 'required|string|max:2500',
                 'short_term_learning_response'              => 'required|string|max:1250',
                 'medium_term_learning_response'             => 'required|string|max:1250',
                 'long_term_learning_response'               => 'required|string|max:1250',
@@ -26,11 +25,11 @@ class BusinessCaseFormRequest extends ProcessInstanceFormDataRequest
                 'communities'                               => 'required|array',
                 'departmental_results_framework_indicators' => 'required|array',
                 'cost_centre'                               => 'required|string|max:6|regex:/[A-Z][0-9]{5}/',
-                'spendings'                                 => 'array',
-                'spendings.*.internal_resources'            => 'required|array',
+                'spendings'                                 => 'required|array',
+                'spendings.*.internal_resource_id'          => 'required|integer',
                 'spendings.*.cost_description'              => 'required|string|max:250',
                 'spendings.*.cost'                          => 'required|integer|between:0,999999',
-                'spendings.*.recurrence'                    => 'required|integer',
+                'spendings.*.recurrence_id'                 => 'required|integer',
                 'spendings.*.comments'                      => 'nullable|string|max:1250',
                 'other_operational_considerations'          => 'nullable|string|max:1250',
                 'risks'                                     => 'array',

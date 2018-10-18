@@ -33,7 +33,6 @@ class CreateRisksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('business_case_risk');
         Schema::dropIfExists('risks');
     }
 }

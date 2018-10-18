@@ -1,9 +1,10 @@
 <?php
 
 return [
-    'tabs' => [
-        'planned_product'  => 'Planned Product|Planned Products',
-        'comments'         => 'Comments',
+    'title' => 'Architecture Plan',
+    'tabs'  => [
+        'planned_product' => 'Planned Product|Planned Products',
+        'comments'        => 'Comments',
     ],
     'form_section_groups' => [
         'planned_product' => 'Planned Product|Planned Products',

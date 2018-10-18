@@ -36,7 +36,6 @@ class CreateSpendingsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('business_case_spending');
         Schema::dropIfExists('spendings');
     }
 }

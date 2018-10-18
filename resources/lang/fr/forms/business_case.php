@@ -46,20 +46,14 @@ return [
         'instruction' => 'Veuillez sélectionner tous les choix qui s’appliquent à votre projet.',
         'description' => 'La liste des priorités de l’École adressé par ce projet.',
     ],
-    'request_sources' => [
-        'label'       => 'Origine de la demande',
+    'request_origins' => [
+        'label'       => 'Origines de la demande',
         'instruction' => 'Pourquoi soumettez-vous ce projet?',
         'description' => 'Les circonstances ayant menées à la création ou la modification de ce projet.',
         'help'        => 'Par exemple : Y a-t-il eu un changement de politique qui exige une transformation des produits d’apprentissage? Y avait-il une nouvelle priorité du gouvernement du Canada à laquelle les produits d’apprentissage devaient répondre?',
     ],
-    'request_source_other' => [
-        'label'       => 'Autres sources de la demande',
-    ],
-    'learning_response_strategy' => [
-        'label'       => 'Stratégie de réponse en matière d’apprentissage',
-        'instruction' => 'Veuillez fournir un aperçu général de votre stratégie de réponse en matière d’apprentissage à court, moyen et long terme.',
-        'description' => 'L’aperçu général de la stratégie de réponse en matière d’apprentissage pour chaque échéancier (à court, moyen et long terme).',
-        'help'        => 'Par exemple : À court terme, deux événements sont planifiés. À moyen terme trois vidéos sont planifiés.',
+    'request_origin_other' => [
+        'label'       => 'Autres origines de la demande',
     ],
     'is_required_training' => [
         'label'       => 'Formation obligatoire / Fait partie des exigences d’une attestation',
@@ -123,7 +117,7 @@ return [
     'risks' => [
         'risk_type' => [
             'label'       => 'Risque',
-            'instruction' => 'Y a-t-il un/des impacts additionnels sur les coûts et les ressources.',
+            'instruction' => 'Veuillez indiquer tous les risques pour l’École si ce projet n’est pas approuvé.',
             'description' => 'La description de tout risque, enjeu ou contrainte connus touchant le projet.',
         ],
         'risk_type_other' => [

@@ -73,7 +73,7 @@
           v-validate="'required'"
           :options="data.recurrenceList"
           sorted />
-      </el-form-item-wrap>
+    </el-form-item-wrap>
 
     <el-form-item-wrap
       :label="trans('forms.business_case.spendings.comments.label')"
@@ -85,7 +85,6 @@
         </span>
         <input-wrap
           v-model="form.comments"
-          v-validate="'required'"
           :data-vv-as="trans('forms.business_case.spendings.comments.label')"
           :name="`${fieldNamePrefix}.comments`"
           maxlength="1250"
