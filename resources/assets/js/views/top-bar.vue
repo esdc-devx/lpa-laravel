@@ -54,10 +54,9 @@
         isAdminBarShown: 'isAdminBarShown',
         user: 'users/current',
         hasRole: 'users/hasRole',
-        shouldConfirmBeforeLanguageChange: 'shouldConfirmBeforeLanguageChange',
-        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
       }),
       ...mapState({
+        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
         filteredDataTableList: state => state.filteredDataTableList
       })
     },

@@ -100,7 +100,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters, mapActions, mapState } from 'vuex';
   import EventBus from '@/event-bus.js';
 
   import HttpStatusCodes from '@axios/http-status-codes';
@@ -155,10 +155,12 @@
     },
 
     computed: {
+      ...mapState({
+        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
+      }),
       ...mapGetters({
         language: 'language',
         isMainLoading: 'isMainLoading',
-        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
         hasRole: 'users/hasRole',
         isCurrentUser: 'users/isCurrentUser',
         viewingProcess: 'processes/viewing',
