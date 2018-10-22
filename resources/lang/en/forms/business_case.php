@@ -117,7 +117,7 @@ return [
     'risks' => [
         'risk_type' => [
             'label'       => 'Risk',
-            'instruction' => 'Please indicate all risks for the School if this project does not go ahead.',
+            'instruction' => 'Please indicate a risk for the School if this project does not go ahead.',
             'description' => 'The description of a known constraint, risk or issue affecting the project.',
         ],
         'risk_type_other' => [

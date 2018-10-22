@@ -117,8 +117,8 @@ return [
     'risks' => [
         'risk_type' => [
             'label'       => 'Risque',
-            'instruction' => 'Veuillez indiquer tous les risques pour l’École si ce projet n’est pas approuvé.',
-            'description' => 'La description de tout risque, enjeu ou contrainte connus touchant le projet.',
+            'instruction' => 'Veuillez indiquer un risque pour l’École si ce projet n’est pas approuvé.',
+            'description' => 'La description d’un risque, enjeu ou contrainte connu touchant le projet.',
         ],
         'risk_type_other' => [
             'label'       => 'Autre risque',

@@ -257,8 +257,7 @@
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.departmental_results_framework_indicators.label')"
           :data="departmentalResultsFrameworkIndicatorList"
-          labelKey="name"
-          :class="'departmental-result-framework-indicators'">
+          labelKey="name">
         </el-tree-wrap>
       </el-form-item-wrap>
     </el-tab-pane>
@@ -459,23 +458,4 @@
 </script>
 
 <style lang="scss">
-
-.departmental-result-framework-indicators {
-  .el-tree-node__content {
-    align-items: flex-start;
-    height: auto;
-    padding: 4px 0px;
-  }
-  .el-tree-node__expand-icon {
-    padding: 0px 6px;
-  }
-  .el-checkbox {
-    padding-top: 2px;
-  }
-  .el-tree-node__label {
-    line-height: 1.3em;
-    word-wrap: normal;
-    white-space: normal;
-  }
-}
 </style>
