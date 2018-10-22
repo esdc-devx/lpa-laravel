@@ -19,7 +19,7 @@ class CreateProcessFormAssessmentsTable extends Migration
             $table->string('assessed_process_form');
 
             // Foreign keys.
-            $table->referenceOn('process_form_id', 'process_forms');
+            $table->referenceOn('process_form_id');
         });
     }
 

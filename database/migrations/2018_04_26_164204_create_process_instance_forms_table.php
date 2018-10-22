@@ -24,10 +24,10 @@ class CreateProcessInstanceFormsTable extends Migration
             $table->auditable();
             $table->timestamps();
 
-            $table->referenceOn('process_form_id', 'process_forms');
-            $table->referenceOn('process_instance_step_id', 'process_instance_steps')->onDelete('cascade');
-            $table->referenceOn('state_id', 'states');
-            $table->referenceOn('organizational_unit_id', 'organizational_units');
+            $table->referenceOn('process_form_id');
+            $table->referenceOn('process_instance_step_id')->onDelete('cascade');
+            $table->referenceOn('state_id');
+            $table->referenceOn('organizational_unit_id');
             $table->referenceOn('current_editor', 'users');
         });
     }

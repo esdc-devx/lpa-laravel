@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSalaryFundsTable extends Migration
+class CreateRequestOriginsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class CreateSalaryFundsTable extends Migration
      */
     public function up()
     {
-        Schema::create('salary_funds', function (Blueprint $table) {
+        Schema::create('request_origins', function (Blueprint $table) {
             $table->listable();
+        });
+
+        Schema::create('business_case_request_origin', function (Blueprint $table) {
+            $table->pivot('business_cases', 'request_origins');
         });
     }
 
@@ -25,6 +29,7 @@ class CreateSalaryFundsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('salary_funds');
+        Schema::dropIfExists('business_case_request_origin');
+        Schema::dropIfExists('request_origins');
     }
 }

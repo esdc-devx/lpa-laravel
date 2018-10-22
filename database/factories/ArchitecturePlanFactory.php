@@ -28,6 +28,6 @@ $factory->define(ArchitecturePlan::class, function (Faker $faker) {
 
     return [
         'planned_products' => $plannedProducts,
-        'comment'          => $faker->paragraph(),
+        'comments'         => $faker->paragraph(),
     ];
 });

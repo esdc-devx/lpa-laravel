@@ -2,168 +2,135 @@
 
 return [
     'title' => 'Business Case',
-    'tabs' => [
-        'business_drivers'      => 'Business Drivers',
-        'proposal'              => 'Proposal',
-        'timeframe'             => 'Timeframe',
-        'audience'              => 'Audience',
-        'departmental_benefit'  => 'Departmental Benefit|Departmental Benefits',
-        'learners_benefit'      => 'Learners Benefit|Learners Benefits',
-        'costs'                 => 'Costs',
-        'internal_resources'    => 'Internal Resources',
-        'risk'                  => 'Risk|Risks',
-        'comment'               => 'Comments',
+    'tabs'  => [
+        'project_objective'              => 'Project Objective',
+        'proposed_solution'              => 'Proposed Solution',
+        'school_priorities'              => 'School Priorities',
+        'target_audience'                => 'Target Audience',
+        'departmental_results_framework' => 'Departmental Results Framework',
+        'costs'                          => 'Costs and Resources',
+        'internal_resources'             => 'Internal Resources',
+        'risk'                           => 'Risks',
+        'comments'                       => 'Comments',
+    ],
+    'form_section_groups' => [
+        'risk'      => 'Risk|Risks',
+        'spending'  => 'Cost Breakdown|Cost Breakdown',
     ],
     'business_issue' => [
-        'label'       => 'Business Issues',
-        'instruction' => 'Please describe the performance gaps or business issues addressed by this project.',
-        'description' => 'The business issues motivating this project.',
-        'help'        => 'What are the business issues, problems or performance gaps that the School is trying to solve?',
+        'label'       => 'Business Issues or Learning Gaps',
+        'instruction' => 'What are the business issues, problems or learning gaps that the School is trying to solve?',
+        'description' => 'The business issues, problems or learning gaps motivating this project.',
+        'help'        => 'For example: A functional community has identified a crucial learning gap that isn’t addressed by the School’s current offering.',
     ],
-    'government_priorities' => [
-        'label'       => 'Government Core Curriculum Priorities',
-        'instruction' => 'Please select all options that apply.',
-        'description' => 'The list of the government core curriculum priorities addressed by this project.',
+    'short_term_learning_response' => [
+        'label'       => 'Short Term Learning Response (0-3 months)',
+        'instruction' => 'Please provide the deliverables for the next 3 months following project approval.',
+        'description' => 'The short term learning response strategy (0-3 months).',
+        'help'        => 'For example: Increased marketing of existing or related products, events, webcasts',
     ],
-    'request_sources' => [
-        'label'       => 'Request Sources',
-        'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
-        'description' => 'The sources of the request.',
-        'help'        => '
-            <ul>
-                <li><span>OCHRO or PCO request</span>: Office of the Chief Human Resources Officer or Privy Council Office request</li>
-            </ul>',
+    'medium_term_learning_response' => [
+        'label'       => 'Medium Term Learning Response (3-6 months)',
+        'instruction' => 'Please provide the deliverables for the next 3 to 6 months following project approval.',
+        'description' => 'The medium term learning response strategy (3-6 months).',
+        'help'        => 'For example: videos, micro-learning, creating a new product from existing products (e.g. pulling and creating a stand-alone module from an existing course)',
     ],
-    'request_source_other' => [
-        'label'       => 'Other Request Sources',
+    'long_term_learning_response' => [
+        'label'       => 'Long Term Learning Response (6-18 months)',
+        'instruction' => 'Please provide the deliverables for the next 6 to 18 months following project approval.',
+        'description' => 'The long term learning solution (6-18 months).',
+        'help'        => 'For example: online or in-class course that will be added to the School’s curriculum',
     ],
-    'potential_solution_types' => [
-        'label'       => 'Potential Solution Types',
-        'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
-        'description' => 'The list of potential solution types to solve the business issue.',
-        'help'        => '
-            <ul>
-                <li><span>Commercial Off-The-Shelf (COTS)</span>: Third party material that requires purchase. E.g.: Skillsoft.</li>
-            </ul>',
+    'school_priorities' => [
+        'label'       => 'School Priorities',
+        'instruction' => 'Please select the priorities that apply to your project.',
+        'description' => 'The list of School priorities addressed by this project.',
     ],
-    'potential_solution_type_other' => [
-        'label'       => 'Other Potential Solution Types',
+    'request_origins' => [
+        'label'       => 'Origins of the Request',
+        'instruction' => 'Why are you submitting this project?',
+        'description' => 'The circumstances leading to the creation or modification of this project.',
+        'help'        => 'For example: Was there a change in policy that requires a learning product transformation? Was there a new Government of Canada priority that needs to be addressed by learning products?',
     ],
-    'learning_response_strategy' => [
-        'label'       => 'Learning Response Strategy',
-        'instruction' => 'Please provide a high-level overview of your project and how it addresses the perfomance gaps or the business issues identified previously.',
-        'description' => 'The proposed Learning Response Strategy (LRS) description.',
+    'request_origin_other' => [
+        'label'       => 'Other Origins of the Request',
     ],
     'is_required_training' => [
         'label'       => 'Required Training / Part of Certification',
-        'instruction' => 'Please indicate whether the Learning Products included in this project are considered as "required training" (under any policy) and/or part of a certification?',
-        'description' => 'An indicator of whether or not the Learning Products included in the project are considered as "required training" or "part of a certification."',
+        'instruction' => 'Please indicate whether the Learning Products included in this project are considered "required training" and/or "part of a certification"?',
+        'description' => 'The learning products included in the project are considered as "required training" or "part of a certification".',
+        'help'        => 'The definition of "required training" can be found in the Treasury Board Policy on Learning, Training, and Development.',
     ],
-    'timeframe' => [
-        'label'       => 'Anticipated Timeframe',
-        'description' => 'The project\'s anticipated timeframe.',
-        'help'        => 'Targeted timeframe until the launch of last included products.',
-    ],
-    'timeframe_rationale' => [
-        'label'       => 'Anticipated Timeframe Rationale',
-        'instruction' => 'Please explain the above anticipated timeframe.',
-        'description' => 'The rationale for the project\'s anticipated timeframe.',
+    'expected_annual_participant_number' => [
+        'label'       => 'Expected number of participants (per year)',
+        'description' => 'An estimate of the number of participants per year.',
     ],
     'communities' => [
         'label'       => 'Communities',
         'instruction' => 'Please select all options that apply.',
         'description' => 'The list of target communities and sub-communities.',
     ],
-    'expected_annual_participant_number' => [
-        'label'       => 'Expected number of participants (per year)',
-        'description' => 'An estimate of the number of participants per year.',
+    'departmental_results_framework_indicators' => [
+        'label'       => 'Indicators',
+        'instruction' => 'Please select all DRF indicators that apply to this project.',
+        'description' => 'The Departmental Results Framework (DRF) indicators addressed by this project.',
     ],
-    'departmental_benefit_type' => [
-        'label'       => 'Type',
-        'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
-        'description' => 'The departmental benefit type.',
-    ],
-    'departmental_benefit_type_other' => [
-        'label'       => 'Other Type',
-    ],
-    'departmental_benefit_rationale' => [
-        'label'       => 'Rationale',
-        'description' => 'The departmental benefit rationale.',
-    ],
-    'learners_benefit_type' => [
-        'label'       => 'Type',
-        'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
-        'description' => 'The learner benefit type.',
-    ],
-    'learner_benefit_type_other' => [
-        'label'       => 'Other Type',
-    ],
-    'learners_benefit_rationale' => [
-        'label'       => 'Rationale',
-        'description' => 'The learner benefit rationale.',
-    ],
-    'cost_center' => [
-        'label'       => 'Cost Center',
-        'instruction' => 'Please provide your Cost Center.',
-        'description' => 'The project cost center.',
+    'cost_centre' => [
+        'label'       => 'Cost Centre',
+        'instruction' => 'Please provide your Cost Centre.',
+        'description' => 'The project cost centre.',
         'hint'        => 'Ex: Q12345',
     ],
-    'maintenance_fund' => [
-        'label'       => 'Estimated Additional Operations and Maintenance (O&M) Funds Required',
-        'description' => 'The estimated additional Operation and Maintenance funds required.',
-        'help'        => 'Also known as "Non-salary related funds".',
+    'spendings' => [
+        'internal_resource' => [
+            'label'       => 'Internal Resources',
+            'description' => 'The list of internal resources at the School that may be impacted by the project.',
+            'help'        => 'For example: Learning Solutions resources may be required to create an online course or a video. New Faculty members may need to be hired to deliver an in-class course.',
+        ],
+        'cost_description' => [
+            'label'       => 'Cost Description',
+            'description' => 'The detailed description of the cost.',
+            'help'        => 'For example: The amount reflects the salary of a new Faculty member. The amount is the cost associated to translating and editing a video.',
+        ],
+        'cost' => [
+            'label'       => 'Cost',
+            'description' => 'The approximate cost required.',
+            'help'        => 'For example: $85,000 for an estimated salary of a subject matter expert. $4,000 for translation.',
+        ],
+        'recurrence' => [
+            'label'       => 'Recurrence',
+            'description' => 'The recurrence of the cost.',
+            'help'        => 'For example: Is the cost an initial investment or will it be recurring annually?',
+        ],
+        'comments' => [
+            'label'       => 'Comments',
+            'instruction' => 'Please add any relevant information related to the cost or resource captured above.',
+            'description' => 'Any other relevant information about this specific cost or resource.',
+            'help'        => 'For example: Using two resources in the Learning Solutions team represents 40% of their current available workforce and may impact other School projects.',
+        ],
     ],
-    'maintenance_fund_rationale' => [
-        'label'       => 'Additional Operations and Maintenance (O&M) Funds Rationale',
-        'instruction' => 'Please provide a rationale for the additional Operations and Maintenance funds.',
-        'description' => 'The additional Operations and Maintenance funds rationale.',
+    'other_operational_considerations' => [
+        'label'       => 'Other Operational Considerations',
+        'instruction' => 'Is there an additional impact on costs or resources?',
+        'description' => 'Any other relevant operational consideration regarding costs or resources.',
     ],
-    'salary_fund' => [
-        'label'       => 'Estimated Additional Salary Funds Required',
-        'description' => 'The estimated additional Salary funds required.',
+    'risks' => [
+        'risk_type' => [
+            'label'       => 'Risk',
+            'instruction' => 'Please indicate a risk for the School if this project does not go ahead.',
+            'description' => 'The description of a known constraint, risk or issue affecting the project.',
+        ],
+        'risk_type_other' => [
+            'label' => 'Other Risk',
+        ],
+        'risk_rationale' => [
+            'label'       => 'Rationale',
+            'instruction' => 'Please indicate why this is a risk.',
+            'description' => 'The impact on the School or Government operations if this project is not realized.',
+            'help'        => 'For example: ATIP officials would be unable to perform their duties based on outdated mandatory training content.',
+        ],
     ],
-    'salary_fund_rationale' => [
-        'label'       => 'Additional Salary Funds Rationale',
-        'instruction' => 'Please provide a rationale for the Salary funds.',
-        'description' => 'The additional Salary funds rationale.',
-    ],
-    'internal_resources' => [
-        'label'       => 'Required Internal Resources',
-        'instruction' => 'Please select all options that apply. If needed, use the Others field to specify any missing options.',
-        'description' => 'A list of the departemental resources that will be required for this project.',
-        'help'        => '
-            <ul>
-                <li><span>Faculty</span>: This team works on the onboarding and management of faculty members. E.g.: Instructors.</li>
-                <li><span>A/V</span>: This team prepares rooms for course, events, etc.</li>
-                <li><span>NOP</span>: This team helps planning national operations such as course offerings or events.</li>
-            </ul>
-        '
-    ],
-    'internal_resource_other' => [
-        'label'       => 'Other Required Internal Resources',
-    ],
-    'risk_type' => [
-        'label'       => 'Risk',
-        'instruction' => 'Please select the option that apply or use the Other field to specify another option.',
-        'description' => 'The description of a known constraint, risk or issue affecting the project.',
-    ],
-    'risk_type_other' => [
-        'label'       => 'Other Risk',
-    ],
-    'risk_impact_level' => [
-        'label'       => 'Impact',
-        'description' => 'An assessment of the impact on the project if the risk ever materializes.',
-    ],
-    'risk_probability_level' => [
-        'label'       => 'Probability',
-        'description' => 'An assessment of the likelihood or probability that the risk will materialize.',
-    ],
-    'risk_rationale' => [
-        'label'       => 'Rationale',
-        'instruction' => 'Please indicate why this is a risk.',
-        'description' => 'A description of the risk rationale.',
-    ],
-    'comment' => [
+    'comments' => [
         'label'       => 'General Comments',
         'description' => 'Any other relevant information about the business case.',
     ],

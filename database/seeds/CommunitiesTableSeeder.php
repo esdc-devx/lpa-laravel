@@ -9,8 +9,9 @@ class CommunitiesTableSeeder extends Seeder
     {
         return [
             [
-                'name_en' => 'Employees',
-                'name_fr' => 'Employés',
+                'name_en' => 'Employees (All Public Servants)',
+                'name_fr' => 'Employés (Tous les fonctionnaires)',
+                'name_key' => 'employees',
             ],
             [
                 'name_en' => 'Managers & Supervisors',
@@ -120,9 +121,9 @@ class CommunitiesTableSeeder extends Seeder
     protected function createTerm($term) {
         return Community::create([
             'parent_id' => $term['parent_id'] ?? 0,
-            'name_key' => str_slug($term['name_en'], '-'),
-            'name_en' => $term['name_en'],
-            'name_fr' => $term['name_fr'],
+            'name_key'  => $term['name_key'] ?? str_slug($term['name_en'], '-'),
+            'name_en'   => $term['name_en'],
+            'name_fr'   => $term['name_fr'],
         ])->id;
     }
 

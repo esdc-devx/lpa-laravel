@@ -168,6 +168,12 @@ export default {
         // get me the first field that has this name.
         const field = this.$validator.fields.find({ name: fieldName });
 
+        // Make sure that field returned by the backend can be mapped to an existing field in the form.
+        if (!field) {
+          console.warn('Cannot map error field [' + fieldName + ']');
+          continue;
+        }
+
         // then for that field, make a correlation on the id of the error and the field
         // and add the error to our Error Bag
         fieldErrors.forEach(error => {

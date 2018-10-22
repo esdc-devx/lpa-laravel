@@ -28,8 +28,8 @@ class CreateProcessInstancesTable extends Migration
             $table->timestamps();
 
             // Foreing keys.
-            $table->referenceOn('process_definition_id', 'process_definitions');
-            $table->referenceOn('state_id', 'states')->onDelete('set null');
+            $table->referenceOn('process_definition_id');
+            $table->referenceOn('state_id')->onDelete('set null');
         });
     }
 

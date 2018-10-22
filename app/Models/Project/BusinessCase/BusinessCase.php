@@ -8,37 +8,28 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 class BusinessCase extends ProcessInstanceFormDataModel
 {
     protected $fillable = [
-        'process_instance_form_id', 'request_source_other', 'business_issue', 'is_required_training', 'learning_response_strategy',
-        'potential_solution_type_other', 'expected_annual_participant_number', 'timeframe_id', 'timeframe_rationale', 'cost_center',
-        'maintenance_fund_id', 'maintenance_fund_rationale', 'salary_fund_id', 'salary_fund_rationale', 'comment', 'internal_resource_other',
+        'process_instance_form_id', 'request_origin_other', 'business_issue',
+        'short_term_learning_response', 'medium_term_learning_response', 'long_term_learning_response', 'is_required_training',
+        'expected_annual_participant_number', 'cost_centre', 'other_operational_considerations',
+        'comments',
     ];
 
     // These relationships will be loaded when retrieving the model.
     public $relationships = [
         // Multiple choice lists.
-        'requestSources', 'potentialSolutionTypes', 'governmentPriorities', 'communities', 'internalResources',
+        'requestOrigins', 'schoolPriorities', 'communities', 'departmentalResultsFrameworkIndicators',
         // Complex data.
-        'departmentalBenefits', 'learnersBenefits', 'risks',
+        'spendings', 'risks',
     ];
 
-    public function requestSources()
+    public function requestOrigins()
     {
-        return $this->belongsToMany(RequestSource::class);
+        return $this->belongsToMany(RequestOrigin::class);
     }
 
-    public function potentialSolutionTypes()
+    public function schoolPriorities()
     {
-        return $this->belongsToMany(PotentialSolutionType::class);
-    }
-
-    public function governmentPriorities()
-    {
-        return $this->belongsToMany(GovernmentPriority::class);
-    }
-
-    public function timeframe()
-    {
-        return $this->belongsTo(Timeframe::class);
+        return $this->belongsToMany(SchoolPriority::class);
     }
 
     public function communities()
@@ -46,29 +37,14 @@ class BusinessCase extends ProcessInstanceFormDataModel
         return $this->belongsToMany(Community::class);
     }
 
-    public function departmentalBenefits()
+    public function departmentalResultsFrameworkIndicators()
     {
-        return $this->hasMany(DepartmentalBenefit::class);
+        return $this->belongsToMany(DepartmentalResultsFrameworkIndicator::class);
     }
 
-    public function learnersBenefits()
+    public function spendings()
     {
-        return $this->hasMany(LearnersBenefit::class);
-    }
-
-    public function maintenanceFund()
-    {
-        return $this->belongsTo(MaintenanceFund::class);
-    }
-
-    public function salaryFund()
-    {
-        return $this->belongsTo(SalaryFund::class);
-    }
-
-    public function internalResources()
-    {
-        return $this->belongsToMany(InternalResource::class);
+        return $this->hasMany(Spending::class);
     }
 
     public function risks()
@@ -79,16 +55,14 @@ class BusinessCase extends ProcessInstanceFormDataModel
     public function saveFormData(array $data)
     {
         $this->syncRelationships($data, [
-            'requestSources',
-            'potentialSolutionTypes',
-            'governmentPriorities',
+            'requestOrigins',
+            'schoolPriorities',
             'communities',
-            'internalResources',
+            'departmentalResultsFrameworkIndicators',
         ]);
 
         $this->syncRelatedModels($data, [
-            'departmentalBenefits',
-            'learnersBenefits',
+            'spendings',
             'risks',
         ]);
 

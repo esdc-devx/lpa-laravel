@@ -1,24 +1,20 @@
 <?php
 
-use App\Models\Project\BusinessCase\RiskProbabilityLevel;
+use App\Models\Project\BusinessCase\Recurrence;
 use Illuminate\Database\Seeder;
 
-class RiskProbabilityLevelTableSeeder extends Seeder
+class RecurrenceTableSeeder extends Seeder
 {
     protected function data()
     {
         return [
             [
-                'name_en' => 'Low',
-                'name_fr' => 'Faible',
+                'name_en' => 'Initial Investment',
+                'name_fr' => 'Investissement initial',
             ],
             [
-                'name_en' => 'Moderate',
-                'name_fr' => 'Modéré',
-            ],
-            [
-                'name_en' => 'High',
-                'name_fr' => 'Élevé',
+                'name_en' => 'Recurrent Cost',
+                'name_fr' => 'Coût récurrent',
             ],
         ];
     }
@@ -31,10 +27,10 @@ class RiskProbabilityLevelTableSeeder extends Seeder
     public function run()
     {
         // Truncate previous tables.
-        DB::table('risk_probability_levels')->truncate();
+        DB::table('recurrences')->truncate();
 
         foreach ($this->data() as $term) {
-            RiskProbabilityLevel::create([
+            Recurrence::create([
                 'name_key' => str_slug($term['name_en'], '-'),
                 'name_en'  => $term['name_en'],
                 'name_fr'  => $term['name_fr'],

@@ -20,21 +20,22 @@
       </span>
       <h2>{{ trans('forms.architecture_plan.tabs.comments') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.architecture_plan.comment.label')"
-        prop="comment">
+        :label="trans('forms.architecture_plan.comments.label')"
+        prop="comments">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.architecture_plan.comment.description')">
+            :description="trans('forms.architecture_plan.comments.description')"
+            :help="trans('forms.architecture_plan.comments.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.architecture_plan.comment.instruction') }}
+            {{ trans('forms.architecture_plan.comments.instruction') }}
           </span>
         </span>
         <input-wrap
-          v-model="form.comment"
-          name="comment"
+          v-model="form.comments"
+          name="comments"
           v-validate="''"
-          :data-vv-as="trans('forms.architecture_plan.comment.label')"
+          :data-vv-as="trans('forms.architecture_plan.comments.label')"
           maxlength="2500"
           type="textarea">
         </input-wrap>

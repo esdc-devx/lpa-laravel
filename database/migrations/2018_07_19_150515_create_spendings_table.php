@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRisksTable extends Migration
+class CreateSpendingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,19 @@ class CreateRisksTable extends Migration
      */
     public function up()
     {
-        Schema::create('risks', function (Blueprint $table) {
+        Schema::create('spendings', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('business_case_id');
-            $table->unsignedInteger('risk_type_id')->nullable();
-            $table->string('risk_type_other')->nullable();
-            $table->text('rationale')->nullable();
+            $table->unsignedInteger('internal_resource_id')->nullable();
+            $table->text('cost_description')->nullable();
+            $table->unsignedInteger('cost')->nullable();
+            $table->unsignedInteger('recurrence_id')->nullable();
+            $table->text('comments')->nullable();
 
             // Foreign keys.
             $table->referenceOn('business_case_id')->onDelete('cascade');
-            $table->referenceOn('risk_type_id');
+            $table->referenceOn('internal_resource_id');
+            $table->referenceOn('recurrence_id');
         });
     }
 
@@ -33,6 +36,6 @@ class CreateRisksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('risks');
+        Schema::dropIfExists('spendings');
     }
 }

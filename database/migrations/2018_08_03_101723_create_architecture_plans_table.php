@@ -16,10 +16,10 @@ class CreateArchitecturePlansTable extends Migration
         Schema::create('architecture_plans', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('process_instance_form_id');
-            $table->text('comment')->nullable();
+            $table->text('comments')->nullable();
 
             // Foreign keys.
-            $table->referenceOn('process_instance_form_id', 'process_instance_forms')->onDelete('cascade');
+            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
         });
     }
 

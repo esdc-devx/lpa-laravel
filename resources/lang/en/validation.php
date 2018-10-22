@@ -117,19 +117,6 @@ return [
             'unique' => 'User already exists.',
             'not-found' => 'User could not be found in Active Directory.'
         ],
-        //@note: To be reviewed.
-        'departmental_benefits' => [
-            'required' => 'There needs to be at least one departmental benefit.'
-        ],
-        'learners_benefits' => [
-            'required' => 'There needs to be at least one learners benefit.'
-        ],
-        'maintenance_fund_rationale' => [
-            'required_unless' => 'You need to specify a rationale if you have some maintenance fund.',
-        ],
-        'salary_fund_rationale' => [
-            'required_unless' => 'You need to specify a rationale if you have some salary fund.',
-        ],
         'risks' => [
             'required' => 'There needs to be at least one risk.',
         ],
@@ -155,16 +142,10 @@ return [
 
     'attributes' => [
         // @refactor: Should always use organizational_unit_id.
-        'organizational_unit'                                     => 'Organizational Unit',
-        'organizational_unit_id'                                  => 'Organizational Unit',
-        'departmental_benefits.*.rationale'                       => 'Rationale',
-        'departmental_benefits.*.departmental_benefit_type_id'    => 'Type',
-        'departmental_benefits.*.departmental_benefit_type_other' => 'Other',
-        'learners_benefits.*.rationale'                           => 'Rationale',
-        'learners_benefits.*.learners_benefit_type_id'            => 'Type',
-        'learners_benefits.*.learners_benefit_type_other'         => 'Other',
-        'risks.*.risk_type_id'                                    => 'Risk',
-        'learning_product_type'                                   => 'Learning Product Type',
+        'organizational_unit'    => 'Organizational Unit',
+        'organizational_unit_id' => 'Organizational Unit',
+        'risks.*.risk_type_id'   => 'Risk',
+        'learning_product_type'  => 'Learning Product Type',
     ],
 
 ];

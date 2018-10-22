@@ -32,10 +32,10 @@ class CreateLearningProductsTable extends Migration
             $table->timestamps();
 
             // Foreing keys.
-            $table->referenceOn('organizational_unit_id', 'organizational_units');
-            $table->referenceOn('state_id', 'states');
-            $table->referenceOn('process_instance_id', 'process_instances');
-            $table->referenceOn('project_id', 'projects')->onDelete('cascade');
+            $table->referenceOn('organizational_unit_id');
+            $table->referenceOn('state_id');
+            $table->referenceOn('process_instance_id');
+            $table->referenceOn('project_id')->onDelete('cascade');
             $table->referenceOn('type_id', 'learning_product_types');
             $table->referenceOn('sub_type_id', 'learning_product_types');
             $table->referenceOn('primary_contact', 'users');

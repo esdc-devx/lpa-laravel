@@ -61,7 +61,8 @@ class DatabaseServiceProvider extends ServiceProvider
         });
 
         // Add foreign key macro.
-        Blueprint::macro('referenceOn', function ($column, $table, $references = 'id') {
+        Blueprint::macro('referenceOn', function ($column, $table = null, $references = 'id') {
+            $table = $table ?? str_plural(str_before($column, '_id'));
             return $this->foreign($column, db_index_name($this->getTable() . '_' . $column))
                 ->references($references)
                 ->on($table);

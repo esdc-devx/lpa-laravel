@@ -1,7 +1,7 @@
 <template>
   <div class="form-section-group">
     <h2>
-      {{ $tc(`forms.${entityFormKey}.tabs.${entitySectionKey}`, 2) }}
+      {{ $tc(`forms.${entityFormKey}.form_section_groups.${entitySectionKey}`, 2) }}
       <div class="header-controls">
         <el-button type="text" size="mini" @click="expandAll = true">
           {{ trans('entities.general.expand_all') }}
@@ -14,7 +14,7 @@
     <el-collapse :value="activePanels">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
-          {{ $tc(`forms.${entityFormKey}.tabs.${entitySectionKey}`) }} {{ index + 1 }}
+          {{ $tc(`forms.${entityFormKey}.form_section_groups.${entitySectionKey}`) }} {{ index + 1 }}
           <!--
             only show the delete button:
             if the min value is not specified (0) always show it
@@ -33,15 +33,14 @@
   import EventBus from '@/event-bus.js';
 
   // Form sections
-  import DepartmentalBenefit from './entities/departmental-benefit';
-  import LearnersBenefit from './entities/learners-benefit';
+  import Spending from './entities/spending';
   import Risk from './entities/risk';
   import PlannedProduct from './entities/planned-product';
 
   export default {
     name: 'form-section-group',
 
-    components: { DepartmentalBenefit, LearnersBenefit, Risk, PlannedProduct },
+    components: { Spending, Risk, PlannedProduct },
 
     props: {
       entityForm: {
@@ -205,7 +204,7 @@
     }
 
     button.add-group {
-      margin-top: 20px;
+      margin: 20px 0;
     }
   }
 </style>

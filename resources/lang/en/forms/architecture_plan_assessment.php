@@ -20,7 +20,7 @@ return [
         'label'       => 'Decision',
         'description' => 'The decision on the Architecture Plan.',
     ],
-    'assessment_comment' => [
+    'assessment_comments' => [
         'label'       => 'Comments',
         'instruction' => 'Please provide an explanation if adjustments are required.',
         'description' => 'Comments supporting the decision on the Architecture Plan.',
