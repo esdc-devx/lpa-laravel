@@ -3,6 +3,7 @@
 return [
     'id'           => 'Process ID',
     'actions'      => 'Process Actions',
+    'start'        => 'Start a Process',
     'started'      => 'Started',
     'current'      => 'Current Process',
     'view'         => 'View Process',
