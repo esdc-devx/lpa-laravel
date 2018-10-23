@@ -4,8 +4,12 @@
       <div slot="header">
         <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProduct.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
-          <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteWrapper()" plain><i class="el-icon-lpa-delete"></i></el-button>
+          <el-tooltip class="item" effect="dark" :content="trans('components.tooltip.edit_learning_product')" placement="top-start">
+            <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
+          </el-tooltip>
+          <el-tooltip class="item" effect="dark" :content="trans('components.tooltip.delete_learning_product')" placement="top-start">
+            <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteWrapper()" plain><i class="el-icon-lpa-delete"></i></el-button>
+          </el-tooltip>
         </div>
       </div>
       <dl>
@@ -13,16 +17,24 @@
         <dd>{{ learningProduct.id | LPANumFilter }}</dd>
       </dl>
       <dl>
-        <dt>{{ trans('entities.learning_product.parent_project') }}</dt>
-        <dd><router-link :to="'/' + language + '/projects/' + learningProduct.project_id">{{ learningProduct.project_id | LPANumFilter }}</router-link></dd>
+        <dt>{{ trans('entities.learning_product.status') }}</dt>
+        <dd>{{ learningProduct.state.name }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ trans('entities.process.current') }}</dt>
+        <dd>{{ learningProduct.current_process ? learningProduct.current_process.definition.name : trans('entities.general.na') }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ $tc('entities.general.organizational_units') }}</dt>
+        <dd>{{ learningProduct.organizational_unit.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.type') }}</dt>
         <dd>{{ learningProduct.type.name, learningProduct.sub_type.name | learningProductTypeSubTypeFilter }}</dd>
       </dl>
       <dl>
-        <dt>{{ $tc('entities.general.organizational_units') }}</dt>
-        <dd>{{ learningProduct.organizational_unit.name }}</dd>
+        <dt>{{ trans('entities.learning_product.parent_project') }}</dt>
+        <dd><router-link :to="'/' + language + '/projects/' + learningProduct.project_id">{{ learningProduct.project_id | LPANumFilter }}</router-link></dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.manager') }}</dt>

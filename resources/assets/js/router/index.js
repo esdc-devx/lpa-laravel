@@ -14,7 +14,7 @@ import LearningProductList     from '@/views/learning-product/learning-product-l
 import LearningProductView     from '@/views/learning-product/learning-product.vue';
 import LearningProductCreate   from '@/views/learning-product/learning-product-create.vue';
 import LearningProductEdit     from '@/views/learning-product/learning-product-edit.vue';
-import AdminDashboard          from '@/views/admin/dashboard.vue';
+import Administration          from '@/views/admin/administration.vue';
 import UserList                from '@/views/admin/user-list.vue';
 import UserCreate              from '@/views/admin/user-create.vue';
 import UserEdit                from '@/views/admin/user-edit.vue';
@@ -49,9 +49,8 @@ async function beforeProceed(to, from, next) {
 
 // This will check to see if the user is authenticated or not.
 async function isAuthenticated(to, from, next) {
-  let response;
   try {
-    response = await store.dispatch('users/loadCurrentUser');
+    let response = await store.dispatch('users/loadCurrentUser');
     if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
       return true;
     }
@@ -94,8 +93,6 @@ function proceed(to, from, next) {
     return;
   }
 
-  setupAdmin(newPath);
-
   // url do not need any modifications and the user do have access to it
   next();
 }
@@ -130,10 +127,6 @@ function isPathForbidden(newPath) {
   return false;
 }
 
-function setupAdmin(newPath) {
-  // make sure that the admin bar is opened when browsing an admin url
-  store.dispatch('toggleAdminBar', !!newPath.match(/\/admin/));
-}
 // @note: Vue-router needs a name property when using history mode
 // so that it can differ route changes. e.g.: language change
 // @note: the meta.breadcrumbs property need to follow this convention:
@@ -369,13 +362,13 @@ const routes = [
   },
   {
     path: '/:lang/admin',
-    name: 'admin-dashboard',
-    component: AdminDashboard,
+    name: 'administration',
+    component: Administration,
     meta: {
       title() {
-        return this.trans('base.navigation.admin_dashboard');
+        return this.trans('base.navigation.administration');
       },
-      breadcrumbs: () => 'admin-dashboard'
+      breadcrumbs: () => 'administration'
     }
   },
   {
@@ -386,7 +379,7 @@ const routes = [
       title() {
         return this.trans('base.navigation.admin_user_list');
       },
-      breadcrumbs: () => 'admin-dashboard/admin-user-list'
+      breadcrumbs: () => 'administration/admin-user-list'
     }
   },
   {
@@ -397,7 +390,7 @@ const routes = [
       title() {
         return this.trans('base.navigation.admin_user_create');
       },
-      breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-create'
+      breadcrumbs: () => 'administration/admin-user-list/admin-user-create'
     }
   },
   {
@@ -406,7 +399,7 @@ const routes = [
     component: UserEdit,
     meta: {
       title: () => `${store.getters['users/viewing'].name}`,
-      breadcrumbs: () => 'admin-dashboard/admin-user-list/admin-user-edit'
+      breadcrumbs: () => 'administration/admin-user-list/admin-user-edit'
     },
     beforeEnter: async (to, from, next) => {
       try {

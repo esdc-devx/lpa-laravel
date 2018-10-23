@@ -4,12 +4,8 @@
       <el-col>
         <info-box>
           <dl>
-            <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
-          </dl>
-          <dl>
             <dt>{{ trans('entities.process.status') }}</dt>
-            <dd>{{ viewingProcess.state.name }}</dd>
+            <dd><span :class="'state ' + viewingProcess.state.name_key">{{ viewingProcess.state.name }}</span></dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.started') }}</dt>
@@ -20,6 +16,10 @@
             <dt>{{ trans('entities.general.updated') }}</dt>
             <dd>{{ viewingProcess.updated_by.name }}</dd>
             <dd>{{ viewingProcess.updated_at }}</dd>
+          </dl>
+          <dl>
+            <dt>{{ trans('entities.process.id') }}</dt>
+            <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
           </dl>
           <div class="controls">
             <el-button
@@ -90,9 +90,15 @@
             <el-table-column
               :label="trans('entities.general.updated')">
               <template slot-scope="scope">
-                <span>{{ scope.row.updated_by ? scope.row.updated_by.name : trans('entities.general.na') }}</span>
+                <span>{{ scope.row.updated_by ? scope.row.updated_by.name : trans('entities.general.none') }}</span>
                 <br>
                 <span>{{ scope.row.updated_at }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="trans('entities.form.current_editor')">
+              <template slot-scope="scope">
+                <span>{{ scope.row.current_editor ? scope.row.current_editor.name : trans('entities.general.none') }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -274,7 +280,7 @@
       dl, .controls {
         flex-basis: 20%;
         max-width: 20%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
-      }  
+      }
       .controls {
         margin-bottom: 0;
         align-items: flex-end;
@@ -336,41 +342,41 @@
 
           // Locked
           .el-step__head.is-wait .el-step__icon-inner {
-            @include svg(locked, map-get($color-form-states, locked));
+            @include svg(locked, map-get($color-states, locked));
           }
           .el-step__title.is-wait, .el-step__description.is-wait {
-            color: map-get($color-form-states, locked) !important;
+            color: map-get($color-states, locked) !important;
           }
           // Cancelled
           .el-step__head.is-error .el-step__icon-inner {
-            @include svg(cancelled, map-get($color-form-states, cancelled));
+            @include svg(cancelled, map-get($color-states, cancelled));
           }
           .el-step__title.is-error, .el-step__description.is-error {
-            color: map-get($color-form-states, cancelled) !important;
+            color: map-get($color-states, cancelled) !important;
           }
         }
 
         // Unlocked
         .el-step__title.is-process, .el-step__description.is-process {
-          color: map-get($color-form-states, unlocked) !important;
+          color: map-get($color-states, unlocked) !important;
         }
         // Locked
         .el-step__title.is-wait, .el-step__description.is-wait {
-          color: lighten(map-get($color-form-states, locked), 25%) !important;
+          color: lighten(map-get($color-states, locked), 25%) !important;
         }
         .el-step__head.is-wait .el-step__icon-inner {
-          @include svg(locked, lighten(map-get($color-form-states, locked), 25%));
+          @include svg(locked, lighten(map-get($color-states, locked), 25%));
         }
         // Completed
         .el-step__title.is-finish, .el-step__description.is-finish {
-          color: map-get($color-form-states, done) !important;
+          color: map-get($color-states, done) !important;
         }
         // Cancelled
         .el-step__title.is-error, .el-step__description.is-error {
-          color: lighten(map-get($color-form-states, cancelled), 25%) !important;
+          color: lighten(map-get($color-states, cancelled), 25%) !important;
         }
         .el-step__head.is-error .el-step__icon-inner {
-          @include svg(cancelled, lighten(map-get($color-form-states, cancelled), 25%));
+          @include svg(cancelled, lighten(map-get($color-states, cancelled), 25%));
           &:before {
             // remove the elementui default icon
             content: '';
@@ -397,7 +403,7 @@
       .el-table__row {
         cursor: pointer;
       }
-      @each $state, $color in $color-form-states {
+      @each $state, $color in $color-states {
         .#{$state} .name, .#{$state} .status {
           color: $color;
         }

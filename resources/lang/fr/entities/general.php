@@ -10,6 +10,7 @@ return [
     'updated'                       => 'Modifié',
     'status'                        => 'État',
     'na'                            => 'Sans objet',
+    'none'                          => '-',
     'description'                   => 'Description',
     'help'                          => 'Aide',
     'expand_all'                    => 'Développer tout',

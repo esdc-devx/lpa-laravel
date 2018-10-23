@@ -43,6 +43,39 @@ input, textarea {
   }
 }
 
+.state {
+  display: inline-block;
+  padding: 5px 8px;
+  background-color: #737680;
+  color: #fff;
+  border-radius: 3px;
+  &.active {
+    background-color: #409eff;
+    background-color: map-get($color-states, active);
+  }
+  &.completed {
+    background-color: map-get($color-states, completed);
+  }
+  &.cancelled {
+    background-color:map-get($color-states, cancelled);
+  }
+  &.unlocked {
+    background-color: map-get($color-states, unlocked);
+  }
+  &.locked {
+    background-color: map-get($color-states, locked);
+  }
+  &.submitted {
+    background-color: map-get($color-states, submitted);
+  }
+  &.rejected {
+    background-color: map-get($color-states, rejected);
+  }
+  &.done {
+    background-color: map-get($color-states, done);
+  }
+}
+
 .loading-spinner {
   position: fixed;
   top: 0;

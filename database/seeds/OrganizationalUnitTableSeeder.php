@@ -73,8 +73,8 @@ class OrganizationalUnitTableSeeder extends Seeder
             [
                 'owner'             => false,
                 'name_key'          => 'scic',
-                'name_en'           => 'School Content Integration Committee',
-                'name_fr'           => 'Comité d’intégration du contenu de l’école',
+                'name_en'           => 'Curriculum Management',
+                'name_fr'           => 'Gestion du programme de cours',
                 'email'             => 'csps.scic.cice.efpc@canada.ca',
                 'director_username' => 'LNOWOSIE',
             ],

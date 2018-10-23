@@ -14,9 +14,8 @@
           v-loading.lock="isMainLoading"
           element-loading-background="rgba(250, 250, 250, 0.6)">
           <el-header height="auto">
-            <admin-bar/>
+            <breadcrumb/>
           </el-header>
-          <breadcrumb/>
           <el-main>
             <main-content/>
           </el-main>
@@ -34,7 +33,6 @@
   import EventBus from '@/event-bus';
 
   import TopBar from '@views/top-bar.vue';
-  import AdminBar from '@views/admin/admin-bar.vue';
   import SideBar from '@views/side-bar.vue';
   import Breadcrumb from '@views/breadcrumb.vue';
   import MainContent from '@views/main-content.vue';
@@ -42,7 +40,7 @@
   export default {
     name: 'app',
 
-    components: { TopBar, AdminBar, SideBar, Breadcrumb, MainContent },
+    components: { TopBar, SideBar, Breadcrumb, MainContent },
 
     computed: {
       ...mapGetters([

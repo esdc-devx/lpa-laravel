@@ -1,10 +1,5 @@
 <template>
   <div class="project content">
-    <el-row>
-      <el-col>
-        <process-current-bar :data="viewingProject" type="project"/>
-      </el-col>
-    </el-row>
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
         <project-info :project="viewingProject"/>
@@ -12,18 +7,25 @@
       <el-col :span="6" v-if="canBeVisible">
         <el-card shadow="never" class="project-actions">
           <div slot="header">
-            <h3>{{ trans('entities.process.start') }}</h3>
+            <h3>{{ trans('entities.process.actions') }}</h3>
           </div>
           <ul class="project-actions-list">
-            <li>
-              <el-button
-                v-for="(process, index) in definitions"
-                :key="index"
-                :disabled="!processDefinitionPermissions[process.name_key]"
-                @click="triggerStartProcess(process.name, process.name_key)" plain>
-                  {{ process.name }}
-              </el-button>
-            </li>
+            <template v-if="viewingProject.current_process">
+              <li>
+                <el-button @click="continueToProcess(viewingProject.current_process.id)">
+                  {{ trans('entities.process.view_current') }}
+                </el-button>
+              </li>
+            </template>
+            <template v-else>
+              <li v-for="(process, index) in definitions" :key="index">
+                <el-button
+                  :disabled="!processDefinitionPermissions[process.name_key]"
+                  @click="triggerStartProcess(process.name, process.name_key)">
+                    {{ process.name }}
+                </el-button>
+              </li>
+            </template>
           </ul>
         </el-card>
       </el-col>
@@ -33,7 +35,7 @@
         <el-tabs type="border-card">
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
-            <learning-product-data-tables 
+            <learning-product-data-tables
               :data="projectLearningProducts" />
           </el-tab-pane>
           <el-tab-pane>
@@ -93,7 +95,6 @@
   import EventBus from '@/event-bus.js';
   import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
-  import ProcessCurrentBar from '@components/process-current-bar.vue';
   import ProjectInfo from '@components/project-info.vue';
   import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
 
@@ -104,7 +105,7 @@
 
     mixins: [ PageUtils, TableUtils ],
 
-    components: { ProcessCurrentBar, ProjectInfo, LearningProductDataTables },
+    components: { ProjectInfo, LearningProductDataTables },
 
     computed: {
       ...mapGetters({
@@ -177,6 +178,11 @@
             }
           }
         }).catch(() => false);
+      },
+
+      continueToProcess(processId) {
+        let projectId = this.$route.params.projectId;
+        this.$router.push(`${projectId}/process/${processId}`);
       },
 
       async getProcessDefinitionPermissions() {
@@ -253,13 +259,13 @@
     .project-actions {
       user-select: none;
       .el-card__header {
-        background-color: #8cc63f;
+        background-color: #f5f7fa;
         h3 {
           margin: 0;
           padding: 3px 0px;
           text-align: center;
           display: block;
-          color: $--color-white;
+          color: #989898;
         }
       }
       &-list {
