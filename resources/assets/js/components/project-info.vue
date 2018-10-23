@@ -4,12 +4,12 @@
       <div slot="header">
         <h2><i class="el-icon-lpa-projects"></i>{{ projectProp.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <el-tooltip class="item" effect="dark" :content="trans('components.tooltip.edit_project')" placement="top-start">
-            <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
-          </el-tooltip>
-          <el-tooltip class="item" effect="dark" :content="trans('components.tooltip.delete_project')" placement="top-start">
-            <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain><i class="el-icon-lpa-delete"></i></el-button>
-          </el-tooltip>
+          <el-button-wrap :tooltip="trans('components.tooltip.edit_project')" :disabled="!rights.canEdit" size="mini" @click.native="edit()" plain>
+            <i class="el-icon-lpa-edit"></i>
+          </el-button-wrap>
+          <el-button-wrap :tooltip="trans('components.tooltip.delete_project')" :disabled="!rights.canDelete" type="danger" size="mini" @click.native="deleteProjectConfirm()" plain>
+            <i class="el-icon-lpa-delete"></i>
+          </el-button-wrap>
         </div>
       </div>
       <dl>
@@ -17,7 +17,7 @@
         <dd>{{ projectProp.id | LPANumFilter }}</dd>
       </dl>
       <dl>
-        <dt>{{ trans('entities.project.status') }}</dt>
+        <dt>{{ trans('entities.general.status') }}</dt>
         <dd>{{ projectProp.state.name }}</dd>
       </dl>
       <dl>
@@ -50,6 +50,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import InfoBox from '@components/info-box.vue';
+  import ElButtonWrap from '@components/el-button-wrap.vue';
 
   import PageUtils from '@mixins/page/utils.js';
 
@@ -58,7 +59,7 @@
   export default {
     name: 'project-info',
 
-    components: { InfoBox },
+    components: { InfoBox, ElButtonWrap },
 
     mixins: [ PageUtils ],
 

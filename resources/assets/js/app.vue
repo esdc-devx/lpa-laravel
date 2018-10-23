@@ -21,9 +21,6 @@
           </el-main>
         </el-container>
       </el-container>
-      <!-- <el-container>
-        <el-footer>Footer</el-footer>
-      </el-container> -->
     </el-container>
   </div>
 </template>

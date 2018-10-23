@@ -38,7 +38,7 @@ class ProcessInstance extends BaseModel
         return $this->with([
             'definition', 'state', 'createdBy', 'updatedBy',
             'steps', 'steps.definition', 'steps.state',
-            'steps.forms.definition', 'steps.forms.state', 'steps.forms.currentEditor', 'steps.forms.createdBy', 'steps.forms.updatedBy'
+            'steps.forms.definition', 'steps.forms.state', 'steps.forms.organizationalUnit', 'steps.forms.currentEditor', 'steps.forms.createdBy', 'steps.forms.updatedBy'
         ]);
     }
 }

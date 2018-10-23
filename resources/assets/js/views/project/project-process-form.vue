@@ -4,7 +4,7 @@
       <el-col>
         <info-box>
           <dl>
-            <dt>{{ trans('entities.form.status') }}</dt>
+            <dt>{{ trans('entities.general.status') }}</dt>
             <dd><span :class="'state ' + viewingFormInfo.state.name_key">{{ viewingFormInfo.state.name }}</span></dd>
           </dl>
           <dl>
@@ -19,9 +19,7 @@
                 viewingFormInfo.current_editor.name :
                 trans('entities.general.none')
               }}
-              <el-tooltip class="item" effect="dark" :content="trans('components.tooltip.release_form')" placement="top-start">
-                <el-button @click="onReleaseForm" class="release-form" type="danger" size="mini" v-if="viewingFormInfo.current_editor && hasRole('admin')" :disabled="!rights.canReleaseForm" icon="el-icon-close" circle></el-button>
-              </el-tooltip>
+              <el-button-wrap :tooltip="trans('components.tooltip.release_form')" @click.native="onReleaseForm" class="release-form" type="danger" size="mini" v-if="viewingFormInfo.current_editor && hasRole('admin')" :disabled="!rights.canReleaseForm" icon="el-icon-close" circle></el-button-wrap>
             </dd>
           </dl>
           <dl>
@@ -110,6 +108,7 @@
   import HttpStatusCodes from '@axios/http-status-codes';
 
   import InfoBox from '@components/info-box.vue';
+  import ElButtonWrap from '@components/el-button-wrap.vue';
 
   import PageUtils from '@mixins/page/utils.js';
   import FormUtils from '@mixins/form/utils';
@@ -125,7 +124,7 @@
   export default {
     name: 'project-process-form',
 
-    components: { InfoBox, BusinessCase, BusinessCaseAssessment, ArchitecturePlan, ArchitecturePlanAssessment },
+    components: { InfoBox, ElButtonWrap, BusinessCase, BusinessCaseAssessment, ArchitecturePlan, ArchitecturePlanAssessment },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

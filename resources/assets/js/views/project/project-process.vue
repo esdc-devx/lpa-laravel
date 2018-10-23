@@ -4,7 +4,7 @@
       <el-col>
         <info-box>
           <dl>
-            <dt>{{ trans('entities.process.status') }}</dt>
+            <dt>{{ trans('entities.general.status') }}</dt>
             <dd><span :class="'state ' + viewingProcess.state.name_key">{{ viewingProcess.state.name }}</span></dd>
           </dl>
           <dl>
@@ -73,6 +73,11 @@
             :row-class-name="getFormRowClassName"
             @row-click="viewForm"
             stripe>
+            <el-table-column width="50px">
+              <template slot-scope="scope">
+                <i :class="'el-icon-lpa-' + scope.row.state.name_key"></i>
+              </template>
+            </el-table-column>
             <el-table-column
               prop="definition.name"
               :label="trans('entities.general.name')"
@@ -81,10 +86,22 @@
             <el-table-column
               :label="trans('entities.general.status')"
               width="180px"
-              class-name="status">
+              >
               <template slot-scope="scope">
-                <span>{{ scope.row.state.name }}</span>
-                <i :class="'el-icon-lpa-' + scope.row.state.name_key"></i>
+                <span :class="'state ' +  scope.row.state.name_key">{{ scope.row.state.name }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="$tc('entities.general.assigned_organizational_units')"
+              >
+              <template slot-scope="scope">
+                <span>{{ scope.row.organizational_unit ? scope.row.organizational_unit.name : trans('entities.general.none') }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="trans('entities.form.current_editor')">
+              <template slot-scope="scope">
+                <span>{{ scope.row.current_editor ? scope.row.current_editor.name : trans('entities.general.none') }}</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -93,12 +110,6 @@
                 <span>{{ scope.row.updated_by ? scope.row.updated_by.name : trans('entities.general.none') }}</span>
                 <br>
                 <span>{{ scope.row.updated_at }}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              :label="trans('entities.form.current_editor')">
-              <template slot-scope="scope">
-                <span>{{ scope.row.current_editor ? scope.row.current_editor.name : trans('entities.general.none') }}</span>
               </template>
             </el-table-column>
           </el-table>
@@ -403,10 +414,9 @@
       .el-table__row {
         cursor: pointer;
       }
-      @each $state, $color in $color-states {
-        .#{$state} .name, .#{$state} .status {
-          color: $color;
-        }
+
+      .state {
+        line-height: 18px;
       }
 
       .status .cell {

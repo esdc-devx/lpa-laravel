@@ -12,7 +12,7 @@
           <ul class="project-actions-list">
             <template v-if="viewingProject.current_process">
               <li>
-                <el-button @click="continueToProcess(viewingProject.current_process.id)">
+                <el-button type="primary" @click="continueToProcess(viewingProject.current_process.id)">
                   {{ trans('entities.process.view_current') }}
                 </el-button>
               </li>
@@ -20,6 +20,7 @@
             <template v-else>
               <li v-for="(process, index) in definitions" :key="index">
                 <el-button
+                  type="primary"
                   :disabled="!processDefinitionPermissions[process.name_key]"
                   @click="triggerStartProcess(process.name, process.name_key)">
                     {{ process.name }}
@@ -265,7 +266,7 @@
           padding: 3px 0px;
           text-align: center;
           display: block;
-          color: #989898;
+          color: #524f74;
         }
       }
       &-list {

@@ -9,8 +9,8 @@ $color-states: (
   done:      $--color-success,
   completed: $--color-success,
   cancelled: $--color-danger,
-  active:  #409EFF,
-  unlocked: #409EFF,
+  active:    #409EFF,
+  unlocked:  #409EFF,
   locked:    $--color-text-regular,
   submitted: #827ccc,
   rejected:  $--color-warning
