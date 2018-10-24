@@ -10,6 +10,7 @@ return [
     'updated'                       => 'Modified',
     'status'                        => 'Status',
     'na'                            => 'Not Applicable',
+    'none'                          => '-',
     'description'                   => 'Description',
     'help'                          => 'Help',
     'expand_all'                    => 'Expand All',

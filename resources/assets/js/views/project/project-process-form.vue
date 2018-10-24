@@ -4,12 +4,12 @@
       <el-col>
         <info-box>
           <dl>
-            <dt>{{ trans('entities.form.status') }}</dt>
-            <dd>{{ viewingFormInfo.state.name }}</dd>
+            <dt>{{ trans('entities.general.status') }}</dt>
+            <dd><span :class="'state ' + viewingFormInfo.state.name_key">{{ viewingFormInfo.state.name }}</span></dd>
           </dl>
           <dl>
             <dt>{{ $tc('entities.general.assigned_organizational_units') }}</dt>
-            <dd>{{ viewingFormInfo.organizational_unit ? viewingFormInfo.organizational_unit.name : trans('entities.general.na') }}</dd>
+            <dd>{{ viewingFormInfo.organizational_unit ? viewingFormInfo.organizational_unit.name : trans('entities.general.none') }}</dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.form.current_editor') }}</dt>
@@ -17,14 +17,23 @@
               {{
                 viewingFormInfo.current_editor ?
                 viewingFormInfo.current_editor.name :
-                trans('entities.general.na')
+                trans('entities.general.none')
               }}
-              <el-button @click="onReleaseForm" class="release-form" type="danger" size="mini" v-if="viewingFormInfo.current_editor && hasRole('admin')" :disabled="!rights.canReleaseForm" icon="el-icon-close" circle></el-button>
+              <el-button-wrap
+                v-if="viewingFormInfo.current_editor && hasRole('admin')"
+                :disabled="!rights.canReleaseForm"
+                @click.native="onReleaseForm"
+                :tooltip="trans('components.tooltip.release_form')"
+                class="release-form"
+                type="danger"
+                size="mini"
+                icon="el-icon-close"
+                circle />
             </dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_by.name : trans('entities.general.na') }}</dd>
+            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_by.name : trans('entities.general.none') }}</dd>
             <dd>{{ viewingFormInfo.updated_at }}</dd>
           </dl>
         </info-box>
@@ -34,24 +43,26 @@
       <el-col>
         <el-container class="form-wrap" direction="vertical">
           <div class="form-header">
-            <el-header></el-header>
-            <el-header class="form-header-details">
-              <div class="form-name">
-                <i class="el-icon-lpa-form"></i>
-                {{ viewingFormInfo.definition.name }}
-              </div>
+            <el-header>
               <!--
                 Switch disabled based on rights or if we are loading,
                 to prevent spam while there is already a request sent
               -->
               <el-switch
                 v-if="hasRole('process-contributor') || hasRole('admin')"
-                :disabled="!rights.canClaim && !rights.canUnclaim || isMainLoading"
                 class="claim"
-                active-color="#13ce66"
+                active-color="#b3b0cc"
+                inactive-color="#75bfff"
                 v-model="isClaimed"
-                :inactive-text="trans('entities.form.claim')">
+                :inactive-text="trans('entities.form.claim')"
+                >
               </el-switch>
+            </el-header>
+            <el-header class="form-header-details">
+              <div class="form-name">
+                <i class="el-icon-lpa-form"></i>
+                {{ viewingFormInfo.definition.name }}
+              </div>
             </el-header>
           </div>
           <el-main>
@@ -106,6 +117,7 @@
   import HttpStatusCodes from '@axios/http-status-codes';
 
   import InfoBox from '@components/info-box.vue';
+  import ElButtonWrap from '@components/el-button-wrap.vue';
 
   import PageUtils from '@mixins/page/utils.js';
   import FormUtils from '@mixins/form/utils';
@@ -121,7 +133,7 @@
   export default {
     name: 'project-process-form',
 
-    components: { InfoBox, BusinessCase, BusinessCaseAssessment, ArchitecturePlan, ArchitecturePlanAssessment },
+    components: { InfoBox, ElButtonWrap, BusinessCase, BusinessCaseAssessment, ArchitecturePlan, ArchitecturePlanAssessment },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
@@ -581,7 +593,7 @@
       dl {
         flex-basis: 25%;
         max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
-      }  
+      }
     }
 
     .el-tabs {
@@ -646,7 +658,6 @@
       color: #fff;
       display: flex;
       align-items: center;
-      justify-content: center;
     }
 
     .form-row {
@@ -666,6 +677,9 @@
       header {
         height: 40px !important;
         box-shadow: $box-shadow-base-bottom;
+        .el-switch__label {
+          color: $--color-white;
+        }
         &.form-header-details {
           justify-content: flex-start;
           font-size: 16px;
@@ -676,9 +690,6 @@
           }
           .form-name {
             flex: 1;
-          }
-          .claim .el-switch__label {
-            color: $--color-white;
           }
         }
       }

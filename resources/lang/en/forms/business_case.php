@@ -52,7 +52,7 @@ return [
         'description' => 'The circumstances leading to the creation or modification of this project.',
         'help'        => 'For example: Was there a change in policy that requires a learning product transformation? Was there a new Government of Canada priority that needs to be addressed by learning products?',
     ],
-    'request_origin_other' => [
+    'request_origins_other' => [
         'label'       => 'Other Origins of the Request',
     ],
     'is_required_training' => [

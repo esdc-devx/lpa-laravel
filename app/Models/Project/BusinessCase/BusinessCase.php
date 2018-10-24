@@ -8,7 +8,7 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 class BusinessCase extends ProcessInstanceFormDataModel
 {
     protected $fillable = [
-        'process_instance_form_id', 'request_origin_other', 'business_issue',
+        'process_instance_form_id', 'request_origins_other', 'business_issue',
         'short_term_learning_response', 'medium_term_learning_response', 'long_term_learning_response', 'is_required_training',
         'expected_annual_participant_number', 'cost_centre', 'other_operational_considerations',
         'comments',

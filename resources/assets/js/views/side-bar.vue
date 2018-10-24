@@ -1,17 +1,5 @@
 <template>
   <div class="side-bar">
-    <el-menu
-      class="menu"
-      ref="menu"
-      :default-active="$route.fullPath"
-      :collapse="isCollapsed"
-      router>
-      <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
-        <i :class="item.icon"></i>
-        <span slot="title">{{ item.text }}</span>
-      </el-menu-item>
-    </el-menu>
-    <div class="build-info" v-if="!isCollapsed" :title="date">{{ version }} ({{ build }})</div>
     <div class="side-bar-toggle" @click="toggleSideBar">
       <div :class="['side-bar-toggle-inner', { 'collapsed': isCollapsed }]">
         <span></span>
@@ -19,6 +7,26 @@
         <span></span>
       </div>
     </div>
+
+    <el-menu
+      class="menu"
+      ref="menu"
+      :default-active="$route.fullPath"
+      :collapse="isCollapsed"
+      router>
+      <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
+        <i :class="item.icon" />
+        <span slot="title">{{ item.text }}</span>
+      </el-menu-item>
+
+      <!-- Administration menu -->
+      <el-menu-item v-if="hasRole('admin')" :index="'/' + language + '/admin'">
+        <i class="el-icon-lpa-settings" />
+        <span slot="title">{{ this.trans('base.navigation.administration') }}</span>
+      </el-menu-item>
+    </el-menu>
+
+    <div class="build-info" v-if="!isCollapsed" :title="date">{{ version }} ({{ build }})</div>
   </div>
 </template>
 
@@ -35,9 +43,10 @@
     mixins: [ MenuUtils ],
 
     computed: {
-      ...mapGetters([
-        'language'
-      ]),
+      ...mapGetters({
+        language: 'language',
+        hasRole: 'users/hasRole'
+      }),
 
       menu() {
         return [

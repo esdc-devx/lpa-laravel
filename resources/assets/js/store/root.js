@@ -14,7 +14,6 @@ export const state = {
   languages: [],
   filteredDataTableList: [],
   shouldConfirmBeforeLeaving: false,
-  isAdminBarShown: false,
   isAppLoading: false,
   isMainLoading: false,
   mainLoadingCount: 0
@@ -27,10 +26,6 @@ export const getters = {
 
   languages(state) {
     return state.languages;
-  },
-
-  isAdminBarShown(state) {
-    return state.isAdminBarShown;
   },
 
   isAppLoading(state) {
@@ -64,11 +59,6 @@ export const actions = {
     }
   },
 
-  // Admin handlers
-  toggleAdminBar({ commit }, context) {
-    commit(types.TOGGLE_ADMINBAR, context);
-  },
-
   // Loading handlers
   showAppLoading({ commit }, context) {
     commit(types.TOGGLE_APP_LOADING, true);
@@ -97,7 +87,7 @@ export const actions = {
     setTimeout(() => {
       if (state.mainLoadingCount === 1) {
         commit(types.TOGGLE_MAIN_LOADING, false);
-      } 
+      }
       commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount - 1);
     }, Constants.DELAY_HIDE_MAIN_LOADING);
   },
@@ -131,11 +121,6 @@ export const mutations = {
     state.languages = languages;
   },
 
-  [types.TOGGLE_ADMINBAR](state, isShown) {
-    isShown = !_.isUndefined(isShown) ? isShown : !state.isAdminBarShown;
-    state.isAdminBarShown = isShown;
-  },
-
   [types.TOGGLE_APP_LOADING](state, isShown) {
     let spinner = document.querySelectorAll('.loading-spinner')[0];
     if (spinner) {
@@ -166,13 +151,13 @@ export const mutations = {
   addFilteredDataTable(state, dataTableName) {
     if (_.indexOf(state.filteredDataTableList, dataTableName) === -1) {
       state.filteredDataTableList.push(dataTableName);
-    } 
+    }
   },
 
   deleteFilteredDataTable(state, dataTableName) {
     let index = _.indexOf(state.filteredDataTableList, dataTableName);
     if (index !== -1) {
       state.filteredDataTableList.splice(index, 1);
-    } 
+    }
   }
 };

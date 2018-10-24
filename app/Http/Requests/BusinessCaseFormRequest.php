@@ -13,8 +13,8 @@ class BusinessCaseFormRequest extends ProcessInstanceFormDataRequest
     {
         if ($this->submitted()) {
             return [
-                'request_origin'                            => 'required_without:request_origin_other|array',
-                'request_origin_other'                      => 'nullable|string|max:100',
+                'request_origins'                           => 'required_without:request_origins_other|array',
+                'request_origins_other'                     => 'nullable|string|max:100',
                 'business_issue'                            => 'required|string|max:1250',
                 'short_term_learning_response'              => 'required|string|max:1250',
                 'medium_term_learning_response'             => 'required|string|max:1250',

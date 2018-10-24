@@ -4,13 +4,34 @@
       <div slot="header">
         <h2><i class="el-icon-lpa-projects"></i>{{ projectProp.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <el-button :disabled="!rights.canEdit" size="mini" @click="edit()"><i class="el-icon-lpa-edit"></i></el-button>
-          <el-button :disabled="!rights.canDelete" type="danger" size="mini" @click="deleteProjectConfirm()" plain><i class="el-icon-lpa-delete"></i></el-button>
+          <el-button-wrap
+            :disabled="!rights.canEdit"
+            @click.native="edit()"
+            :tooltip="trans('components.tooltip.edit_project')"
+            size="mini"
+            icon="el-icon-lpa-edit"
+            plain />
+          <el-button-wrap
+            :disabled="!rights.canDelete"
+            @click.native="deleteProjectConfirm()"
+            :tooltip="trans('components.tooltip.delete_project')"
+            type="danger"
+            size="mini"
+            icon="el-icon-lpa-delete"
+            plain />
         </div>
       </div>
       <dl>
         <dt>{{ trans('entities.general.lpa_num') }}</dt>
         <dd>{{ projectProp.id | LPANumFilter }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ trans('entities.general.status') }}</dt>
+        <dd>{{ projectProp.state.name }}</dd>
+      </dl>
+      <dl>
+        <dt>{{ trans('entities.process.current') }}</dt>
+        <dd>{{ projectProp.current_process ? projectProp.current_process.definition.name : trans('entities.general.na') }}</dd>
       </dl>
       <dl>
         <dt>{{ $tc('entities.general.organizational_units') }}</dt>
@@ -38,6 +59,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import InfoBox from '@components/info-box.vue';
+  import ElButtonWrap from '@components/el-button-wrap.vue';
 
   import PageUtils from '@mixins/page/utils.js';
 
@@ -46,7 +68,7 @@
   export default {
     name: 'project-info',
 
-    components: { InfoBox },
+    components: { InfoBox, ElButtonWrap },
 
     mixins: [ PageUtils ],
 
@@ -136,10 +158,6 @@
       dl {
         flex-basis: 25%;
         max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
-        &:first-of-type {
-          flex-basis: 100%;
-          max-width: 100%;
-        }
       }
 
       .el-card__header > div {

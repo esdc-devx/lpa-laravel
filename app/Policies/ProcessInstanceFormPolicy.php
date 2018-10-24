@@ -25,12 +25,22 @@ class ProcessInstanceFormPolicy
 
         // Ensure that form is not already claimed by someone else.
         if (! is_null($processInstanceForm->currentEditor)) {
-            throw new OperationDeniedException();
+            throw new OperationDeniedException(trans('errors.process_instance_form.already_claimed'));
         }
 
         // Admin users can claim the form from this point.
         if ($user->isAdmin()) {
             return true;
+        }
+
+        // Ensure that process instance state is active.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+            throw new OperationDeniedException(trans('errors.process_instance_form.invalid_process_state'));
+        }
+
+        // Ensure that current form state is valid.
+        if (! in_array($processInstanceForm->state->name_key, ['unlocked', 'rejected'])) {
+            throw new OperationDeniedException(trans('errors.process_instance_form.invalid_state'));
         }
 
         // Ensure that user have the right roles.
@@ -40,17 +50,7 @@ class ProcessInstanceFormPolicy
 
         // Ensure that user is part of candidate editor organizational unit.
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
-            throw new InsufficientPrivilegesException();
-        }
-
-        // Ensure that current form state is valid.
-        if (! in_array($processInstanceForm->state->name_key, ['unlocked', 'rejected'])) {
-            throw new OperationDeniedException();
-        }
-
-        // Ensure that process instance state is active.
-        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
-            throw new OperationDeniedException();
+            throw new InsufficientPrivilegesException(trans('errors.process_instance_form.invalid_organizational_unit'));
         }
 
         return true;

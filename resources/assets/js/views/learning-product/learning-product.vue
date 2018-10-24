@@ -1,10 +1,5 @@
 <template>
   <div class="entity content">
-    <el-row>
-      <el-col>
-        <process-current-bar :data="viewingLearningProduct" type="learning-product"/>
-      </el-col>
-    </el-row>
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
         <learning-product-info :learningProduct="viewingLearningProduct" v-on:learning-product-info:operation-denied="fetch(false)"/>
@@ -19,7 +14,6 @@
   import EventBus from '@/event-bus.js';
   import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
-  import ProcessCurrentBar from '@components/process-current-bar.vue';
   import LearningProductInfo from '@components/learning-product-info.vue';
 
   let namespace = 'learningProducts';
@@ -27,7 +21,7 @@
   export default {
     name: 'learning-products',
 
-    components: { ProcessCurrentBar, LearningProductInfo },
+    components: { LearningProductInfo },
 
     computed: {
       ...mapGetters({

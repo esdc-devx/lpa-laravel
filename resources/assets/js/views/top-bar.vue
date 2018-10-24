@@ -26,7 +26,6 @@
             <el-menu-item index=""><a :href="trans('base.navigation.help_learning_products_url')" target="_blank">{{ trans('base.navigation.help_learning_products') }}</a></el-menu-item>
           </el-submenu>
           <el-menu-item index="" @click="setLanguage" :class="{ 'disabled': isMainLoading }">{{ trans('base.navigation.language_toggle') }}</el-menu-item>
-          <el-menu-item index="" v-if="hasRole('admin')" @click="toggleAdminBar"><i :class="['el-icon-lpa-settings', { 'active' : isAdminBarShown} ]"></i></el-menu-item>
         </el-menu>
       </nav>
     </el-col>
@@ -51,9 +50,7 @@
       ...mapGetters({
         isMainLoading: 'isMainLoading',
         language: 'language',
-        isAdminBarShown: 'isAdminBarShown',
-        user: 'users/current',
-        hasRole: 'users/hasRole',
+        user: 'users/current'
       }),
       ...mapState({
         shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving',
@@ -168,10 +165,6 @@
           route.params.lang = newLang;
           this.$router.push(route);
         });
-      },
-
-      toggleAdminBar() {
-        this.$store.dispatch('toggleAdminBar');
       }
     },
 
