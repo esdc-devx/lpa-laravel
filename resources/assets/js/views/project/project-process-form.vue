@@ -19,7 +19,16 @@
                 viewingFormInfo.current_editor.name :
                 trans('entities.general.none')
               }}
-              <el-button-wrap :tooltip="trans('components.tooltip.release_form')" @click.native="onReleaseForm" class="release-form" type="danger" size="mini" v-if="viewingFormInfo.current_editor && hasRole('admin')" :disabled="!rights.canReleaseForm" icon="el-icon-close" circle></el-button-wrap>
+              <el-button-wrap
+                v-if="viewingFormInfo.current_editor && hasRole('admin')"
+                :disabled="!rights.canReleaseForm"
+                @click.native="onReleaseForm"
+                :tooltip="trans('components.tooltip.release_form')"
+                class="release-form"
+                type="danger"
+                size="mini"
+                icon="el-icon-close"
+                circle />
             </dd>
           </dl>
           <dl>

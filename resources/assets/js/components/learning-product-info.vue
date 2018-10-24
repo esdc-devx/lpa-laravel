@@ -4,8 +4,20 @@
       <div slot="header">
         <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProduct.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-          <el-button-wrap :tooltip="trans('components.tooltip.edit_learning_product')" :disabled="!rights.canEdit" size="mini" @click.native="edit()"><i class="el-icon-lpa-edit"></i></el-button-wrap>
-          <el-button-wrap :tooltip="trans('components.tooltip.delete_learning_product')" :disabled="!rights.canDelete" type="danger" size="mini" @click.native="deleteWrapper()" plain><i class="el-icon-lpa-delete"></i></el-button-wrap>
+          <el-button-wrap
+            :disabled="!rights.canEdit"
+            @click.native="edit()"
+            :tooltip="trans('components.tooltip.edit_learning_product')"
+            size="mini"
+            icon="el-icon-lpa-edit" />
+          <el-button-wrap
+            :disabled="!rights.canDelete"
+            @click.native="deleteWrapper()"
+            :tooltip="trans('components.tooltip.delete_learning_product')"
+            type="danger"
+            size="mini"
+            icon="el-icon-lpa-delete"
+            plain />
         </div>
       </div>
       <dl>
