@@ -168,8 +168,10 @@
            * Also set the params['0'] for cases where the variable 
            * "path" as defined by the router for the matching route 
            * does not contain a language parameter. 
+           * We also need to decode the URI before assigning it 
+           * to avoid double encoding. Ex: "%20" -> "%2520" 
            */
-          route.params['0'] = route.path.replace(new RegExp('^\/' + oldLang + '\/'), '/' + newLang + '/');          
+          route.params['0'] = decodeURIComponent(route.path).replace(new RegExp('^\/' + oldLang + '\/'), '/' + newLang + '/');          
           this.$router.push(route);
         });
       }
