@@ -52,7 +52,7 @@ return [
         'description' => 'Les circonstances ayant menées à la création ou la modification de ce projet.',
         'help'        => 'Par exemple : Y a-t-il eu un changement de politique qui exige une transformation des produits d’apprentissage? Y avait-il une nouvelle priorité du gouvernement du Canada à laquelle les produits d’apprentissage devaient répondre?',
     ],
-    'request_origin_other' => [
+    'request_origins_other' => [
         'label'       => 'Autres origines de la demande',
     ],
     'is_required_training' => [

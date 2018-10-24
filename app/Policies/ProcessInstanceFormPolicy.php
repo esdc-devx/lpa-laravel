@@ -42,7 +42,7 @@ class ProcessInstanceFormPolicy
         if (! in_array($processInstanceForm->state->name_key, ['unlocked', 'rejected'])) {
             throw new OperationDeniedException(trans('errors.process_instance_form.invalid_state'));
         }
-        
+
         // Ensure that user have the right roles.
         if (! $user->hasRole('process-contributor')) {
             throw new InsufficientPrivilegesException();
@@ -52,7 +52,7 @@ class ProcessInstanceFormPolicy
         if (! $user->belongsToOrganizationalUnit($processInstanceForm->organizational_unit_id)) {
             throw new InsufficientPrivilegesException(trans('errors.process_instance_form.invalid_organizational_unit'));
         }
-        
+
         return true;
     }
 

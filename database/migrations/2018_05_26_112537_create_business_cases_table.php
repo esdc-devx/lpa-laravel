@@ -17,7 +17,7 @@ class CreateBusinessCasesTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('process_instance_form_id');
             // Project Objective fields.
-            $table->string('request_origin_other')->nullable();
+            $table->string('request_origins_other')->nullable();
             $table->text('business_issue')->nullable();
             // Proposed Solution fields.
             $table->text('short_term_learning_response')->nullable();

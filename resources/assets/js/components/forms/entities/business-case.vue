@@ -28,9 +28,9 @@
           multiple
           sorted
 
-          :modelOther.sync="form.request_origin_other"
-          nameOther="request_origin_other"
-          :dataVVasOther="trans('forms.business_case.request_origin_other.label')"
+          :modelOther.sync="form.request_origins_other"
+          nameOther="request_origins_other"
+          :dataVVasOther="trans('forms.business_case.request_origins_other.label')"
           :validateOther="{ required: this.isRequestOriginOther }"
           :isChecked.sync="isRequestOriginOther"
           maxlength="100"
@@ -435,7 +435,7 @@
       },
 
       bindCheckboxes() {
-        this.isRequestOriginOther = !!this.form.request_origin_other;
+        this.isRequestOriginOther = !!this.form.request_origins_other;
         this.isInternalResourceOther = !!this.form.internal_resource_other;
       }
     },

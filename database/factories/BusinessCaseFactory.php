@@ -14,7 +14,7 @@ $factory->define(BusinessCase::class, function (Faker $faker) {
 
     return [
         'request_origins'                           => $faker->randomMultipleList(RequestOrigin::all()),
-        'request_origin_other'                      => $faker->sentenceNoDot(),
+        'request_origins_other'                     => $faker->sentenceNoDot(),
         'business_issue'                            => $faker->paragraph(),
         'is_required_training'                      => $faker->boolean(),
         'short_term_learning_response'              => $faker->paragraph(),
