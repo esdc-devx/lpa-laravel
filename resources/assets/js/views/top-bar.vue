@@ -149,8 +149,8 @@
         // @todo: we probably should hide the app entirely
         // to avoid seeing bouncing texts
         this.$helpers.debounceAction(() => {
-          let storeLang = this.$store.getters.language;
-          let newLang = this.getSwitchedLang(storeLang);
+          let oldLang = this.$store.getters.language;
+          let newLang = this.getSwitchedLang(oldLang);
           let route = Object.assign({}, this.$route);
 
           // change the locale of the translation plugin
@@ -159,10 +159,17 @@
           // that will be used to determine the dislayed lang
           this.currentLang = newLang;
 
-          // apply lang to route
+          // apply lang to route 
           // so that we can 'refresh' the current route
           // with the new language
-          route.params.lang = newLang;
+          route.params['lang'] = newLang;
+          
+          /*
+           * Also set the params['0'] for cases where the variable 
+           * "path" as defined by the router for the matching route 
+           * does not contain a language parameter. 
+           */
+          route.params['0'] = route.path.replace(new RegExp('^\/' + oldLang + '\/'), '/' + newLang + '/');          
           this.$router.push(route);
         });
       }
