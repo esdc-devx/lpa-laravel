@@ -1,17 +1,20 @@
 <?php
 
 return [
-    'title' => 'Évaluation du plan d\'affaire',
+    'title' => 'Approbation Jalon 1',
     'tabs' => [
-        'assessment' => 'Évaluation',
+        'overall_assessment' => 'Évaluation globale',
         // form tabs ommited, since they are dynamically added by the entity title
     ],
-    'is_process_cancelled' => [
+    'is_entity_cancelled' => [
         'label'       => 'Annulation du projet',
-        'option'      => 'J\'aimerai annuler ce projet.',
+        'options'     => [
+            'J’aimerais évaluer chaque formulaire individuellement.',
+            'J’aimerais annuler ce projet.',
+        ],
         'description' => 'Indique si le projet a été annulé ou non.',
     ],
-    'process_cancellation_rationale' => [
+    'entity_cancellation_rationale' => [
         'label'       => 'Justification de l\'annulation',
         'instruction' => 'Veuillez fournir une explication si le projet est annulé.',
         'description' => 'La justification de l\'annulation du projet.',

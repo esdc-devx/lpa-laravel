@@ -53,7 +53,7 @@
               :status="
                 step.state.name_key === 'locked' ? 'wait' :
                 step.state.name_key === 'unlocked' ? 'process' :
-                step.state.name_key === 'done' ? 'finish' :
+                step.state.name_key === 'completed' ? 'finish' :
                 step.state.name_key === 'cancelled' ? 'error' : ''
               "
               :icon="'el-icon-lpa-' + step.state.name_key">
@@ -380,7 +380,7 @@
         }
         // Completed
         .el-step__title.is-finish, .el-step__description.is-finish {
-          color: map-get($color-states, done) !important;
+          color: map-get($color-states, completed) !important;
         }
         // Cancelled
         .el-step__title.is-error, .el-step__description.is-error {

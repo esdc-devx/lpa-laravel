@@ -54,7 +54,7 @@ class LearningProductEventSubscriber
      */
     protected function resolveProjectState()
     {
-        $this->project->load(['learningProducts', 'architecturePlan.plannedProducts']);
+        $this->project->load(['learningProducts', 'plannedProductList.plannedProducts']);
 
         // No learning products under the project, update state back to approved.
         if ($this->project->learningProducts->isEmpty()) {
@@ -62,12 +62,12 @@ class LearningProductEventSubscriber
         }
 
         // Some learning products are created under the project, update state to active.
-        if ($this->project->learningProducts->count() < $this->project->architecturePlan->plannedProducts->sum('quantity')) {
+        if ($this->project->learningProducts->count() < $this->project->plannedProductList->plannedProducts->sum('quantity')) {
             return State::getByKey('project.active')->first();
         }
 
         // All learning products were created, update state to active full.
-        if ($this->project->learningProducts->count() == $this->project->architecturePlan->plannedProducts->sum('quantity')) {
+        if ($this->project->learningProducts->count() == $this->project->plannedProductList->plannedProducts->sum('quantity')) {
             return State::getByKey('project.active-full')->first();
         }
     }

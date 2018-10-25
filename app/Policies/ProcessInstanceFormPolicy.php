@@ -33,8 +33,8 @@ class ProcessInstanceFormPolicy
             return true;
         }
 
-        // Ensure that process instance state is active.
-        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+        // Ensure that process instance state is running.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'running') {
             throw new OperationDeniedException(trans('errors.process_instance_form.invalid_process_state'));
         }
 
@@ -144,8 +144,8 @@ class ProcessInstanceFormPolicy
             throw new InsufficientPrivilegesException();
         }
 
-        // Ensure that process instance state is active.
-        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+        // Ensure that process instance state is running.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'running') {
             throw new OperationDeniedException();
         }
 
@@ -178,8 +178,8 @@ class ProcessInstanceFormPolicy
             throw new OperationDeniedException();
         }
 
-        // Ensure that process instance state is active.
-        if ($processInstanceForm->step->processInstance->state->name_key !== 'active') {
+        // Ensure that process instance state is running.
+        if ($processInstanceForm->step->processInstance->state->name_key !== 'running') {
             throw new OperationDeniedException();
         }
 

@@ -104,29 +104,14 @@ class StatesTableSeeder extends Seeder
             ],
             'process-instance' => [
                 [
-                    'name_key' => 'active',
+                    'name_key' => 'running',
                     'name_en'  => 'Running',
                     'name_fr'  => 'En cours',
-                ],
-                [
-                    'name_key' => 'suspended',
-                    'name_en'  => 'Suspended',
-                    'name_fr'  => 'Suspendu',
                 ],
                 [
                     'name_key' => 'completed',
                     'name_en'  => 'Completed',
                     'name_fr'  => 'Complété',
-                ],
-                [
-                    'name_key' => 'externally-terminated',
-                    'name_en'  => 'Cancelled',
-                    'name_fr'  => 'Annulé',
-                ],
-                [
-                    'name_key' => 'internally-terminated',
-                    'name_en'  => 'Cancelled',
-                    'name_fr'  => 'Annulé',
                 ],
                 [
                     'name_key' => 'cancelled',
@@ -146,15 +131,10 @@ class StatesTableSeeder extends Seeder
                     'name_fr'  => 'Déverrouillé',
                 ],
                 [
-                    'name_key' => 'done',
-                    'name_en'  => 'Done',
+                    'name_key' => 'completed',
+                    'name_en'  => 'Completed',
                     'name_fr'  => 'Complété',
                 ],
-                [
-                    'name_key' => 'cancelled',
-                    'name_en'  => 'Cancelled',
-                    'name_fr'  => 'Annulé',
-                ]
             ],
             'process-form' => [
                 [
@@ -178,15 +158,10 @@ class StatesTableSeeder extends Seeder
                     'name_fr'  => 'Nécessite des ajustements',
                 ],
                 [
-                    'name_key' => 'done',
-                    'name_en'  => 'Done',
+                    'name_key' => 'completed',
+                    'name_en'  => 'Completed',
                     'name_fr'  => 'Complété',
                 ],
-                [
-                    'name_key' => 'cancelled',
-                    'name_en'  => 'Cancelled',
-                    'name_fr'  => 'Annulé',
-                ]
             ],
         ];
     }

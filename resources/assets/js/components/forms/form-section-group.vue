@@ -64,10 +64,10 @@
 
     computed: {
       entityFormKey() {
-        return this.entityForm.replace('-', '_');
+        return this.entityForm.replace(/-/g, '_');
       },
       entitySectionKey() {
-        return this.entitySection.replace('-', '_');
+        return this.entitySection.replace(/-/g, '_');
       },
 
       activePanels() {

@@ -26,8 +26,8 @@ class ProcessInstancePolicy
             throw new InsufficientPrivilegesException();
         }
 
-        // Ensure process instance state is active.
-        if ($processInstance->state->name_key !== 'active') {
+        // Ensure process instance state is running.
+        if ($processInstance->state->name_key !== 'running') {
             throw new OperationDeniedException();
         }
 

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateBusinessCaseAssessmentsTable extends Migration
+class CreatePlannedProductListsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,10 @@ class CreateBusinessCaseAssessmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('business_case_assessments', function (Blueprint $table) {
+        Schema::create('planned_product_lists', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('process_instance_form_id');
-            $table->dateTime('assessment_date')->nullable();
-            // Gate assessment fields.
-            $table->boolean('is_process_cancelled')->default(0);
-            $table->text('process_cancellation_rationale')->nullable();
+            $table->text('comments')->nullable();
 
             // Foreign keys.
             $table->referenceOn('process_instance_form_id')->onDelete('cascade');
@@ -33,6 +30,6 @@ class CreateBusinessCaseAssessmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('business_case_assessments');
+        Schema::dropIfExists('planned_product_lists');
     }
 }

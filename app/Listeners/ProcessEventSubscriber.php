@@ -27,7 +27,7 @@ class ProcessEventSubscriber
     public function onProcessProjectApprovalCompleted($event)
     {
         // Attach all form data entered during the process to the project entity.
-        // (i.e. BusinessCase, BusinessCaseAssessment, etc.).
+        // (i.e. BusinessCase, PlannedProductList, etc.).
         \Process::load($event->processInstance)->attachFormData();
     }
 

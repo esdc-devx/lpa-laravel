@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Architecture Plan',
+    'title' => 'Planned Product List',
     'tabs'  => [
         'planned_product' => 'Planned Product|Planned Products',
         'comments'        => 'Comments',

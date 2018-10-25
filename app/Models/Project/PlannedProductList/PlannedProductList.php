@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Project\ArchitecturePlan;
+namespace App\Models\Project\PlannedProductList;
 
 use App\Models\Process\ProcessInstanceFormDataModel;
 
-class ArchitecturePlan extends ProcessInstanceFormDataModel
+class PlannedProductList extends ProcessInstanceFormDataModel
 {
     protected $fillable = ['process_instance_form_id', 'comments'];
 

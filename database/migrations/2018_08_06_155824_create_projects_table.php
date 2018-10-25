@@ -21,9 +21,8 @@ class CreateProjectsTable extends Migration
             $table->unsignedInteger('process_instance_id')->unique()->nullable();
             // Form data entities.
             $table->unsignedInteger('business_case_id')->unique()->nullable();
-            $table->unsignedInteger('business_case_assessment_id')->unique()->nullable();
-            $table->unsignedInteger('architecture_plan_id')->unique()->nullable();
-            $table->unsignedInteger('architecture_plan_assessment_id')->unique()->nullable();
+            $table->unsignedInteger('planned_product_list_id')->unique()->nullable();
+            $table->unsignedInteger('gate_one_approval_id')->unique()->nullable();
             // Audit and timestamps.
             $table->auditable();
             $table->softDeletes();
@@ -34,9 +33,8 @@ class CreateProjectsTable extends Migration
             $table->referenceOn('state_id');
             $table->referenceOn('process_instance_id');
             $table->referenceOn('business_case_id');
-            $table->referenceOn('business_case_assessment_id');
-            $table->referenceOn('architecture_plan_id');
-            $table->referenceOn('architecture_plan_assessment_id');
+            $table->referenceOn('planned_product_list_id');
+            $table->referenceOn('gate_one_approval_id');
         });
     }
 
