@@ -2,22 +2,22 @@
   <el-tabs v-bind="$attrs" @tab-click="onTabClick">
     <el-tab-pane data-name="assessment">
       <span slot="label" :class="{'is-error': errorTabs.includes('assessment') }">
-        {{ trans('forms.gate_one_approval.tabs.overall_assessment') }}
+        {{ trans('forms.form_assessment.tabs.overall_assessment') }}
       </span>
-      <h2>{{ trans('forms.gate_one_approval.tabs.overall_assessment') }}</h2>
+      <h2>{{ trans('forms.form_assessment.tabs.overall_assessment') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.gate_one_approval.assessment_date.label')"
+        :label="trans('forms.form_assessment.assessment_date.label')"
         prop="assessment_date"
         required>
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.gate_one_approval.assessment_date.description')">
+            :description="trans('forms.form_assessment.assessment_date.description')">
           </el-popover-wrap>
         </span>
         <el-date-picker
           v-model="form.assessment_date"
           v-validate="'required'"
-          :data-vv-as="trans('forms.gate_one_approval.assessment_date.label')"
+          :data-vv-as="trans('forms.form_assessment.assessment_date.label')"
           name="assessment_date"
           :picker-options="assessment_date_options"
           type="date"
@@ -34,8 +34,10 @@
             :description="trans('forms.gate_one_approval.is_entity_cancelled.description')">
           </el-popover-wrap>
         </span>
-        <el-radio v-model="form.is_entity_cancelled" :label=false>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.0') }}</el-radio>
-        <el-radio v-model="form.is_entity_cancelled" :label=true>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.1') }}</el-radio>
+        <el-radio-group v-model="form.is_entity_cancelled" v-validate="''">
+          <el-radio :label=false>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.0') }}</el-radio>
+          <el-radio :label=true>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.1') }}</el-radio>
+        </el-radio-group>
         <el-collapse-transition>
           <div v-show="form.is_entity_cancelled">
             <el-alert
@@ -77,41 +79,41 @@
       </span>
       <h2>{{ trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.gate_one_approval.process_form_decision_id.label')"
+        :label="trans('forms.form_assessment.process_form_decision_id.label')"
         prop="process_form_decision_id"
         :required="!form.is_entity_cancelled">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.gate_one_approval.process_form_decision_id.description')">
-          </el-popover-wrap>
+            :description="trans('forms.form_assessment.process_form_decision_id.description', { assessed_form_title: trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) })"
+          />
         </span>
         <el-select-wrap
           v-model="item.process_form_decision_id"
           :disabled="form.is_entity_cancelled"
-          name="process_form_decision_id"
-          :data-vv-as="trans('forms.gate_one_approval.process_form_decision_id.label')"
+          :name="'process_form_decision_id.' + index"
+          :data-vv-as="trans('forms.form_assessment.process_form_decision_id.label')"
           v-validate="'required'"
           :options="processFormDecisionList"
         />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.gate_one_approval.assessment_comments.label')"
+        :label="trans('forms.form_assessment.assessment_comments.label')"
         prop="assessment_comments"
         :required="item.process_form_decision_id === 2">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.gate_one_approval.assessment_comments.description')">
+            :description="trans('forms.form_assessment.assessment_comments.description', { assessed_form_title: trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) })">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.gate_one_approval.assessment_comments.instruction') }}
+            {{ trans('forms.form_assessment.assessment_comments.instruction') }}
           </span>
         </span>
         <input-wrap
           v-model="item.comments"
           :disabled="form.is_entity_cancelled"
           v-validate="{ required: item.process_form_decision_id === 2 }"
-          :data-vv-as="trans('forms.gate_one_approval.assessment_comments.label')"
-          name="assessment_comments"
+          :data-vv-as="trans('forms.form_assessment.assessment_comments.label')"
+          :name="'assessment_comments.' + index"
           maxlength="2500"
           type="textarea">
         </input-wrap>
@@ -213,5 +215,8 @@
       display: block;
       margin: 0 0 14px 0;
     }
+  }
+  .el-alert__content {
+    line-height: 1.3em;
   }
 </style>

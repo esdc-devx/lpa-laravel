@@ -15,11 +15,6 @@ class StatesTableSeeder extends Seeder
                     'name_fr'  => 'Nouveau',
                 ],
                 [
-                    'name_key' => 'defined',
-                    'name_en'  => 'Defined',
-                    'name_fr'  => 'Défini',
-                ],
-                [
                     'name_key' => 'approved',
                     'name_en'  => 'Approved',
                     'name_fr'  => 'Approuvé',
