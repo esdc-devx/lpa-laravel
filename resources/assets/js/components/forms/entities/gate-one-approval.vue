@@ -34,9 +34,12 @@
             :description="trans('forms.gate_one_approval.is_entity_cancelled.description')">
           </el-popover-wrap>
         </span>
-        <el-radio-group v-model="form.is_entity_cancelled" v-validate="''">
-          <el-radio :label=false>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.0') }}</el-radio>
-          <el-radio :label=true>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.1') }}</el-radio>
+        <el-radio-group
+          v-model="form.is_entity_cancelled" 
+          v-validate="''" 
+          name="is_entity_cancelled">
+          <el-radio :label=false>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.false') }}</el-radio>
+          <el-radio :label=true>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.true') }}</el-radio>
         </el-radio-group>
         <el-collapse-transition>
           <div v-show="form.is_entity_cancelled">

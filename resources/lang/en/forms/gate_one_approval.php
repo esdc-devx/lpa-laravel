@@ -5,8 +5,8 @@ return [
     'is_entity_cancelled' => [
         'label'       => 'Project Assessment',
         'options'     => [
-            'I would like to assess each form individually.',
-            'I would like to cancel this project.',
+            'false'   => 'I would like to assess each form individually.',
+            'true'    => 'I would like to cancel this project.',
         ],
         'description' => 'An indicator of whether or not the project has been cancelled.',
     ],
