@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'manager'         => 'Gestionnaire',
+    'manager'         => 'Gestionnaire de programme',
     'parent_project'  => 'Projet parent',
-    'primary_contact' => 'Contact',
+    'primary_contact' => 'Point de contact',
     'type'            => 'Type',
 ];
