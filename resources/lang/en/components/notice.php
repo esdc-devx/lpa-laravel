@@ -19,7 +19,7 @@ return [
     ],
     'message' => [
         'cancel_process'           => 'Cancelling a process is a critical and definitive action. Do you really want to proceed with the cancellation of this process?',
-        'cancel_project'           => 'Cancelling a project is a critical and definitive action. This action will automatically take place upon submitting this form with this option.',
+        'cancel_project'           => 'Cancelling a project is a critical and definitive action. This action will automatically take place upon submitting this form.',
         'changes_discarded'        => 'The changes have been discarded.',
         'changes_saved'            => 'The changes have been saved.',
         'data_refreshed'           => 'The form data has been refreshed.',
