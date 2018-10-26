@@ -174,7 +174,7 @@ class Configure extends BaseCommand
         try {
             $this->camunda->processes()->deploy([
                 'name' => 'Project Approval',
-                'file' => 'project-approval-v1.bpmn'
+                'file' => 'project-approval-v2.bpmn',
             ]);
             $this->info('Processes were deployed successfully.');
         }

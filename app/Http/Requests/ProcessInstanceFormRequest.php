@@ -20,10 +20,10 @@ class ProcessInstanceFormRequest extends FormRequest
     {
         $this->processInstanceForm = $this->route('processInstanceFormData');
 
-        // Get form data class (i.e. BusinessCase, BusinessCaseAssessment, ArchitecturePlan, etc.).
+        // Get form data class (i.e. BusinessCase, PlannedProductList, GateOneApproval etc.).
         $formDataClass = class_basename($this->processInstanceForm->formData()->getRelated());
 
-        // Resolve form request class according to form data class. (i.e. BusinessCaseFormRequest, ArchitecturePlanFormRequest, etc.).
+        // Resolve form request class according to form data class. (i.e. BusinessCaseFormRequest, PlannedProductListFormRequest, etc.).
         $formRequestClass = "{$this->namespace}\\{$formDataClass}FormRequest";
         if (class_exists($formRequestClass)) {
             $this->formRequestClass = resolve($formRequestClass);

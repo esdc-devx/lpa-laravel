@@ -2,11 +2,11 @@
   <el-tabs v-bind="$attrs" @tab-click="onTabClick">
     <el-tab-pane data-name="planned_product">
       <span slot="label" :class="{'is-error': errorTabs.includes('planned_product') }">
-        {{ $tc('forms.architecture_plan.tabs.planned_product', 2) }}
+        {{ $tc('forms.planned_product_list.tabs.planned_product', 2) }}
       </span>
       <form-section-group
         v-model="form.planned_products"
-        entityForm="architecture-plan"
+        entityForm="planned-product-list"
         entitySection="planned-product"
         :data="{
           typeList
@@ -16,26 +16,26 @@
     </el-tab-pane>
     <el-tab-pane>
       <span slot="label" :class="{'is-error': errorTabs.includes('comments') }">
-        {{ trans('forms.architecture_plan.tabs.comments') }}
+        {{ trans('forms.planned_product_list.tabs.comments') }}
       </span>
-      <h2>{{ trans('forms.architecture_plan.tabs.comments') }}</h2>
+      <h2>{{ trans('forms.planned_product_list.tabs.comments') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.architecture_plan.comments.label')"
+        :label="trans('forms.planned_product_list.comments.label')"
         prop="comments">
         <span slot="label-addons">
           <el-popover-wrap
-            :description="trans('forms.architecture_plan.comments.description')"
-            :help="trans('forms.architecture_plan.comments.help')">
+            :description="trans('forms.planned_product_list.comments.description')"
+            :help="trans('forms.planned_product_list.comments.help')">
           </el-popover-wrap>
           <span class="instruction">
-            {{ trans('forms.architecture_plan.comments.instruction') }}
+            {{ trans('forms.planned_product_list.comments.instruction') }}
           </span>
         </span>
         <input-wrap
           v-model="form.comments"
           name="comments"
           v-validate="''"
-          :data-vv-as="trans('forms.architecture_plan.comments.label')"
+          :data-vv-as="trans('forms.planned_product_list.comments.label')"
           maxlength="2500"
           type="textarea">
         </input-wrap>
@@ -57,7 +57,7 @@
   import ListsAPI from '@api/lists';
 
   export default {
-    name: 'architecture-plan',
+    name: 'planned-product-list',
 
     components: { FormError, FormSectionGroup, ElFormItemWrap, InputWrap, ElPopoverWrap },
 

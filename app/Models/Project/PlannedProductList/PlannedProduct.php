@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Project\ArchitecturePlan;
+namespace App\Models\Project\PlannedProductList;
 
 use App\Models\BaseModel;
 use App\Models\LearningProduct\LearningProductType;
@@ -8,7 +8,7 @@ use App\Models\LearningProduct\LearningProductType;
 class PlannedProduct extends BaseModel
 {
     protected $fillable = [
-        'architecture_plan_id', 'type_id', 'sub_type_id', 'quantity',
+        'planned_product_list_id', 'type_id', 'sub_type_id', 'quantity',
     ];
 
     public $timestamps = false;

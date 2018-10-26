@@ -109,7 +109,7 @@ class ProcessManager {
                         'updated_at'               => null,
                     ]);
 
-                    // Create an empty form data class model mapped to the process instance form (i.e. BusinessCase, ArchitecturePlan, etc.).
+                    // Create an empty form data class model mapped to the process instance form (i.e. BusinessCase, PlannedProductList, etc.).
                     try {
                         $formData = entity($form->name_key)::create([
                             'process_instance_form_id' => $processInstanceForm->id,
@@ -193,7 +193,7 @@ class ProcessManager {
         $entity = entity($this->processInstance->entity_type)->findOrFail($this->processInstance->entity_id);
 
         // If process instance is no longer active in Camunda, remove mapping with entity.
-        if ($this->processStates['process-instance']->name_key !== 'active') {
+        if ($this->processStates['process-instance']->name_key !== 'running') {
             $entity->currentProcess()->dissociate();
         }
 
@@ -211,7 +211,7 @@ class ProcessManager {
 
     /**
      * Attach all process form data entities to their parent entity.
-     * i.e. Attach BusinessCase, ArchitecturePlan, etc. to Project.
+     * i.e. Attach BusinessCase, PlannedProductList, etc. to Project.
      * This operation is usually done when a process is completed.
      *
      * @return $this

@@ -17,9 +17,9 @@ class ProcessProjectApprovalSeeder extends Seeder
             'name_fr'     => 'Approbation d\'un projet',
             'steps'       => [
                 [
-                    'name_key' => 'business-case',
-                    'name_en'  => 'Business Case',
-                    'name_fr'  => 'Plan d\'affaire',
+                    'name_key' => 'gate-one-approval',
+                    'name_en'  => 'Gate 1 Approval',
+                    'name_fr'  => 'Approbation Jalon 1',
                     'forms'    => [
                         [
                             'name_key'    => 'business-case',
@@ -28,33 +28,20 @@ class ProcessProjectApprovalSeeder extends Seeder
                             'assessments' => [],
                         ],
                         [
-                            'name_key'    => 'business-case-assessment',
-                            'name_en'     => 'Business Case Assessment',
-                            'name_fr'     => 'Évaluation du plan d\'affaire',
-                            'assessments' => ['business-case'],
-                        ],
-                    ],
-                ],
-                [
-                    'name_key' => 'architecture-plan',
-                    'name_en'  => 'Planned Product List',
-                    'name_fr'  => 'Liste de produits prévus',
-                    'forms'    => [
-                        [
-                            'name_key'    => 'architecture-plan',
+                            'name_key'    => 'planned-product-list',
                             'name_en'     => 'Planned Product List',
                             'name_fr'     => 'Liste de produits prévus',
                             'assessments' => [],
                         ],
                         [
-                            'name_key'    => 'architecture-plan-assessment',
-                            'name_en'     => 'Architecture Plan Assessment',
-                            'name_fr'     => 'Évaluation du plan d\'architecture',
-                            'assessments' => ['architecture-plan'],
+                            'name_key'    => 'gate-one-approval',
+                            'name_en'     => 'Gate 1 Approval',
+                            'name_fr'     => 'Approbation Jalon 1',
+                            'assessments' => ['business-case', 'planned-product-list'],
                         ],
                     ],
                 ],
-            ]
+            ],
         ];
     }
 

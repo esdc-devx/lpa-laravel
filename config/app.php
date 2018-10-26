@@ -231,18 +231,17 @@ return [
     // Used to resolve model class from a string, usually stored into the database or as a route parameter.
     // @note: Instead of maintaining this list manually, we could possibly read from a seperate cached file, which could be generated from an artisan command (i.e. app:generate-entities-map).
     'entity_types' => [
-        'architecture-plan'                        => App\Models\Project\ArchitecturePlan\ArchitecturePlan::class,
-        'architecture-plan-assessment'             => App\Models\Project\ArchitecturePlan\ArchitecturePlanAssessment::class,
         'business-case'                            => App\Models\Project\BusinessCase\BusinessCase::class,
-        'business-case-assessment'                 => App\Models\Project\BusinessCase\BusinessCaseAssessment::class,
         'community'                                => App\Models\Community::class,
         'course'                                   => App\Models\LearningProduct\Course::class,
         'departmental-results-framework-indicator' => App\Models\Project\BusinessCase\DepartmentalResultsFrameworkIndicator::class,
+        'gate-one-approval'                        => App\Models\Project\GateOneApproval\GateOneApproval::class,
         'internal-resource'                        => App\Models\Project\BusinessCase\InternalResource::class,
         'learning-product'                         => App\Models\LearningProduct\LearningProduct::class,
         'learning-product-type'                    => App\Models\LearningProduct\LearningProductType::class,
         'organizational-unit'                      => App\Models\OrganizationalUnit::class,
-        'planned-product'                          => App\Models\Project\ArchitecturePlan\ArchitecturePlan::class,
+        'planned-product'                          => App\Models\Project\PlannedProductList\PlannedProduct::class,
+        'planned-product-list'                     => App\Models\Project\PlannedProductList\PlannedProductList::class,
         'process-form-decision'                    => App\Models\Process\ProcessFormDecision::class,
         'process-instance'                         => App\Models\Process\ProcessInstance::class,
         'process-instance-form'                    => App\Models\Process\ProcessInstanceForm::class,

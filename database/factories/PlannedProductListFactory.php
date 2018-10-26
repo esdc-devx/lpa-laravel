@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\LearningProduct\LearningProductType;
-use App\Models\Project\ArchitecturePlan\ArchitecturePlan;
+use App\Models\Project\PlannedProductList\PlannedProductList;
 use Faker\Generator as Faker;
 
-$factory->define(ArchitecturePlan::class, function (Faker $faker) {
+$factory->define(PlannedProductList::class, function (Faker $faker) {
 
     static $learningProductTypes;
 

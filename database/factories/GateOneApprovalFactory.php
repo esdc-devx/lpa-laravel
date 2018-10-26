@@ -1,10 +1,10 @@
 <?php
 
 use App\Models\Process\ProcessFormDecision;
-use App\Models\Project\BusinessCase\BusinessCaseAssessment;
+use App\Models\Project\GateOneApproval\GateOneApproval;
 use Faker\Generator as Faker;
 
-$factory->define(BusinessCaseAssessment::class, function (Faker $faker) {
+$factory->define(GateOneApproval::class, function (Faker $faker) {
 
     static $decision;
 
@@ -13,9 +13,13 @@ $factory->define(BusinessCaseAssessment::class, function (Faker $faker) {
     }
 
     return [
-        'is_process_cancelled' => false,
+        'is_entity_cancelled'  => false,
         'assessment_date'      => $faker->dateTimeThisMonth('now')->format('Y-m-d H:i:s'),
         'assessments'          => [
+            [
+                'process_form_decision_id' => $decision->id,
+                'comments'                 => $faker->paragraph(),
+            ],
             [
                 'process_form_decision_id' => $decision->id,
                 'comments'                 => $faker->paragraph(),

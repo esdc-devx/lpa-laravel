@@ -6,10 +6,9 @@ use App\Events\ProcessEntityDeleted;
 use App\Models\BaseModel;
 use App\Models\LearningProduct\LearningProduct;
 use App\Models\OrganizationalUnit;
-use App\Models\Project\ArchitecturePlan\ArchitecturePlan;
-use App\Models\Project\ArchitecturePlan\ArchitecturePlanAssessment;
 use App\Models\Project\BusinessCase\BusinessCase;
-use App\Models\Project\BusinessCase\BusinessCaseAssessment;
+use App\Models\Project\GateOneApproval\GateOneApproval;
+use App\Models\Project\PlannedProductList\PlannedProductList;
 use App\Models\State;
 use App\Models\Traits\HasProcesses;
 use App\Models\Traits\UsesUserAudit;
@@ -21,7 +20,7 @@ class Project extends BaseModel
 
     protected $hidden = [
         'organizational_unit_id', 'state_id', 'process_instance_id',
-        'business_case_id', 'business_case_assessment_id', 'architecture_plan_id', 'architecture_plan_assessment_id',
+        'business_case_id', 'planned_product_list_id', 'gate_one_approval_id',
     ];
 
     protected $dates = [
@@ -33,20 +32,16 @@ class Project extends BaseModel
         return $this->belongsTo(BusinessCase::class);
     }
 
-    public function businessCaseAssessment()
+    public function plannedProductList()
     {
-        return $this->belongsTo(BusinessCaseAssessment::class);
+        return $this->belongsTo(PlannedProductList::class);
     }
 
-    public function architecturePlan()
+    public function gateOneApproval()
     {
-        return $this->belongsTo(ArchitecturePlan::class);
+        return $this->belongsTo(GateOneApproval::class);
     }
 
-    public function architecturePlanAssessment()
-    {
-        return $this->belongsTo(ArchitecturePlanAssessment::class);
-    }
 
     public function learningProducts()
     {
@@ -61,7 +56,7 @@ class Project extends BaseModel
     public static function availableForLearningProductCreation()
     {
         return static::whereState(['approved', 'active'])
-            ->with('architecturePlan.plannedProducts', 'learningProducts')
+            ->with('plannedProductList.plannedProducts', 'learningProducts')
             ->where('process_instance_id', null)
             ->whereIn('organizational_unit_id', OrganizationalUnit::getLearningProductOwnersFor(auth()->user())->pluck('id'))
             ->get()->filter(function ($project)  {
@@ -78,7 +73,7 @@ class Project extends BaseModel
     public function getAvailableLearningProductTypesAttribute()
     {
         // Ensure there is some planned products.
-        if (! $this->architecturePlan || $this->architecturePlan->plannedProducts->isEmpty()) {
+        if (! $this->plannedProductList || $this->plannedProductList->plannedProducts->isEmpty()) {
             return collect([]);
         }
 
@@ -86,7 +81,7 @@ class Project extends BaseModel
         $projectLearningProducts = $this->learningProducts->groupBy('sub_type_id');
 
         // For each planned products, substract their quantity from the number of products already created.
-        return $this->architecturePlan->plannedProducts->map(function ($plannedProduct) use ($projectLearningProducts) {
+        return $this->plannedProductList->plannedProducts->map(function ($plannedProduct) use ($projectLearningProducts) {
             // Work with a copy of the object to keep the original values intact.
             $plannedProduct = $plannedProduct->replicate();
             if ($projectLearningProducts->has($plannedProduct->sub_type_id)) {

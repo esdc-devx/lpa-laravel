@@ -45,7 +45,7 @@ class ProcessInstanceForm extends BaseModel
     public function formData()
     {
         // Dynamically resolve and load form data class based on form definition.
-        // (i.e. BusinessCase, BusinessCaseAssessment, ArchitecturePlan, etc.)
+        // (i.e. BusinessCase, PlannedProductList, GateOneApproval etc.)
         $entity = entity($this->definition->name_key);
         return $this->hasOne(get_class($entity))->with($entity->relationships);
     }

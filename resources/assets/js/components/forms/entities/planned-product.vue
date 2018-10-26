@@ -1,13 +1,13 @@
 <template>
   <div class="planned-product">
     <el-form-item-wrap
-      :label="trans('forms.architecture_plan.type.label')"
+      :label="trans('forms.planned_product_list.type.label')"
       :prop="`${fieldNamePrefix}.type_id`"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.architecture_plan.type.description')"
-          :help="trans('forms.architecture_plan.type.help')">
+          :description="trans('forms.planned_product_list.type.description')"
+          :help="trans('forms.planned_product_list.type.help')">
         </el-popover-wrap>
       </span>
       <el-cascader
@@ -15,26 +15,26 @@
         :name="`${fieldNamePrefix}.type_id`"
         element-loading-spinner="el-icon-loading"
         v-validate="'required'"
-        :data-vv-as="trans('forms.architecture_plan.type.label')"
+        :data-vv-as="trans('forms.planned_product_list.type.label')"
         :options="data.typeList"
         :props="typeOptions">
       </el-cascader>
       <form-error :name="`${fieldNamePrefix}.type_id`"></form-error>
     </el-form-item-wrap>
     <el-form-item-wrap
-      :label="trans('forms.architecture_plan.quantity.label')"
+      :label="trans('forms.planned_product_list.quantity.label')"
       :prop="`${fieldNamePrefix}.quantity`"
       required>
       <span slot="label-addons">
         <el-popover-wrap
-          :description="trans('forms.architecture_plan.quantity.description')">
+          :description="trans('forms.planned_product_list.quantity.description')">
         </el-popover-wrap>
       </span>
       <input-wrap
         v-model="form.quantity"
         :name="`${fieldNamePrefix}.quantity`"
         v-validate="'required'"
-        :data-vv-as="trans('forms.architecture_plan.quantity.label')"
+        :data-vv-as="trans('forms.planned_product_list.quantity.label')"
         v-mask="'###'"
         :min="1"
         :max="100"

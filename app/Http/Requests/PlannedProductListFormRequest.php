@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class ArchitecturePlanFormRequest extends ProcessInstanceFormDataRequest
+class PlannedProductListFormRequest extends ProcessInstanceFormDataRequest
 {
     /**
      * Get the validation rules that apply to the request.
