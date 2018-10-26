@@ -26,13 +26,12 @@
           <span class="action-description" v-html="trans('pages.home.description_project')"></span>
         </el-button>
       </el-col>
-      <!-- @todo: Uncomment the following section when the Create Learning Product page is implemented. See user story lpa-4957.  -->
-      <!-- <el-col :span="7" :offset="1">
-        <el-button class="action" @click="$router.push(`${language}/products/create`)" icon="el-icon-lpa-learning-product">
-          <span class="action-instruction" v-html="trans('pages.product_list.create_product')"></span>
+      <el-col :span="7" :offset="1">
+        <el-button class="action" @click="$router.push(`${language}/learning-products/create`)" icon="el-icon-lpa-learning-product">
+          <span class="action-instruction" v-html="trans('pages.learning_product_list.create_learning_product')"></span>
           <span class="action-description" v-html="trans('pages.home.description_learning_product')"></span>
         </el-button>
-      </el-col> -->
+      </el-col>
     </el-row>
     <el-row v-if="isAdminOrOwner" type="flex" justify="center" :gutter="12">
       <el-col :span="12">
@@ -75,16 +74,19 @@
     // make sure the content is at the top
     top: 0;
     left: 0;
-    @include size(100%);
-    height: 100%;
+    width: 100%;
     box-sizing: border-box;
-    background-color: $--color-white;
+    
+    .el-row {
+      margin-top: 0px;
+    }
+
     h2, p {
       text-align: center;
     }
 
     h2 {
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin-bottom: 0;
     }
 
@@ -98,7 +100,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        border-color: transparent;
         &:hover {
           border-color: $--button-default-border;
         }
