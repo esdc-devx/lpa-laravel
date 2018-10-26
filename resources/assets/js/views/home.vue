@@ -26,7 +26,6 @@
           <span class="action-description" v-html="trans('pages.home.description_project')"></span>
         </el-button>
       </el-col>
-      <!-- @todo: Uncomment the following section when the Create Learning Product page is implemented. See user story lpa-4957.  -->
       <el-col :span="7" :offset="1">
         <el-button class="action" @click="$router.push(`${language}/learning-products/create`)" icon="el-icon-lpa-learning-product">
           <span class="action-instruction" v-html="trans('pages.learning_product_list.create_learning_product')"></span>
