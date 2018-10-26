@@ -19,7 +19,7 @@ return [
     ],
     'message' => [
         'cancel_process'           => 'L\'annulation d\'un processus est une action critique et définitive. Voulez-vous vraiment poursuivre avec l\'annulation de ce processus?',
-        'cancel_project'           => 'L\'annulation d\'un projet est une action critique et définitive. Cette action aura automatiquement lieu lors de la soumission de ce formulaire avec cette option.',
+        'cancel_project'           => 'L\'annulation d\'un projet est une action critique et définitive. Cette action aura automatiquement lieu lors de la soumission de ce formulaire.',
         'changes_discarded'        => 'Les changements ont été supprimés.',
         'changes_saved'            => 'Les changements ont été sauvegardés.',
         'data_refreshed'           => 'Les données du formulaire ont été actualisées.',
