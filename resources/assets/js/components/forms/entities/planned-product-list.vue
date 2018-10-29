@@ -100,21 +100,21 @@
         this.$emit('update:value', tab.index);
       },
 
-      async fetch() {
+      async loadData() {
         this.typeList = await ListsAPI.getList('learning-product-type');
       }
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.fetch);
+      EventBus.$off('Store:languageUpdate', this.loadData);
     },
 
     async created() {
-      this.fetch();
+      this.loadData();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.fetch);
+      EventBus.$on('Store:languageUpdate', this.loadData);
     }
   };
 </script>

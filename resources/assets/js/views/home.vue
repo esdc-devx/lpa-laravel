@@ -42,25 +42,17 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-  import EventBus from '@/event-bus.js';
+  import Page from '@components/page';
 
   export default {
     name: 'home',
 
+    extends: Page,
+
     computed: {
-      ...mapGetters({
-        language: 'language',
-        user: 'users/current',
-        hasRole: 'users/hasRole',
-      }),
       isAdminOrOwner() {
         return this.hasRole('admin') || this.hasRole('owner');
       }
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
     }
   };
 </script>
@@ -68,7 +60,7 @@
 <style lang="scss">
   @import '~@sass/abstracts/vars';
   @import '~@sass/abstracts/mixins/helpers';
-  
+
   .home {
     // since there is no breadcrumbs bar on the home page,
     // make sure the content is at the top

@@ -111,36 +111,37 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions, mapState } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
   import HttpStatusCodes from '@axios/http-status-codes';
 
+  import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
   import ElButtonWrap from '@components/el-button-wrap.vue';
-
-  import PageUtils from '@mixins/page/utils.js';
-  import FormUtils from '@mixins/form/utils';
-
   // Forms
   import BusinessCase from '@components/forms/entities/business-case';
   import PlannedProductList from '@components/forms/entities/planned-product-list';
   import GateOneApproval from '@components/forms/entities/gate-one-approval';
+
+  import FormUtils from '@mixins/form/utils';
+
+  import ProcessAPI from '@api/processes';
 
   let namespace = 'projects';
 
   export default {
     name: 'project-process-form',
 
+    extends: Page,
+
     components: { InfoBox, ElButtonWrap, BusinessCase, PlannedProductList, GateOneApproval },
 
-    // Gives us the ability to inject validation in child components
-    // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
-    $_veeValidate: {
-      validator: 'new'
-    },
+    mixins: [ FormUtils ],
 
-    mixins: [ PageUtils, FormUtils ],
+    events: {
+      'TopBar:beforeLogout': 'beforeLogout'
+    },
 
     data() {
       return {
@@ -166,14 +167,7 @@
     },
 
     computed: {
-      ...mapState({
-        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
-      }),
       ...mapGetters({
-        language: 'language',
-        isMainLoading: 'isMainLoading',
-        hasRole: 'users/hasRole',
-        isCurrentUser: 'users/isCurrentUser',
         viewingProcess: 'processes/viewing',
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
@@ -188,9 +182,9 @@
           // claiming
           if (val) {
             try {
-              await this.claimForm(this.formId);
+              await this.claimForm(this.$route.params.formId);
               if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-                this.rights.canSubmit = await this.canSubmitForm(this.formId);
+                this.rights.canSubmit = await this.canSubmitForm(this.$route.params.formId);
               }
             } catch (e) {
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
@@ -250,7 +244,6 @@
 
     methods: {
       ...mapActions({
-        confirmBeforeLeaving: 'confirmBeforeLeaving',
         loadProject: `${namespace}/loadProject`,
         loadProcessInstance: 'processes/loadInstance',
         loadProcessInstanceForm: 'processes/loadInstanceForm',
@@ -311,7 +304,7 @@
             // No need to unclaim the form if it was submitted
             // since the backend will automatically unclaim it.
             if (!this.isFormSubmitted && shouldUnclaim) {
-              await this.unclaimForm(this.formId);
+              await this.unclaimForm(this.$route.params.formId);
             }
 
             if (formWasDirty) {
@@ -348,7 +341,7 @@
         this.confirmReleaseForm().then(async () => {
           try {
             await this.releaseForm({
-              formId: this.formId,
+              formId: this.$route.params.formId,
               username: this.getCurrentEditorUsername()
             });
             this.notifySuccess({
@@ -369,7 +362,7 @@
       async onSave() {
         this.isSaving = true;
         try {
-          await this.saveForm({ formId: this.formId, form: this.formData });
+          await this.saveForm({ formId: this.$route.params.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           // reset the fields states
           // so that we get a pristine form with the new values
@@ -384,7 +377,7 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             this.discardChanges(true);
-            this.getRights();
+            this.loadPermissions();
             this.isSaving = false;
           } else {
             throw e;
@@ -399,10 +392,10 @@
       },
 
       async refreshData() {
-        this.getRights();
+        this.loadPermissions();
         let formWasDirty = this.isFormDirty;
         let oldUpdatedDate = this.viewingFormInfo.updated_at;
-        await this.loadProcessInstanceForm(this.formId);
+        await this.loadProcessInstanceForm(this.$route.params.formId);
 
         // deep copy so that we don't alter the store's data
         this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
@@ -434,7 +427,7 @@
 
       async triggerSubmitForm() {
         try {
-          await this.submitForm({ formId: this.formId, form: this.formData });
+          await this.submitForm({ formId: this.$route.params.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           this.notifySuccess({
             message: this.trans('components.notice.message.form_submitted')
@@ -446,30 +439,28 @@
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
             this.discardChanges(true);
-            this.getRights();
+            this.loadPermissions();
           } else {
             throw e;
           }
         }
       },
 
-      async fetch(isInitialLoad = true) {
-        try {
-          if (isInitialLoad) {
-            // deep copy so that we don't alter the store's data
-            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
-            this.formComponent = this.viewingFormInfo.definition.name_key;
-            this.setupStage();
-          } else {
-            await this.loadProject(this.projectId);
-            await this.loadProcessInstance(this.processId);
-            await this.loadProcessInstanceForm(this.formId);
-          }
-        } catch (e) {
+      async loadData(isInitialLoad = true) {
+        if (isInitialLoad) {
+          // deep copy so that we don't alter the store's data
+          this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
+          this.formComponent = this.viewingFormInfo.definition.name_key;
+          this.setupStage();
+        } else {
+          let requests = [];
+          requests.push(
+            this.loadProject(this.$route.params.projectId),
+            this.loadProcessInstance(this.$route.params.processId),
+            this.loadProcessInstanceForm(this.$route.params.formId)
+          );
           // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
+          axios.all(requests);
         }
       },
 
@@ -484,24 +475,30 @@
         });
       },
 
-      async getRights() {
-        try {
-          if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-            this.rights.canSubmit = await this.canSubmitForm(this.formId);
-          }
-          this.rights.canEdit = await this.canEditForm(this.formId);
-          this.rights.canClaim = await this.canClaimForm(this.formId);
-          this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
-          this.rights.canReleaseForm = await this.canReleaseForm({
-            formId: this.formId,
+      async loadPermissions() {
+        let requests = [];
+        requests.push(
+          this.canEditForm(this.$route.params.formId),
+          this.canClaimForm(this.$route.params.formId),
+          this.canUnclaimForm(this.$route.params.formId),
+          this.canReleaseForm({
+            formId: this.$route.params.formId,
             username: this.getCurrentEditorUsername()
-          });
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
+          })
+        );
+        if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
+          requests.push(this.canSubmitForm(this.$route.params.formId));
         }
+        axios.all(requests)
+          .then(axios.spread((canEditForm, canClaimForm, canUnclaimForm, canReleaseForm, canSubmitForm) => {
+            this.rights.canEdit = canEditForm;
+            this.rights.canClaim = canClaimForm;
+            this.rights.canUnclaim = canUnclaimForm;
+            this.rights.canRelease = canReleaseForm;
+            if (!_.isUndefined(canSubmitForm)) {
+              this.rights.canSubmit = canSubmitForm;
+            }
+          }));
       },
 
       beforeLogout(callback) {
@@ -509,17 +506,24 @@
           this.discardChanges();
           callback();
         }).catch(() => false);
-      },
-
-      onLanguageUpdate() {
-        this.fetch(false);
-      },
-
-      destroyEvents() {
-        // Destroy any events we might be listening
-        // so that they do not get called while being on another page
-        EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      // Exception handled by interceptor
+      axios.all([
+        store.dispatch('projects/loadProject', to.params.projectId),
+        store.dispatch('processes/loadInstance', to.params.processId),
+        store.dispatch('processes/loadInstanceForm', to.params.formId)
+      ]).then(() => {
+        next(async vm => {
+          // deep copy so that we don't alter the store's data
+          vm.formData = _.cloneDeep(vm.viewingFormInfo.form_data);
+          vm.formComponent = vm.viewingFormInfo.definition.name_key;
+          vm.setupStage();
+          await vm.loadPermissions();
+        });
+      });
     },
 
     async beforeRouteLeave(to, from, next) {
@@ -544,31 +548,6 @@
         });
         next();
       }
-    },
-
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    async created() {
-      // store the reference to the current form id
-      this.projectId = this.$route.params.projectId;
-      this.processId = this.$route.params.processId;
-      this.formId = this.$route.params.formId;
-      this.getRights();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
-      EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
     }
   };
 </script>

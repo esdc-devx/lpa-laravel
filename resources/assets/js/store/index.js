@@ -17,7 +17,7 @@ import learningProducts from './modules/learning-products.js';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+window.store = new Vuex.Store({
   state,
   getters,
   actions,
@@ -31,3 +31,5 @@ export default new Vuex.Store({
   // https://vuex.vuejs.org/en/strict.html
   strict: process.env.NODE_ENV !== 'production'
 });
+
+export default window.store;

@@ -92,7 +92,7 @@ new Vue({
       let request = axios.create({baseURL: '/' + Config.DEFAULT_LANG});
       let response;
       response = await request.get('api/locales');
-      window.i18n.messages = response.data.data;
+      window.i18n.messages = response.data;
     },
 
     setupLocale() {

@@ -193,21 +193,21 @@
         }
       },
 
-      async fetch() {
+      async loadData() {
         this.processFormDecisionList = await ListsAPI.getList('process-form-decision');
       },
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.fetch);
+      EventBus.$off('Store:languageUpdate', this.loadData);
     },
 
     async created() {
-      this.fetch();
+      this.loadData();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.fetch);
+      EventBus.$on('Store:languageUpdate', this.loadData);
     }
   };
 </script>

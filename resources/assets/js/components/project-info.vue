@@ -123,13 +123,24 @@
             }
           }
         }).catch(() => false);
+      },
+
+      loadPermissions() {
+        let projectId = this.$route.params.projectId;
+        axios.all([
+          this.canEditProject(projectId),
+          this.canDeleteProject(projectId)
+        ]).then((canEdit, canDelete) => {
+          this.rights.canEdit = canEdit;
+          this.rights.canDelete = canDelete;
+        });
       }
     },
 
-    async created() {
-      let projectId = this.$route.params.projectId;
-      this.rights.canEdit = await this.canEditProject(projectId);
-      this.rights.canDelete = await this.canDeleteProject(projectId);
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.loadPermissions();
+      });
     }
   };
 </script>

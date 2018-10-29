@@ -71,14 +71,16 @@
 <script>
   import { mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-  import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
+  import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import UserSearch from '@components/forms/user-search';
   import InputWrap from '@components/forms/input-wrap';
+
+  import FormUtils from '@mixins/form/utils.js';
+  import PageUtils from '@mixins/page/utils.js';
+
   import LearningProductAPI from '@api/learning-products';
 
   let namespace = 'learningProducts';
@@ -86,12 +88,13 @@
   export default {
     name: 'learning-product-edit',
 
+    extends: Page,
+
     inject: ['$validator'],
 
     mixins: [ FormUtils, PageUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
-
 
     data() {
       return {
@@ -131,13 +134,12 @@
         this.goToParentPage();
       },
 
-      async fetch() {
+      async loadData() {
         try {
           // Load form information.
           let editInfo = await this.loadLearningProductEditInfo(this.learningProductId);
           this.form = _.cloneDeep(editInfo.learning_product);
           this.organizationalUnits = editInfo.organizational_units;
-
         } catch (e) {
           // Exception handled by interceptor
           if (!e.response) {
@@ -158,19 +160,18 @@
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    async created() {
-      this.learningProductId = this.$route.params.learningProductId;
-      await this.fetch();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+    beforeRouteEnter(to, from, next) {
+      store.dispatch('learningProducts/canEdit', to.params.learningProductId)
+        .then(allowed => {
+          if (allowed) {
+            next(vm => {
+              vm.learningProductId = vm.$route.params.learningProductId;
+              vm.loadData();
+            });
+          } else {
+            router.replace({ name: 'forbidden', params: { '0': to.path } });
+          }
+        });
     }
   };
 </script>

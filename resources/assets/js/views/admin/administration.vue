@@ -16,13 +16,12 @@
 </template>
 
 <script>
-  import EventBus from '@/event-bus.js';
+  import Page from '@components/page';
+
   export default {
     name: 'administration',
 
-    mounted() {
-      EventBus.$emit('App:ready');
-    }
+    extends: Page
   };
 </script>
 

@@ -28,7 +28,7 @@ export default {
       showMainLoading: false,
       params: { name: name }
     });
-    return response.data.data;
+    return response.data;
   },
 
   update(user) {

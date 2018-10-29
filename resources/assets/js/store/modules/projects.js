@@ -30,53 +30,63 @@ export default {
   actions: {
     async loadProjectCreateInfo({ commit }) {
       let response = await ProjectsAPI.getProjectCreateInfo();
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      return response.data.data;
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      return response.data;
     },
 
     async loadProjectEditInfo({ commit }, id) {
       let response = await ProjectsAPI.getProjectEditInfo(id);
-      commit('setViewing', response.data.data.project);
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      return response.data.data;
+      commit('setViewing', response.data.project);
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      return response.data;
     },
 
     async loadProjects({ commit, dispatch }) {
       let response = await ProjectsAPI.getProjects();
-      commit('setProjects', response.data.data.projects);
-      return response.data.data.projects;
+      commit('setProjects', response.data.projects);
+      return response.data.projects;
     },
 
-    async loadProject({ commit }, id) {
-      let response = await ProjectsAPI.getProject(id);
-      commit('setViewing', response.data.data.project);
-      return response.data.data;
+    loadProject({ commit }, id) {
+      return new Promise((resolve, reject) => {
+        ProjectsAPI.getProject(id)
+          .then(response => {
+            commit('setViewing', response.data.project);
+            resolve(response.data);
+          })
+          .catch(reject);
+      });
     },
 
     async canCreateProject({ commit }) {
       let response = await ProjectsAPI.canCreateProject();
-      return response.data.data.allowed;
+      return response.data.allowed;
     },
 
     async canEditProject({ commit }, id) {
-      let response = await ProjectsAPI.canEditProject(id);
-      return response.data.data.allowed;
+      return new Promise((resolve, reject) => {
+        ProjectsAPI.canEditProject(id)
+          .then(response => {
+            resolve(response.data.allowed);
+          })
+          .catch(reject);
+      });
     },
 
     async canDeleteProject({ commit }, id) {
       let response = await ProjectsAPI.canDeleteProject(id);
-      return response.data.data.allowed;
+      return response.data.allowed;
     },
 
     async canStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
       let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
-      return response.data.data.allowed;
+      return response.data.allowed;
     },
 
     async create({ commit }, project) {
       let response = await ProjectsAPI.create(project);
-      commit('setViewing', response.data.data);
-      return response.data.data;
+      commit('setViewing', response.data);
+      return response.data;
     },
 
     async update({ commit }, project) {

@@ -20,27 +20,19 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
+  import Page from '@components/page';
+
   import PageUtils from '@mixins/page/utils.js';
 
   export default {
     name: 'forbidden',
 
-    mixins: [ PageUtils ],
+    extends: Page,
 
-    computed: {
-      ...mapGetters([
-        'language'
-      ])
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
-    }
+    mixins: [ PageUtils ]
   };
 </script>
 
 <style lang="scss">
-@import '~@sass/pages/error';
+
 </style>

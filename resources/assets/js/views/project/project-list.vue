@@ -62,7 +62,8 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
+
+  import Page from '@components/page';
 
   import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
@@ -71,6 +72,8 @@
 
   export default {
     name: 'project-list',
+
+    extends: Page,
 
     mixins: [ PageUtils, TableUtils ],
 
@@ -83,8 +86,6 @@
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         projects: `${namespace}/all`
       }),
 
@@ -108,14 +109,13 @@
         this.headerClick(col, e);
       },
 
-      async triggerLoadProjects() {
+      async loadData() {
         try {
           await this.loadProjects();
           this.normalizedList = _.map(this.projects, project => {
             let normProject = _.pick(project, this.normalizedListAttrs);
             normProject.organizational_unit = normProject.organizational_unit.name;
             normProject.state = normProject.state.name;
-            // @todo: change to real property instead
             normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
             return normProject;
           });
@@ -125,22 +125,13 @@
             throw e;
           }
         }
-      },
-
-      async onLanguageUpdate() {
-        await this.triggerLoadProjects();
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
-      this.triggerLoadProjects();
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.loadData();
+      });
     }
   };
 </script>

@@ -11,7 +11,7 @@ export default {
    */
   async getList(listName) {
     return await axios.get('lists/' + listName).then(function(response) {
-      return response.data.data;
+      return response.data;
     });
   },
 
@@ -27,7 +27,7 @@ export default {
       } 
     })
     .then(function(response) {
-      return response.data.data;
+      return response.data;
     });
   }
 

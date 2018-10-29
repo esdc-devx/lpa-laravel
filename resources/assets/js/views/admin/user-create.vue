@@ -52,12 +52,12 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-
+  import Page from '@components/page';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import FormError from '@components/forms/error.vue';
   import UserSearch from '@components/forms/user-search';
+
   import FormUtils from '@mixins/form/utils.js';
   import PageUtils from '@mixins/page/utils.js';
 
@@ -65,6 +65,8 @@
 
   export default {
     name: 'admin-user-create',
+
+    extends: Page,
 
     inject: ['$validator'],
 
@@ -74,7 +76,6 @@
 
     computed: {
       ...mapGetters({
-        language: 'language',
         organizationalUnits: `${namespace}/organizationalUnits`,
         roles: `${namespace}/roles`
       })
@@ -114,7 +115,7 @@
         this.goToParentPage();
       },
 
-      async triggerLoadUserCreateInfo() {
+      async loadData() {
         await this.loadUserCreateInfo();
       },
 
@@ -124,20 +125,17 @@
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.triggerLoadUserCreateInfo();
+        await this.loadData();
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.loadData();
+      });
     },
 
     mounted() {
-      EventBus.$emit('App:ready');
-
-      this.triggerLoadUserCreateInfo();
       this.autofocus('name');
     }
   };

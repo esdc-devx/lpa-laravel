@@ -67,9 +67,9 @@ export default {
 
     async loadUsers({ commit }, page) {
       let response = await UserAPI.getUsers(page);
-      commit('setUsers', response.data.data);
-      commit('setPagination', response.data.meta);
-      return response.data.data;
+      commit('setUsers', response.data);
+      commit('setPagination', response.meta);
+      return response.data;
     },
 
     async loadCurrentUser({ commit }) {
@@ -77,9 +77,9 @@ export default {
       let response;
       try {
         response = await UserAPI.getUser();
-        commit('setCurrentUser', response.data.data);
+        commit('setCurrentUser', response.data);
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-        return response.data.data;
+        return response.data;
       } catch (e) {
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_FAILED);
         throw e;
@@ -88,23 +88,23 @@ export default {
 
     async loadViewingUser({ commit }, id) {
       let response = await UserAPI.getUser(id);
-      commit('setViewing', response.data.data);
-      return response.data.data;
+      commit('setViewing', response.data);
+      return response.data;
     },
 
     async loadUserCreateInfo({ commit }) {
       let response = await UserAPI.getUserCreateInfo();
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      commit('setRoles', response.data.data.roles);
-      return response.data.data;
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      commit('setRoles', response.data.roles);
+      return response.data;
     },
 
     async loadUserEditInfo({ commit }, id) {
       let response = await UserAPI.getUserEditInfo(id);
-      commit('setViewing', response.data.data.user);
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      commit('setRoles', response.data.data.roles);
-      return response.data.data;
+      commit('setViewing', response.data.user);
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      commit('setRoles', response.data.roles);
+      return response.data;
     },
 
     // CRUD methods
@@ -114,7 +114,7 @@ export default {
 
     async search({ commit }, name) {
       let response = await UserAPI.search(name);
-      return response.data.data;
+      return response.data;
     },
 
     async update({ commit }, user) {

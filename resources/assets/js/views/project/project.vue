@@ -93,16 +93,20 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
-  import PageUtils from '@mixins/page/utils.js';
-  import TableUtils from '@mixins/table/utils.js';
+
+  import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
   import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
+
+  import PageUtils from '@mixins/page/utils.js';
+  import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
 
   export default {
     name: 'project',
+
+    extends: Page,
 
     mixins: [ PageUtils, TableUtils ],
 
@@ -110,8 +114,6 @@
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
         definitions: `processes/definitions`,
         viewingHistory: 'processes/viewingHistory',
@@ -173,7 +175,7 @@
           } catch (e) {
             if (e.response) {
               // on error, re-fetch the info just to be in-sync
-              this.fetch();
+              this.loadData();
             } else {
               throw e;
             }
@@ -186,7 +188,32 @@
         this.$router.push(`${projectId}/process/${processId}`);
       },
 
-      async getProcessDefinitionPermissions() {
+      async loadData(isInitialLoad = true) {
+        let projectId = this.$route.params.projectId;
+        let requests = [];
+
+        if (!isInitialLoad) {
+          requests.push(this.loadProject(projectId));
+        }
+        requests.push(
+          this.loadProcessDefinitions('project'),
+          this.loadProcessHistory({ entityType: 'project', entityId: projectId }),
+          this.loadProjectLearningProducts(projectId)
+        );
+
+        axios.all(requests).then(() => {
+          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
+            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
+            normProcess.state = normProcess.state.name;
+            normProcess.name = normProcess.definition.name;
+            return normProcess;
+          });
+        });
+
+        this.loadPermissions();
+      },
+
+      async loadPermissions() {
         let definition;
         for (let i = 0; i < this.definitions.length; i++) {
           definition = this.definitions[i];
@@ -197,55 +224,16 @@
             await this.canStartProcess({ projectId: this.$route.params.projectId, processDefinitionNameKey: definition.name_key })
           );
         }
-      },
-
-      async fetch(isInitialLoad = true) {
-        try {
-          let projectId = this.$route.params.projectId;
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadProject(projectId);
-          }
-          await this.loadProcessDefinitions('project');
-          await this.loadProcessHistory({ entityType: 'project', entityId: projectId });
-
-          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
-            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
-            normProcess.state = normProcess.state.name;
-            normProcess.name = normProcess.definition.name;
-            return normProcess;
-          });
-
-          await this.loadProjectLearningProducts(projectId);
-          this.getProcessDefinitionPermissions();
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
-      async onLanguageUpdate() {
-        this.fetch(false);
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
     beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      store.dispatch('projects/loadProject', to.params.projectId)
+        .then(() => {
+          next(vm => {
+            vm.loadData();
+          });
+        });
     }
   };
 </script>

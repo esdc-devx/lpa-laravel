@@ -136,14 +136,21 @@ export default {
       }).catch(() => false);
     },
 
-    async getAuthorizations() {
-      this.rights.canEdit = await this.canEditLearningProduct(this.learningProduct.id);
-      this.rights.canDelete = await this.canDeleteLearningProduct(this.learningProduct.id);
+    async loadPermissions() {
+      axios.all([
+        this.canEditLearningProduct(this.learningProduct.id),
+        this.canDeleteLearningProduct(this.learningProduct.id)
+      ]).then((canEdit, canDelete) => {
+        this.rights.canEdit = canEdit;
+        this.rights.canDelete = canDelete;
+      });
     }
   },
 
-  created() {
-    this.getAuthorizations();
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.loadPermissions();
+    });
   }
 };
 </script>
