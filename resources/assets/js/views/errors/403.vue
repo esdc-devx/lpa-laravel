@@ -30,5 +30,5 @@
 </script>
 
 <style lang="scss">
-
+  @import '~@sass/pages/error';
 </style>
