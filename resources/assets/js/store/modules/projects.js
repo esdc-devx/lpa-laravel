@@ -47,15 +47,10 @@ export default {
       return response.data.projects;
     },
 
-    loadProject({ commit }, id) {
-      return new Promise((resolve, reject) => {
-        ProjectsAPI.getProject(id)
-          .then(response => {
-            commit('setViewing', response.data.project);
-            resolve(response.data);
-          })
-          .catch(reject);
-      });
+    async loadProject({ commit }, id) {
+      let response = await ProjectsAPI.getProject(id);
+      commit('setViewing', response.data.project);
+      return response.data;
     },
 
     async canCreateProject({ commit }) {
@@ -64,13 +59,8 @@ export default {
     },
 
     async canEditProject({ commit }, id) {
-      return new Promise((resolve, reject) => {
-        ProjectsAPI.canEditProject(id)
-          .then(response => {
-            resolve(response.data.allowed);
-          })
-          .catch(reject);
-      });
+      let response = await ProjectsAPI.canEditProject(id);
+      return response.data.allowed;
     },
 
     async canDeleteProject({ commit }, id) {

@@ -51,14 +51,9 @@ export default {
     },
 
     async loadInstance({ commit }, processId) {
-      return new Promise((resolve, reject) => {
-        ProcessAPI.getInstance(processId)
-          .then(response => {
-            commit('setViewing', response.data.process_instance);
-            resolve(response.data);
-          })
-          .catch(reject);
-      });
+      let response = await ProcessAPI.getInstance(processId);
+      commit('setViewing', response.data.process_instance);
+      return response.data;
     },
 
     async loadHistory({ commit }, { entityType, entityId }) {
@@ -68,14 +63,9 @@ export default {
     },
 
     async loadInstanceForm({ commit }, formId) {
-      return new Promise((resolve, reject) => {
-        ProcessAPI.getInstanceForm(formId)
-          .then(response => {
-            commit('setViewingFormInfo', response.data);
-            resolve(response.data.form_data);
-          })
-          .catch(reject);
-      });
+      let response = await ProcessAPI.getInstanceForm(formId);
+      commit('setViewingFormInfo', response.data);
+      return response.data.form_data;
     },
 
     async start({ commit }, { nameKey, entityId }) {
