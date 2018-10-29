@@ -56,9 +56,10 @@ class ProcessManager {
             'key'          => $processDefinition->name_key,
             'business_key' => "$entityType:{$entity->id}",
             'variables'    => [
-                'authToken'     => ['value' => $authToken, 'type' => 'String'],
-                'owner'         => ['value' => $entity->organizationalUnit->name_key, 'type' => 'String'],
-                'stateEntity'   => ['value' => $entity->state->name_key, 'type' => 'String']
+                'applicationUrl' => ['type' => 'String', 'value' => config('app.url') . '/process-engine'],
+                'authToken'      => ['type' => 'String', 'value' => $authToken],
+                'owner'          => ['type' => 'String', 'value' => $entity->organizationalUnit->name_key],
+                'stateEntity'    => ['type' => 'String', 'value' => $entity->state->name_key],
             ]
         ])->id;
 
