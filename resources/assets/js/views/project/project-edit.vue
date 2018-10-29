@@ -50,7 +50,6 @@
   import InputWrap from '@components/forms/input-wrap';
   import FormError from '@components/forms/error.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
   import FormUtils from '@mixins/form/utils.js';
 
   let namespace = 'projects';
@@ -62,7 +61,7 @@
 
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 

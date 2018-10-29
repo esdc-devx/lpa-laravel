@@ -59,7 +59,6 @@
   import UserSearch from '@components/forms/user-search';
 
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
 
   let namespace = 'users';
 
@@ -70,7 +69,7 @@
 
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 

@@ -15,16 +15,12 @@
   import Page from '@components/page';
   import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
-
   let namespace = 'learningProducts';
 
   export default {
     name: 'learning-product-list',
 
     extends: Page,
-
-    mixins: [ PageUtils ],
 
     components: { LearningProductDataTables },
 

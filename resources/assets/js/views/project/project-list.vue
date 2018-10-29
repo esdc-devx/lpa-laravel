@@ -65,7 +65,6 @@
 
   import Page from '@components/page';
 
-  import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
@@ -75,7 +74,7 @@
 
     extends: Page,
 
-    mixins: [ PageUtils, TableUtils ],
+    mixins: [ TableUtils ],
 
     data() {
       return {

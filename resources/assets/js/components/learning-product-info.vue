@@ -71,7 +71,6 @@ import { mapGetters, mapActions } from 'vuex';
 import HttpStatusCodes from '@axios/http-status-codes';
 import InfoBox from '@components/info-box.vue';
 import ElButtonWrap from '@components/el-button-wrap.vue';
-import PageUtils from '@mixins/page/utils.js';
 
 let namespace = 'learningProducts';
 
@@ -79,8 +78,6 @@ export default {
   name: 'learning-product-info',
 
   components: { InfoBox, ElButtonWrap },
-
-  mixins: [ PageUtils ],
 
   props: {
     learningProduct: {

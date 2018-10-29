@@ -22,14 +22,10 @@
 <script>
   import Page from '@components/page';
 
-  import PageUtils from '@mixins/page/utils.js';
-
   export default {
     name: 'forbidden',
 
-    extends: Page,
-
-    mixins: [ PageUtils ]
+    extends: Page
   };
 </script>
 

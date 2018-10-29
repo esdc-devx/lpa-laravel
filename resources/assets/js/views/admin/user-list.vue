@@ -76,16 +76,12 @@
 
   import Page from '@components/page';
 
-  import PageUtils from '@mixins/page/utils.js';
-
   let namespace = 'users';
 
   export default {
     name: 'admin-user-list',
 
     extends: Page,
-
-    mixins: [ PageUtils ],
 
     computed: {
       ...mapGetters({

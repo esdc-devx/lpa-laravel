@@ -79,7 +79,6 @@
   import InputWrap from '@components/forms/input-wrap';
 
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
 
   import LearningProductAPI from '@api/learning-products';
 
@@ -92,7 +91,7 @@
 
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
 

@@ -66,7 +66,6 @@
   import ElSelectWrap from '@components/forms/el-select-wrap';
 
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
 
   import HttpStatusCodes from '@axios/http-status-codes';
 
@@ -79,7 +78,7 @@
 
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElSelectWrap },
 

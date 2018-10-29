@@ -61,16 +61,12 @@
   import InfoBox from '@components/info-box.vue';
   import ElButtonWrap from '@components/el-button-wrap.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
-
   let namespace = 'projects';
 
   export default {
     name: 'project-info',
 
     components: { InfoBox, ElButtonWrap },
-
-    mixins: [ PageUtils ],
 
     props: [ 'project' ],
 

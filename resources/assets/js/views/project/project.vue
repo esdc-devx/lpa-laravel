@@ -98,7 +98,6 @@
   import ProjectInfo from '@components/project-info.vue';
   import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
   import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
@@ -108,7 +107,7 @@
 
     extends: Page,
 
-    mixins: [ PageUtils, TableUtils ],
+    mixins: [ TableUtils ],
 
     components: { ProjectInfo, LearningProductDataTables },
 

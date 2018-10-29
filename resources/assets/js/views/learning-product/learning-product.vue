@@ -15,9 +15,6 @@
   import Page from '@components/page';
   import LearningProductInfo from '@components/learning-product-info.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
-  import TableUtils from '@mixins/table/utils.js';
-
   let namespace = 'learningProducts';
 
   export default {
