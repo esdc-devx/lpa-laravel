@@ -34,17 +34,17 @@ export default {
 
   actions: {
     async loadLearningProducts({ commit, dispatch }) {
-      await LearningProductAPI.getLearningProducts();
+      let learningProducts = await LearningProductAPI.getLearningProducts();
       commit('setLearningProducts', learningProducts);
     },
 
     async loadProjectLearningProducts({ commit }, projectId) {
-      await LearningProductAPI.getProjectLearningProducts(projectId);
+      let projectLearningProducts = await LearningProductAPI.getProjectLearningProducts(projectId);
       commit('setProjectLearningProducts', projectLearningProducts);
     },
 
     async loadLearningProduct({ commit }, id) {
-      await LearningProductAPI.getLearningProduct(id);
+      let learningProduct = await LearningProductAPI.getLearningProduct(id);
       commit('setViewing', learningProduct);
     },
 
