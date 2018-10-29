@@ -35,8 +35,8 @@
           </el-popover-wrap>
         </span>
         <el-radio-group
-          v-model="form.is_entity_cancelled" 
-          v-validate="''" 
+          v-model="form.is_entity_cancelled"
+          v-validate="''"
           name="is_entity_cancelled">
           <el-radio :label=false>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.false') }}</el-radio>
           <el-radio :label=true>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.true') }}</el-radio>
@@ -202,7 +202,7 @@
       EventBus.$off('Store:languageUpdate', this.loadData);
     },
 
-    async created() {
+    created() {
       this.loadData();
     },
 

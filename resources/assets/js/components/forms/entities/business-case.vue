@@ -443,7 +443,7 @@
       EventBus.$off('FormEntity:discardChanges', this.bindCheckboxes);
     },
 
-    async created() {
+    created() {
       this.loadData();
       this.bindCheckboxes();
     },

@@ -204,7 +204,7 @@
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
-              .then(async () => {
+              .then(() => {
                 this.discardChanges();
               }).catch(() => false);
           } else {
@@ -502,7 +502,7 @@
       },
 
       beforeLogout(callback) {
-        this.confirmLoseChanges().then(async () => {
+        this.confirmLoseChanges().then(() => {
           this.discardChanges();
           callback();
         }).catch(() => false);
@@ -528,7 +528,7 @@
 
     async beforeRouteLeave(to, from, next) {
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
-        this.confirmLoseChanges().then(async () => {
+        this.confirmLoseChanges().then(() => {
           this.destroyEvents();
           this.discardChanges();
           next();

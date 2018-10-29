@@ -109,7 +109,7 @@
       EventBus.$off('Store:languageUpdate', this.loadData);
     },
 
-    async created() {
+    created() {
       this.loadData();
     },
 
