@@ -87,7 +87,7 @@
       /**
        * Destroy any events we might be listening
        * so that they do not get called while being on another page
-      */
+       */
       destroyEvents() {
         // loop through listeners of the current page,
         // and turn them off
