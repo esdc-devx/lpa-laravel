@@ -84,8 +84,8 @@ class CamundaConnector
         }
         // Handle Server Exceptions.
         catch (ServerException $e) {
-            $error = json_decode($e->getResponse()->getBody())->message;
-            throw new ProcessEngineException($error);
+            $error = json_decode($e->getResponse()->getBody());
+            throw new ProcessEngineException($error ? $error->message : $e->getMessage());
         }
 
         return json_decode($response->getBody());
