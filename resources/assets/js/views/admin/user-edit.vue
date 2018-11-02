@@ -126,12 +126,9 @@
         this.goToParentPage();
       },
 
-      async loadData(isInitialLoad = true) {
+      async loadData() {
         let userId = this.$route.params.userId;
         try {
-          if (!isInitialLoad) {
-            await this.loadUserEditInfo(userId);
-          }
           this.form.user = Object.assign({}, this.viewingUser);
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options

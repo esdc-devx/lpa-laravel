@@ -133,10 +133,8 @@
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.loadPermissions();
-      });
+    created() {
+      this.loadPermissions();
     }
   };
 </script>

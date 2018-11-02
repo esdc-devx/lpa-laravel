@@ -128,7 +128,9 @@
     beforeRouteEnter(to, from, next) {
       store.dispatch('projects/canCreateProject').then(allowed => {
         if (allowed) {
-          next();
+          next(vm => {
+            vm.loadData();
+          });
         } else {
           router.replace({ name: 'forbidden', params: { '0': to.path } });
         }

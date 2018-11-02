@@ -64,8 +64,7 @@
        * Async fetching function that provides a switch
        * to handle initial load duty
        */
-
-      async loadData(isInitialLoad = true) {},
+      async loadData() {},
 
       async loadPermissions() {},
 
@@ -138,11 +137,6 @@
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
 
     mounted() {
       EventBus.$emit('App:ready');

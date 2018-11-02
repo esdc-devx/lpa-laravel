@@ -187,20 +187,19 @@
         this.$router.push(`${projectId}/process/${processId}`);
       },
 
-      async loadData(isInitialLoad = true) {
+      loadData() {
         let projectId = this.$route.params.projectId;
         let requests = [];
 
-        if (!isInitialLoad) {
-          requests.push(this.loadProject(projectId));
-        }
         requests.push(
+          this.loadProject(projectId),
           this.loadProcessDefinitions('project'),
           this.loadProcessHistory({ entityType: 'project', entityId: projectId }),
           this.loadProjectLearningProducts(projectId)
         );
 
         axios.all(requests).then(() => {
+          this.loadPermissions();
           this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
             let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
             normProcess.state = normProcess.state.name;
@@ -208,11 +207,10 @@
             return normProcess;
           });
         });
-
-        this.loadPermissions();
       },
 
       async loadPermissions() {
+        // @fixme: axios.all
         let definition;
         for (let i = 0; i < this.definitions.length; i++) {
           definition = this.definitions[i];

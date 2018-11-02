@@ -5,6 +5,11 @@ export default {
 
   state: {
     definitions: [],
+    canEditForm: false,
+    canClaimForm: false,
+    canUnclaimForm: false,
+    canSubmitForm: false,
+    canReleaseForm: false,
     viewing: {
       definition: {
         name: ''
@@ -111,35 +116,55 @@ export default {
       return response.data.allowed;
     },
 
-    async canEditForm({ commit }, formId) {
+    async loadCanEditForm({ commit }, formId) {
       let response = await ProcessAPI.canEditForm(formId);
-      return response.data.allowed;
+      commit('setCanEditForm', response.data.allowed);
     },
 
-    async canClaimForm({ commit }, formId) {
+    async loadCanClaimForm({ commit }, formId) {
       let response = await ProcessAPI.canClaimForm(formId);
-      return response.data.allowed;
+      commit('setCanClaimForm', response.data.allowed);
     },
 
-    async canUnclaimForm({ commit }, formId) {
+    async loadCanUnclaimForm({ commit }, formId) {
       let response = await ProcessAPI.canUnclaimForm(formId);
-      return response.data.allowed;
+      commit('setCanUnclaimForm', response.data.allowed);
     },
 
-    async canSubmitForm({ commit }, formId) {
+    async loadCanSubmitForm({ commit }, formId) {
       let response = await ProcessAPI.canSubmitForm(formId);
-      return response.data.allowed;
+      commit('setCanSubmitForm', response.data.allowed);
     },
 
-    async canReleaseForm({ commit }, { formId, username }) {
+    async loadCanReleaseForm({ commit }, { formId, username }) {
       let response = await ProcessAPI.canReleaseForm(formId, username);
-      return response.data.allowed;
+      commit('setCanReleaseForm', response.data.allowed);
     }
   },
 
   mutations: {
     setDefinitions(state, definitions) {
       state.definitions = definitions;
+    },
+
+    setCanEditForm(state, allowed) {
+      state.canEditForm = allowed;
+    },
+
+    setCanClaimForm(state, allowed) {
+      state.canClaimForm = allowed;
+    },
+
+    setCanUnclaimForm(state, allowed) {
+      state.canUnclaimForm = allowed;
+    },
+
+    setCanSubmitForm(state, allowed) {
+      state.canSubmitForm = allowed;
+    },
+
+    setCanReleaseForm(state, allowed) {
+      state.canReleaseForm = allowed;
     },
 
     setViewing(state, viewing) {

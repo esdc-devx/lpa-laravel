@@ -21,7 +21,7 @@
               }}
               <el-button-wrap
                 v-if="viewingFormInfo.current_editor && hasRole('admin')"
-                :disabled="!rights.canReleaseForm"
+                :disabled="!canReleaseForm"
                 @click.native="onReleaseForm"
                 :tooltip="trans('components.tooltip.release_form')"
                 class="release-form"
@@ -99,7 +99,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -111,7 +111,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
   import HttpStatusCodes from '@axios/http-status-codes';
@@ -129,6 +129,46 @@
   import ProcessAPI from '@api/processes';
 
   let namespace = 'projects';
+
+  const loadData = async ({ to, hasToLoadEntity = true }) => {
+    let { projectId, processId, formId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    if (hasToLoadEntity) {
+      requests.push(store.dispatch('projects/loadProject', projectId));
+    }
+    requests.push(
+      store.dispatch('processes/loadInstance', processId),
+      store.dispatch('processes/loadInstanceForm', formId),
+      store.dispatch('processes/loadCanEditForm', formId),
+      store.dispatch('processes/loadCanClaimForm', formId),
+      store.dispatch('processes/loadCanUnclaimForm', formId)
+    );
+
+    // Exception handled by interceptor
+    await axios.all(requests).then(() => {
+      let currentEditor = store.state.processes.viewingFormInfo.current_editor;
+      let currentEditorUsername = !_.isEmpty(currentEditor) ?
+                                store.state.processes.viewingFormInfo.current_editor.username : null;
+
+      let requests = [];
+      requests.push(
+        store.dispatch('processes/loadCanReleaseForm', {
+          formId: formId,
+          username: currentEditorUsername
+        })
+      );
+
+      if (store.getters['users/isCurrentUser'](currentEditor)) {
+        requests.push(store.dispatch('processes/loadCanSubmitForm', formId));
+      }
+
+      axios.all(requests);
+    });
+  };
 
   export default {
     name: 'project-process-form',
@@ -155,18 +195,19 @@
         activeIndex: '0',
         tabsLength: 0,
         formComponent: '',
-        rights: {
-          canEdit: false,
-          canClaim: false,
-          canUnclaim: false,
-          canSubmit: false,
-          canReleaseForm: false
-        },
         isFormSubmitted: false
       }
     },
 
     computed: {
+      ...mapState('processes', [
+        'canEditForm',
+        'canClaimForm',
+        'canUnclaimForm',
+        'canSubmitForm',
+        'canReleaseForm'
+      ]),
+
       ...mapGetters({
         viewingProcess: 'processes/viewing',
         viewingFormInfo: 'processes/viewingFormInfo'
@@ -180,11 +221,12 @@
         // update the value server side
         async set(val) {
           // claiming
+          // @fixme: should reload permissions (or at least canRelease)
           if (val) {
             try {
-              await this.claimForm(this.$route.params.formId);
+              await this.claimForm(this.formId);
               if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-                this.rights.canSubmit = await this.canSubmitForm(this.$route.params.formId);
+                await this.loadCanSubmitForm(this.formId);
               }
             } catch (e) {
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
@@ -249,14 +291,14 @@
         loadProcessInstanceForm: 'processes/loadInstanceForm',
         claimForm: 'processes/claimForm',
         unclaimForm: 'processes/unclaimForm',
-        canEditForm: 'processes/canEditForm',
-        canClaimForm: 'processes/canClaimForm',
-        canUnclaimForm: 'processes/canUnclaimForm',
-        canSubmitForm: 'processes/canSubmitForm',
-        canReleaseForm: 'processes/canReleaseForm',
         saveForm: 'processes/saveForm',
         submitForm: 'processes/submitForm',
-        releaseForm: 'processes/releaseForm'
+        releaseForm: 'processes/releaseForm',
+        loadCanEditForm: 'processes/loadCanEditForm',
+        loadCanClaimForm: 'processes/loadCanClaimForm',
+        loadCanUnclaimForm: 'processes/loadCanUnclaimForm',
+        loadCanSubmitForm: 'processes/loadCanSubmitForm',
+        loadCanReleaseForm: 'processes/loadCanReleaseForm'
       }),
 
       prevTabIndex() {
@@ -304,7 +346,7 @@
             // No need to unclaim the form if it was submitted
             // since the backend will automatically unclaim it.
             if (!this.isFormSubmitted && shouldUnclaim) {
-              await this.unclaimForm(this.$route.params.formId);
+              await this.unclaimForm(this.formId);
             }
 
             if (formWasDirty) {
@@ -334,14 +376,14 @@
       },
 
       getCurrentEditorUsername() {
-        return this.viewingFormInfo.current_editor ? this.viewingFormInfo.current_editor.username : null;
+        return !_.isEmpty(this.viewingFormInfo.current_editor) ? this.viewingFormInfo.current_editor.username : null;
       },
 
       onReleaseForm() {
         this.confirmReleaseForm().then(async () => {
           try {
             await this.releaseForm({
-              formId: this.$route.params.formId,
+              formId: this.formId,
               username: this.getCurrentEditorUsername()
             });
             this.notifySuccess({
@@ -362,7 +404,7 @@
       async onSave() {
         this.isSaving = true;
         try {
-          await this.saveForm({ formId: this.$route.params.formId, form: this.formData });
+          await this.saveForm({ formId: this.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           // reset the fields states
           // so that we get a pristine form with the new values
@@ -376,6 +418,7 @@
           });
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            // @fixme: reload info (loadData)
             this.discardChanges(true);
             this.loadPermissions();
             this.isSaving = false;
@@ -392,10 +435,11 @@
       },
 
       async refreshData() {
+        // @fixme: reload info (loadData)
         this.loadPermissions();
         let formWasDirty = this.isFormDirty;
         let oldUpdatedDate = this.viewingFormInfo.updated_at;
-        await this.loadProcessInstanceForm(this.$route.params.formId);
+        await this.loadProcessInstanceForm(this.formId);
 
         // deep copy so that we don't alter the store's data
         this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
@@ -427,7 +471,7 @@
 
       async triggerSubmitForm() {
         try {
-          await this.submitForm({ formId: this.$route.params.formId, form: this.formData });
+          await this.submitForm({ formId: this.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           this.notifySuccess({
             message: this.trans('components.notice.message.form_submitted')
@@ -438,6 +482,7 @@
           this.goToParentPage();
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            // @fixme: reload info (loadData)
             this.discardChanges(true);
             this.loadPermissions();
           } else {
@@ -446,25 +491,7 @@
         }
       },
 
-      async loadData(isInitialLoad = true) {
-        if (isInitialLoad) {
-          // deep copy so that we don't alter the store's data
-          this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
-          this.formComponent = this.viewingFormInfo.definition.name_key;
-          this.setupStage();
-        } else {
-          let requests = [];
-          requests.push(
-            this.loadProject(this.$route.params.projectId),
-            this.loadProcessInstance(this.$route.params.processId),
-            this.loadProcessInstanceForm(this.$route.params.formId)
-          );
-          // Exception handled by interceptor
-          axios.all(requests);
-        }
-      },
-
-      setupStage() {
+      setupTabPanes() {
         this.$nextTick(() => {
           // we need to wait until the dom is ready
           // so that we have access to the tabs panes
@@ -475,30 +502,23 @@
         });
       },
 
-      async loadPermissions() {
+      // @removeme: this should not exist
+      // as the logic to loadpermissions is done in the loadData
+      loadPermissions() {
         let requests = [];
         requests.push(
-          this.canEditForm(this.$route.params.formId),
-          this.canClaimForm(this.$route.params.formId),
-          this.canUnclaimForm(this.$route.params.formId),
-          this.canReleaseForm({
-            formId: this.$route.params.formId,
+          this.loadCanEditForm(this.formId),
+          this.loadCanClaimForm(this.formId),
+          this.loadCanUnclaimForm(this.formId),
+          this.loadCanReleaseForm({
+            formId: this.formId,
             username: this.getCurrentEditorUsername()
           })
         );
         if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-          requests.push(this.canSubmitForm(this.$route.params.formId));
+          requests.push(this.loadCanSubmitForm(this.formId));
         }
-        axios.all(requests)
-          .then(axios.spread((canEditForm, canClaimForm, canUnclaimForm, canReleaseForm, canSubmitForm) => {
-            this.rights.canEdit = canEditForm;
-            this.rights.canClaim = canClaimForm;
-            this.rights.canUnclaim = canUnclaimForm;
-            this.rights.canRelease = canReleaseForm;
-            if (!_.isUndefined(canSubmitForm)) {
-              this.rights.canSubmit = canSubmitForm;
-            }
-          }));
+        axios.all(requests);
       },
 
       beforeLogout(callback) {
@@ -511,19 +531,7 @@
 
     beforeRouteEnter(to, from, next) {
       // Exception handled by interceptor
-      axios.all([
-        store.dispatch('projects/loadProject', to.params.projectId),
-        store.dispatch('processes/loadInstance', to.params.processId),
-        store.dispatch('processes/loadInstanceForm', to.params.formId)
-      ]).then(() => {
-        next(async vm => {
-          // deep copy so that we don't alter the store's data
-          vm.formData = _.cloneDeep(vm.viewingFormInfo.form_data);
-          vm.formComponent = vm.viewingFormInfo.definition.name_key;
-          vm.setupStage();
-          await vm.loadPermissions();
-        });
-      });
+      loadData({to}).then(next);
     },
 
     async beforeRouteLeave(to, from, next) {
@@ -548,6 +556,21 @@
         });
         next();
       }
+    },
+
+    beforeRouteUpdate(to, from, next) {
+      loadData({to}).then(next);
+    },
+
+    created() {
+      // store the reference to the current form id
+      this.projectId = this.$route.params.projectId;
+      this.processId = this.$route.params.processId;
+      this.formId = this.$route.params.formId;
+      // deep copy so that we don't alter the store's data
+      this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
+      this.formComponent = this.viewingFormInfo.definition.name_key;
+      this.setupTabPanes();
     }
   };
 </script>

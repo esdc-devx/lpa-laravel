@@ -133,21 +133,19 @@ export default {
       }).catch(() => false);
     },
 
-    async loadPermissions() {
+    loadPermissions() {
       axios.all([
         this.canEditLearningProduct(this.learningProduct.id),
         this.canDeleteLearningProduct(this.learningProduct.id)
-      ]).then((canEdit, canDelete) => {
+      ]).then(axios.spread((canEdit, canDelete) => {
         this.rights.canEdit = canEdit;
         this.rights.canDelete = canDelete;
-      });
+      }));
     }
   },
 
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.loadPermissions();
-    });
+  created() {
+    this.loadPermissions();
   }
 };
 </script>
