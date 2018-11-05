@@ -3,6 +3,7 @@
 namespace App\Console\Commands\Application;
 
 use App\Console\BaseCommand;
+use Schema;
 
 class Install extends BaseCommand
 {
@@ -45,6 +46,8 @@ class Install extends BaseCommand
 
             // If populate option is passed, generate fake data.
             if ($this->option('populate')) {
+                // Authenticate as admin before creating any data.
+                $this->authenticate();
                 $this->call('db:populate');
             }
 
