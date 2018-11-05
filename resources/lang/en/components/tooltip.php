@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'delete_learning_product' => 'Delete Learning Product',
-    'delete_project'          => 'Delete Project',
-    'edit_learning_product'   => 'Edit Learning Product',
-    'edit_project'            => 'Edit Project',
-    'release_form'            => 'Release Form',
+    'delete_learning_product' => 'Delete the learning product',
+    'delete_project'          => 'Delete the project',
+    'edit_learning_product'   => 'Edit the learning product',
+    'edit_project'            => 'Edit the project',
+    'release_form'            => 'Release the form',
 ];
