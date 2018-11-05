@@ -6,8 +6,17 @@ use App\Models\LocalizableModel;
 
 class ProcessStep extends LocalizableModel
 {
-    protected $hidden = ['id', 'process_definition_id'];
-    protected $localizable = ['name'];
+    protected $fillable = [
+        'name_key',
+        'name_en',
+        'name_fr',
+        'process_definition_id',
+        'display_sequence',
+    ];
+
+    protected $localizable = [
+        'name',
+    ];
 
     public $timestamps = false;
 

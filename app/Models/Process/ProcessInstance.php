@@ -11,7 +11,21 @@ class ProcessInstance extends BaseModel
 {
     use SoftDeletes, UsesUserAudit;
 
-    protected $hidden = ['process_definition_id', 'state_id', 'engine_auth_token'];
+    protected $fillable = [
+        'process_definition_id',
+        'entity_type',
+        'entity_id',
+        'engine_process_instance_id',
+        'engine_auth_token',
+        'entity_previous_state_id',
+        'state_id',
+        'created_by',
+        'updated_by',
+    ];
+
+    protected $hidden = [
+        'engine_auth_token',
+    ];
 
     public function entity()
     {
@@ -38,7 +52,8 @@ class ProcessInstance extends BaseModel
         return $this->with([
             'definition', 'state', 'createdBy', 'updatedBy',
             'steps', 'steps.definition', 'steps.state',
-            'steps.forms.definition', 'steps.forms.state', 'steps.forms.organizationalUnit', 'steps.forms.currentEditor', 'steps.forms.createdBy', 'steps.forms.updatedBy'
+            'steps.forms.definition', 'steps.forms.state', 'steps.forms.organizationalUnit',
+            'steps.forms.currentEditor', 'steps.forms.createdBy', 'steps.forms.updatedBy',
         ]);
     }
 }

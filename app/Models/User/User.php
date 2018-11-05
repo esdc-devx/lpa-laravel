@@ -7,8 +7,8 @@ use App\Models\BaseModel;
 use App\Models\OrganizationalUnit;
 use App\Models\Project\Project;
 use Illuminate\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
@@ -20,49 +20,35 @@ class User extends BaseModel implements
 {
     use Notifiable, HasLdapUser, HasApiTokens, SoftDeletes, Authenticatable, Authorizable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     protected $fillable = [
-       'username', 'first_name', 'last_name', 'email', 'password'
+       'username',
+       'first_name',
+       'last_name',
+       'email',
+       'password',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
+    protected $dates = [
+        'deleted_at',
+    ];
 
-    /**
-     * The attributes that are added to the model through getters.
-     *
-     * @var array
-     */
-    protected $appends = ['deleted', 'name'];
+    protected $appends = [
+        'deleted',
+        'name',
+    ];
 
-    /**
-     * The events that are dispatched by the model.
-     *
-     * @var array
-     */
     protected $dispatchesEvents = [
-        'created' => \App\Events\UserCreated::class
+        'created' => \App\Events\UserCreated::class,
     ];
 
     protected $relationships = [
-        'organizationalUnits', 'roles',
+        'organizationalUnits',
+        'roles',
     ];
 
     public function getNameAttribute()

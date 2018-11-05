@@ -7,7 +7,14 @@ use App\Models\Process\ProcessFormDecision;
 
 class ProcessInstanceFormAssessment extends BaseModel
 {
-    protected $hidden = ['entity_type', 'entity_id'];
+    protected $fillable = [
+        'process_instance_form_id',
+        'entity_type',
+        'entity_id',
+        'assessed_process_form',
+        'process_form_decision_id',
+        'comments',
+    ];
 
     public $timestamps = false;
 

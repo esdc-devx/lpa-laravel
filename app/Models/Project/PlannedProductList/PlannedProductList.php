@@ -6,9 +6,14 @@ use App\Models\Process\ProcessInstanceFormDataModel;
 
 class PlannedProductList extends ProcessInstanceFormDataModel
 {
-    protected $fillable = ['process_instance_form_id', 'comments'];
+    protected $fillable = [
+        'process_instance_form_id',
+        'comments',
+    ];
 
-    public $relationships = ['plannedProducts'];
+    public $relationships = [
+        'plannedProducts',
+    ];
 
     public function plannedProducts()
     {

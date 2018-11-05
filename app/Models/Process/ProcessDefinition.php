@@ -9,8 +9,16 @@ class ProcessDefinition extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $hidden = ['id'];
-    protected $localizable = ['name'];
+    protected $fillable = [
+        'entity_type',
+        'name_key',
+        'name_en',
+        'name_fr',
+    ];
+
+    protected $localizable = [
+        'name',
+    ];
 
     public $timestamps = false;
 
