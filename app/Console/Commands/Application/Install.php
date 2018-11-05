@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Application;
 
 use App\Console\BaseCommand;
-use Schema;
 
 class Install extends BaseCommand
 {
