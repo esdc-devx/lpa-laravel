@@ -137,22 +137,21 @@
     // in which we don't have access to the this context yet
 
     let requests = [];
-    if (hasToLoadEntity) {
-      requests.push(store.dispatch('projects/loadProject', projectId));
-    }
     requests.push(
+      store.dispatch('projects/loadProject', projectId),
       store.dispatch('processes/loadInstance', processId),
-      store.dispatch('processes/loadInstanceForm', formId),
       store.dispatch('processes/loadCanEditForm', formId),
       store.dispatch('processes/loadCanClaimForm', formId),
       store.dispatch('processes/loadCanUnclaimForm', formId)
     );
+    if (hasToLoadEntity) {
+      requests.push(store.dispatch('processes/loadInstanceForm', formId));
+    }
 
     // Exception handled by interceptor
     await axios.all(requests).then(() => {
       let currentEditor = store.state.processes.viewingFormInfo.current_editor;
-      let currentEditorUsername = !_.isEmpty(currentEditor) ?
-                                store.state.processes.viewingFormInfo.current_editor.username : null;
+      let currentEditorUsername = !_.isEmpty(currentEditor) ? currentEditor.username : null;
 
       let requests = [];
       requests.push(
@@ -559,7 +558,10 @@
     },
 
     beforeRouteUpdate(to, from, next) {
-      loadData({to}).then(next);
+      loadData({
+        to,
+        hasToLoadEntity: false
+      }).then(next);
     },
 
     created() {
