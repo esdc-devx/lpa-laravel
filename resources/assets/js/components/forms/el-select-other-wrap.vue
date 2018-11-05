@@ -196,6 +196,9 @@
 <style lang="scss">
   .el-select-other-wrap {
     display: flex;
+    .el-select {
+      width: 300px;
+    }
     .el-input-other-wrap {
       flex: 1;
       display: flex;

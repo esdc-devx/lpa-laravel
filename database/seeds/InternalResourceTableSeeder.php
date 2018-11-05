@@ -21,8 +21,8 @@ class InternalResourceTableSeeder extends Seeder
                 'name_fr' => 'Communications et gestion Web',
             ],
             [
-                'name_en' => 'GC Campus',
-                'name_fr' => 'GC Campus',
+                'name_en' => 'GCcampus',
+                'name_fr' => 'GCcampus',
             ],
             [
                 'name_en' => 'Learning Solutions',

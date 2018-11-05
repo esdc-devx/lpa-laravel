@@ -83,7 +83,7 @@
 
 <style lang="scss">
   .el-select {
-    width: 300px;
+    width: 100%;
     // make sure the select tags do not overflow
     .el-select__tags-text {
       max-width: 225px;

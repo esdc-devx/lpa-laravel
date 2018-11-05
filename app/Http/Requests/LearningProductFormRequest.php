@@ -42,7 +42,7 @@ class LearningProductFormRequest extends FormRequest
             case 'POST':
                 return [
                     'project_id'             => 'required|integer',
-                    'name'                   => 'required|max:175|unique:learning_products,name',
+                    'name'                   => "required|max:175|unique:learning_products,name,{$this->learningProduct},id,deleted_at,NULL",
                     'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
                     'type_id'                => 'required|integer',
                     'sub_type_id'            => 'required|integer',
@@ -53,7 +53,7 @@ class LearningProductFormRequest extends FormRequest
             // Update validation rules.
             case 'PUT':
                 return [
-                    'name'                   => 'required|max:175|unique:learning_products,name,' . $this->learningProduct,
+                    'name'                   => "required|max:175|unique:learning_products,name,{$this->learningProduct},id,deleted_at,NULL",
                     'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
                     'primary_contact'        => 'required|string',
                     'manager'                => 'required|string',

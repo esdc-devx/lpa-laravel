@@ -16,7 +16,7 @@ class CreateLearningProductsTable extends Migration
         Schema::create('learning_products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('entity_type');
-            $table->string('name')->unique();
+            $table->string('name');
             $table->unsignedInteger('type_id')->nullable();
             $table->unsignedInteger('sub_type_id')->nullable();
             $table->unsignedInteger('organizational_unit_id')->nullable();
