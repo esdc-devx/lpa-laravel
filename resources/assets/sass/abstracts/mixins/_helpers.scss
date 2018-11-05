@@ -1,0 +1,203 @@
+@import '../functions';
+
+/**
+ * Shorthand to hide text
+ */
+@mixin hide-text() {
+  text-indent: -9999px;
+}
+
+/**
+ * Shorthand to apply width and height on a selector
+ * @param  {Unit size} $width
+ * @param  {Unit size} $height: $width
+ */
+@mixin size($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+/**
+ * Shorthand to apply min-width and min-height on a selector
+ * @param  {Unit size} $min-width
+ * @param  {Unit size} $min-height: $min-width
+ */
+@mixin min-size($min-width, $min-height: $min-width) {
+  @if type-of($min-width) != number {
+    @error '`#{$min-width}` is not a number for `min-size`';
+  }
+  min-width: $min-width;
+  min-height: $min-height;
+}
+
+/**
+ * Shorthand mixin to apply a spritesheet
+ * NOTE: $url param can be replaced by $important param for shorter syntax
+ * @param  {Unit size}    $x:         0px
+ * @param  {Unit size}    $y:         0px
+ * @param  {String}       $url:       $spritesheet-url
+ * @param  {Boolean}      $important: null
+ */
+@mixin spritesheet($x: 0px, $y: 0px, $url: $spritesheet-url, $important: null) {
+  @if type-of($x) != number {
+    @error '`#{$x}` is not a number for `spritesheet`';
+  }
+  @if type-of($y) != number {
+    @error '`#{$y}` is not a number for `spritesheet`';
+  }
+  // keep trace of the default in case it is overriden by the !important shorthand
+  $url-default: $spritesheet-url;
+
+  // check if we recieved a bool for $url param
+  // if so, we are specifying important instead
+  // spritesheet(x, y, important)  {shorthand}
+  @if type-of($url) == bool {
+    $important: $url;
+    $url: $url-default;
+  }
+  @if $important {
+    $important: !important;
+  }
+
+  background: url($url) no-repeat $x $y $important;
+}
+
+/**
+ * Shorthand to vertical align center an element
+ * @param  {Unit Size} $type: relative
+ */
+@mixin vertical-center($type: relative) {
+  @if $type == relative or $type == absolute {
+    transform: translateY(-50%);
+    position: $type;
+    top: 50%;
+  } @else if $type == flex {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    // Note: A height is needed so that the element(s)
+    // are correctly aligned for IE10 & IE11
+    // See bug:
+    // https://connect.microsoft.com/IE/feedback/details/802625/min-height-and-flexbox-flex-direction-column-dont-work-together-in-ie-10-11-preview
+  } @else if $type == inline-block {
+    display: $type;
+    vertical-align: middle;
+  }
+}
+
+/**
+ * Shorthand to horizontal align center an element
+ * @param  {Unit Size} $type: relative
+ */
+@mixin horizontal-center($type: relative) {
+  @if $type == relative or $type == absolute {
+    transform: translateX(-50%);
+    position: $type;
+    left: 50%;
+  }
+}
+
+/**
+ * Shorthand to horizontal and vertical align center an element
+ * @param  {Unit Size} $type: absolute
+ */
+@mixin dead-center($type: absolute) {
+  @if $type == relative or $type == absolute {
+    transform: translate(-50%, -50%);
+    position: $type;
+    top: 50%;
+    left: 50%;
+  } @else if $type == flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // Note: A height is needed so that the element(s)
+    // are correctly aligned for IE10 & IE11
+    // See bug:
+    // https://connect.microsoft.com/IE/feedback/details/802625/min-height-and-flexbox-flex-direction-column-dont-work-together-in-ie-10-11-preview
+  }
+}
+
+/**
+ * Shorthand to create up-down arrows entirely colored
+ * @param  {Color}           $color:   $--color-primary
+ * @param  {Unit size}       $border-width:   5px
+ * @param  {Unit size}       $border-height:  6px
+ */
+@mixin up-down-arrows($color: $--color-primary, $border-width: 5px, $border-height: 6px) {
+  // base arrow
+  &:before,
+  &:after {
+    @include size(0);
+    content: '';
+    position: absolute;
+  }
+  // ^ arrow
+  &:before {
+    transform: translateY(calc(50% - #{$border-width}));
+    // IE11 doesn't interprete calc in translations...
+    -ms-transform: translateY(50%) translateY(-#{$border-width});
+    top: calc(50% - #{$border-height});
+    @include triangle($color, up, $border-width, $border-height);
+  }
+  // v arrow
+  &:after {
+    transform: translateY(calc(-50% + #{$border-width}));
+    // IE11 doesn't interprete calc in translations...
+    -ms-transform: translateY(-50%) translateY(#{$border-width});
+    bottom: calc(50% - #{$border-height});
+    @include triangle($color, down, $border-width, $border-height);
+  }
+}
+
+/**
+ * Used in order to determine styling for x number or between x to x number of items
+ * ol li {
+ *   @include quantity-query(from 3)     { // styling if the list has 3 or more items }
+ *   @include quantity-query(to 5)       { // styling if the list has 5 or less items }
+ *   @include quantity-query(from 3 to 5){ // styling if the list has between 3 and 5 items }
+ * }
+ * @param {Custom} $query: possible values are: from #, to #, from # to #
+ */
+@mixin quantity-query($query){
+  // find to and from index in query
+  $at-least: index($query,from);
+  $at-most : index($query,to);
+
+  // loop through selectors to find the last selector of each part
+  // the "alphabet" loop is just a simple way to listify selectors
+  // (if the selector has more than 26 parts – you're on your own)
+  @each $selector in & {
+    $list:();
+    @each $a, $b, $c, $d, $e, $f, $g, $h, $i, $j, $k, $l, $m, $n, $o, $p, $q, $r, $s, $t, $u, $v, $w, $x, $y, $z in $selector {
+      $list:append($list, $a $b $c $d $e $f $g $h $i $j $k $l $m $n $o $p $q $r $s $t $u $v $w $x $y $z);
+    }
+    $last: nth($list, length($list));
+
+    // print nth selectors
+    @if $at-least and $at-most {
+      $min: nth($query, min($at-least, $at-most)+1);
+      $max: nth($query, max($at-least, $at-most)+1);
+      &:nth-last-child(n+#{$min}):nth-last-child(-n+#{$max}):first-child,
+      &:nth-last-child(n+#{$min}):nth-last-child(-n+#{$max}):first-child ~ #{$last} { @content; }
+    } @else if $at-least {
+      $min: nth($query, $at-least+1);
+      &:nth-last-child(n+#{$min}),
+      &:nth-last-child(n+#{$min}) ~ #{$last} { @content; }
+    } @else if $at-most {
+      $max: nth($query, $at-most+1);
+      &:nth-last-child(-n+#{$max}):first-child,
+      &:nth-last-child(-n+#{$max}):first-child ~ #{$last} { @content; }
+    }
+  }
+}
+
+/**
+ * Shorthand to apply background-image from svg name
+ * @param  {String} $name
+ * @param  {Color}  $color: $--color-primary
+ */
+@mixin svg($name, $color: $--color-primary) {
+  $svg: get-svg($name, $color);
+  background: url($svg) center no-repeat;
+}

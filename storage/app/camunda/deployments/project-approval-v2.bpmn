@@ -1,0 +1,581 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0">
+  <bpmn:collaboration id="Collaboration_09lvwpz">
+    <bpmn:participant id="Participant_0og4gm5" name="Project Approval" processRef="project-approval" />
+  </bpmn:collaboration>
+  <bpmn:process id="project-approval" name="Project Approval" isExecutable="true" camunda:historyTimeToLive="30">
+    <bpmn:laneSet>
+      <bpmn:lane id="Lane_19kf457" name="Curriculum Management">
+        <bpmn:flowNodeRef>EndEvent_0geci4e</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>assess-gate-one-approval</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_03icrnh</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_0n8dmcs</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_10vio88</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_08o842s</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_16do5bj</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_1yyy271</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_1v0mvhh" name="Learning Product Owner">
+        <bpmn:flowNodeRef>StartEvent_1qmhyoy</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>prepare-business-case</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>prepare-planned-product-list</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_0qosetf</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>correct-planned-product-list</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_1kns0jx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_0bg1r6e</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>correct-business-case</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>IntermediateThrowEvent_1wie0va</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="SequenceFlow_1lmya5m" sourceRef="prepare-business-case" targetRef="prepare-planned-product-list" />
+    <bpmn:startEvent id="StartEvent_1qmhyoy" name="New">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript"><![CDATA[// Define constants.
+
+// Entity States
+execution.setVariable("STATE_ENTITY_NEW", "new");
+execution.setVariable("STATE_ENTITY_APPROVED", "approved");
+execution.setVariable("STATE_ENTITY_CANCELLED", "cancelled");
+
+// Process States
+execution.setVariable("STATE_PROCESS_INSTANCE_RUNNING", "running");
+execution.setVariable("STATE_PROCESS_INSTANCE_COMPLETED", "completed");
+
+// Step States
+execution.setVariable("STATE_STEP_LOCKED", "locked");
+execution.setVariable("STATE_STEP_UNLOCKED", "unlocked");
+execution.setVariable("STATE_STEP_COMPLETED", "completed");
+
+// Form States
+execution.setVariable("STATE_FORM_LOCKED", "locked");  
+execution.setVariable("STATE_FORM_UNLOCKED", "unlocked");  
+execution.setVariable("STATE_FORM_SUBMITTED", "submitted");  
+execution.setVariable("STATE_FORM_REJECTED", "rejected");  
+execution.setVariable("STATE_FORM_COMPLETED", "completed");  
+
+// Form Decisions
+execution.setVariable("DECISION_FORM_APPROVED", "approved");  
+execution.setVariable("DECISION_FORM_REJECTED", "rejected");  
+execution.setVariable("DECISION_FORM_NONE", "none");
+
+
+// Set process variables.
+
+// Process States
+execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_RUNNING);
+
+// Step States
+execution.setVariable("stateStepGateOneApproval", STATE_STEP_UNLOCKED);
+
+// Form States
+execution.setVariable("stateFormBusinessCase", STATE_FORM_UNLOCKED);
+execution.setVariable("stateFormPlannedProductList", STATE_FORM_LOCKED);
+execution.setVariable("stateFormGateOneApproval", STATE_FORM_LOCKED);
+
+// Decisions
+execution.setVariable("decisionFormBusinessCase", DECISION_FORM_NONE);
+execution.setVariable("decisionFormPlannedProductList", DECISION_FORM_NONE);]]></camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1dygwdg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1dygwdg" sourceRef="StartEvent_1qmhyoy" targetRef="prepare-business-case" />
+    <bpmn:userTask id="prepare-business-case" name="Prepare Business Case " camunda:formKey="business-case" camunda:candidateGroups="${owner}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[// Form States
+task.execution.setVariable("stateFormBusinessCase", STATE_FORM_SUBMITTED);
+task.execution.setVariable("stateFormPlannedProductList", STATE_FORM_UNLOCKED);
+]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1dygwdg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1lmya5m</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="prepare-planned-product-list" name="Prepare Planned Product List" camunda:formKey="planned-product-list" camunda:candidateGroups="${owner}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[// Form States
+task.execution.setVariable("stateFormPlannedProductList", STATE_FORM_SUBMITTED);
+task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_UNLOCKED);
+]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1lmya5m</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ergn66</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1ergn66" sourceRef="prepare-planned-product-list" targetRef="IntermediateThrowEvent_1wie0va" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qvbw3z" sourceRef="IntermediateThrowEvent_1wie0va" targetRef="assess-gate-one-approval" />
+    <bpmn:sequenceFlow id="SequenceFlow_13ek50h" name="Yes" sourceRef="ExclusiveGateway_03icrnh" targetRef="IntermediateThrowEvent_1yyy271">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_07jx9n1" sourceRef="ExclusiveGateway_0qosetf" targetRef="IntermediateThrowEvent_1wie0va" />
+    <bpmn:endEvent id="EndEvent_0geci4e" name="Cancelled">
+      <bpmn:incoming>SequenceFlow_0kx4lyd</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kx4lyd" sourceRef="IntermediateThrowEvent_1yyy271" targetRef="EndEvent_0geci4e" />
+    <bpmn:userTask id="assess-gate-one-approval" name="Gate 1 Approval" camunda:formKey="gate-one-approval" camunda:candidateGroups="curriculum-management">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[if (isEntityCancelled) {
+
+   task.execution.setVariable("stateEntity", STATE_ENTITY_CANCELLED);
+   task.execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_COMPLETED);
+   task.execution.setVariable("stateStepGateOneApproval", STATE_STEP_COMPLETED);
+   task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_COMPLETED);
+
+} else {
+
+   switch (decisionFormBusinessCase) {
+      case DECISION_FORM_APPROVED:
+         task.execution.setVariable("stateFormBusinessCase", STATE_FORM_COMPLETED);
+         break;
+      case DECISION_FORM_REJECTED:
+         task.execution.setVariable("stateFormBusinessCase",  STATE_FORM_REJECTED);
+         break;
+      default:
+         throw new Error('Unexpected value for the "decisionFormBusinessCase" variable: "'+decisionFormBusinessCase+'".');
+   }
+
+   switch (decisionFormPlannedProductList) {
+      case DECISION_FORM_APPROVED:
+         task.execution.setVariable("stateFormPlannedProductList", STATE_FORM_COMPLETED);
+         break;
+      case DECISION_FORM_REJECTED:
+         task.execution.setVariable("stateFormPlannedProductList",  STATE_FORM_REJECTED);
+         break;
+      default:
+         throw new Error('Unexpected value for the "decisionFormPlannedProductList" variable: "'+decisionFormPlannedProductList+'".');
+   }
+
+   if (decisionFormBusinessCase == DECISION_FORM_APPROVED && decisionFormPlannedProductList == DECISION_FORM_APPROVED) {
+
+      task.execution.setVariable("stateEntity", STATE_ENTITY_APPROVED);
+      task.execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_COMPLETED);
+      task.execution.setVariable("stateStepGateOneApproval", STATE_STEP_COMPLETED);
+      task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_COMPLETED);
+
+   } else {
+
+      task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_LOCKED);
+
+   }
+}]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0qvbw3z</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_03mdjz5</bpmn:outgoing>
+      <bpmn:property id="Property_0g31cpv" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_1y913yv">
+        <bpmn:sourceRef>DataObjectReference_01qhcqc</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0g31cpv</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+      <bpmn:dataInputAssociation id="DataInputAssociation_1oshmcp">
+        <bpmn:sourceRef>DataObjectReference_1re9a8i</bpmn:sourceRef>
+        <bpmn:targetRef>Property_0g31cpv</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_03icrnh" name="Is Project Cancelled?">
+      <bpmn:incoming>SequenceFlow_03mdjz5</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_13ek50h</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_091vawx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_0n8dmcs" name="Approved">
+      <bpmn:incoming>SequenceFlow_1loh69n</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_03mdjz5" sourceRef="assess-gate-one-approval" targetRef="ExclusiveGateway_03icrnh" />
+    <bpmn:sequenceFlow id="SequenceFlow_091vawx" name="No" sourceRef="ExclusiveGateway_03icrnh" targetRef="ExclusiveGateway_08o842s">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_1loh69n" sourceRef="IntermediateThrowEvent_16do5bj" targetRef="EndEvent_0n8dmcs" />
+    <bpmn:inclusiveGateway id="ExclusiveGateway_0qosetf">
+      <bpmn:incoming>SequenceFlow_1dwhsl5</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_085y3z7</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_07jx9n1</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:inclusiveGateway id="ExclusiveGateway_10vio88">
+      <bpmn:incoming>SequenceFlow_0kmljls</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0riori8</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_19wcved</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_08o842s" name="Are Business Case and Planned Product List Approved?">
+      <bpmn:incoming>SequenceFlow_091vawx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_19ti0wn</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0kmljls</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="correct-planned-product-list" name="Correct Planned Product List" camunda:formKey="planned-product-list" camunda:candidateGroups="${owner}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[task.execution.setVariable("stateFormPlannedProductList", STATE_FORM_SUBMITTED);
+
+if (stateFormBusinessCase == STATE_FORM_SUBMITTED || stateFormBusinessCase == STATE_FORM_COMPLETED) {
+   task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_UNLOCKED);
+}]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0zlpm1b</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dwhsl5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1kns0jx" name="Business Case Requires Adjustments">
+      <bpmn:incoming>SequenceFlow_0riori8</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1h268hs</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0bg1r6e" name="Planned Product List Requires Adjustments">
+      <bpmn:incoming>SequenceFlow_19wcved</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0zlpm1b</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:userTask id="correct-business-case" name="Correct Business Case" camunda:formKey="business-case" camunda:candidateGroups="${owner}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="complete">
+          <camunda:script scriptFormat="javascript"><![CDATA[task.execution.setVariable("stateFormBusinessCase", STATE_FORM_SUBMITTED);
+
+if (stateFormPlannedProductList == STATE_FORM_SUBMITTED || stateFormPlannedProductList == STATE_FORM_COMPLETED) {
+   task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_UNLOCKED);
+}]]></camunda:script>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1h268hs</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_085y3z7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="SequenceFlow_085y3z7" sourceRef="correct-business-case" targetRef="ExclusiveGateway_0qosetf" />
+    <bpmn:sequenceFlow id="SequenceFlow_1dwhsl5" sourceRef="correct-planned-product-list" targetRef="ExclusiveGateway_0qosetf" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kmljls" name="No" sourceRef="ExclusiveGateway_08o842s" targetRef="ExclusiveGateway_10vio88">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormBusinessCase == DECISION_FORM_REJECTED || decisionFormPlannedProductList == DECISION_FORM_REJECTED}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_19wcved" name="Is Planned Pruduct List Require Adjustments?" sourceRef="ExclusiveGateway_10vio88" targetRef="IntermediateThrowEvent_0bg1r6e">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormPlannedProductList == DECISION_FORM_REJECTED}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0riori8" name="Is Business Case Require Adjustments?" sourceRef="ExclusiveGateway_10vio88" targetRef="IntermediateThrowEvent_1kns0jx">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decisionFormBusinessCase == DECISION_FORM_REJECTED}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_19ti0wn" name="Yes" sourceRef="ExclusiveGateway_08o842s" targetRef="IntermediateThrowEvent_16do5bj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${decisionFormBusinessCase == DECISION_FORM_APPROVED && decisionFormPlannedProductList == DECISION_FORM_APPROVED}]]></bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0zlpm1b" sourceRef="IntermediateThrowEvent_0bg1r6e" targetRef="correct-planned-product-list" />
+    <bpmn:sequenceFlow id="SequenceFlow_1h268hs" sourceRef="IntermediateThrowEvent_1kns0jx" targetRef="correct-business-case" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_16do5bj" name="Project Approved">
+      <bpmn:incoming>SequenceFlow_19ti0wn</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1loh69n</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1yyy271" name="Project Cancelled">
+      <bpmn:incoming>SequenceFlow_13ek50h</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kx4lyd</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_1re9a8i" name="Planned Product List Info. Sheet" dataObjectRef="DataObject_0exiqpp" />
+    <bpmn:dataObject id="DataObject_0exiqpp" />
+    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1wie0va" name="Project Ready for Assessment">
+      <bpmn:extensionElements />
+      <bpmn:incoming>SequenceFlow_1ergn66</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_07jx9n1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qvbw3z</bpmn:outgoing>
+      <bpmn:messageEventDefinition />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_01qhcqc" name="Busines Case Info. Sheet" dataObjectRef="DataObject_0wghrk3" />
+    <bpmn:dataObject id="DataObject_0wghrk3" />
+    <bpmn:association id="Association_054gy47" sourceRef="IntermediateThrowEvent_1wie0va" targetRef="TextAnnotation_1dpxwpn" />
+    <bpmn:association id="Association_0smoe4v" sourceRef="IntermediateThrowEvent_1yyy271" targetRef="TextAnnotation_1voafcj" />
+    <bpmn:association id="Association_04klfuw" sourceRef="IntermediateThrowEvent_16do5bj" targetRef="TextAnnotation_1voafcj" />
+    <bpmn:textAnnotation id="TextAnnotation_1voafcj">    <bpmn:text>To Learning Product Owner</bpmn:text>
+</bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0epcjya">    <bpmn:text>To Learning Product Owner</bpmn:text>
+</bpmn:textAnnotation>
+    <bpmn:association id="Association_1dndxdu" sourceRef="IntermediateThrowEvent_1kns0jx" targetRef="TextAnnotation_0epcjya" />
+    <bpmn:association id="Association_0mlunmm" sourceRef="IntermediateThrowEvent_0bg1r6e" targetRef="TextAnnotation_0epcjya" />
+    <bpmn:textAnnotation id="TextAnnotation_1dpxwpn">    <bpmn:text>To Curriculum Management</bpmn:text>
+</bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_09lvwpz">
+      <bpmndi:BPMNShape id="StartEvent_1qmhyoy_di" bpmnElement="StartEvent_1qmhyoy">
+        <dc:Bounds x="188" y="983" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="195" y="1023" width="24" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_0og4gm5_di" bpmnElement="Participant_0og4gm5">
+        <dc:Bounds x="74" y="338" width="1488" height="919" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dygwdg_di" bpmnElement="SequenceFlow_1dygwdg">
+        <di:waypoint xsi:type="dc:Point" x="224" y="1001" />
+        <di:waypoint xsi:type="dc:Point" x="318" y="1001" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="226" y="980" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1lmya5m_di" bpmnElement="SequenceFlow_1lmya5m">
+        <di:waypoint xsi:type="dc:Point" x="418" y="1001" />
+        <di:waypoint xsi:type="dc:Point" x="521" y="1001" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="424.5" y="980" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="DataObjectReference_01qhcqc_di" bpmnElement="DataObjectReference_01qhcqc">
+        <dc:Bounds x="479" y="398" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="462" y="452" width="70" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DataObjectReference_1re9a8i_di" bpmnElement="DataObjectReference_1re9a8i">
+        <dc:Bounds x="632" y="398" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="608" y="452" width="85" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_19kf457_di" bpmnElement="Lane_19kf457">
+        <dc:Bounds x="104" y="338" width="1458" height="410" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_02ufgcu_di" bpmnElement="IntermediateThrowEvent_1wie0va">
+        <dc:Bounds x="553" y="847" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="581" y="879" width="80" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1v0mvhh_di" bpmnElement="Lane_1v0mvhh">
+        <dc:Bounds x="104" y="748" width="1458" height="509" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1b3w9is_di" bpmnElement="prepare-business-case">
+        <dc:Bounds x="318" y="961" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_0ut6ko4_di" bpmnElement="prepare-planned-product-list">
+        <dc:Bounds x="521" y="961" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_04pkd2v_di" bpmnElement="assess-gate-one-approval">
+        <dc:Bounds x="521" y="517" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1dpxwpn_di" bpmnElement="TextAnnotation_1dpxwpn">
+        <dc:Bounds x="406" y="844" width="106" height="42" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_054gy47_di" bpmnElement="Association_054gy47">
+        <di:waypoint xsi:type="dc:Point" x="553" y="865" />
+        <di:waypoint xsi:type="dc:Point" x="512" y="865" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ergn66_di" bpmnElement="SequenceFlow_1ergn66">
+        <di:waypoint xsi:type="dc:Point" x="571" y="961" />
+        <di:waypoint xsi:type="dc:Point" x="571" y="883" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="916" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qvbw3z_di" bpmnElement="SequenceFlow_0qvbw3z">
+        <di:waypoint xsi:type="dc:Point" x="571" y="847" />
+        <di:waypoint xsi:type="dc:Point" x="571" y="597" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="541" y="716" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_03icrnh_di" bpmnElement="ExclusiveGateway_03icrnh" isMarkerVisible="true">
+        <dc:Bounds x="808" y="532" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="804" y="585" width="57" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_03mdjz5_di" bpmnElement="SequenceFlow_03mdjz5">
+        <di:waypoint xsi:type="dc:Point" x="621" y="557" />
+        <di:waypoint xsi:type="dc:Point" x="808" y="557" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="670" y="536" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_08o842s_di" bpmnElement="ExclusiveGateway_08o842s" isMarkerVisible="true">
+        <dc:Bounds x="1026" y="532" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1008" y="476" width="85" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_13ek50h_di" bpmnElement="SequenceFlow_13ek50h">
+        <di:waypoint xsi:type="dc:Point" x="833" y="532" />
+        <di:waypoint xsi:type="dc:Point" x="833" y="423" />
+        <di:waypoint xsi:type="dc:Point" x="1235" y="423" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="855" y="523" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1pyu9mp_di" bpmnElement="EndEvent_0geci4e">
+        <dc:Bounds x="1414" y="405" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1406" y="447" width="51" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_19ti0wn_di" bpmnElement="SequenceFlow_19ti0wn">
+        <di:waypoint xsi:type="dc:Point" x="1076" y="557" />
+        <di:waypoint xsi:type="dc:Point" x="1235" y="557" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1075.1125" y="538" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_091vawx_di" bpmnElement="SequenceFlow_091vawx">
+        <di:waypoint xsi:type="dc:Point" x="858" y="557" />
+        <di:waypoint xsi:type="dc:Point" x="1026" y="557" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="859.7105263157895" y="567" width="15" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="InclusiveGateway_1hnow4c_di" bpmnElement="ExclusiveGateway_0qosetf">
+        <dc:Bounds x="1026" y="1102" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1006" y="1156" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dwhsl5_di" bpmnElement="SequenceFlow_1dwhsl5">
+        <di:waypoint xsi:type="dc:Point" x="1181" y="1041" />
+        <di:waypoint xsi:type="dc:Point" x="1181" y="1127" />
+        <di:waypoint xsi:type="dc:Point" x="1076" y="1127" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1151" y="1078" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_085y3z7_di" bpmnElement="SequenceFlow_085y3z7">
+        <di:waypoint xsi:type="dc:Point" x="921" y="1041" />
+        <di:waypoint xsi:type="dc:Point" x="921" y="1127" />
+        <di:waypoint xsi:type="dc:Point" x="1026" y="1127" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="891" y="1078" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07jx9n1_di" bpmnElement="SequenceFlow_07jx9n1">
+        <di:waypoint xsi:type="dc:Point" x="1051" y="1152" />
+        <di:waypoint xsi:type="dc:Point" x="1051" y="1192" />
+        <di:waypoint xsi:type="dc:Point" x="763" y="1192" />
+        <di:waypoint xsi:type="dc:Point" x="763" y="865" />
+        <di:waypoint xsi:type="dc:Point" x="589" y="865" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="862" y="1171" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0riori8_di" bpmnElement="SequenceFlow_0riori8">
+        <di:waypoint xsi:type="dc:Point" x="1026" y="651" />
+        <di:waypoint xsi:type="dc:Point" x="920" y="651" />
+        <di:waypoint xsi:type="dc:Point" x="920" y="847" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="942" y="655" width="88" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_19wcved_di" bpmnElement="SequenceFlow_19wcved">
+        <di:waypoint xsi:type="dc:Point" x="1076" y="651" />
+        <di:waypoint xsi:type="dc:Point" x="1179" y="651" />
+        <di:waypoint xsi:type="dc:Point" x="1179" y="847" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1094" y="655" width="69" height="48" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zlpm1b_di" bpmnElement="SequenceFlow_0zlpm1b">
+        <di:waypoint xsi:type="dc:Point" x="1179" y="883" />
+        <di:waypoint xsi:type="dc:Point" x="1180" y="961" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1134.5" y="901" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0rpnakn_di" bpmnElement="IntermediateThrowEvent_0bg1r6e">
+        <dc:Bounds x="1161" y="847" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1206" y="846" width="85" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="InclusiveGateway_1s1n0pb_di" bpmnElement="ExclusiveGateway_10vio88">
+        <dc:Bounds x="1026" y="626" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="950" y="680" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1h268hs_di" bpmnElement="SequenceFlow_1h268hs">
+        <di:waypoint xsi:type="dc:Point" x="921" y="883" />
+        <di:waypoint xsi:type="dc:Point" x="922" y="961" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="876.5" y="901" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_19o5ol1_di" bpmnElement="IntermediateThrowEvent_1kns0jx">
+        <dc:Bounds x="903" y="847" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="821" y="846" width="76" height="36" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kmljls_di" bpmnElement="SequenceFlow_0kmljls">
+        <di:waypoint xsi:type="dc:Point" x="1051" y="582" />
+        <di:waypoint xsi:type="dc:Point" x="1051" y="626" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1068" y="576" width="15" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0epcjya_di" bpmnElement="TextAnnotation_0epcjya">
+        <dc:Bounds x="1001" y="844" width="100" height="42" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1dndxdu_di" bpmnElement="Association_1dndxdu">
+        <di:waypoint xsi:type="dc:Point" x="939" y="865" />
+        <di:waypoint xsi:type="dc:Point" x="1001" y="865" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0mlunmm_di" bpmnElement="Association_0mlunmm">
+        <di:waypoint xsi:type="dc:Point" x="1161" y="865" />
+        <di:waypoint xsi:type="dc:Point" x="1101" y="864" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0to5t89_di" bpmnElement="EndEvent_0n8dmcs">
+        <dc:Bounds x="1414" y="539" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1407" y="579" width="50" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1ma2j7t_di" bpmnElement="correct-business-case">
+        <dc:Bounds x="871" y="961" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1kl4qiw_di" bpmnElement="correct-planned-product-list">
+        <dc:Bounds x="1131" y="961" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1loh69n_di" bpmnElement="SequenceFlow_1loh69n">
+        <di:waypoint xsi:type="dc:Point" x="1271" y="557" />
+        <di:waypoint xsi:type="dc:Point" x="1414" y="557" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1297.5" y="536" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kx4lyd_di" bpmnElement="SequenceFlow_0kx4lyd">
+        <di:waypoint xsi:type="dc:Point" x="1271" y="423" />
+        <di:waypoint xsi:type="dc:Point" x="1414" y="423" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1297.5" y="402" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0mtl75d_di" bpmnElement="IntermediateThrowEvent_1yyy271">
+        <dc:Bounds x="1235" y="405" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1213" y="384" width="89" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_1b083nz_di" bpmnElement="IntermediateThrowEvent_16do5bj">
+        <dc:Bounds x="1235" y="539" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1209" y="579" width="88" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1voafcj_di" bpmnElement="TextAnnotation_1voafcj">
+        <dc:Bounds x="1299" y="470" width="100" height="42" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_0smoe4v_di" bpmnElement="Association_0smoe4v">
+        <di:waypoint xsi:type="dc:Point" x="1253" y="441" />
+        <di:waypoint xsi:type="dc:Point" x="1253" y="491" />
+        <di:waypoint xsi:type="dc:Point" x="1299" y="491" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_04klfuw_di" bpmnElement="Association_04klfuw">
+        <di:waypoint xsi:type="dc:Point" x="1253" y="539" />
+        <di:waypoint xsi:type="dc:Point" x="1253" y="491" />
+        <di:waypoint xsi:type="dc:Point" x="1299" y="491" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1y913yv_di" bpmnElement="DataInputAssociation_1y913yv">
+        <di:waypoint xsi:type="dc:Point" x="515" y="423" />
+        <di:waypoint xsi:type="dc:Point" x="571" y="423" />
+        <di:waypoint xsi:type="dc:Point" x="571" y="517" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="DataInputAssociation_1oshmcp_di" bpmnElement="DataInputAssociation_1oshmcp">
+        <di:waypoint xsi:type="dc:Point" x="632" y="423" />
+        <di:waypoint xsi:type="dc:Point" x="572" y="423" />
+        <di:waypoint xsi:type="dc:Point" x="571" y="517" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

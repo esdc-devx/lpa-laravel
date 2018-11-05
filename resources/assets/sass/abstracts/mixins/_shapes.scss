@@ -1,0 +1,40 @@
+/**
+ * Circle Mixin
+ * @param  {Unit size} $width
+ * @param  {Unit size} $height: $width
+ */
+@mixin circle($width, $height: $width) {
+  @if $width {
+    @include size($width, $height);
+  }
+
+  border-radius: 50%;
+}
+
+/**
+ * Triangle mixin
+ * @param  {Color} $color
+ * @param  {String} $direction: down - [top|right|bottom|right]
+ * @param  {Unit size} $width:     1em
+ * @param  {Unit size} $height:    $width
+ */
+@mixin triangle($color, $direction: down, $width: 1em, $height: $width) {
+  @include size(0);
+  @if $direction == up {
+    border-left: $width solid transparent;
+    border-right: $width solid transparent;
+    border-bottom: $height solid $color;
+  } @else if $direction == right {
+    border-top: $width solid transparent;
+    border-left: $height solid $color;
+    border-bottom: $width solid transparent;
+  } @else if $direction == down {
+    border-left: $width solid transparent;
+    border-right: $width solid transparent;
+    border-top: $height solid $color;
+  } @else if $direction == left {
+    border-top: $width solid transparent;
+    border-right: $height solid $color;
+    border-bottom: $width solid transparent;
+  }
+}

@@ -1,0 +1,38 @@
+// 1 - Vendors
+// ElementUI Theme
+@import 'vendors/elementui/vars';
+// this needs to be imported after the vars override
+// since it also contains the default vars
+@import '../../../node_modules/element-ui/packages/theme-chalk/src/index';
+
+// 2 - Configuration and helpers
+@import 'abstracts/vars';
+@import 'abstracts/functions';
+@import 'abstracts/mixins/helpers';
+@import 'abstracts/mixins/breakpoints';
+@import 'abstracts/transitions';
+@import 'abstracts/mixins/shapes';
+
+// 3 - Vendors overrides
+@import 'vendors/elementui/notify';
+@import 'vendors/elementui/form';
+@import 'vendors/elementui/table';
+@import 'vendors/elementui/layout';
+@import 'vendors/elementui/pagination';
+@import 'vendors/elementui/breadcrumb';
+@import 'vendors/elementui/tooltip';
+@import 'vendors/elementui/menu';
+@import 'vendors/elementui/popover';
+@import 'vendors/elementui/tabs';
+@import 'vendors/elementui/tree';
+
+// 4 - Base stuff
+@import 'base/general';
+@import 'base/icons';
+@import 'base/form';
+// @import 'base/fonts';
+@import 'base/typography';
+@import 'base/helpers';
+
+// 5 - Layout-related sections
+// if any...

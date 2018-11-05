@@ -1,0 +1,30 @@
+// Utils
+.hidden {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.disabled {
+  user-select: none;
+  opacity: 0.4;
+  pointer-events: none;
+  cursor: not-allowed !important;
+}
+
+.no-shadow {
+  box-shadow: none;
+}
+
+.fake-link {
+  transition: 0.3s ease;
+  border-bottom: 2px solid lighten($--color-primary, 20%);
+  padding-bottom: 0px;
+  &:hover {
+    padding-bottom: 2px;
+    border-bottom-color: $--color-primary;
+  }
+}

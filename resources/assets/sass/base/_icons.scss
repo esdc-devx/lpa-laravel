@@ -1,0 +1,34 @@
+// It is necessary to add the 'el-icon' prefix to any custom icons
+// so that ElementUI understand them
+[class^="el-icon-lpa"], [class*=" el-icon-lpa"] {
+  @include size($svg-icons-size-small);
+  vertical-align: sub;
+}
+
+// build up the icon selectors
+@each $name, $color in $svg-icons {
+  [class^="el-icon-lpa-#{$name}"], [class*=" el-icon-lpa-#{$name}"] {
+    @include svg($name, $color);
+  }
+}
+
+.icon-divider {
+  position: relative;
+  text-align: center;
+  &:before, &:after {
+    content: '';
+    width: calc(50% - #{($svg-icons-size-x-large / 2) + 25} );
+    height: 1px;
+    background-color: $--color-primary;
+    @include vertical-center(absolute);
+  }
+  &:before {
+    left: 0;
+  }
+  &:after {
+    right: 0;
+  }
+  i.el-icon {
+    @include size($svg-icons-size-x-large);
+  }
+}

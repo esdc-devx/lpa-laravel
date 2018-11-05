@@ -1,0 +1,138 @@
+/**
+ * Generate an icon based on the name provided
+ * @param {String} $name
+ * @param {Color} $color
+ * @return {String} icon wanted
+ */
+ @function get-svg($name, $color: $--color-primary) {
+  @if type-of($name) != string {
+    @error '`#{$name}` is not a string for `get-svg`';
+    @return null;
+  }
+  @if type-of($color) != color {
+    @error '`#{$color}` is not a color for `get-svg`';
+    @return null;
+  }
+
+  $encodedColor: str-replace('#{$color}', '#', '%23');
+
+  // IE11 *must* use this quoting format of encoded SVGs or it just won't work.
+  // "data:image... attr='' ..."
+  $data-image: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\'';
+
+  // since IE11 is really picky with encoded SVGs, we need to use and escape single quotes
+  // IE11 proper align dead center method
+  $IE11-fix: 'preserveAspectRatio=\'xMidYMid\'';
+
+  // get item from list
+  $item: null;
+  @for $i from 1 through length($svg-icons) {
+    // get the one that matches the wanted name
+    @if nth(nth($svg-icons, $i), 1) == $name {
+      $item: nth($svg-icons, $i);
+    }
+  }
+
+  // if not found throw an error
+  @if type-of($item) == null {
+    @error 'There is no svg named `#{$name}` in $svg-icons.';
+    @return null;
+  }
+
+  // get the svg part of list item
+  $svg-dirty: nth($item, length($item));
+  // replace its $fill-color placeholder for the wanted color
+  $svg-dirty: str-replace($svg-dirty, '$fill-color', '#{$encodedColor}');
+  // build the actual svg
+  $svg: '#{$data-image} #{$IE11-fix} #{$svg-dirty}';
+
+  @return $svg;
+}
+
+/**
+ * Returns the opposite direction of each direction in a list
+ * @author Hugo Giraudel
+ * @param {List} $directions - List of initial directions
+ * @return {List} - List of opposite directions
+ */
+@function opposite-direction($directions) {
+  $opposite-directions: ();
+  $direction-map: (
+    'top':    'bottom',
+    'right':  'left',
+    'bottom': 'top',
+    'left':   'right',
+    'center': 'center',
+    'ltr':    'rtl',
+    'rtl':    'ltr'
+  );
+
+  @each $direction in $directions {
+    $direction: to-lower-case($direction);
+
+    @if map-has-key($direction-map, $direction) {
+      $opposite-directions: append($opposite-directions, unquote(map-get($direction-map, $direction)));
+    } @else {
+      @warn 'No opposite direction can be found for `#{$direction}`. Direction omitted.';
+    }
+  }
+
+  @return $opposite-directions;
+}
+
+/**
+ * String Replace
+ * https://gist.github.com/jonathantneal/d0460e5c2d5d7f9bc5e6
+ * @param {String} $string - Subject to replace
+ * @param {String} $search - String to search in subject
+ * @param {String} $replace - String to replace in Subject
+ * @return {String} - Replaced string
+ */
+@function str-replace($string, $search, $replace: '') {
+  @if type-of($string) != string {
+    @error '`#{$string}` is not a string for `str-replace`';
+    @return null;
+  }
+  @if type-of($search) != string {
+    @error '`#{$search}` is not a string for `str-replace`';
+    @return null;
+  }
+  @if type-of($replace) != string {
+    @error '`#{$replace}` is not a string for `str-replace`';
+    @return null;
+  }
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+/**
+ * Encode provided color # to %23.
+ * @param {Color} $color: color to encode
+ */
+@function encodeColor($color) {
+  @return str-replace('#{$color}', '#', '%23');
+}
+
+/**
+ * Gets best color saturation from background-color
+ * @param  {Color} $bg-color
+ * @return {Color}
+ */
+@function get-text-color($bg-color) {
+  @if type-of($bg-color) != color {
+    @error '`#{$bg-color}` is not a color for `get-text-color`';
+    @return null;
+  }
+  @if lightness($bg-color) > 50 {
+    // Lighter background, return dark color
+    @return #000000;
+  } @else {
+    // Darker background, return light color
+    @return #ffffff;
+  }
+}

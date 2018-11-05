@@ -1,0 +1,12 @@
+// make sure that the columns have the same heights
+.el-row.equal-height {
+  display: flex;
+  .el-col > div {
+    height: 100%;
+  }
+}
+
+// make sure each rows have space between them
+.el-row + .el-row {
+  margin-top: 20px;
+}

@@ -1,0 +1,20 @@
+.el-pagination {
+  padding: 20px;
+  margin-bottom: 30px;
+  background-color: $--color-white;
+  border: 1px solid $--border-color-lighter;
+  border-top: none;
+}
+
+.el-pagination__total {
+  float: left;
+}
+
+.el-pagination__sizes {
+  float: right;
+  margin-right: 0px;
+}
+
+.sc-table .pagination-wrap {
+  margin-top: 0 !important;
+}

@@ -1,0 +1,110 @@
+// Body, Common Classes & Structure
+html, body {
+  height: 100%;
+}
+body {
+  font-family: $font-family-sans-serif;
+  font-size: $font-size-base;
+  line-height: $line-height-base;
+  margin: 0;
+  color: $--color-text-primary;
+}
+
+a {
+  color: $--link-color;
+  font-weight: bold;
+  transition: $--color-transition-base;
+  &:hover {
+    color: $--link-hover-color;
+  }
+}
+
+input, textarea {
+  font-family: $font-family-sans-serif;
+}
+
+.content {
+  $el-main-padding: 30px;
+  position: absolute;
+  // allocate space under breadcrumb
+  top: 20px;
+  // remove padding-left and right
+  width: calc(100% - (#{$el-main-padding} * 2));
+  // allow transition between contents
+  // to keep their position while transitioning
+  padding: 0 30px;
+}
+
+.controls {
+  margin-bottom: 20px;
+  // add space between buttons
+  .el-button + .el-button {
+    margin-left: 5px;
+  }
+}
+
+.state {
+  display: inline-block;
+  padding: 5px 8px;
+  background-color: #737680;
+  color: #fff;
+  border-radius: 3px;
+  @each $name, $color in $color-states {
+    &.#{$name} {
+      background-color: $color;
+    }
+  }
+}
+
+.loading-spinner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: $index-loading;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  svg {
+    width: 4rem;
+    height: 4rem;
+    animation: spinner 2s infinite linear;
+    .path {
+      animation: loading-dash 1.5s ease-in-out infinite;
+      stroke-dasharray: 90,150;
+      stroke-dashoffset: 0;
+      stroke-width: 2;
+      stroke: $--color-primary;
+      stroke-linecap: round;
+    }
+  }
+}
+@keyframes spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+*::-webkit-scrollbar {
+  width: .9rem;
+}
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  border: 4px solid transparent;
+  background-clip: content-box;
+  background-color: rgba(#000, 0.3);
+}
+*:hover {
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(#000, 0.5);
+  }
+}
+
+input::-ms-reveal {
+  display: none;
+}

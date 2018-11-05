@@ -1,0 +1,17 @@
+.el-notification {
+  // override z-index and put it on top of everything
+  // including loading masks
+  // this is to make sure that when errors are caught,
+  // we are able to see them even when things broke while loading something
+  z-index: $index-notify !important;
+  // Fixes the alignment of the content of the notification. Default is justify...
+  .el-notification__content {
+    text-align: left !important;
+  }
+
+  // Fixes on IE11 the spacing between the icon and the text when there is a long text
+  .el-notification__icon {
+    display: inline-table !important;
+  }
+}
+

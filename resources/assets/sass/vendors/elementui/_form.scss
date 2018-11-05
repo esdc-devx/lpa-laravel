@@ -1,0 +1,26 @@
+// ElementUI override so that we can have multiple errors shown as a list
+.el-form-item__error, .error-list-item {
+  position: relative;
+  display: flex;
+}
+
+// this fixes a color contrast issue when the radio buttons are disabled ans selected
+.el-radio-button__orig-radio:disabled:checked + .el-radio-button__inner {
+  color: $--color-white;
+}
+// fixes the color of the checkmark in a disabled checked checkbox
+.el-checkbox__input.is-disabled.is-checked .el-checkbox__inner:after {
+  border-color: $--color-white;
+}
+.el-checkbox__input.is-disabled.is-indeterminate .el-checkbox__inner:before {
+  background: #fff;
+}
+
+// make error border availlable not only on form-items like ElementUI does,
+// but on anything that has .is-error .el-{control}__inner
+form .is-error .el-input__inner,
+form .is-error .el-input__inner:focus,
+form .is-error .el-textarea__inner,
+form .is-error .el-textarea__inner:focus {
+  border-color: $--color-danger;
+}
