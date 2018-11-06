@@ -163,6 +163,11 @@
       next(vm => {
         vm.loadData();
       });
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.loadData().then(next);
     }
   };
 </script>

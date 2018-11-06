@@ -143,6 +143,11 @@
             router.replace({ name: 'forbidden', params: { '0': to.path } });
           }
         });
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate().then(next);
     }
   };
 </script>

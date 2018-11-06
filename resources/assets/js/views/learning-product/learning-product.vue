@@ -63,6 +63,11 @@
     beforeRouteEnter(to, from, next) {
       store.dispatch('learningProducts/loadLearningProduct', to.params.learningProductId)
         .then(next);
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.loadData().then(next);
     }
   };
 </script>

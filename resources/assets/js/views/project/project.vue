@@ -187,7 +187,7 @@
         this.$router.push(`${projectId}/process/${processId}`);
       },
 
-      loadData() {
+      async loadData() {
         let projectId = this.$route.params.projectId;
         let requests = [];
 
@@ -198,7 +198,7 @@
           this.loadProjectLearningProducts(projectId)
         );
 
-        axios.all(requests).then(() => {
+        await axios.all(requests).then(() => {
           this.loadPermissions();
           this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
             let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
@@ -235,6 +235,11 @@
             vm.loadData();
           });
         });
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.loadData().then(next);
     }
   };
 </script>

@@ -134,6 +134,11 @@
       });
     },
 
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.onLanguageUpdate().then(next);
+    },
+
     mounted() {
       this.autofocus('name');
     }

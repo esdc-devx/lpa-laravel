@@ -235,8 +235,8 @@
         this.selectedIndex = this.getActiveStep();
       },
 
-      loadData() {
-        axios.all([
+      async loadData() {
+        await axios.all([
           this.triggerLoadProject(),
           this.triggerLoadProcessInstance()
         ]);
@@ -260,6 +260,11 @@
           vm.loadPermissions();
         });
       });
+    },
+
+    // called when url params change, e.g: language
+    beforeRouteUpdate(to, from, next) {
+      this.loadData().then(next);
     }
   };
 </script>
