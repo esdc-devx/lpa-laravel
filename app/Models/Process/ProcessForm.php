@@ -9,8 +9,17 @@ class ProcessForm extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $hidden = ['id', 'process_step_id'];
-    protected $localizable = ['name'];
+    protected $fillable = [
+        'name_key',
+        'name_en',
+        'name_fr',
+        'process_step_id',
+        'display_sequence',
+    ];
+
+    protected $localizable = [
+        'name',
+    ];
 
     public $timestamps = false;
 

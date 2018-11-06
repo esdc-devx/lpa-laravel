@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class BaseModel extends Model
 {
     protected $formatListsOutput = false;
-    protected $guarded = [];
+    protected $fillable = [];
 
     /**
      * Return entity type string from model class name.

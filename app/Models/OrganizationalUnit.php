@@ -3,13 +3,23 @@
 namespace App\Models;
 
 use App\Models\ListableModel;
-use App\Models\Traits\UsesKeyNameField;
 use App\Models\User\User;
 
 class OrganizationalUnit extends ListableModel
 {
     protected $casts = [
         'owner' => 'boolean',
+    ];
+
+    protected $fillable = [
+        'parent_id',
+        'name_key',
+        'name_en',
+        'name_fr',
+        'active',
+        'owner',
+        'email',
+        'director',
     ];
 
     public $timestamps = true;

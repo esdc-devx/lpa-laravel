@@ -9,7 +9,13 @@ class State extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $hidden = ['id', 'entity_type'];
+    protected $fillable = [
+        'entity_type',
+        'name_key',
+        'name_en',
+        'name_fr',
+    ];
+
     protected $localizable = ['name'];
 
     public $timestamps = false;

@@ -26,19 +26,42 @@ class LearningProduct extends BaseModel
 
     // Fields that will be retrieved and updated from all models.
     protected static $persisted = [
-        'entity_type', 'name', 'type_id', 'sub_type_id', 'organizational_unit_id', 'project_id', 'state_id', 'process_instance_id',
-        'primary_contact', 'manager', 'created_by', 'updated_by',
+        'entity_type',
+        'name',
+        'type_id',
+        'sub_type_id',
+        'organizational_unit_id',
+        'project_id',
+        'state_id',
+        'process_instance_id',
+        'primary_contact',
+        'manager',
+        'created_by',
+        'updated_by',
     ];
 
     protected $table = 'learning_products';
 
-    protected $hidden = [
-        'type_id', 'sub_type_id', 'organizational_unit_id', 'state_id', 'process_instance_id',
+    protected $fillable = [
+        'name',
+        'type_id',
+        'sub_type_id',
+        'organizational_unit_id',
+        'project_id',
+        'state_id',
+        'process_instance_id',
+        'primary_contact',
+        'manager',
+        'created_by',
+        'updated_by',
     ];
 
-    protected $fillable = [
-        'name', 'type_id', 'sub_type_id', 'organizational_unit_id', 'project_id', 'state_id', 'process_instance_id',
-        'primary_contact', 'manager', 'created_by', 'updated_by',
+    protected $hidden = [
+        'type_id',
+        'sub_type_id',
+        'organizational_unit_id',
+        'state_id',
+        'process_instance_id',
     ];
 
     protected $dates = [
