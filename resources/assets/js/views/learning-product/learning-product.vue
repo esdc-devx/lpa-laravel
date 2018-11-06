@@ -2,7 +2,7 @@
   <div class="entity content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <learning-product-info :learningProduct="viewingLearningProduct"/>
+        <learning-product-info :learningProduct="viewingLearningProduct" @onAfterDelete="onAfterDelete"/>
       </el-col>
     </el-row>
   </div>
@@ -53,6 +53,10 @@
             throw e;
           }
         }
+      },
+
+      onAfterDelete() {
+        this.goToParentPage();
       }
     },
 

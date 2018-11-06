@@ -2,7 +2,7 @@
   <div class="project content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <project-info :project="viewingProject"/>
+        <project-info :project="viewingProject" @onAfterDelete="onAfterDelete"/>
       </el-col>
       <el-col :span="6" v-if="canBeVisible">
         <el-card shadow="never" class="project-actions">
@@ -221,6 +221,10 @@
             await this.canStartProcess({ projectId: this.$route.params.projectId, processDefinitionNameKey: definition.name_key })
           );
         }
+      },
+
+      onAfterDelete() {
+        this.goToParentPage();
       }
     },
 

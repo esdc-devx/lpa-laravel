@@ -123,7 +123,7 @@ export default {
           this.notifySuccess({
             message: this.trans('components.notice.message.learning_product_deleted')
           });
-          this.goToParentPage();
+          this.$emit('onAfterDelete');
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {

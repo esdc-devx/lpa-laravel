@@ -111,7 +111,7 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.project_deleted')
             });
-            this.goToParentPage();
+            this.$emit('onAfterDelete');
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
