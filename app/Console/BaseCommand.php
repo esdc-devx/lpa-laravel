@@ -18,14 +18,24 @@ class BaseCommand extends Command
     public function __construct()
     {
         // Login as admin when running commands.
-        if (Schema::hasTable('users') && $admin = User::admin()->first()) {
-            Auth::login($admin);
-        }
+        $this->authenticate();
 
         // Set default language since it is not defined when running commands.
         app()->setLocale(config('app.fallback_locale'));
 
         parent::__construct();
+    }
+
+    /**
+     * Authenticate current user as admin.
+     *
+     * @return void
+     */
+    protected function authenticate()
+    {
+        if (Schema::hasTable('users') && $admin = User::where('username', config('auth.admin.username'))->first()) {
+            Auth::login($admin);
+        }
     }
 
     /**
