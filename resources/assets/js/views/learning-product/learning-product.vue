@@ -2,7 +2,7 @@
   <div class="entity content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <learning-product-info :learningProduct="viewingLearningProduct" v-on:learning-product-info:operation-denied="fetch(false)"/>
+        <learning-product-info :learningProduct="viewingLearningProduct" @onAfterDelete="onAfterDelete"/>
       </el-col>
     </el-row>
   </div>
@@ -11,9 +11,8 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
-  import PageUtils from '@mixins/page/utils.js';
-  import TableUtils from '@mixins/table/utils.js';
+
+  import Page from '@components/page';
   import LearningProductInfo from '@components/learning-product-info.vue';
 
   let namespace = 'learningProducts';
@@ -21,12 +20,12 @@
   export default {
     name: 'learning-products',
 
+    extends: Page,
+
     components: { LearningProductInfo },
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         viewingLearningProduct: `${namespace}/viewing`
       }),
 
@@ -44,14 +43,10 @@
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
-      async fetch(isInitialLoad = true) {
+      async loadData() {
         try {
           let learningProductId = this.$route.params.learningProductId;
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadLearningProduct(learningProductId);
-          }
+          await this.loadLearningProduct(learningProductId);
         } catch (e) {
           // Exception handled by interceptor
           if (!e.response) {
@@ -60,25 +55,19 @@
         }
       },
 
-      async onLanguageUpdate() {
-        this.fetch(false);
+      onAfterDelete() {
+        this.goToParentPage();
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      store.dispatch('learningProducts/loadLearningProduct', to.params.learningProductId)
+        .then(next);
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      this.loadData().then(next);
     }
   };
 </script>

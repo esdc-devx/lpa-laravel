@@ -73,16 +73,15 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
 
-  import PageUtils from '@mixins/page/utils.js';
+  import Page from '@components/page';
 
   let namespace = 'users';
 
   export default {
     name: 'admin-user-list',
 
-    mixins: [ PageUtils ],
+    extends: Page,
 
     computed: {
       ...mapGetters({
@@ -120,7 +119,7 @@
       // Pagination
       handlePageChange(newCurrentPage) {
         this.scrollToTop();
-        this.fetch(newCurrentPage);
+        this.loadData(newCurrentPage);
       },
 
       scrollToTop() {
@@ -152,27 +151,23 @@
         return row.group === value;
       },
 
-      async fetch(page) {
+      async loadData(page) {
         this.$parent.$el.scrollTop = 0;
         page = _.isUndefined(page) ? this.currentPage : page;
         await this.loadUsers(page);
         this.parseUsers();
-      },
-
-      async onLanguageUpdate() {
-        await this.fetch();
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.loadData();
+      });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
-      this.fetch();
+      this.loadData().then(next);
     }
   };
 </script>

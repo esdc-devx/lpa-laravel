@@ -108,3 +108,13 @@ input, textarea {
 input::-ms-reveal {
   display: none;
 }
+
+::-moz-selection {
+  color: $--color-white;
+  background: $--color-primary-light-3;
+}
+
+::selection {
+  color: $--color-white;
+  background: $--color-primary-light-3;
+}

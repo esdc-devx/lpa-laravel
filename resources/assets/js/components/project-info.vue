@@ -61,16 +61,12 @@
   import InfoBox from '@components/info-box.vue';
   import ElButtonWrap from '@components/el-button-wrap.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
-
   let namespace = 'projects';
 
   export default {
     name: 'project-info',
 
     components: { InfoBox, ElButtonWrap },
-
-    mixins: [ PageUtils ],
 
     props: [ 'project' ],
 
@@ -115,7 +111,7 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.project_deleted')
             });
-            this.goToParentPage();
+            this.$emit('onAfterDelete');
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
@@ -123,13 +119,22 @@
             }
           }
         }).catch(() => false);
+      },
+
+      loadPermissions() {
+        let projectId = this.$route.params.projectId;
+        axios.all([
+          this.canEditProject(projectId),
+          this.canDeleteProject(projectId)
+        ]).then((canEdit, canDelete) => {
+          this.rights.canEdit = canEdit;
+          this.rights.canDelete = canDelete;
+        });
       }
     },
 
-    async created() {
-      let projectId = this.$route.params.projectId;
-      this.rights.canEdit = await this.canEditProject(projectId);
-      this.rights.canDelete = await this.canDeleteProject(projectId);
+    created() {
+      this.loadPermissions();
     }
   };
 </script>

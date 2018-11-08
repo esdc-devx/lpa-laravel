@@ -2,7 +2,7 @@
   <div class="project content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <project-info :project="viewingProject"/>
+        <project-info :project="viewingProject" @onAfterDelete="onAfterDelete"/>
       </el-col>
       <el-col :span="6" v-if="canBeVisible">
         <el-card shadow="never" class="project-actions">
@@ -93,25 +93,26 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
-  import PageUtils from '@mixins/page/utils.js';
-  import TableUtils from '@mixins/table/utils.js';
+
+  import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
   import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
+
+  import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
 
   export default {
     name: 'project',
 
-    mixins: [ PageUtils, TableUtils ],
+    extends: Page,
+
+    mixins: [ TableUtils ],
 
     components: { ProjectInfo, LearningProductDataTables },
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
         definitions: `processes/definitions`,
         viewingHistory: 'processes/viewingHistory',
@@ -173,7 +174,7 @@
           } catch (e) {
             if (e.response) {
               // on error, re-fetch the info just to be in-sync
-              this.fetch();
+              this.loadData();
             } else {
               throw e;
             }
@@ -186,7 +187,30 @@
         this.$router.push(`${projectId}/process/${processId}`);
       },
 
-      async getProcessDefinitionPermissions() {
+      async loadData() {
+        let projectId = this.$route.params.projectId;
+        let requests = [];
+
+        requests.push(
+          this.loadProject(projectId),
+          this.loadProcessDefinitions('project'),
+          this.loadProcessHistory({ entityType: 'project', entityId: projectId }),
+          this.loadProjectLearningProducts(projectId)
+        );
+
+        await axios.all(requests).then(() => {
+          this.loadPermissions();
+          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
+            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
+            normProcess.state = normProcess.state.name;
+            normProcess.name = normProcess.definition.name;
+            return normProcess;
+          });
+        });
+      },
+
+      async loadPermissions() {
+        // @fixme: axios.all
         let definition;
         for (let i = 0; i < this.definitions.length; i++) {
           definition = this.definitions[i];
@@ -199,53 +223,23 @@
         }
       },
 
-      async fetch(isInitialLoad = true) {
-        try {
-          let projectId = this.$route.params.projectId;
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadProject(projectId);
-          }
-          await this.loadProcessDefinitions('project');
-          await this.loadProcessHistory({ entityType: 'project', entityId: projectId });
-
-          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
-            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
-            normProcess.state = normProcess.state.name;
-            normProcess.name = normProcess.definition.name;
-            return normProcess;
-          });
-
-          await this.loadProjectLearningProducts(projectId);
-          this.getProcessDefinitionPermissions();
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
-      async onLanguageUpdate() {
-        this.fetch(false);
+      onAfterDelete() {
+        this.goToParentPage();
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      store.dispatch('projects/loadProject', to.params.projectId)
+        .then(() => {
+          next(vm => {
+            vm.loadData();
+          });
+        });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      this.loadData().then(next);
     }
   };
 </script>

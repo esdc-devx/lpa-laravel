@@ -21,7 +21,7 @@
               }}
               <el-button-wrap
                 v-if="viewingFormInfo.current_editor && hasRole('admin')"
-                :disabled="!rights.canReleaseForm"
+                :disabled="!canReleaseForm"
                 @click.native="onReleaseForm"
                 :tooltip="trans('components.tooltip.release_form')"
                 class="release-form"
@@ -99,7 +99,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!rights.canSubmit || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -111,36 +111,60 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions, mapState } from 'vuex';
+  import { mapState, mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
   import HttpStatusCodes from '@axios/http-status-codes';
 
+  import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
   import ElButtonWrap from '@components/el-button-wrap.vue';
-
-  import PageUtils from '@mixins/page/utils.js';
-  import FormUtils from '@mixins/form/utils';
-
   // Forms
   import BusinessCase from '@components/forms/entities/business-case';
   import PlannedProductList from '@components/forms/entities/planned-product-list';
   import GateOneApproval from '@components/forms/entities/gate-one-approval';
 
+  import FormUtils from '@mixins/form/utils';
+
+  import ProcessAPI from '@api/processes';
+
   let namespace = 'projects';
+
+  const loadData = async ({ to, hasToLoadEntity = true }) => {
+    let { projectId, processId, formId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch('projects/loadProject', projectId),
+      store.dispatch('processes/loadInstance', processId),
+      store.dispatch('processes/loadCanEditForm', formId),
+      store.dispatch('processes/loadCanClaimForm', formId),
+      store.dispatch('processes/loadCanUnclaimForm', formId),      
+      store.dispatch('processes/loadCanReleaseForm', formId)
+    );
+    if (hasToLoadEntity) {
+      requests.push(store.dispatch('processes/loadInstanceForm', formId));
+    }
+
+    // Exception handled by interceptor
+    await axios.all(requests);
+  };
 
   export default {
     name: 'project-process-form',
 
+    extends: Page,
+
     components: { InfoBox, ElButtonWrap, BusinessCase, PlannedProductList, GateOneApproval },
 
-    // Gives us the ability to inject validation in child components
-    // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
-    $_veeValidate: {
-      validator: 'new'
-    },
+    mixins: [ FormUtils ],
 
-    mixins: [ PageUtils, FormUtils ],
+    events: {
+      'TopBar:beforeLogout': 'beforeLogout'
+    },
 
     data() {
       return {
@@ -154,26 +178,20 @@
         activeIndex: '0',
         tabsLength: 0,
         formComponent: '',
-        rights: {
-          canEdit: false,
-          canClaim: false,
-          canUnclaim: false,
-          canSubmit: false,
-          canReleaseForm: false
-        },
         isFormSubmitted: false
       }
     },
 
     computed: {
-      ...mapState({
-        shouldConfirmBeforeLeaving: 'shouldConfirmBeforeLeaving'
-      }),
+      ...mapState('processes', [
+        'canEditForm',
+        'canClaimForm',
+        'canUnclaimForm',
+        'canSubmitForm',
+        'canReleaseForm'
+      ]),
+
       ...mapGetters({
-        language: 'language',
-        isMainLoading: 'isMainLoading',
-        hasRole: 'users/hasRole',
-        isCurrentUser: 'users/isCurrentUser',
         viewingProcess: 'processes/viewing',
         viewingFormInfo: 'processes/viewingFormInfo'
       }),
@@ -186,11 +204,12 @@
         // update the value server side
         async set(val) {
           // claiming
+          // @fixme: should reload permissions (or at least canRelease)
           if (val) {
             try {
               await this.claimForm(this.formId);
               if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-                this.rights.canSubmit = await this.canSubmitForm(this.formId);
+                await this.loadCanSubmitForm(this.formId);
               }
             } catch (e) {
               if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
@@ -210,7 +229,7 @@
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
-              .then(async () => {
+              .then(() => {
                 this.discardChanges();
               }).catch(() => false);
           } else {
@@ -250,20 +269,19 @@
 
     methods: {
       ...mapActions({
-        confirmBeforeLeaving: 'confirmBeforeLeaving',
         loadProject: `${namespace}/loadProject`,
         loadProcessInstance: 'processes/loadInstance',
         loadProcessInstanceForm: 'processes/loadInstanceForm',
         claimForm: 'processes/claimForm',
         unclaimForm: 'processes/unclaimForm',
-        canEditForm: 'processes/canEditForm',
-        canClaimForm: 'processes/canClaimForm',
-        canUnclaimForm: 'processes/canUnclaimForm',
-        canSubmitForm: 'processes/canSubmitForm',
-        canReleaseForm: 'processes/canReleaseForm',
         saveForm: 'processes/saveForm',
         submitForm: 'processes/submitForm',
-        releaseForm: 'processes/releaseForm'
+        releaseForm: 'processes/releaseForm',
+        loadCanEditForm: 'processes/loadCanEditForm',
+        loadCanClaimForm: 'processes/loadCanClaimForm',
+        loadCanUnclaimForm: 'processes/loadCanUnclaimForm',
+        loadCanSubmitForm: 'processes/loadCanSubmitForm',
+        loadCanReleaseForm: 'processes/loadCanReleaseForm'
       }),
 
       prevTabIndex() {
@@ -341,7 +359,7 @@
       },
 
       getCurrentEditorUsername() {
-        return this.viewingFormInfo.current_editor ? this.viewingFormInfo.current_editor.username : null;
+        return !_.isEmpty(this.viewingFormInfo.current_editor) ? this.viewingFormInfo.current_editor.username : null;
       },
 
       onReleaseForm() {
@@ -383,8 +401,9 @@
           });
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            // @fixme: reload info (loadData)
             this.discardChanges(true);
-            this.getRights();
+            this.loadPermissions();
             this.isSaving = false;
           } else {
             throw e;
@@ -399,7 +418,8 @@
       },
 
       async refreshData() {
-        this.getRights();
+        // @fixme: reload info (loadData)
+        this.loadPermissions();
         let formWasDirty = this.isFormDirty;
         let oldUpdatedDate = this.viewingFormInfo.updated_at;
         await this.loadProcessInstanceForm(this.formId);
@@ -445,35 +465,16 @@
           this.goToParentPage();
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            // @fixme: reload info (loadData)
             this.discardChanges(true);
-            this.getRights();
+            this.loadPermissions();
           } else {
             throw e;
           }
         }
       },
 
-      async fetch(isInitialLoad = true) {
-        try {
-          if (isInitialLoad) {
-            // deep copy so that we don't alter the store's data
-            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
-            this.formComponent = this.viewingFormInfo.definition.name_key;
-            this.setupStage();
-          } else {
-            await this.loadProject(this.projectId);
-            await this.loadProcessInstance(this.processId);
-            await this.loadProcessInstanceForm(this.formId);
-          }
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
-      setupStage() {
+      setupTabPanes() {
         this.$nextTick(() => {
           // we need to wait until the dom is ready
           // so that we have access to the tabs panes
@@ -484,47 +485,41 @@
         });
       },
 
-      async getRights() {
-        try {
-          if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-            this.rights.canSubmit = await this.canSubmitForm(this.formId);
-          }
-          this.rights.canEdit = await this.canEditForm(this.formId);
-          this.rights.canClaim = await this.canClaimForm(this.formId);
-          this.rights.canUnclaim = await this.canUnclaimForm(this.formId);
-          this.rights.canReleaseForm = await this.canReleaseForm({
+      // @removeme: this should not exist
+      // as the logic to loadpermissions is done in the loadData
+      loadPermissions() {
+        let requests = [];
+        requests.push(
+          this.loadCanEditForm(this.formId),
+          this.loadCanClaimForm(this.formId),
+          this.loadCanUnclaimForm(this.formId),
+          this.loadCanReleaseForm({
             formId: this.formId,
             username: this.getCurrentEditorUsername()
-          });
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
+          })
+        );
+        if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
+          requests.push(this.loadCanSubmitForm(this.formId));
         }
+        axios.all(requests);
       },
 
       beforeLogout(callback) {
-        this.confirmLoseChanges().then(async () => {
+        this.confirmLoseChanges().then(() => {
           this.discardChanges();
           callback();
         }).catch(() => false);
-      },
-
-      onLanguageUpdate() {
-        this.fetch(false);
-      },
-
-      destroyEvents() {
-        // Destroy any events we might be listening
-        // so that they do not get called while being on another page
-        EventBus.$off('TopBar:beforeLogout', this.beforeLogout);
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      // Exception handled by interceptor
+      loadData({to}).then(next);
     },
 
     async beforeRouteLeave(to, from, next) {
       if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
-        this.confirmLoseChanges().then(async () => {
+        this.confirmLoseChanges().then(() => {
           this.destroyEvents();
           this.discardChanges();
           next();
@@ -546,29 +541,22 @@
       }
     },
 
-    // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
+      loadData({
+        to,
+        hasToLoadEntity: false
+      }).then(next);
     },
 
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    async created() {
+    created() {
       // store the reference to the current form id
       this.projectId = this.$route.params.projectId;
       this.processId = this.$route.params.processId;
       this.formId = this.$route.params.formId;
-      this.getRights();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
-      EventBus.$on('TopBar:beforeLogout', this.beforeLogout);
+      // deep copy so that we don't alter the store's data
+      this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
+      this.formComponent = this.viewingFormInfo.definition.name_key;
+      this.setupTabPanes();
     }
   };
 </script>

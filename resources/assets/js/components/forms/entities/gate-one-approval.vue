@@ -35,8 +35,8 @@
           </el-popover-wrap>
         </span>
         <el-radio-group
-          v-model="form.is_entity_cancelled" 
-          v-validate="''" 
+          v-model="form.is_entity_cancelled"
+          v-validate="''"
           name="is_entity_cancelled">
           <el-radio :label=false>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.false') }}</el-radio>
           <el-radio :label=true>{{ trans('forms.gate_one_approval.is_entity_cancelled.options.true') }}</el-radio>
@@ -193,21 +193,21 @@
         }
       },
 
-      async fetch() {
+      async loadData() {
         this.processFormDecisionList = await ListsAPI.getList('process-form-decision');
       },
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.fetch);
+      EventBus.$off('Store:languageUpdate', this.loadData);
     },
 
-    async created() {
-      this.fetch();
+    created() {
+      this.loadData();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.fetch);
+      EventBus.$on('Store:languageUpdate', this.loadData);
     }
   };
 </script>

@@ -101,7 +101,6 @@ export default {
 
     setProjectLearningProducts(state, projectLearningProducts) {
       state.projectLearningProducts = projectLearningProducts;
-    },
-    
+    }
   }
 };

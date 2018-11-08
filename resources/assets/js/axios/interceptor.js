@@ -40,7 +40,7 @@ axios.interceptors.response.use(
     if (response.config.showMainLoading) {
       store.dispatch('hideMainLoading'); // Hide Main loading animation after receiving a response.
     }
-    return response;
+    return response.data;
   },
   error => {
     let trans = Vue.prototype.trans;

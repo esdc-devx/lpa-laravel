@@ -52,8 +52,8 @@ export const actions = {
     let response;
     try {
       response = await axios.get('locales');
-      commit(types.SET_LANGUAGES, response.data.data);
-      return response.data.data;
+      commit(types.SET_LANGUAGES, response.data);
+      return response.data;
     } catch (e) {
       throw e;
     }

@@ -5,6 +5,11 @@ export default {
 
   state: {
     definitions: [],
+    canEditForm: false,
+    canClaimForm: false,
+    canUnclaimForm: false,
+    canSubmitForm: false,
+    canReleaseForm: false,
     viewing: {
       definition: {
         name: ''
@@ -46,60 +51,60 @@ export default {
   actions: {
     async loadDefinitions({ commit }, entityType) {
       let response = await ProcessAPI.getDefinitions(entityType);
-      commit('setDefinitions', response.data.data.process_definitions);
-      return response.data.data;
+      commit('setDefinitions', response.data.process_definitions);
+      return response.data;
     },
 
     async loadInstance({ commit }, processId) {
       let response = await ProcessAPI.getInstance(processId);
-      commit('setViewing', response.data.data.process_instance);
-      return response.data.data;
+      commit('setViewing', response.data.process_instance);
+      return response.data;
     },
 
     async loadHistory({ commit }, { entityType, entityId }) {
       let response = await ProcessAPI.getHistory(entityType, entityId);
-      commit('setViewingHistory', response.data.data.process_instances);
-      return response.data.data.process_instances;
+      commit('setViewingHistory', response.data.process_instances);
+      return response.data.process_instances;
     },
 
     async loadInstanceForm({ commit }, formId) {
       let response = await ProcessAPI.getInstanceForm(formId);
-      commit('setViewingFormInfo', response.data.data);
-      return response.data.data.form_data;
+      commit('setViewingFormInfo', response.data);
+      return response.data.form_data;
     },
 
     async start({ commit }, { nameKey, entityId }) {
       let response = await ProcessAPI.start(nameKey, entityId);
-      return response.data.data;
+      return response.data;
     },
 
     async cancelInstance({ commit }, processId) {
       let response = await ProcessAPI.cancelInstance(processId);
-      return response.data.data;
+      return response.data;
     },
 
     async claimForm({ commit }, formId) {
       let response = await ProcessAPI.claimForm(formId);
-      commit('setCurrentEditor', response.data.data.current_editor);
-      return response.data.data;
+      commit('setCurrentEditor', response.data.current_editor);
+      return response.data;
     },
 
     async unclaimForm({ commit }, formId) {
       let response = await ProcessAPI.unclaimForm(formId);
-      commit('setCurrentEditor', response.data.data.current_editor);
-      return response.data.data;
+      commit('setCurrentEditor', response.data.current_editor);
+      return response.data;
     },
 
     async saveForm({ commit }, { formId, form }) {
       let response = await ProcessAPI.saveForm(formId, form);
-      commit('setViewingFormInfo', response.data.data);
-      return response.data.data.form_data;
+      commit('setViewingFormInfo', response.data);
+      return response.data.form_data;
     },
 
     async submitForm({ commit }, { formId, form }) {
       let response = await ProcessAPI.submitForm(formId, form);
-      commit('setViewingFormInfo', response.data.data);
-      return response.data.data.form_data;
+      commit('setViewingFormInfo', response.data);
+      return response.data.form_data;
     },
 
     async releaseForm({ commit }, { formId, username }) {
@@ -108,38 +113,58 @@ export default {
 
     async canCancelProcess({ commit }, processId) {
       let response = await ProcessAPI.canCancelProcess(processId);
-      return response.data.data.allowed;
+      return response.data.allowed;
     },
 
-    async canEditForm({ commit }, formId) {
+    async loadCanEditForm({ commit }, formId) {
       let response = await ProcessAPI.canEditForm(formId);
-      return response.data.data.allowed;
+      commit('setCanEditForm', response.data.allowed);
     },
 
-    async canClaimForm({ commit }, formId) {
+    async loadCanClaimForm({ commit }, formId) {
       let response = await ProcessAPI.canClaimForm(formId);
-      return response.data.data.allowed;
+      commit('setCanClaimForm', response.data.allowed);
     },
 
-    async canUnclaimForm({ commit }, formId) {
+    async loadCanUnclaimForm({ commit }, formId) {
       let response = await ProcessAPI.canUnclaimForm(formId);
-      return response.data.data.allowed;
+      commit('setCanUnclaimForm', response.data.allowed);
     },
 
-    async canSubmitForm({ commit }, formId) {
+    async loadCanSubmitForm({ commit }, formId) {
       let response = await ProcessAPI.canSubmitForm(formId);
-      return response.data.data.allowed;
+      commit('setCanSubmitForm', response.data.allowed);
     },
 
-    async canReleaseForm({ commit }, { formId, username }) {
-      let response = await ProcessAPI.canReleaseForm(formId, username);
-      return response.data.data.allowed;
+    async loadCanReleaseForm({ commit }, formId) {
+      let response = await ProcessAPI.canReleaseForm(formId);
+      commit('setCanReleaseForm', response.data.allowed);
     }
   },
 
   mutations: {
     setDefinitions(state, definitions) {
       state.definitions = definitions;
+    },
+
+    setCanEditForm(state, allowed) {
+      state.canEditForm = allowed;
+    },
+
+    setCanClaimForm(state, allowed) {
+      state.canClaimForm = allowed;
+    },
+
+    setCanUnclaimForm(state, allowed) {
+      state.canUnclaimForm = allowed;
+    },
+
+    setCanSubmitForm(state, allowed) {
+      state.canSubmitForm = allowed;
+    },
+
+    setCanReleaseForm(state, allowed) {
+      state.canReleaseForm = allowed;
     },
 
     setViewing(state, viewing) {

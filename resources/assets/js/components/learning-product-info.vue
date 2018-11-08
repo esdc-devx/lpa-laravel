@@ -71,7 +71,6 @@ import { mapGetters, mapActions } from 'vuex';
 import HttpStatusCodes from '@axios/http-status-codes';
 import InfoBox from '@components/info-box.vue';
 import ElButtonWrap from '@components/el-button-wrap.vue';
-import PageUtils from '@mixins/page/utils.js';
 
 let namespace = 'learningProducts';
 
@@ -79,8 +78,6 @@ export default {
   name: 'learning-product-info',
 
   components: { InfoBox, ElButtonWrap },
-
-  mixins: [ PageUtils ],
 
   props: {
     learningProduct: {
@@ -126,7 +123,7 @@ export default {
           this.notifySuccess({
             message: this.trans('components.notice.message.learning_product_deleted')
           });
-          this.goToParentPage();
+          this.$emit('onAfterDelete');
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
@@ -136,14 +133,19 @@ export default {
       }).catch(() => false);
     },
 
-    async getAuthorizations() {
-      this.rights.canEdit = await this.canEditLearningProduct(this.learningProduct.id);
-      this.rights.canDelete = await this.canDeleteLearningProduct(this.learningProduct.id);
+    loadPermissions() {
+      axios.all([
+        this.canEditLearningProduct(this.learningProduct.id),
+        this.canDeleteLearningProduct(this.learningProduct.id)
+      ]).then(axios.spread((canEdit, canDelete) => {
+        this.rights.canEdit = canEdit;
+        this.rights.canDelete = canDelete;
+      }));
     }
   },
 
   created() {
-    this.getAuthorizations();
+    this.loadPermissions();
   }
 };
 </script>

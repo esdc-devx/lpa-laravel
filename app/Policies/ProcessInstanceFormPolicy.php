@@ -101,8 +101,10 @@ class ProcessInstanceFormPolicy
         }
 
         // Ensure current form editor is still the same one as it was after making the request.
-        if (! $processInstanceForm->currentEditor->is($editor)) {
-            throw new OperationDeniedException();
+        if ($editor) {
+            if (! $processInstanceForm->currentEditor->is($editor)) {
+                throw new OperationDeniedException();
+            }
         }
 
         return true;

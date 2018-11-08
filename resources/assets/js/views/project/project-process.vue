@@ -122,16 +122,16 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
 
-  import HttpStatusCodes from '@axios/http-status-codes';
-
+  import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
 
   let namespace = 'processes';
 
   export default {
     name: 'project-process',
+
+    extends: Page,
 
     components: { InfoBox },
 
@@ -147,9 +147,7 @@
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        viewingProcess: `${namespace}/viewing`,
-        hasRole: 'users/hasRole'
+        viewingProcess: `${namespace}/viewing`
       }),
 
       selectedIndex: {
@@ -237,40 +235,36 @@
         this.selectedIndex = this.getActiveStep();
       },
 
-      async fetch() {
-        try {
-          await this.triggerLoadProject();
-          await this.triggerLoadProcessInstance();
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
+      async loadData() {
+        await axios.all([
+          this.triggerLoadProject(),
+          this.triggerLoadProcessInstance()
+        ]);
+      },
+
+      async loadPermissions() {
+        this.processId = this.$route.params.processId;
+        this.rights.canCancelProcess = await this.canCancelProcess(this.processId);
       }
     },
 
     // This makes sure that before entering the route, that we set the active step
     // so that when the page is rendered, the correct step is selected.
     beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.selectedIndex = vm.getActiveStep();
+      axios.all([
+        store.dispatch('projects/loadProject', to.params.projectId),
+        store.dispatch('processes/loadInstance', to.params.processId)
+      ]).then(() => {
+        next(vm => {
+          vm.selectedIndex = vm.getActiveStep();
+          vm.loadPermissions();
+        });
       });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.fetch();
-      next();
-    },
-
-    async created() {
-      this.processId = this.$route.params.processId;
-      this.rights.canCancelProcess = await this.canCancelProcess(this.processId);
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      this.loadData().then(next);
     }
   };
 </script>

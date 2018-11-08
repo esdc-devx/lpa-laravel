@@ -62,9 +62,9 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
 
-  import PageUtils from '@mixins/page/utils.js';
+  import Page from '@components/page';
+
   import TableUtils from '@mixins/table/utils.js';
 
   let namespace = 'projects';
@@ -72,7 +72,9 @@
   export default {
     name: 'project-list',
 
-    mixins: [ PageUtils, TableUtils ],
+    extends: Page,
+
+    mixins: [ TableUtils ],
 
     data() {
       return {
@@ -83,8 +85,6 @@
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         projects: `${namespace}/all`
       }),
 
@@ -108,14 +108,13 @@
         this.headerClick(col, e);
       },
 
-      async triggerLoadProjects() {
+      async loadData() {
         try {
           await this.loadProjects();
           this.normalizedList = _.map(this.projects, project => {
             let normProject = _.pick(project, this.normalizedListAttrs);
             normProject.organizational_unit = normProject.organizational_unit.name;
             normProject.state = normProject.state.name;
-            // @todo: change to real property instead
             normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
             return normProject;
           });
@@ -128,19 +127,19 @@
       },
 
       async onLanguageUpdate() {
-        await this.triggerLoadProjects();
+        await this.loadData();
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.loadData();
+      });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
-      this.triggerLoadProjects();
+      this.loadData().then(next);
     }
   };
 </script>

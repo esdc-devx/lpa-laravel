@@ -43,30 +43,30 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
 
+  import Page from '@components/page';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import InputWrap from '@components/forms/input-wrap';
   import FormError from '@components/forms/error.vue';
 
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
 
   let namespace = 'projects';
 
   export default {
     name: 'project-edit',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 
     computed: {
       ...mapGetters({
-        language: 'language',
         viewingProject: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`
       })
@@ -105,7 +105,7 @@
         this.goToParentPage();
       },
 
-      async fetch() {
+      async loadData() {
         let projectId = this.$route.params.projectId;
         try {
           await this.loadProjectEditInfo(projectId);
@@ -132,20 +132,22 @@
       }
     },
 
+    beforeRouteEnter(to, from, next) {
+      store.dispatch('projects/canEditProject', to.params.projectId)
+        .then(allowed => {
+          if (allowed) {
+            next(vm => {
+              vm.loadData();
+            });
+          } else {
+            router.replace({ name: 'forbidden', params: { '0': to.path } });
+          }
+        });
+    },
+
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      this.onLanguageUpdate().then(next);
     }
   };
 </script>

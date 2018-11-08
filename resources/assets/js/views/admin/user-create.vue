@@ -52,29 +52,29 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-
+  import Page from '@components/page';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import FormError from '@components/forms/error.vue';
   import UserSearch from '@components/forms/user-search';
+
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
 
   let namespace = 'users';
 
   export default {
     name: 'admin-user-create',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 
     computed: {
       ...mapGetters({
-        language: 'language',
         organizationalUnits: `${namespace}/organizationalUnits`,
         roles: `${namespace}/roles`
       })
@@ -114,7 +114,7 @@
         this.goToParentPage();
       },
 
-      async triggerLoadUserCreateInfo() {
+      async loadData() {
         await this.loadUserCreateInfo();
       },
 
@@ -124,20 +124,22 @@
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.triggerLoadUserCreateInfo();
+        await this.loadData();
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      next(vm => {
+        vm.loadData();
+      });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
+      this.onLanguageUpdate().then(next);
     },
 
     mounted() {
-      EventBus.$emit('App:ready');
-
-      this.triggerLoadUserCreateInfo();
       this.autofocus('name');
     }
   };

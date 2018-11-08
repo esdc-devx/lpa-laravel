@@ -61,12 +61,12 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
+  import Page from '@components/page';
 
   import ElSelectWrap from '@components/forms/el-select-wrap';
 
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
+
   import HttpStatusCodes from '@axios/http-status-codes';
 
   let namespace = 'users';
@@ -74,15 +74,16 @@
   export default {
     name: 'user-edit',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElSelectWrap },
 
     computed: {
       ...mapGetters({
-        language: 'language',
         viewingUser: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`,
         roles: `${namespace}/roles`
@@ -125,14 +126,9 @@
         this.goToParentPage();
       },
 
-      async fetch(isInitialLoad = true) {
+      async loadData() {
         let userId = this.$route.params.userId;
         try {
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadUserEditInfo(userId);
-          }
           this.form.user = Object.assign({}, this.viewingUser);
           // replace our internal organizational_units with only the ids
           // since ElementUI only need ids to populate the selected options
@@ -157,20 +153,18 @@
       }
     },
 
+    beforeRouteEnter(to, from, next) {
+      store.dispatch('users/loadUserEditInfo', to.params.userId)
+        .then(() => {
+          next(vm => {
+            vm.loadData();
+          });
+        });
+    },
+
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
-    },
-
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      this.onLanguageUpdate().then(next);
     }
   };
 </script>

@@ -417,8 +417,8 @@
         this.$emit('update:value', tab.index);
       },
 
-      async fetch() {
-        await ListsAPI.getLists([
+      async loadData() {
+        let lists = await ListsAPI.getLists([
           'request-origin',
           'school-priority',
           'community',
@@ -426,11 +426,9 @@
           'internal-resource',
           'recurrence',
           'risk-type'
-        ])
-        .then(lists => {
-          _.forEach(lists, (list, key) => {
-            this[`${_.camelCase(key)}List`] = list;
-          });
+        ]);
+        _.forEach(lists, (list, key) => {
+          this[`${_.camelCase(key)}List`] = list;
         });
       },
 
@@ -441,17 +439,17 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.fetch);
+      EventBus.$off('Store:languageUpdate', this.loadData);
       EventBus.$off('FormEntity:discardChanges', this.bindCheckboxes);
     },
 
-    async created() {
-      this.fetch();
+    created() {
+      this.loadData();
       this.bindCheckboxes();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.fetch);
+      EventBus.$on('Store:languageUpdate', this.loadData);
       EventBus.$on('FormEntity:discardChanges', this.bindCheckboxes);
     }
   };

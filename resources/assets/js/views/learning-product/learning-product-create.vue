@@ -103,15 +103,14 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
+  import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
-  import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
-
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import UserSearch from '@components/forms/user-search';
   import InputWrap from '@components/forms/input-wrap';
+
+  import FormUtils from '@mixins/form/utils.js';
 
   import ListsAPI from '@api/lists';
 
@@ -120,9 +119,11 @@
   export default {
     name: 'learning-product-create',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
 
@@ -169,7 +170,6 @@
 
     computed: {
       ...mapGetters({
-        language: 'language',
         viewingLearningProduct: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`
       })
@@ -236,7 +236,7 @@
         return list;
       },
 
-      async fetch() {
+      async loadData() {
         this.learningProductTypeList = this.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
         let response = await this.loadLearningProductCreateInfo();
         this.projects = response.projects;
@@ -252,19 +252,29 @@
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.fetch();
+        await this.loadData();
       }
+    },
+
+    beforeRouteEnter(to, from, next) {
+      store.dispatch('learningProducts/canCreate', to.params.learningProductId)
+        .then(allowed => {
+          if (allowed) {
+            next(vm => {
+              vm.loadData();
+            });
+          } else {
+            router.replace({ name: 'forbidden', params: { '0': to.path } });
+          }
+        });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
+      this.onLanguageUpdate().then(next);
     },
 
-    async mounted() {
-      EventBus.$emit('App:ready');
-      await this.fetch();
+    mounted() {
       this.autofocus('name');
     }
   };

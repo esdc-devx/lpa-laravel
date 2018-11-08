@@ -1,9 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Config from '@/config';
 
 import Home                    from '@/views/home.vue';
-import Profile                 from '@/views/profile.vue';
 import ProjectList             from '@/views/project/project-list.vue';
 import ProjectView             from '@/views/project/project.vue';
 import ProjectEdit             from '@/views/project/project-edit.vue';
@@ -23,7 +21,6 @@ import Forbidden               from '@/views/errors/403.vue';
 
 import LoadStatus              from '@/store/load-status-constants';
 import store                   from '@/store/';
-import HttpStatusCodes         from '@axios/http-status-codes';
 
 Vue.use(Router);
 
@@ -165,21 +162,6 @@ const routes = [
         return this.trans('base.navigation.create');
       },
       breadcrumbs: () => 'projects/project-create'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        let canCreateProject = await store.dispatch('projects/canCreateProject');
-        if (canCreateProject) {
-          next();
-        } else {
-          router.replace({ name: 'forbidden', params: { '0': to.path } });
-        }
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -189,17 +171,6 @@ const routes = [
     meta: {
       title: () => `${store.getters['projects/viewing'].name}`,
       breadcrumbs: () => 'projects/project'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        await store.dispatch('projects/loadProject', to.params.projectId);
-        next();
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -211,24 +182,6 @@ const routes = [
         return this.trans('base.navigation.edit');
       },
       breadcrumbs: () => 'projects/project/project-edit'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        let canEditProject = await store.dispatch(
-          'projects/canEditProject',
-          to.params.projectId
-        );
-        if (canEditProject) {
-          next();
-        } else {
-          router.replace({ name: 'forbidden', params: { '0': to.path } });
-        }
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -238,18 +191,6 @@ const routes = [
     meta: {
       title: () => `${store.getters['processes/viewing'].definition.name}`,
       breadcrumbs: () => 'projects/project/project-process'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        await store.dispatch('projects/loadProject', to.params.projectId);
-        await store.dispatch('processes/loadInstance', to.params.processId);
-        next();
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -259,19 +200,6 @@ const routes = [
     meta: {
       title: () => `${store.getters['processes/viewingFormInfo'].definition.name}`,
       breadcrumbs: () => 'projects/project/project-process/project-process-form'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        await store.dispatch('projects/loadProject', to.params.projectId);
-        await store.dispatch('processes/loadInstance', to.params.processId);
-        await store.dispatch('processes/loadInstanceForm', to.params.formId);
-        next();
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -292,17 +220,6 @@ const routes = [
     meta: {
       title: () => `${store.getters['learningProducts/viewing'].name}`,
       breadcrumbs: () => 'learning-products/learning-product'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        await store.dispatch('learningProducts/loadLearningProduct', to.params.learningProductId);
-        next();
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -314,21 +231,6 @@ const routes = [
         return this.trans('base.navigation.create');
       },
       breadcrumbs: () => 'learning-products/learning-product-create'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        let canCreateLearningProduct = await store.dispatch('learningProducts/canCreate');
-        if (canCreateLearningProduct) {
-          next();
-        } else {
-          router.replace({ name: 'forbidden', params: { '0': to.path } });
-        }
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -340,24 +242,6 @@ const routes = [
         return this.trans('base.navigation.edit');
       },
       breadcrumbs: () => 'learning-products/learning-product/learning-product-edit'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        let canEditLearningProduct = await store.dispatch(
-          'learningProducts/canEdit',
-          to.params.learningProductId
-        );
-        if (canEditLearningProduct) {
-          next();
-        } else {
-          router.replace({ name: 'forbidden', params: { '0': to.path } });
-        }
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -400,17 +284,6 @@ const routes = [
     meta: {
       title: () => `${store.getters['users/viewing'].name}`,
       breadcrumbs: () => 'administration/admin-user-list/admin-user-edit'
-    },
-    beforeEnter: async (to, from, next) => {
-      try {
-        await store.dispatch('users/loadUserEditInfo', to.params.userId);
-        next();
-      } catch (e) {
-        // Exception handled by interceptor
-        if (!e.response) {
-          throw e;
-        }
-      }
     }
   },
   {
@@ -441,7 +314,8 @@ const routes = [
     }
   }
 ];
-const router = new Router({
+
+window.router = new Router({
   routes,
   mode: 'history',
   saveScrollPosition: 'true'
