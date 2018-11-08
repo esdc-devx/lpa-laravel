@@ -142,31 +142,15 @@
       store.dispatch('processes/loadInstance', processId),
       store.dispatch('processes/loadCanEditForm', formId),
       store.dispatch('processes/loadCanClaimForm', formId),
-      store.dispatch('processes/loadCanUnclaimForm', formId)
+      store.dispatch('processes/loadCanUnclaimForm', formId),      
+      store.dispatch('processes/loadCanReleaseForm', formId)
     );
     if (hasToLoadEntity) {
       requests.push(store.dispatch('processes/loadInstanceForm', formId));
     }
 
     // Exception handled by interceptor
-    await axios.all(requests).then(() => {
-      let currentEditor = store.state.processes.viewingFormInfo.current_editor;
-      let currentEditorUsername = !_.isEmpty(currentEditor) ? currentEditor.username : null;
-
-      let requests = [];
-      requests.push(
-        store.dispatch('processes/loadCanReleaseForm', {
-          formId: formId,
-          username: currentEditorUsername
-        })
-      );
-
-      if (store.getters['users/isCurrentUser'](currentEditor)) {
-        requests.push(store.dispatch('processes/loadCanSubmitForm', formId));
-      }
-
-      axios.all(requests);
-    });
+    await axios.all(requests);
   };
 
   export default {

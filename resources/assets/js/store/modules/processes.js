@@ -136,8 +136,8 @@ export default {
       commit('setCanSubmitForm', response.data.allowed);
     },
 
-    async loadCanReleaseForm({ commit }, { formId, username }) {
-      let response = await ProcessAPI.canReleaseForm(formId, username);
+    async loadCanReleaseForm({ commit }, formId) {
+      let response = await ProcessAPI.canReleaseForm(formId);
       commit('setCanReleaseForm', response.data.allowed);
     }
   },
