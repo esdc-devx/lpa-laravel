@@ -131,7 +131,7 @@
   let namespace = 'projects';
 
   const loadData = async ({ to, hasToLoadEntity = true }) => {
-    let { projectId, processId, formId } = to ? to.params : this;
+    const { projectId, processId, formId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
@@ -142,7 +142,8 @@
       store.dispatch('processes/loadInstance', processId),
       store.dispatch('processes/loadCanEditForm', formId),
       store.dispatch('processes/loadCanClaimForm', formId),
-      store.dispatch('processes/loadCanUnclaimForm', formId),      
+      store.dispatch('processes/loadCanUnclaimForm', formId),
+      store.dispatch('processes/loadCanSubmitForm', formId),
       store.dispatch('processes/loadCanReleaseForm', formId)
     );
     if (hasToLoadEntity) {

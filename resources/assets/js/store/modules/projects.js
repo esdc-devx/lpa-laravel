@@ -10,6 +10,7 @@ export default {
       name: ''
     },
     all: [],
+    processPermissions: {},
     organizationalUnits: []
   },
 
@@ -70,7 +71,10 @@ export default {
 
     async canStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
       let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
-      return response.data.allowed;
+      commit('setProcessPermission', {
+        name_key: processDefinitionNameKey,
+        isAllowed: response.data.allowed
+      });
     },
 
     async create({ commit }, project) {
@@ -91,6 +95,10 @@ export default {
   mutations: {
     setProjects(state, projects) {
       state.all = projects;
+    },
+
+    setProcessPermission(state, { name_key, isAllowed }) {
+      state.processPermissions[name_key] = isAllowed;
     },
 
     setViewing(state, project) {
