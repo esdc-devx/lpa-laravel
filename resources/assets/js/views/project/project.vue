@@ -1,10 +1,10 @@
 <template>
   <div class="project content">
     <el-row :gutter="20" class="equal-height">
-      <el-col :span="canBeVisible ? 18 : 24">
+      <el-col :span="canActionsBeVisible ? 18 : 24">
         <project-info :project="viewingProject" @onAfterDelete="onAfterDelete"/>
       </el-col>
-      <el-col :span="6" v-if="canBeVisible">
+      <el-col :span="6" v-if="canActionsBeVisible">
         <el-card shadow="never" class="project-actions">
           <div slot="header">
             <h3>{{ trans('entities.process.actions') }}</h3>
@@ -18,10 +18,10 @@
               </li>
             </template>
             <template v-else>
-              <li v-for="(process, index) in definitions" :key="index">
+              <li v-for="(process, index) in processDefinitions" :key="index">
                 <el-button
                   type="primary"
-                  :disabled="!processDefinitionPermissions[process.name_key]"
+                  :disabled="!processPermissions[process.name_key]"
                   @click="triggerStartProcess(process.name, process.name_key)">
                     {{ process.name }}
                 </el-button>
@@ -60,7 +60,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
@@ -70,6 +70,36 @@
 
   let namespace = 'projects';
 
+  const loadData = async ({ to }) => {
+    const { projectId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch('projects/loadProject', projectId),
+      store.dispatch('processes/loadDefinitions', 'project'),
+      store.dispatch('processes/loadHistory', {
+        entityType: 'project',
+        entityId: projectId
+      }),
+      store.dispatch('learningProducts/loadProjectLearningProducts', projectId),
+    );
+
+    // Exception handled by interceptor
+    await axios.all(requests).then(async () => {
+      // load all the permissions in the store
+      // so that we can access them afterwards
+      await axios.all(store.state.processes.definitions.map(
+        ({name_key}) => store.dispatch('projects/canStartProcess', {
+          projectId: to.params.projectId,
+          processDefinitionNameKey: name_key
+        })
+      ));
+    });
+  };
+
   export default {
     name: 'project',
 
@@ -78,10 +108,13 @@
     components: { ProjectInfo, EntityDataTable },
 
     computed: {
+      ...mapState(`${namespace}`, [
+        'processPermissions'
+      ]),
       ...mapGetters({
         viewingProject: `${namespace}/viewing`,
-        definitions: `processes/definitions`,
         viewingHistory: 'processes/viewingHistory',
+        processDefinitions: `processes/definitions`,
         projectLearningProducts: 'learningProducts/projectLearningProducts'
       }),
 
@@ -164,7 +197,7 @@
         }
       },
 
-      canBeVisible() {
+      canActionsBeVisible() {
         return this.hasRole('owner') || this.hasRole('admin');
       }
     },
@@ -213,7 +246,7 @@
           } catch (e) {
             if (e.response) {
               // on error, re-fetch the info just to be in-sync
-              this.loadData();
+              loadData();
             } else {
               throw e;
             }
@@ -226,53 +259,21 @@
         this.$router.push(`${projectId}/process/${processId}`);
       },
 
-      async loadData() {
-        let projectId = this.$route.params.projectId;
-        let requests = [];
-
-        requests.push(
-          this.loadProject(projectId),
-          this.loadProcessDefinitions('project'),
-          this.loadProcessHistory({ entityType: 'project', entityId: projectId }),
-          this.loadProjectLearningProducts(projectId)
-        );
-
-        await axios.all(requests).then(() => {
-          this.loadPermissions();
-        });
-      },
-
-      async loadPermissions() {
-        // @fixme: axios.all
-        let definition;
-        for (let i = 0; i < this.definitions.length; i++) {
-          definition = this.definitions[i];
-          // add reactive properties
-          this.$set(
-            this.processDefinitionPermissions,
-            definition.name_key,
-            await this.canStartProcess({ projectId: this.$route.params.projectId, processDefinitionNameKey: definition.name_key })
-          );
-        }
-      },
-
       onAfterDelete() {
         this.goToParentPage();
       }
     },
 
     beforeRouteEnter(to, from, next) {
-      store.dispatch('projects/loadProject', to.params.projectId)
-        .then(() => {
-          next(vm => {
-            vm.loadData();
-          });
-        });
+      // Exception handled by interceptor
+      loadData({to}).then(() => {
+        next();
+      });
     },
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      this.loadData().then(next);
+      loadData({to}).then(next);
     }
   };
 </script>
