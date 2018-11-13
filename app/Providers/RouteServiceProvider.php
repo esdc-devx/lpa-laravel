@@ -60,11 +60,9 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map()
     {
+        $this->mapProcessEngineRoutes();
         $this->mapApiRoutes();
-
         $this->mapWebRoutes();
-
-        //
     }
 
     /**
@@ -101,5 +99,18 @@ class RouteServiceProvider extends ServiceProvider
              ->middleware('api')
              ->namespace($this->namespace)
              ->group(base_path('routes/api.php'));
+    }
+
+    /**
+     * Define the process engine routes to allow communication between both systems.
+     *
+     * @return void
+     */
+    protected function mapProcessEngineRoutes()
+    {
+        Route::prefix('process-engine')
+            ->middleware('json', 'auth.process-engine')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/process_engine.php'));
     }
 }
