@@ -69,6 +69,26 @@
 
   let namespace = 'projects';
 
+  const loadData = async () => {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadProjects`)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'project-list',
 
@@ -95,10 +115,6 @@
     },
 
     methods: {
-      ...mapActions({
-        loadProjects: `${namespace}/loadProjects`
-      }),
-
       viewProject(project) {
         this.scrollToTop();
         this.$router.push(`${namespace}/${project.id}`);
@@ -108,38 +124,31 @@
         this.headerClick(col, e);
       },
 
-      async loadData() {
-        try {
-          await this.loadProjects();
-          this.normalizedList = _.map(this.projects, project => {
-            let normProject = _.pick(project, this.normalizedListAttrs);
-            normProject.organizational_unit = normProject.organizational_unit.name;
-            normProject.state = normProject.state.name;
-            normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
-            return normProject;
-          });
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
-      async onLanguageUpdate() {
-        await this.loadData();
+      normalizeList() {
+        this.normalizedList = _.map(this.projects, project => {
+          let normProject = _.pick(project, this.normalizedListAttrs);
+          normProject.organizational_unit = normProject.organizational_unit.name;
+          normProject.state = normProject.state.name;
+          normProject.current_process = normProject.current_process && normProject.current_process.definition ?
+                                        normProject.current_process.definition.name :
+                                        this.trans('entities.general.na');
+          return normProject;
+        });
       }
     },
 
-    beforeRouteEnter(to, from, next) {
+    async beforeRouteEnter(to, from, next) {
+      await loadData();
       next(vm => {
-        vm.loadData();
+        vm.normalizeList.call(vm);
       });
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.loadData().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await loadData();
+      this.normalizeList();
+      next();
     }
   };
 </script>
