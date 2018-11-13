@@ -55,6 +55,26 @@
 
   let namespace = 'projects';
 
+  const loadData = async function () {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadProjectCreateInfo`)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'project-create',
 
@@ -104,42 +124,30 @@
         this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
       },
 
-      async loadData() {
-        try {
-          await this.loadProjectCreateInfo();
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.loadData();
+        await loadData();
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      store.dispatch('projects/canCreateProject').then(allowed => {
-        if (allowed) {
-          next(vm => {
-            vm.loadData();
-          });
-        } else {
-          router.replace({ name: 'forbidden', params: { '0': to.path } });
-        }
-      });
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('projects/loadCanCreate');
+      if (store.state.projects.permissions.canCreate) {
+        await loadData();
+        next();
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await this.onLanguageUpdate();
+      next();
     },
 
     mounted() {

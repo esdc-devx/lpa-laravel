@@ -10,6 +10,11 @@ export default {
       name: ''
     },
     all: [],
+    permissions: {
+      canEdit: false,
+      canCreate: false,
+      canDelete: false
+    },
     processPermissions: {},
     organizationalUnits: []
   },
@@ -42,7 +47,7 @@ export default {
       return response.data;
     },
 
-    async loadProjects({ commit, dispatch }) {
+    async loadProjects({ commit }) {
       let response = await ProjectsAPI.getProjects();
       commit('setProjects', response.data.projects);
       return response.data.projects;
@@ -54,22 +59,31 @@ export default {
       return response.data;
     },
 
-    async canCreateProject({ commit }) {
-      let response = await ProjectsAPI.canCreateProject();
-      return response.data.allowed;
+    async loadCanCreate({ commit }) {
+      let response = await ProjectsAPI.canCreate();
+      commit('setPermission', {
+        name: 'canCreate',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async canEditProject({ commit }, id) {
-      let response = await ProjectsAPI.canEditProject(id);
-      return response.data.allowed;
+    async loadCanEdit({ commit }, id) {
+      let response = await ProjectsAPI.canEdit(id);
+      commit('setPermission', {
+        name: 'canEdit',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async canDeleteProject({ commit }, id) {
-      let response = await ProjectsAPI.canDeleteProject(id);
-      return response.data.allowed;
+    async loadCanDelete({ commit }, id) {
+      let response = await ProjectsAPI.canDelete(id);
+      commit('setPermission', {
+        name: 'canDelete',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async canStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
+    async loadCanStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
       let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
       commit('setProcessPermission', {
         name_key: processDefinitionNameKey,
@@ -99,6 +113,10 @@ export default {
 
     setProcessPermission(state, { name_key, isAllowed }) {
       state.processPermissions[name_key] = isAllowed;
+    },
+
+    setPermission(state, { name, isAllowed }) {
+      state.permissions[name] = isAllowed;
     },
 
     setViewing(state, project) {

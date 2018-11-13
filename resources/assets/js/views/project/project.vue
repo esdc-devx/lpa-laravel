@@ -70,7 +70,7 @@
 
   let namespace = 'projects';
 
-  const loadData = async ({ to }) => {
+  const loadData = async function ({ to } = {}) {
     const { projectId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
@@ -85,19 +85,33 @@
         entityId: projectId
       }),
       store.dispatch('learningProducts/loadProjectLearningProducts', projectId),
+      store.dispatch('projects/loadCanEdit', projectId),
+      store.dispatch('projects/loadCanDelete', projectId)
     );
 
     // Exception handled by interceptor
-    await axios.all(requests).then(async () => {
-      // load all the permissions in the store
-      // so that we can access them afterwards
-      await axios.all(store.state.processes.definitions.map(
-        ({name_key}) => store.dispatch('projects/canStartProcess', {
-          projectId: to.params.projectId,
-          processDefinitionNameKey: name_key
-        })
-      ));
-    });
+    try {
+      await axios.all(requests).then(async () => {
+        // load all the permissions in the store
+        // so that we can access them afterwards
+        try {
+          await axios.all(store.state.processes.definitions.map(
+            ({name_key}) => store.dispatch('projects/loadCanStartProcess', {
+              projectId: projectId,
+              processDefinitionNameKey: name_key
+            })
+          ));
+        } catch (e) {
+          if (!e.response) {
+            throw e;
+          }
+        }
+      });
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
   };
 
   export default {
@@ -210,11 +224,7 @@
 
     methods: {
       ...mapActions({
-        loadProject: `${namespace}/loadProject`,
-        canStartProcess: `${namespace}/canStartProcess`,
-        loadProcessDefinitions: `processes/loadDefinitions`,
         startProcess: `processes/start`,
-        loadProcessHistory: 'processes/loadHistory',
         loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
       }),
 
@@ -241,12 +251,11 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.process_started')
             });
-            let projectId = this.$route.params.projectId;
-            this.$router.push(`${projectId}/process/${response.process_instance.id}`);
+            this.$router.push(`${this.projectId}/process/${response.process_instance.id}`);
           } catch (e) {
             if (e.response) {
               // on error, re-fetch the info just to be in-sync
-              loadData();
+              loadData.apply(this);
             } else {
               throw e;
             }
@@ -255,8 +264,7 @@
       },
 
       continueToProcess(processId) {
-        let projectId = this.$route.params.projectId;
-        this.$router.push(`${projectId}/process/${processId}`);
+        this.$router.push(`${this.projectId}/process/${processId}`);
       },
 
       onAfterDelete() {
@@ -273,7 +281,11 @@
 
     // called when url params change, e.g: language
     beforeRouteUpdate(to, from, next) {
-      loadData({to}).then(next);
+      loadData.apply(this).then(next);
+    },
+
+    created() {
+      this.projectId = this.$route.params.projectId;
     }
   };
 </script>
