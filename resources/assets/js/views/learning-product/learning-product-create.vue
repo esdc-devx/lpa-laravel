@@ -114,7 +114,7 @@
 
   import ListsAPI from '@api/lists';
 
-  let namespace = 'learningProducts';
+  const namespace = 'learningProducts';
 
   const loadData = async function () {
     // we need to access the store directly

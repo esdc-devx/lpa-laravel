@@ -72,7 +72,7 @@ import HttpStatusCodes from '@axios/http-status-codes';
 import InfoBox from '@components/info-box.vue';
 import ElButtonWrap from '@components/el-button-wrap.vue';
 
-let namespace = 'learningProducts';
+const namespace = 'learningProducts';
 
 export default {
   name: 'learning-product-info',

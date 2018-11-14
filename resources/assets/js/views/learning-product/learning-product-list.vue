@@ -15,7 +15,7 @@
   import Page from '@components/page';
   import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
 
-  let namespace = 'learningProducts';
+  const namespace = 'learningProducts';
 
   const loadData = async () => {
     // we need to access the store directly

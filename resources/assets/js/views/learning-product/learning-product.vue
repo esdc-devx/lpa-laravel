@@ -15,7 +15,7 @@
   import Page from '@components/page';
   import LearningProductInfo from '@components/learning-product-info.vue';
 
-  let namespace = 'learningProducts';
+  const namespace = 'learningProducts';
 
   const loadData = async function ({ to } = {}) {
     const { learningProductId } = to ? to.params : this;
