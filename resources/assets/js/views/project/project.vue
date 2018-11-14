@@ -68,7 +68,7 @@
 
   import TableUtils from '@mixins/table/utils.js';
 
-  let namespace = 'projects';
+  const namespace = 'projects';
 
   const loadData = async function ({ to } = {}) {
     const { projectId } = to ? to.params : this;

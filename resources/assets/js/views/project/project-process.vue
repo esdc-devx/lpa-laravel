@@ -126,7 +126,7 @@
   import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
 
-  let namespace = 'processes';
+  const namespace = 'processes';
 
   const loadData = async function ({ to } = {}) {
     const { projectId, processId } = to ? to.params : this;

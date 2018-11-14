@@ -20,7 +20,7 @@
 
   import EntityDataTable from '@components/entity-data-table.vue';
 
-  let namespace = 'projects';
+  const namespace = 'projects';
 
   const loadData = async () => {
     // we need to access the store directly
