@@ -272,16 +272,22 @@
       }
     },
 
-    beforeRouteEnter(to, from, next) {
+    async beforeRouteEnter(to, from, next) {
       // Exception handled by interceptor
-      loadData({to}).then(() => {
-        next();
-      });
+      await loadData({ to });
+      next();
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      loadData.apply(this).then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await loadData.apply(this);
+      this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
+        let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
+        normProcess.state = normProcess.state.name;
+        normProcess.name = normProcess.definition.name;
+        return normProcess;
+      });
+      next();
     },
 
     created() {

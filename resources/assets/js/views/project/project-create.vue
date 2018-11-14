@@ -146,8 +146,13 @@
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
-      await this.onLanguageUpdate();
-      next();
+      await this.$store.dispatch('projects/loadCanCreate');
+      if (this.$store.state.projects.permissions.canCreate) {
+        await this.onLanguageUpdate();
+        next();
+      } else {
+        this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     mounted() {
