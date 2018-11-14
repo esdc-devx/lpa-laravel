@@ -104,8 +104,7 @@
 
     methods: {
       ...mapActions({
-        createProject: `${namespace}/create`,
-        loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
+        createProject: `${namespace}/create`
       }),
 
       // Form handlers
