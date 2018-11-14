@@ -46,7 +46,7 @@ export default {
     return axios.put(`process-instance-forms/${formId}/submit`, form);
   },
 
-  canCancelProcess(processId) {
+  canCancel(processId) {
     return axios.get(`authorization/process-instance/cancel/${processId}`);
   },
 
