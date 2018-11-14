@@ -294,7 +294,7 @@
         this.innerProjects = _.cloneDeep(this.projects);
         // Add LPA number to each project name.
         _.forEach(this.innerProjects, project => {
-          project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
+          project.name = `${this.$options.filters.LPANumFilter(project.id)} - ${project.name}`;
         });
         next();
       } else {

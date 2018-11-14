@@ -123,7 +123,7 @@
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
-      await loadData()
+      await loadData();
       next();
     }
   };
