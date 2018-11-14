@@ -31,11 +31,11 @@
           check for the state here since when we move to another page
           the project is refrehed and we might not have the property state
         -->
-        <dd>{{ project.state ? project.state.name : trans('entities.general.na') }}</dd>
+        <dd>{{ project.state ? project.state.name : trans('entities.general.none') }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.process.current') }}</dt>
-        <dd>{{ project.current_process ? project.current_process.definition.name : trans('entities.general.na') }}</dd>
+        <dd>{{ project.current_process ? project.current_process.definition.name : trans('entities.general.none') }}</dd>
       </dl>
       <dl>
         <dt>{{ $tc('entities.general.organizational_units') }}</dt>

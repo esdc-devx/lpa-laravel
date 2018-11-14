@@ -121,7 +121,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapState, mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
   import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
@@ -199,6 +199,10 @@
         cancelProcessInstance: `${namespace}/cancelInstance`
       }),
 
+      ...mapMutations(`${namespace}`, [
+        'setPermission'
+      ]),
+
       viewForm(form) {
         this.$router.push(`${this.processId}/form/${form.id}`);
       },
@@ -235,7 +239,7 @@
               message: this.trans('components.notice.message.process_cancelled')
             });
             await loadData.apply(this);
-            this.$store.commit(`${namespace}/setPermission`, {
+            this.setPermission({
               name: 'canCancel',
               isAllowed: false
             });

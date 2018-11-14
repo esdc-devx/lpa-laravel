@@ -8,7 +8,7 @@ Vue.filter('LPANumFilter', function (id) {
 
 Vue.filter('learningProductTypeSubTypeFilter', function (type, subType) {
   return type + ' / ' + subType;
-})
+});
 
 Vue.mixin({
   methods: {
@@ -21,7 +21,10 @@ Vue.mixin({
       return _.chain(list)
               .mapValues(attr)
               .toArray().flatMapDeep().uniq().compact()
-              .map((val, key) => { return { text: val, value: val } })
+              .map((val, key) => {
+                val = val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
+                return { text: val, value: val };
+              })
               .value();
     }
   }
