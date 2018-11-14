@@ -171,30 +171,6 @@ export default {
       state.permissions[name] = isAllowed;
     },
 
-    setCanEditForm(state, allowed) {
-      state.canEditForm = allowed;
-    },
-
-    setCanClaimForm(state, allowed) {
-      state.canClaimForm = allowed;
-    },
-
-    setCanUnclaimForm(state, allowed) {
-      state.canUnclaimForm = allowed;
-    },
-
-    setCanSubmitForm(state, allowed) {
-      state.canSubmitForm = allowed;
-    },
-
-    setCanReleaseForm(state, allowed) {
-      state.canReleaseForm = allowed;
-    },
-
-    setCanCancel(state, allowed) {
-      state.canCancel = allowed;
-    },
-
     setViewing(state, viewing) {
       // set to default in case there is no process yet
       viewing = viewing || state.viewing;
