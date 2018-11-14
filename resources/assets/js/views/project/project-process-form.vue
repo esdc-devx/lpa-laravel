@@ -34,7 +34,7 @@
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
             <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_by.name : trans('entities.general.none') }}</dd>
-            <dd>{{ viewingFormInfo.updated_at }}</dd>
+            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_at : '' }}</dd>
           </dl>
         </info-box>
       </el-col>
