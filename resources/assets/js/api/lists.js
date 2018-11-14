@@ -1,18 +1,14 @@
-import _ from 'lodash';
 import axios from '@axios/interceptor';
-import store from '@/store';
 
 export default {
-
   /**
    * Get the content of a single list.
    * @param {string} listName
    * @return {collection} - The requested list content.
    */
   async getList(listName) {
-    return await axios.get('lists/' + listName).then(function(response) {
-      return response.data;
-    });
+    let response = await axios.get('lists/' + listName);
+    return response.data;
   },
 
   /**
@@ -21,14 +17,11 @@ export default {
    * @return {object} - The requested lists content.
    */
   async getLists(listNames) {
-    return await axios.get('lists', { 
-      params: { 
-        include: listNames 
-      } 
-    })
-    .then(function(response) {
-      return response.data;
+    let response = await axios.get('lists', {
+      params: {
+        include: listNames
+      }
     });
+    return response.data;
   }
-
 };

@@ -17,6 +17,30 @@
 
   let namespace = 'learningProducts';
 
+  const loadData = async function ({ to } = {}) {
+    const { learningProductId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+
+    requests.push(
+      store.dispatch(`${namespace}/loadLearningProduct`, learningProductId),
+      store.dispatch(`${namespace}/loadCanEdit`, learningProductId),
+      store.dispatch(`${namespace}/loadCanDelete`, learningProductId)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'learning-products',
 
@@ -43,31 +67,20 @@
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
-      async loadData() {
-        try {
-          let learningProductId = this.$route.params.learningProductId;
-          await this.loadLearningProduct(learningProductId);
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
       onAfterDelete() {
         this.goToParentPage();
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      store.dispatch('learningProducts/loadLearningProduct', to.params.learningProductId)
-        .then(next);
+    async beforeRouteEnter(to, from, next) {
+      await loadData({to});
+      next();
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.loadData().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await loadData.apply(this);
+      next();
     }
   };
 </script>

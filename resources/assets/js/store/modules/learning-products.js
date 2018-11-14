@@ -10,6 +10,12 @@ export default {
       name: ''
     },
     all: [],
+    projects: [],
+    permissions: {
+      canCreate: false,
+      canEdit: false,
+      canDelete: false
+    },
     organizationalUnits: [],
     projectLearningProducts: []
   },
@@ -34,55 +40,67 @@ export default {
 
   actions: {
     async loadLearningProducts({ commit, dispatch }) {
-      let learningProducts = await LearningProductAPI.getLearningProducts();
-      commit('setLearningProducts', learningProducts);
+      let response = await LearningProductAPI.getLearningProducts();
+      commit('setLearningProducts', response.data.learning_products);
     },
 
     async loadProjectLearningProducts({ commit }, projectId) {
-      let projectLearningProducts = await LearningProductAPI.getProjectLearningProducts(projectId);
-      commit('setProjectLearningProducts', projectLearningProducts);
+      let response = await LearningProductAPI.getProjectLearningProducts(projectId);
+      commit('setProjectLearningProducts', response.data.learning_products);
     },
 
     async loadLearningProduct({ commit }, id) {
-      let learningProduct = await LearningProductAPI.getLearningProduct(id);
-      commit('setViewing', learningProduct);
+      let response = await LearningProductAPI.getLearningProduct(id);
+      commit('setViewing', response.data.learning_product);
     },
 
     async loadLearningProductCreateInfo({ commit }) {
-      let learningProductCreateInfo = await LearningProductAPI.getCreateInfo();
-      commit('setOrganizationalUnits', learningProductCreateInfo.organizational_units);
-      return learningProductCreateInfo;
+      let response = await LearningProductAPI.getCreateInfo();
+      commit('setProjects', response.data.projects);
+      commit('setOrganizationalUnits', response.data.organizational_units);
     },
 
-    async canCreate({ commit }) {
-      let autorization = await LearningProductAPI.canCreate();
-      return autorization;
+    async loadLearningProductEditInfo({ commit }, id) {
+      let response = await LearningProductAPI.getEditInfo(id);
+      commit('setViewing', response.data.learning_product);
+      commit('setOrganizationalUnits', response.data.organizational_units);
     },
 
     async create({ commit }, learningProduct) {
-      let newLearningProduct = await LearningProductAPI.create(learningProduct);
-      commit('setViewing', newLearningProduct);
-      return newLearningProduct;
+      let response = await LearningProductAPI.create(learningProduct);
+      commit('setViewing', response.data);
     },
 
-    async canDelete({ commit }, id) {
-      let autorization = await LearningProductAPI.canDelete(id);
-      return autorization;
+    async update({ commit }, { id , data }) {
+      await LearningProductAPI.update(id, data);
     },
 
     async delete({ commit }, id) {
       await LearningProductAPI.delete(id);
     },
 
-    async canEdit({ commit }, id) {
-      let autorization = await LearningProductAPI.canEdit(id);
-      return autorization;
+    async loadCanCreate({ commit }) {
+      let response = await LearningProductAPI.canCreate();
+      commit('setPermission', {
+        name: 'canCreate',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async loadLearningProductEditInfo({ commit }, id) {
-      let response = await LearningProductAPI.getEditInfo(id);
-      commit('setViewing', response.learning_product);
-      return response;
+    async loadCanEdit({ commit }, id) {
+      let response = await LearningProductAPI.canEdit(id);
+      commit('setPermission', {
+        name: 'canEdit',
+        isAllowed: response.data.allowed
+      });
+    },
+
+    async loadCanDelete({ commit }, id) {
+      let response = await LearningProductAPI.canDelete(id);
+      commit('setPermission', {
+        name: 'canDelete',
+        isAllowed: response.data.allowed
+      });
     }
   },
 
@@ -93,6 +111,14 @@ export default {
 
     setViewing(state, learningProduct) {
       state.viewing = learningProduct;
+    },
+
+    setProjects(state, projects) {
+      state.projects = projects;
+    },
+
+    setPermission(state, { name, isAllowed }) {
+      state.permissions[name] = isAllowed;
     },
 
     setOrganizationalUnits(state, organizationalUnits) {
