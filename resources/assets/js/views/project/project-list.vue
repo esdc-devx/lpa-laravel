@@ -67,7 +67,7 @@
 
   import TableUtils from '@mixins/table/utils.js';
 
-  let namespace = 'projects';
+  const namespace = 'projects';
 
   const loadData = async () => {
     // we need to access the store directly

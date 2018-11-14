@@ -140,12 +140,7 @@
       await store.dispatch('projects/loadCanEdit', to.params.projectId);
       if (store.state.projects.permissions.canEdit) {
         await loadData({to});
-        next(vm => {
-          vm.form.project = _.cloneDeep(vm.viewingProject);
-          // replace our internal organizational_units with only the ids
-          // since ElementUI only need ids to populate the selected options
-          vm.form.project.organizational_unit = vm.viewingProject.organizational_unit.id;
-        });
+        next();
       } else {
         router.replace({ name: 'forbidden', params: { '0': to.path } });
       }
@@ -156,10 +151,6 @@
       await this.$store.dispatch('projects/loadCanEdit', to.params.projectId);
       if (this.$store.state.projects.permissions.canEdit) {
         await this.onLanguageUpdate();
-        this.form.project = _.cloneDeep(this.viewingProject);
-        // replace our internal organizational_units with only the ids
-        // since ElementUI only need ids to populate the selected options
-        this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
         next();
       } else {
         this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
@@ -169,6 +160,10 @@
      created() {
       // store the reference to the current form id
       this.projectId = this.$route.params.projectId;
+      this.form.project = _.cloneDeep(this.viewingProject);
+      // replace our internal organizational_units with only the ids
+      // since ElementUI only need ids to populate the selected options
+      this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
     }
   };
 </script>
