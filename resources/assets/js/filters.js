@@ -19,7 +19,10 @@ Vue.mixin({
       return _.chain(list)
               .mapValues(attr)
               .toArray().uniq().compact()
-              .map((val, key) => { return { text: val, value: val } })
+              .map((val, key) => {
+                val = val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
+                return { text: val, value: val };
+              })
               .value();
     }
   }

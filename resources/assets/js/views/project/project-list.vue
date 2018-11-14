@@ -98,9 +98,8 @@
 
     data() {
       return {
-        normalizedList: [],
         normalizedListAttrs: ['id', 'name', 'organizational_unit.name', 'updated_at', 'state.name', 'current_process']
-      }
+      };
     },
 
     computed: {
@@ -111,6 +110,18 @@
       orgUnitFilters() {
         return this.getColumnFilters(this.normalizedList, 'organizational_unit')
                    .sort((a, b) => this.$helpers.localeSort(a, b, 'text'));
+      },
+
+      normalizedList() {
+        return _.map(this.projects, project => {
+          let normProject = _.pick(project, this.normalizedListAttrs);
+          normProject.organizational_unit = normProject.organizational_unit.name;
+          normProject.state = normProject.state.name;
+          normProject.current_process = normProject.current_process && normProject.current_process.definition ?
+                                        normProject.current_process.definition.name :
+                                        this.trans('entities.general.none');
+          return normProject;
+        });
       }
     },
 
@@ -122,32 +133,17 @@
 
       onHeaderClick(col, e) {
         this.headerClick(col, e);
-      },
-
-      normalizeList() {
-        this.normalizedList = _.map(this.projects, project => {
-          let normProject = _.pick(project, this.normalizedListAttrs);
-          normProject.organizational_unit = normProject.organizational_unit.name;
-          normProject.state = normProject.state.name;
-          normProject.current_process = normProject.current_process && normProject.current_process.definition ?
-                                        normProject.current_process.definition.name :
-                                        this.trans('entities.general.na');
-          return normProject;
-        });
       }
     },
 
     async beforeRouteEnter(to, from, next) {
       await loadData();
-      next(vm => {
-        vm.normalizeList.call(vm);
-      });
+      next();
     },
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
       await loadData();
-      this.normalizeList();
       next();
     }
   };
