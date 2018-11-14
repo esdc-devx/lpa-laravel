@@ -17,6 +17,26 @@
 
   let namespace = 'learningProducts';
 
+  const loadData = async () => {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadLearningProducts`)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'learning-product-list',
 
@@ -30,32 +50,15 @@
       })
     },
 
-    methods: {
-      ...mapActions({
-        loadLearningProducts: `${namespace}/loadLearningProducts`
-      }),
-
-      async loadData() {
-        try {
-          await this.loadLearningProducts();
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      }
-    },
-
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.loadData();
-      });
+    async beforeRouteEnter(to, from, next) {
+      await loadData();
+      next();
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.loadData().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await loadData()
+      next();
     }
   };
 </script>

@@ -5,13 +5,13 @@
         <h2><i class="el-icon-lpa-learning-product"></i>{{ learningProduct.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
           <el-button-wrap
-            :disabled="!rights.canEdit"
+            :disabled="!permissions.canEdit"
             @click.native="edit()"
             :tooltip="trans('components.tooltip.edit_learning_product')"
             size="mini"
             icon="el-icon-lpa-edit" />
           <el-button-wrap
-            :disabled="!rights.canDelete"
+            :disabled="!permissions.canDelete"
             @click.native="deleteWrapper()"
             :tooltip="trans('components.tooltip.delete_learning_product')"
             type="danger"
@@ -26,11 +26,11 @@
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.type') }}</dt>
-        <dd>{{ learningProduct.type.name, learningProduct.sub_type.name | learningProductTypeSubTypeFilter }}</dd>
+        <dd>{{ (learningProduct.type ? learningProduct.type.name : ''), (learningProduct.sub_type ? learningProduct.sub_type.name : '') | learningProductTypeSubTypeFilter }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.status') }}</dt>
-        <dd>{{ learningProduct.state.name }}</dd>
+        <dd>{{ learningProduct.state ? learningProduct.state.name : trans('entities.general.na') }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.process.current') }}</dt>
@@ -67,7 +67,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import HttpStatusCodes from '@axios/http-status-codes';
 import InfoBox from '@components/info-box.vue';
 import ElButtonWrap from '@components/el-button-wrap.vue';
@@ -86,16 +86,10 @@ export default {
     }
   },
 
-  data() {
-    return {
-      rights: {
-        canEdit: false,
-        canDelete: false
-      }
-    };
-  },
-
   computed: {
+    ...mapState(`${namespace}`, [
+      'permissions'
+    ]),
     ...mapGetters({
       language: 'language',
       hasRole: 'users/hasRole'
@@ -104,9 +98,7 @@ export default {
 
   methods: {
     ...mapActions({
-      deleteLearningProduct: `${namespace}/delete`,
-      canEditLearningProduct: `${namespace}/canEdit`,
-      canDeleteLearningProduct: `${namespace}/canDelete`
+      deleteLearningProduct: `${namespace}/delete`
     }),
 
     edit() {
@@ -131,21 +123,7 @@ export default {
             }
           }
       }).catch(() => false);
-    },
-
-    loadPermissions() {
-      axios.all([
-        this.canEditLearningProduct(this.learningProduct.id),
-        this.canDeleteLearningProduct(this.learningProduct.id)
-      ]).then(axios.spread((canEdit, canDelete) => {
-        this.rights.canEdit = canEdit;
-        this.rights.canDelete = canDelete;
-      }));
     }
-  },
-
-  created() {
-    this.loadPermissions();
   }
 };
 </script>
