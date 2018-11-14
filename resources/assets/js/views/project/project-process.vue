@@ -259,9 +259,8 @@
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
-      next(vm => {
-        vm.selectedIndex = vm.getActiveStep();
-      });
+      this.selectedIndex = this.getActiveStep();
+      next();
     },
 
     created() {
