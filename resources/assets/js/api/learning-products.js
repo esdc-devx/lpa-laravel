@@ -4,56 +4,46 @@ import axios from '@axios/interceptor';
 export default {
 
   async getLearningProducts() {
-    let response = await axios.get(`learning-products`);
-    return response.data.learning_products;
+    return await axios.get(`learning-products`);
   },
 
   async getProjectLearningProducts(projectId) {
-    let response = await axios.get(`learning-products/?project_id=${projectId}`);
-    return response.data.learning_products;
+    return await axios.get(`learning-products/?project_id=${projectId}`);
   },
 
   async getLearningProduct(id) {
-    let response = await axios.get(`learning-products/${id}`);
-    return response.data.learning_product;
+    return await axios.get(`learning-products/${id}`);
   },
 
   async getCreateInfo() {
-    let response = await axios.get('learning-products/create');
-    return response.data;
+    return await axios.get('learning-products/create');
   },
 
-  async canCreate() {
-    let response = await axios.get('authorization/learning-product/create');
-    return response.data.allowed;
+  async getEditInfo(id) {
+    return await axios.get(`learning-products/${id}/edit`);
   },
 
   async create(learningProduct) {
-    let response = await axios.post('learning-products', learningProduct);
-    return response.data;
+    return await axios.post('learning-products', learningProduct);
   },
 
-  async canDelete(id) {
-    let response = await axios.get(`authorization/learning-product/delete/${id}`);
-    return response.data.allowed;
+  async update(id, data) {
+    return await axios.put(`learning-products/${id}`, data);
   },
 
   async delete(id) {
     await axios.delete(`learning-products/${id}`);
   },
 
+  async canCreate() {
+    return await axios.get('authorization/learning-product/create');
+  },
+
+  async canDelete(id) {
+    return await axios.get(`authorization/learning-product/delete/${id}`);
+  },
+
   async canEdit(id) {
-    let response = await axios.get(`authorization/learning-product/edit/${id}`);
-    return response.data.allowed;
-  },
-
-  async getEditInfo(id) {
-    let response = await axios.get(`learning-products/${id}/edit`);
-    return response.data;
-  },
-
-  async update(id, data) {
-    let response = await axios.put(`learning-products/${id}`, data);
-    return response.data;
+    return await axios.get(`authorization/learning-product/edit/${id}`);
   }
 };

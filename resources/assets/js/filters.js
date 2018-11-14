@@ -7,7 +7,7 @@ Vue.filter('LPANumFilter', function (id) {
 });
 
 Vue.filter('learningProductTypeSubTypeFilter', function (type, subType) {
-  return type + ' / ' + subType;
+  return `${type} / ${subType}`;
 })
 
 Vue.mixin({

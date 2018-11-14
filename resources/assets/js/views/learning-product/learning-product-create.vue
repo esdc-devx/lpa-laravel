@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
@@ -116,6 +116,26 @@
 
   let namespace = 'learningProducts';
 
+  const loadData = async function () {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadLearningProductCreateInfo`)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'learning-product-create',
 
@@ -128,13 +148,13 @@
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
 
     watch: {
-      learningProductType: function(value) {
+      learningProductType: function (value) {
         // Update learning product type and sub type id when interacting with cascader control.
         this.form.type_id = value[0];
         this.form.sub_type_id = value[1];
       },
 
-      'form.project_id': function(projectId) {
+      'form.project_id': function (projectId) {
         if (!projectId) {
           this.projectSelected = false;
           this.learningProductType = [];
@@ -143,7 +163,7 @@
 
         this.projectSelected = true;
 
-        let project = _.find(this.projects, { id: projectId });
+        let project = _.find(this.innerProjects, { id: projectId });
         let availableProductTypes = _.cloneDeep(project.available_learning_product_types);
 
         // If a learning product type was entered beforehand, clear its value.
@@ -169,6 +189,9 @@
     },
 
     computed: {
+      ...mapState(`${namespace}`, [
+        'projects'
+      ]),
       ...mapGetters({
         viewingLearningProduct: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`
@@ -186,9 +209,9 @@
           manager: {},
           primary_contact: {}
         },
-        projects: [],
-        learningProductTypeList: [],
+        innerProjects: [],
         learningProductType: [],
+        learningProductTypeList: [],
         learningProductTypeOptions: {
           label: 'name',
           value: 'id'
@@ -199,8 +222,7 @@
 
     methods: {
       ...mapActions({
-        createLearningProduct: `${namespace}/create`,
-        loadLearningProductCreateInfo: `${namespace}/loadLearningProductCreateInfo`
+        createLearningProduct: `${namespace}/create`
       }),
 
       // Form handlers
@@ -236,42 +258,48 @@
         return list;
       },
 
-      async loadData() {
-        this.learningProductTypeList = this.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
-        let response = await this.loadLearningProductCreateInfo();
-        this.projects = response.projects;
-        // Add LPA number to each project name.
-        _.forEach(this.projects, project => {
-          project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
-        });
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.loadData();
+        await loadData();
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      store.dispatch('learningProducts/canCreate', to.params.learningProductId)
-        .then(allowed => {
-          if (allowed) {
-            next(vm => {
-              vm.loadData();
-            });
-          } else {
-            router.replace({ name: 'forbidden', params: { '0': to.path } });
-          }
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
+      if (store.state.learningProducts.permissions.canCreate) {
+        await loadData();
+        next(async (vm) => {
+          vm.learningProductTypeList = vm.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
+          vm.innerProjects = _.cloneDeep(vm.projects);
+          // Add LPA number to each project name.
+          _.forEach(vm.innerProjects, project => {
+            project.name = vm.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
+          });
         });
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await this.$store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
+      if (this.$store.state.learningProducts.permissions.canCreate) {
+        await this.onLanguageUpdate();
+        this.learningProductTypeList = this.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
+        this.innerProjects = _.cloneDeep(this.projects);
+        // Add LPA number to each project name.
+        _.forEach(this.innerProjects, project => {
+          project.name = `${this.$options.filters.LPANumFilter(project.id)} - ${project.name}`;
+        });
+        next();
+      } else {
+        this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     mounted() {
