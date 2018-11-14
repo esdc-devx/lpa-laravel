@@ -86,7 +86,7 @@ export default {
     async loadCanStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
       let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
       commit('setProcessPermission', {
-        name_key: processDefinitionNameKey,
+        name: processDefinitionNameKey,
         isAllowed: response.data.allowed
       });
     },
@@ -111,8 +111,8 @@ export default {
       state.all = projects;
     },
 
-    setProcessPermission(state, { name_key, isAllowed }) {
-      state.processPermissions[name_key] = isAllowed;
+    setProcessPermission(state, { name, isAllowed }) {
+      state.processPermissions[name] = isAllowed;
     },
 
     setPermission(state, { name, isAllowed }) {
