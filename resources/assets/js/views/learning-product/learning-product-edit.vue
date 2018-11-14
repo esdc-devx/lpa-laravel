@@ -81,7 +81,7 @@
 
   import LearningProductAPI from '@api/learning-products';
 
-  let namespace = 'learningProducts';
+  const namespace = 'learningProducts';
 
   const loadData = async function ({ to, hasToLoadEntity = true } = {}) {
     const { learningProductId } = to ? to.params : this;
