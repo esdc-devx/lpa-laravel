@@ -234,9 +234,11 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.process_cancelled')
             });
-            // Reload process intance info.
-            await this.triggerLoadProcessInstance();
-            this.$store.commit('setCanCancel', false);
+            await loadData.apply(this);
+            this.$store.commit(`${namespace}/setPermission`, {
+              name: 'canCancel',
+              isAllowed: false
+            });
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
