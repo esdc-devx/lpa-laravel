@@ -52,10 +52,8 @@ class UserController extends APIController
      */
     public function index()
     {
-        $limit = request()->get('limit') ? : self::ITEMS_PER_PAGE;
-
-        return $this->respondWithPagination(
-            $this->users->with(['organizationalUnits', 'roles'])->getPaginated($limit)
+        return $this->respond(
+            $this->users->with(['organizationalUnits', 'roles'])->getAll()
         );
     }
 
