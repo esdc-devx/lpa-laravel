@@ -62,7 +62,7 @@
 
   import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
-  import EntityDataTables from '@components/data-tables/entity-data-tables.vue';
+  import EntityDataTables from '@components/entity-data-tables.vue';
 
   import TableUtils from '@mixins/table/utils.js';
 

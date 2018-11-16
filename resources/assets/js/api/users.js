@@ -9,9 +9,8 @@ export default {
     return request.post('logout');
   },
 
-  async getUsers(page) {
-    let query = !_.isUndefined(page) ? `?page=${page}` : '';
-    return await axios.get(`users${query}`);
+  async getUsers() {
+    return await axios.get('users');
   },
 
   async getUser(id) {

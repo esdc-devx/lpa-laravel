@@ -60,8 +60,8 @@ export default {
       await UserAPI.logout();
     },
 
-    async loadUsers({ commit }, page) {
-      let response = await UserAPI.getUsers(page);
+    async loadUsers({ commit }) {
+      let response = await UserAPI.getUsers();
       commit('setUsers', response.data);
       return response.data;
     },

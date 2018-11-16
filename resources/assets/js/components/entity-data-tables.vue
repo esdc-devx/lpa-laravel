@@ -141,6 +141,10 @@
               }
             }
           });
+          // formatting
+          if (this.entityType === 'learning-product') {
+            normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
+          }
           // sort the columns so that we have an array properly indexed
           // to reference later on
           entityProps.sort();
@@ -151,6 +155,7 @@
             let column = _.get(normEntity, key);
             // check if we need to return the name of the path to the value
             // given in the entity props
+
             if (_.isArray(column)) {
               normEntity[key] = _.map(normEntity[entityProps[i]], 'name');
             } else if (_.isObject(_.get(normEntity, key))) {
@@ -179,9 +184,15 @@
         if (entityProps.includes('updated_at')) {
           entityProps.push('updated_by');
         }
+        if (this.entityType === 'learning-product' && entityProps.includes('type')) {
+          entityProps.push('sub_type');
+        }
         // this is to be able to view the entity based on its id
         if (!entityProps.includes('id')) {
           entityProps.push('id');
+        }
+        if (this.entityType === 'process' && !entityProps.includes('entity_id')) {
+          entityProps.push('entity_id');
         }
         return entityProps;
       },

@@ -15,7 +15,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import EntityDataTables from '@components/data-tables/entity-data-tables.vue';
+  import EntityDataTables from '@components/entity-data-tables.vue';
 
   let namespace = 'users';
 
@@ -66,10 +66,9 @@
         loadUsers: `${namespace}/loadUsers`
       }),
 
-      async loadData(page) {
+      async loadData() {
         this.scrollToTop();
-        page = _.isUndefined(page) ? this.currentPage : page;
-        await this.loadUsers(page);
+        await this.loadUsers();
       }
     },
 

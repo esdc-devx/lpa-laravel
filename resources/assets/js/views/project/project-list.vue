@@ -17,7 +17,7 @@
 
   import Page from '@components/page';
 
-  import EntityDataTables from '@components/data-tables/entity-data-tables.vue';
+  import EntityDataTables from '@components/entity-data-tables.vue';
 
   let namespace = 'projects';
 
