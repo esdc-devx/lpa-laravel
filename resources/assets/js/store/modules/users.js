@@ -14,7 +14,6 @@ export default {
     all: [],
     organizationalUnits: [],
     roles: [],
-    pagination: {},
     currentUserLoadStatus: LoadStatus.NOT_LOADED
   },
 
@@ -53,10 +52,6 @@ export default {
       return function (user) {
         return !! (user && state.current.username === user.username);
       };
-    },
-
-    pagination(state) {
-      return state.pagination;
     }
   },
 
@@ -68,7 +63,6 @@ export default {
     async loadUsers({ commit }, page) {
       let response = await UserAPI.getUsers(page);
       commit('setUsers', response.data);
-      commit('setPagination', response.meta);
       return response.data;
     },
 
@@ -149,10 +143,6 @@ export default {
 
     setRoles(state, roles) {
       state.roles = roles;
-    },
-
-    setPagination(state, pagination) {
-      state.pagination = pagination;
     }
   }
 };

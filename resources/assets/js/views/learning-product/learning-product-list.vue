@@ -3,8 +3,11 @@
     <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
     </div>
-    <learning-product-data-tables
-     :data="learningProducts" />
+    <entity-data-tables
+      entityType="learning-product"
+      :data="learningProducts"
+      :attributes="dataTableAttributes.learningProducts"
+    />
   </div>
 </template>
 
@@ -13,7 +16,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
+  import EntityDataTables from '@components/data-tables/entity-data-tables.vue';
 
   let namespace = 'learningProducts';
 
@@ -22,12 +25,49 @@
 
     extends: Page,
 
-    components: { LearningProductDataTables },
+    components: { EntityDataTables },
 
     computed: {
       ...mapGetters({
         learningProducts: `${namespace}/all`
-      })
+      }),
+
+      dataTableAttributes: {
+        get() {
+          return {
+            learningProducts: {
+              id: {
+                label: this.trans('entities.general.lpa_num'),
+                minWidth: 12
+              },
+              name: {
+                label: this.trans('entities.general.name'),
+                minWidth: 36
+              },
+              type: {
+                label: this.trans('entities.learning_product.type'),
+                minWidth: 13
+              },
+              organizational_unit: {
+                label: this.$tc('entities.general.organizational_units'),
+                minWidth: 25
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated'),
+                minWidth: 20
+              },
+              state: {
+                label: this.trans('entities.general.status'),
+                minWidth: 14
+              },
+              'current_process.definition': {
+                label: this.trans('entities.process.current'),
+                minWidth: 21
+              }
+            }
+          }
+        }
+      }
     },
 
     methods: {

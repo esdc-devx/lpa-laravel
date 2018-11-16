@@ -36,53 +36,19 @@
         <el-tabs type="border-card">
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
-            <learning-product-data-tables
-              :data="projectLearningProducts" />
+            <entity-data-tables
+              entityType="learning-product"
+              :data="projectLearningProducts"
+              :attributes="dataTableAttributes.learningProducts"
+            />
           </el-tab-pane>
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
-            <data-tables
-              ref="table"
-              :search-def="{show: false}"
-              :data="dataTables.processesHistory.normalizedList"
-              :pagination-def="paginationDef"
-              :custom-filters="customFilters"
-              @filter-change="onFilterChange"
-              @row-click="viewProcess"
-              :sort-method="$helpers.localeSort">
-              <el-table-column
-                prop="definition.name"
-                sortable="custom"
-                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'name')"
-                :label="trans('entities.general.name')">
-              </el-table-column>
-              <el-table-column
-                prop="created_at"
-                sortable="custom"
-                :label="trans('entities.process.started')">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.created_at }}</span>
-                  <br>
-                  <span>{{ scope.row.created_by.name }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="updated_at"
-                sortable="custom"
-                :label="trans('entities.general.updated')">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.updated_at }}</span>
-                  <br>
-                  <span>{{ scope.row.updated_by.name }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="state"
-                sortable="custom"
-                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'state')"
-                :label="trans('entities.general.status')">
-              </el-table-column>
-            </data-tables>
+            <entity-data-tables
+              entityType="process"
+              :data="viewingHistory"
+              :attributes="dataTableAttributes.processHistory"
+            />
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -96,7 +62,7 @@
 
   import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
-  import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
+  import EntityDataTables from '@components/data-tables/entity-data-tables.vue';
 
   import TableUtils from '@mixins/table/utils.js';
 
@@ -107,9 +73,7 @@
 
     extends: Page,
 
-    mixins: [ TableUtils ],
-
-    components: { ProjectInfo, LearningProductDataTables },
+    components: { ProjectInfo, EntityDataTables },
 
     computed: {
       ...mapGetters({
@@ -119,6 +83,58 @@
         projectLearningProducts: 'learningProducts/projectLearningProducts'
       }),
 
+      dataTableAttributes: {
+        get() {
+          return {
+            learningProducts: {
+              id: {
+                label: this.trans('entities.general.lpa_num'),
+                minWidth: 12
+              },
+              name: {
+                label: this.trans('entities.general.name'),
+                minWidth: 36
+              },
+              type: {
+                label: this.trans('entities.learning_product.type'),
+                minWidth: 13
+              },
+              organizational_unit: {
+                label: this.$tc('entities.general.organizational_units'),
+                minWidth: 25
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated'),
+                minWidth: 20
+              },
+              state: {
+                label: this.trans('entities.general.status'),
+                minWidth: 14
+              },
+              'current_process.definition': {
+                label: this.trans('entities.process.current'),
+                minWidth: 21
+              }
+            },
+
+            processHistory: {
+              definition: {
+                label: this.trans('entities.general.name')
+              },
+              created_at: {
+                label: this.trans('entities.process.started')
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated')
+              },
+              state: {
+                label: this.trans('entities.general.status')
+              }
+            }
+          }
+        }
+      },
+
       canBeVisible() {
         return this.hasRole('owner') || this.hasRole('admin');
       }
@@ -127,14 +143,6 @@
     data() {
       return {
         processDefinitionPermissions: {},
-        dataTables: {
-          processesHistory: {
-            normalizedList: [],
-            normalizedListAttrs: [
-              'id', 'entity_id', 'definition.name', 'created_at', 'updated_at', 'created_by', 'updated_by', 'state.name'
-            ]
-          }
-        }
       };
     },
 
@@ -147,14 +155,6 @@
         loadProcessHistory: 'processes/loadHistory',
         loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
       }),
-
-      viewProcess(process) {
-        this.$router.push(`${process.entity_id}/process/${process.id}`);
-      },
-
-      onHeaderClick(col, e) {
-        this.headerClick(col, e);
-      },
 
       triggerStartProcess(processName, processNameKey) {
         // confirm the intention to start a process first
@@ -200,12 +200,6 @@
 
         await axios.all(requests).then(() => {
           this.loadPermissions();
-          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
-            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
-            normProcess.state = normProcess.state.name;
-            normProcess.name = normProcess.definition.name;
-            return normProcess;
-          });
         });
       },
 

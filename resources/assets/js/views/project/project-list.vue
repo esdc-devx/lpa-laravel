@@ -3,59 +3,11 @@
     <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="goToPage('project-create')">{{ trans('pages.project_list.create_project') }}</el-button>
     </div>
-
-    <data-tables
-      ref="table"
-      :search-def="{show: false}"
-      :custom-filters="customFilters"
-      :pagination-def="paginationDef"
-      :data="normalizedList"
-      @filter-change="onFilterChange"
-      @current-page-change="scrollToTop"
-      @row-click="viewProject"
-      @header-click="onHeaderClick"
-      :sort-method="$helpers.localeSort">
-      <el-table-column
-        sortable="custom"
-        prop="id"
-        width="180"
-        :label="trans('entities.general.lpa_num')">
-        <template slot-scope="scope">
-          {{ scope.row.id | LPANumFilter }}
-        </template>
-      </el-table-column>
-      <el-table-column
-        sortable="custom"
-        prop="name"
-        :label="trans('entities.general.name')">
-      </el-table-column>
-      <el-table-column
-        sortable="custom"
-        column-key="organizational_unit"
-        :filters="orgUnitFilters"
-        prop="organizational_unit"
-        :label="$tc('entities.general.organizational_units')">
-      </el-table-column>
-      <el-table-column
-        sortable="custom"
-        prop="updated_at"
-        :label="trans('entities.general.updated')">
-      </el-table-column>
-      <el-table-column
-        sortable="custom"
-        column-key="state"
-        :filters="getColumnFilters(this.normalizedList, 'state')"
-        prop="state"
-        :label="trans('entities.general.status')">
-      </el-table-column>
-      <el-table-column
-        sortable="custom"
-        column-key="current_process"
-        :filters="getColumnFilters(this.normalizedList, 'current_process')"
-        prop="current_process"
-        :label="trans('entities.process.current')">
-      </el-table-column>
-    </data-tables>
+    <entity-data-tables
+      entityType="project"
+      :data="projects"
+      :attributes="dataTableAttributes.projects"
+    />
   </div>
 </template>
 
@@ -65,7 +17,7 @@
 
   import Page from '@components/page';
 
-  import TableUtils from '@mixins/table/utils.js';
+  import EntityDataTables from '@components/data-tables/entity-data-tables.vue';
 
   let namespace = 'projects';
 
@@ -74,23 +26,39 @@
 
     extends: Page,
 
-    mixins: [ TableUtils ],
-
-    data() {
-      return {
-        normalizedList: [],
-        normalizedListAttrs: ['id', 'name', 'organizational_unit.name', 'updated_at', 'state.name', 'current_process']
-      }
-    },
+    components: { EntityDataTables },
 
     computed: {
       ...mapGetters({
         projects: `${namespace}/all`
       }),
 
-      orgUnitFilters() {
-        return this.getColumnFilters(this.normalizedList, 'organizational_unit')
-                   .sort((a, b) => this.$helpers.localeSort(a, b, 'text'));
+      dataTableAttributes: {
+        get() {
+          return {
+            projects: {
+              id: {
+                label: this.trans('entities.general.lpa_num'),
+                minWidth: 36
+              },
+              name: {
+                label: this.trans('entities.general.name')
+              },
+              organizational_unit: {
+                label: this.$tc('entities.general.organizational_units')
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated')
+              },
+              state: {
+                label: this.trans('entities.general.status')
+              },
+              'current_process.definition': {
+                label: this.trans('entities.process.current')
+              }
+            }
+          }
+        }
       }
     },
 
@@ -99,25 +67,9 @@
         loadProjects: `${namespace}/loadProjects`
       }),
 
-      viewProject(project) {
-        this.scrollToTop();
-        this.$router.push(`${namespace}/${project.id}`);
-      },
-
-      onHeaderClick(col, e) {
-        this.headerClick(col, e);
-      },
-
       async loadData() {
         try {
           await this.loadProjects();
-          this.normalizedList = _.map(this.projects, project => {
-            let normProject = _.pick(project, this.normalizedListAttrs);
-            normProject.organizational_unit = normProject.organizational_unit.name;
-            normProject.state = normProject.state.name;
-            normProject.current_process = normProject.current_process && normProject.current_process.definition ? normProject.current_process.definition.name : this.trans('entities.general.na');
-            return normProject;
-          });
         } catch (e) {
           // Exception handled by interceptor
           if (!e.response) {
