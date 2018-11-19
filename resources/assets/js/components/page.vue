@@ -100,7 +100,6 @@
 
       // Utils
       scrollToTop() {
-        this.$parent.$el.scrollTop = 0;
         document.querySelectorAll('.el-main')[0].scrollTop = 0;
         // IE11 scroll to top
         document.querySelectorAll('.content-wrap')[0].scrollTop = 0
