@@ -8,6 +8,7 @@
       :data="learningProducts"
       :attributes="dataTableAttributes.learningProducts"
       @rowClick="onLearningProductRowClick"
+      @formatData="onFormatData"
     />
   </div>
 </template>
@@ -82,6 +83,10 @@
       onLearningProductRowClick(learningProduct) {
         this.scrollToTop();
         this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
+      },
+
+      onFormatData(normEntity) {
+        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
       },
 
       async loadData() {

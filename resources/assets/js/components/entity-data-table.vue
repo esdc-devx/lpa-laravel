@@ -142,9 +142,8 @@
             }
           });
           // formatting
-          if (this.entityType === 'learning-product') {
-            normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
-          }
+          this.$emit('formatData', normEntity);
+
           // sort the columns so that we have an array properly indexed
           // to reference later on
           entityProps.sort();
