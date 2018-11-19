@@ -52,15 +52,11 @@ class UserController extends APIController
      */
     public function index()
     {
-        $users = $this->users->with(['organizationalUnits', 'roles'])->getAll()
-            // Remove admin account from user list.
-            ->reject(function ($user) {
-                return strtolower($user->username) === strtolower(config('auth.admin.username'));
-            });
+        $users = User::with(['organizationalUnits', 'roles'])
+            ->where('username', '!=', config('auth.admin.username'))
+            ->get();
 
-        return $this->respond(
-            $users->all()
-        );
+        return $this->respond($users);
     }
 
     /**
