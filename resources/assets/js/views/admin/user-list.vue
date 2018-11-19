@@ -3,10 +3,11 @@
     <div class="controls">
       <el-button @click="goToPage('admin-user-create')">{{ trans('pages.user_list.create_user') }}</el-button>
     </div>
-    <entity-data-tables
+    <entity-data-table
       entityType="user"
       :data="users"
       :attributes="dataTableAttributes.users"
+      @rowClick="onUserRowClick"
     />
   </div>
 </template>
@@ -15,7 +16,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import EntityDataTables from '@components/entity-data-tables.vue';
+  import EntityDataTable from '@components/entity-data-table.vue';
 
   let namespace = 'users';
 
@@ -24,7 +25,7 @@
 
     extends: Page,
 
-    components: { EntityDataTables },
+    components: { EntityDataTable },
 
     computed: {
       ...mapGetters({
@@ -45,11 +46,13 @@
               },
               organizational_units: {
                 label: this.$tc('entities.general.organizational_units', 2),
-                minWidth: 25
+                minWidth: 25,
+                isSortedAlphabetically: true
               },
               roles: {
                 label: this.trans('entities.user.roles'),
-                minWidth: 16
+                minWidth: 16,
+                isSortedAlphabetically: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated'),
@@ -65,6 +68,11 @@
       ...mapActions({
         loadUsers: `${namespace}/loadUsers`
       }),
+
+      onUserRowClick(user) {
+        this.scrollToTop();
+        this.$router.push(`/${this.language}/admin/users/${user.id}/edit`);
+      },
 
       async loadData() {
         this.scrollToTop();

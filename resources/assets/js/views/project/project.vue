@@ -36,18 +36,20 @@
         <el-tabs type="border-card">
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
-            <entity-data-tables
+            <entity-data-table
               entityType="learning-product"
               :data="projectLearningProducts"
               :attributes="dataTableAttributes.learningProducts"
+              @rowClick="onLearningProductRowClick"
             />
           </el-tab-pane>
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
-            <entity-data-tables
+            <entity-data-table
               entityType="process"
               :data="viewingHistory"
               :attributes="dataTableAttributes.processHistory"
+              @rowClick="onProcessRowClick"
             />
           </el-tab-pane>
         </el-tabs>
@@ -62,7 +64,7 @@
 
   import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
-  import EntityDataTables from '@components/entity-data-tables.vue';
+  import EntityDataTable from '@components/entity-data-table.vue';
 
   import TableUtils from '@mixins/table/utils.js';
 
@@ -73,7 +75,7 @@
 
     extends: Page,
 
-    components: { ProjectInfo, EntityDataTables },
+    components: { ProjectInfo, EntityDataTable },
 
     computed: {
       ...mapGetters({
@@ -97,11 +99,13 @@
               },
               type: {
                 label: this.trans('entities.learning_product.type'),
-                minWidth: 13
+                minWidth: 13,
+                isSortedAlphabetically: true
               },
               organizational_unit: {
                 label: this.$tc('entities.general.organizational_units'),
-                minWidth: 25
+                minWidth: 25,
+                isSortedAlphabetically: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated'),
@@ -109,7 +113,8 @@
               },
               state: {
                 label: this.trans('entities.general.status'),
-                minWidth: 14
+                minWidth: 14,
+                isSortedAlphabetically: true
               },
               'current_process.definition': {
                 label: this.trans('entities.process.current'),
@@ -128,7 +133,8 @@
                 label: this.trans('entities.general.updated')
               },
               state: {
-                label: this.trans('entities.general.status')
+                label: this.trans('entities.general.status'),
+                isSortedAlphabetically: true
               }
             }
           }
@@ -155,6 +161,16 @@
         loadProcessHistory: 'processes/loadHistory',
         loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
       }),
+
+      onLearningProductRowClick(learningProduct) {
+        this.scrollToTop();
+        this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
+      },
+
+      onProcessRowClick(process) {
+        this.scrollToTop();
+        this.$router.push(`${process.entity_id}/process/${process.id}`);
+      },
 
       triggerStartProcess(processName, processNameKey) {
         // confirm the intention to start a process first

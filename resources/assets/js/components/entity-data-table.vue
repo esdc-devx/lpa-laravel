@@ -7,7 +7,7 @@
     :data="parsedData"
     @filter-change="onFilterChange"
     @current-page-change="scrollToTop"
-    @row-click="viewEntity"
+    @row-click="onRowClick"
     @header-click="headerClick"
     :sort-method="$helpers.localeSort">
     <el-table-column
@@ -62,7 +62,7 @@
   import TableUtils from '@mixins/table/utils.js';
 
   export default {
-    name: 'entity-data-tables',
+    name: 'entity-data-table',
 
     mixins: [ TableUtils ],
 
@@ -201,35 +201,21 @@
         let filters = [];
         if (this.excludedColumnNamesForFiltering.includes(attr)) {
           return filters;
-        } else if (attr === 'organizational_unit' ||
-                   attr === 'organizational_units' ||
-                   attr === 'roles' ||
-                   attr === 'state' ||
-                   attr === 'type')
-        {
+        } else if (this.attributes[attr].isSortedAlphabetically) {
           filters = this.sortFilterEntries(this.parsedData, attr);
         } else {
           filters = this.getColumnFilters(this.parsedData, attr);
         }
 
-        // if there is only one filter, don't shot the filter arrow
+        // if there is only one filter, don't show the filter arrow
         if (filters.length === 1) {
           return [];
         }
         return filters;
       },
 
-      viewEntity(entity) {
-        this.scrollToTop();
-        if (this.entityType === 'project') {
-          this.$router.push(`/${this.language}/projects/${entity.id}`);
-        } else if (this.entityType === 'learning-product') {
-          this.$router.push(`/${this.language}/learning-products/${entity.id}`);
-        } else if (this.entityType === 'process') {
-          this.$router.push(`${entity.entity_id}/process/${entity.id}`);
-        } else if (this.entityType === 'user') {
-          this.$router.push(`/${this.language}/admin/users/${entity.id}/edit`);
-        }
+      onRowClick(entity) {
+        this.$emit('rowClick', entity);
       }
     }
   }

@@ -3,10 +3,11 @@
     <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
     </div>
-    <entity-data-tables
+    <entity-data-table
       entityType="learning-product"
       :data="learningProducts"
       :attributes="dataTableAttributes.learningProducts"
+      @rowClick="onLearningProductRowClick"
     />
   </div>
 </template>
@@ -16,7 +17,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import EntityDataTables from '@components/entity-data-tables.vue';
+  import EntityDataTable from '@components/entity-data-table.vue';
 
   let namespace = 'learningProducts';
 
@@ -25,7 +26,7 @@
 
     extends: Page,
 
-    components: { EntityDataTables },
+    components: { EntityDataTable },
 
     computed: {
       ...mapGetters({
@@ -46,11 +47,13 @@
               },
               type: {
                 label: this.trans('entities.learning_product.type'),
-                minWidth: 13
+                minWidth: 13,
+                isSortedAlphabetically: true
               },
               organizational_unit: {
                 label: this.$tc('entities.general.organizational_units'),
-                minWidth: 25
+                minWidth: 25,
+                isSortedAlphabetically: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated'),
@@ -58,7 +61,8 @@
               },
               state: {
                 label: this.trans('entities.general.status'),
-                minWidth: 14
+                minWidth: 14,
+                isSortedAlphabetically: true
               },
               'current_process.definition': {
                 label: this.trans('entities.process.current'),
@@ -74,6 +78,11 @@
       ...mapActions({
         loadLearningProducts: `${namespace}/loadLearningProducts`
       }),
+
+      onLearningProductRowClick(learningProduct) {
+        this.scrollToTop();
+        this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
+      },
 
       async loadData() {
         try {

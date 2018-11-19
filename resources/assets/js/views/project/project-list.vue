@@ -3,10 +3,11 @@
     <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="goToPage('project-create')">{{ trans('pages.project_list.create_project') }}</el-button>
     </div>
-    <entity-data-tables
+    <entity-data-table
       entityType="project"
       :data="projects"
       :attributes="dataTableAttributes.projects"
+      @rowClick="onProjectRowClick"
     />
   </div>
 </template>
@@ -17,7 +18,7 @@
 
   import Page from '@components/page';
 
-  import EntityDataTables from '@components/entity-data-tables.vue';
+  import EntityDataTable from '@components/entity-data-table.vue';
 
   let namespace = 'projects';
 
@@ -26,7 +27,7 @@
 
     extends: Page,
 
-    components: { EntityDataTables },
+    components: { EntityDataTable },
 
     computed: {
       ...mapGetters({
@@ -45,13 +46,15 @@
                 label: this.trans('entities.general.name')
               },
               organizational_unit: {
-                label: this.$tc('entities.general.organizational_units')
+                label: this.$tc('entities.general.organizational_units'),
+                isSortedAlphabetically: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated')
               },
               state: {
-                label: this.trans('entities.general.status')
+                label: this.trans('entities.general.status'),
+                isSortedAlphabetically: true
               },
               'current_process.definition': {
                 label: this.trans('entities.process.current')
@@ -66,6 +69,11 @@
       ...mapActions({
         loadProjects: `${namespace}/loadProjects`
       }),
+
+      onProjectRowClick(project) {
+        this.scrollToTop();
+        this.$router.push(`/${this.language}/projects/${project.id}`);
+      },
 
       async loadData() {
         try {
