@@ -49,25 +49,35 @@
               type: {
                 label: this.trans('entities.learning_product.type'),
                 minWidth: 13,
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              sub_type: {
+                isColumn: false
               },
               organizational_unit: {
                 label: this.$tc('entities.general.organizational_units'),
                 minWidth: 25,
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated'),
                 minWidth: 20
               },
+              updated_by: {
+                isColumn: false
+              },
               state: {
                 label: this.trans('entities.general.status'),
                 minWidth: 14,
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
               },
               'current_process.definition': {
                 label: this.trans('entities.process.current'),
-                minWidth: 21
+                minWidth: 21,
+                isFilterable: true
               }
             }
           }

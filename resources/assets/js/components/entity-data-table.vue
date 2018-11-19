@@ -11,7 +11,7 @@
     @header-click="headerClick"
     :sort-method="$helpers.localeSort">
     <el-table-column
-      v-for="(attr, index) in columnNames"
+      v-for="(attr, index) in columns"
       :key="index"
       :label="labels[index]"
       :prop="attr"
@@ -81,33 +81,50 @@
       }
     },
 
-    data() {
-      return {
-        excludedColumnNamesForFiltering: [
-          'id', 'entity_id', 'name', 'email', 'definition', 'updated_at', 'created_at'
-        ]
-      };
-    },
-
     computed: {
       ...mapGetters([
         'language'
       ]),
 
-      columnNames() {
+      /**
+       * Gets all the root keys of the attributes as props
+       * @return { Array }
+       */
+      props() {
         return _.keys(this.attributes);
       },
 
-      labels() {
-        return _.map(this.attributes, (val, key) => {
-          return _.get(val, 'label');
-        });
+      /**
+       * Gets all the objects that are not set isColumn: false
+       * @return { Array }
+       */
+      columns() {
+        let columns = _.keys(_.pickBy(this.attributes, (val, key) => {
+          if (val.isColumn === false) {
+            return false;
+          }
+          return true;
+        }));
+        if (!columns.length) {
+          throw new Error('Columns are required to render the data-table. Make sure you specified which attributes are columns using `isColumn` property.')
+        }
+        return columns;
       },
 
+      /**
+       * Gets all the labels properties from the attributes objects
+       * @return { Array }
+       */
+      labels() {
+        return _.compact(_.map(this.attributes, 'label'));
+      },
+
+      /**
+       * Gets all the minWidth properties from the attributes objects
+       * @return { Array }
+       */
       minWidths() {
-        return _.map(this.attributes, (val, key) => {
-          return val.minWidth;
-        });
+        return _.compact(_.map(this.attributes, 'minWidth'));
       },
 
       /**
@@ -118,7 +135,7 @@
        *       current_process.definition.name -> current_process
        */
       parsedData() {
-        let entityProps = this.getEntityProps();
+        let entityProps = _.cloneDeep(this.props);
         return _.map(_.cloneDeep(this.data), entity => {
           // equivalent of _.pick, but keeps the property if it is found in the attributes
           // but is undefined / null
@@ -144,7 +161,7 @@
           // formatting
           this.$emit('formatData', normEntity);
 
-          // sort the columns so that we have an array properly indexed
+          // sort the props so that we have an array properly indexed
           // to reference later on
           entityProps.sort();
           // sort here as well to make correlation possible with the column names
@@ -171,36 +188,11 @@
         return _.isArray(rowValue);
       },
 
-      getEntityProps() {
-        // do not alter the columnNames
-        let entityProps = _.cloneDeep(this.columnNames);
-        // automatically add created_by and updated_by
-        // when their associated prop is found
-        // so that we can use them in the template
-        if (entityProps.includes('created_at')) {
-          entityProps.push('created_by');
-        }
-        if (entityProps.includes('updated_at')) {
-          entityProps.push('updated_by');
-        }
-        if (this.entityType === 'learning-product' && entityProps.includes('type')) {
-          entityProps.push('sub_type');
-        }
-        // this is to be able to view the entity based on its id
-        if (!entityProps.includes('id')) {
-          entityProps.push('id');
-        }
-        if (this.entityType === 'process' && !entityProps.includes('entity_id')) {
-          entityProps.push('entity_id');
-        }
-        return entityProps;
-      },
-
       getFilters(attr) {
         let filters = [];
-        if (this.excludedColumnNamesForFiltering.includes(attr)) {
+        if (!this.attributes[attr].isFilterable) {
           return filters;
-        } else if (this.attributes[attr].isSortedAlphabetically) {
+        } else if (this.attributes[attr].areFiltersSorted) {
           filters = this.sortFilterEntries(this.parsedData, attr);
         } else {
           filters = this.getColumnFilters(this.parsedData, attr);

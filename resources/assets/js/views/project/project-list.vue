@@ -47,17 +47,20 @@
               },
               organizational_unit: {
                 label: this.$tc('entities.general.organizational_units'),
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated')
               },
               state: {
                 label: this.trans('entities.general.status'),
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
               },
               'current_process.definition': {
-                label: this.trans('entities.process.current')
+                label: this.trans('entities.process.current'),
+                isFilterable: true
               }
             }
           }

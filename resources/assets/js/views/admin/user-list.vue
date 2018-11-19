@@ -36,6 +36,9 @@
         get() {
           return {
             users: {
+              id: {
+                isColumn: false
+              },
               name: {
                 label: this.trans('entities.general.full_name'),
                 minWidth: 20
@@ -47,16 +50,21 @@
               organizational_units: {
                 label: this.$tc('entities.general.organizational_units', 2),
                 minWidth: 25,
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
               },
               roles: {
                 label: this.trans('entities.user.roles'),
                 minWidth: 16,
-                isSortedAlphabetically: true
+                areFiltersSorted: true,
+                isFilterable: true
               },
               updated_at: {
                 label: this.trans('entities.general.updated'),
                 minWidth: 14
+              },
+              updated_by: {
+                isColumn: false
               }
             }
           }
