@@ -234,7 +234,7 @@
 
     async beforeRouteEnter(to, from, next) {
       // Exception handled by interceptor
-      await loadData({to});
+      await loadData({ to });
       next(vm => {
         vm.dataTables.processesHistory.normalizedList = _.map(vm.viewingHistory, process => {
           let normProcess = _.pick(process, vm.dataTables.processesHistory.normalizedListAttrs);

@@ -517,7 +517,7 @@
 
     async beforeRouteEnter(to, from, next) {
       // Exception handled by interceptor
-      await loadData({to});
+      await loadData({ to });
       next();
     },
 
