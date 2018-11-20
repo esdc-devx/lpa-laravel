@@ -3,8 +3,13 @@
     <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
       <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
     </div>
-    <learning-product-data-tables
-     :data="learningProducts" />
+    <entity-data-table
+      entityType="learning-product"
+      :data="learningProducts"
+      :attributes="dataTableAttributes.learningProducts"
+      @rowClick="onLearningProductRowClick"
+      @formatData="onFormatData"
+    />
   </div>
 </template>
 
@@ -13,7 +18,7 @@
   import { mapGetters, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
+  import EntityDataTable from '@components/entity-data-table.vue';
 
   let namespace = 'learningProducts';
 
@@ -22,18 +27,77 @@
 
     extends: Page,
 
-    components: { LearningProductDataTables },
+    components: { EntityDataTable },
 
     computed: {
       ...mapGetters({
         learningProducts: `${namespace}/all`
-      })
+      }),
+
+      dataTableAttributes: {
+        get() {
+          return {
+            learningProducts: {
+              id: {
+                label: this.trans('entities.general.lpa_num'),
+                minWidth: 12
+              },
+              name: {
+                label: this.trans('entities.general.name'),
+                minWidth: 36
+              },
+              type: {
+                label: this.trans('entities.learning_product.type'),
+                minWidth: 13,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              sub_type: {
+                isColumn: false
+              },
+              organizational_unit: {
+                label: this.$tc('entities.general.organizational_units'),
+                minWidth: 25,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated'),
+                minWidth: 20
+              },
+              updated_by: {
+                isColumn: false
+              },
+              state: {
+                label: this.trans('entities.general.status'),
+                minWidth: 14,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              'current_process.definition': {
+                label: this.trans('entities.process.current'),
+                minWidth: 21,
+                isFilterable: true
+              }
+            }
+          }
+        }
+      }
     },
 
     methods: {
       ...mapActions({
         loadLearningProducts: `${namespace}/loadLearningProducts`
       }),
+
+      onLearningProductRowClick(learningProduct) {
+        this.scrollToTop();
+        this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
+      },
+
+      onFormatData(normEntity) {
+        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
+      },
 
       async loadData() {
         try {

@@ -9,18 +9,17 @@ export default {
     return request.post('logout');
   },
 
-  getUsers(page) {
-    let query = !_.isUndefined(page) ? `?page=${page}` : '';
-    return axios.get(`users${query}`);
+  async getUsers() {
+    return await axios.get('users');
   },
 
-  getUser(id) {
+  async getUser(id) {
     let request = !_.isUndefined(id) ? id : 'current';
-    return axios.get(`users/${request}`);
+    return await axios.get(`users/${request}`);
   },
 
-  create(user) {
-    return axios.post('users', user);
+  async create(user) {
+    return await axios.post('users', user);
   },
 
   async search(name) {
@@ -31,19 +30,19 @@ export default {
     return response.data;
   },
 
-  update(user) {
-    return axios.put(`users/${user.id}`, user);
+  async update(user) {
+    return await axios.put(`users/${user.id}`, user);
   },
 
-  delete(id) {
-    return axios.delete(`users/${id}`);
+  async delete(id) {
+    return await axios.delete(`users/${id}`);
   },
 
-  getUserCreateInfo() {
-    return axios.get('users/create');
+  async getUserCreateInfo() {
+    return await axios.get('users/create');
   },
 
-  getUserEditInfo(id) {
-    return axios.get(`users/${id}/edit`);
+  async getUserEditInfo(id) {
+    return await axios.get(`users/${id}/edit`);
   }
 };

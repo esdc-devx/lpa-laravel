@@ -16,9 +16,11 @@ Vue.mixin({
       // grab the attrs values,
       // put them in an array, remove dupplicates, remove falsy values,
       // and then rearrange its format to match ElementUI's
+      // @note: flatMapDeep is mainly used in user-list
+      // since we may have multiple organizational units associated to a user
       return _.chain(list)
               .mapValues(attr)
-              .toArray().uniq().compact()
+              .toArray().flatMapDeep().uniq().compact()
               .map((val, key) => { return { text: val, value: val } })
               .value();
     }

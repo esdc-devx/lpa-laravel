@@ -278,7 +278,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/admin/users/edit/:userId(\\d+)',
+    path: '/:lang/admin/users/:userId(\\d+)/edit',
     name: 'admin-user-edit',
     component: UserEdit,
     meta: {

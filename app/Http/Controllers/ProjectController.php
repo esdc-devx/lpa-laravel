@@ -27,7 +27,7 @@ class ProjectController extends APIController
     public function index()
     {
         return $this->respond([
-            'projects' => $this->projects->with(['state', 'organizationalUnit', 'currentProcess.definition'])->getAll()
+            'projects' => $this->projects->with(['state', 'organizationalUnit', 'currentProcess.definition', 'updatedBy'])->getAll()
         ]);
     }
 
