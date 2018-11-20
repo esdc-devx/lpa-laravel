@@ -81,26 +81,6 @@ class UserRepository extends BaseEloquentRepository
     }
 
     /**
-     * Get paged items
-     *
-     * @param  integer $paged Items per page
-     * @param  string $orderBy Column to sort by
-     * @param  string $sort Sort direction
-     * @return \Illuminate\Pagination\Paginator
-     */
-    public function getPaginated($paged = 15, $orderBy = 'id', $sort = 'asc')
-    {
-        $query = function () use ($paged, $orderBy, $sort) {
-            return $this->model
-                ->where('username', '!=', config('auth.admin.username')) // Exclude admin account.
-                ->with($this->requiredRelationships)
-                ->orderBy($orderBy, $sort)
-                ->paginate($paged);
-        };
-        return $this->doQuery($query);
-    }
-
-    /**
      * Create user.
      *
      * @param  array $data
