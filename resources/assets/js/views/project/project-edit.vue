@@ -131,15 +131,14 @@
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
-        // only reload the dropdowns, not the project
-        await this.loadProjectEditInfo(this.projectId);
+        await loadData();
       }
     },
 
     async beforeRouteEnter(to, from, next) {
       await store.dispatch('projects/loadCanEdit', to.params.projectId);
       if (store.state.projects.permissions.canEdit) {
-        await loadData({to});
+        await loadData({ to });
         next();
       } else {
         router.replace({ name: 'forbidden', params: { '0': to.path } });

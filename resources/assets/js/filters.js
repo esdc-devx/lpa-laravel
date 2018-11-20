@@ -22,8 +22,8 @@ Vue.mixin({
               .mapValues(attr)
               .toArray().flatMapDeep().uniq().compact()
               .map((val, key) => {
-                val = val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
-                return { text: val, value: val };
+                let text = val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
+                return { text, value: val };
               })
               .value();
     }

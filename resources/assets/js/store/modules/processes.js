@@ -4,6 +4,7 @@ export default {
   namespaced: true,
 
   state: {
+    activeStep: 0,
     definitions: [],
     permissions: {
       canEditForm: false,
@@ -33,6 +34,21 @@ export default {
   },
 
   getters: {
+    activeStep(state) {
+      if (state.viewing.state.name_key === 'completed') {
+        return state.viewing.steps.length - 1;
+      }
+
+      let active = 0;
+      // grab the last step that is not locked
+      _.forEach(state.viewing.steps, (step, i) => {
+        if (step.state.name_key !== 'locked') {
+          active = i;
+        }
+      });
+      return active;
+    },
+
     definitions(state) {
       return state.definitions;
     },
@@ -163,6 +179,10 @@ export default {
   },
 
   mutations: {
+    setActiveStep(state, activeStep) {
+      state.activeStep = activeStep;
+    },
+
     setDefinitions(state, definitions) {
       state.definitions = definitions;
     },

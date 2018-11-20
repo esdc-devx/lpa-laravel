@@ -45,7 +45,7 @@
           <el-steps :active="activeStep" finish-status="finish" align-center>
             <el-step
               v-for="(step, index) in steps"
-              :class="{ 'is-selected': selectedIndex === index }"
+              :class="{ 'is-selected': activeStep === index }"
               :title="trans('entities.process.step', { num: index + 1 })"
               :description="step.definition.name"
               :key="index"
@@ -161,8 +161,7 @@
     data() {
       return {
         projectId: null,
-        processId: null,
-        activeStep: 0
+        processId: null
       }
     },
 
@@ -171,24 +170,25 @@
         'permissions'
       ]),
       ...mapGetters({
-        viewingProcess: `${namespace}/viewing`
+        viewingProcess: `${namespace}/viewing`,
+        activeStepStore: `${namespace}/activeStep`
       }),
-
-      selectedIndex: {
-        get() {
-          return this.activeStep;
-        },
-        set(val) {
-          this.activeStep = val;
-        }
-      },
 
       steps() {
         return _.sortBy(this.viewingProcess.steps, 'definition.display_sequence');
       },
 
       forms() {
-        return _.sortBy(this.viewingProcess.steps[this.selectedIndex].forms, 'definition.display_sequence');
+        return _.sortBy(this.viewingProcess.steps[this.activeStep].forms, 'definition.display_sequence');
+      },
+
+      activeStep: {
+        get() {
+          return this.activeStepStore;
+        },
+        set(val) {
+          this.setActiveStep(val);
+        }
       }
     },
 
@@ -200,7 +200,8 @@
       }),
 
       ...mapMutations(`${namespace}`, [
-        'setPermission'
+        'setPermission',
+        'setActiveStep'
       ]),
 
       viewForm(form) {
@@ -211,24 +212,8 @@
         return row.state.name_key;
       },
 
-      getActiveStep() {
-        // when process is completed, just use the last step as the active one
-        if (this.viewingProcess.state.name_key === 'completed') {
-          return this.viewingProcess.steps.length - 1;
-        }
-
-        let active = 0;
-        // grab the last step that is not locked
-        _.forEach(this.viewingProcess.steps, (step, i) => {
-          if (step.state.name_key !== 'locked') {
-            active = i;
-          }
-        });
-        return active;
-      },
-
       onStepChange(index) {
-        this.selectedIndex = index;
+        this.activeStep = index;
       },
 
       onCancel() {
@@ -256,16 +241,13 @@
     // This makes sure that before entering the route, that we set the active step
     // so that when the page is rendered, the correct step is selected.
     async beforeRouteEnter(to, from, next) {
-      await loadData({to});
-      next(vm => {
-        vm.selectedIndex = vm.getActiveStep();
-      });
+      await loadData({ to });
+      next();
     },
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
-      this.selectedIndex = this.getActiveStep();
       next();
     },
 

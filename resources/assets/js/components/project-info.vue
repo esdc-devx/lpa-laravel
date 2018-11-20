@@ -72,7 +72,12 @@
 
     components: { InfoBox, ElButtonWrap },
 
-    props: [ 'project' ],
+    props: {
+      project: {
+        type: Object,
+        required: true
+      }
+    },
 
     computed: {
       ...mapState(`${namespace}`, [
