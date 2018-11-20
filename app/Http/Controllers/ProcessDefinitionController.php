@@ -28,7 +28,7 @@ class ProcessDefinitionController extends APIController
      */
     public function startProcess($processDefinition)
     {
-        $entity = entity($processDefinition->entity_type)->findOrFail(request()->get('entity_id'));
+        $entity = entity($processDefinition->entity_type, request()->get('entity_id'));
         $this->authorize('start-process', [$entity, $processDefinition]);
         return $this->respond([
             'process_instance' => Process::startProcess($processDefinition, $entity)->getProcessInstance()

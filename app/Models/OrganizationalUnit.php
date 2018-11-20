@@ -4,9 +4,12 @@ namespace App\Models;
 
 use App\Models\ListableModel;
 use App\Models\User\User;
+use Illuminate\Notifications\Notifiable;
 
 class OrganizationalUnit extends ListableModel
 {
+    use Notifiable;
+
     protected $casts = [
         'owner' => 'boolean',
     ];

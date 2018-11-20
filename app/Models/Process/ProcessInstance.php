@@ -17,6 +17,7 @@ class ProcessInstance extends BaseModel
         'entity_id',
         'engine_process_instance_id',
         'engine_auth_token',
+        'send_notifications',
         'entity_previous_state_id',
         'state_id',
         'created_by',

@@ -22,8 +22,23 @@ class ProcessDefinition extends LocalizableModel
 
     public $timestamps = false;
 
+    public function getRouteKeyName()
+    {
+        return 'name_key';
+    }
+
     public function steps()
     {
         return $this->hasMany(ProcessStep::class);
+    }
+
+    public function forms()
+    {
+        return $this->hasManyThrough(ProcessForm::class, ProcessStep::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(ProcessNotification::class);
     }
 }

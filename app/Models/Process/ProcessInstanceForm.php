@@ -140,9 +140,7 @@ class ProcessInstanceForm extends BaseModel
         $processInstance = $this->step->processInstance->updateAudit();
 
         // Update entity audit and timestamps.
-        entity($processInstance->entity_type)
-            ->find($processInstance->entity_id)
-            ->updateAudit();
+        entity($processInstance->entity_type, $processInstance->entity_id)->updateAudit();
 
         return $this;
     }
