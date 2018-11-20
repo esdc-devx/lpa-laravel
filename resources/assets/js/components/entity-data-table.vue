@@ -106,7 +106,7 @@
           return true;
         }));
         if (!columns.length) {
-          throw new Error('Columns are required to render the data-table. Make sure you specified which attributes are columns using `isColumn` property.')
+          this.$log.error('Columns are required to render the data-table. Make sure you specified which attributes are columns using `isColumn` property.')
         }
         return columns;
       },
@@ -196,11 +196,6 @@
           filters = this.sortFilterEntries(this.parsedData, attr);
         } else {
           filters = this.getColumnFilters(this.parsedData, attr);
-        }
-
-        // if there is only one filter, don't show the filter arrow
-        if (filters.length === 1) {
-          return [];
         }
         return filters;
       },
