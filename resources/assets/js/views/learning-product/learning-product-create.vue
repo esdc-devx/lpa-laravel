@@ -198,7 +198,6 @@
           manager: {},
           primary_contact: {}
         },
-        innerProjects: [],
         learningProductType: [],
         learningProductTypeOptions: {
           label: 'name',
@@ -229,6 +228,15 @@
             list: val
           });
         }
+      },
+
+      innerProjects() {
+        let projects = _.cloneDeep(this.projects);
+        // Add LPA number to each project name.
+        _.forEach(projects, project => {
+          project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
+        });
+        return projects;
       }
     },
 
@@ -288,13 +296,7 @@
       await store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
       if (store.state.learningProducts.permissions.canCreate) {
         await loadData();
-        next(async (vm) => {
-          vm.innerProjects = _.cloneDeep(vm.projects);
-          // Add LPA number to each project name.
-          _.forEach(vm.innerProjects, project => {
-            project.name = vm.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
-          });
-        });
+        next();
       } else {
         router.replace({ name: 'forbidden', params: { '0': to.path } });
       }
@@ -305,11 +307,6 @@
       await this.$store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
       if (this.$store.state.learningProducts.permissions.canCreate) {
         await this.onLanguageUpdate();
-        this.innerProjects = _.cloneDeep(this.projects);
-        // Add LPA number to each project name.
-        _.forEach(this.innerProjects, project => {
-          project.name = `${this.$options.filters.LPANumFilter(project.id)} - ${project.name}`;
-        });
         next();
       } else {
         this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
