@@ -131,7 +131,7 @@
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
-        await loadData();
+        await loadData.apply(this);
       }
     },
 
