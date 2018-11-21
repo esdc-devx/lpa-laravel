@@ -67,8 +67,6 @@
   import ProjectInfo from '@components/project-info.vue';
   import EntityDataTable from '@components/entity-data-table.vue';
 
-  import TableUtils from '@mixins/table/utils.js';
-
   const namespace = 'projects';
 
   const loadData = async function ({ to } = {}) {
