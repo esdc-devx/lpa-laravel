@@ -60,7 +60,7 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  let namespace = 'users';
+  const namespace = 'users';
 
   export default {
     name: 'admin-user-create',
@@ -74,9 +74,9 @@
     components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 
     computed: {
-      ...mapGetters({
-        organizationalUnits: `${namespace}/organizationalUnits`,
-        roles: `${namespace}/roles`
+      ...mapGetters(`${namespace}`, {
+        organizationalUnits: 'organizationalUnits',
+        roles: 'roles'
       })
     },
 
@@ -91,10 +91,10 @@
     },
 
     methods: {
-      ...mapActions({
-        searchUser: `${namespace}/search`,
-        createUser: `${namespace}/create`,
-        loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
+      ...mapActions(`${namespace}`, {
+        searchUser: 'search',
+        createUser: 'create',
+        loadUserCreateInfo: 'loadUserCreateInfo'
       }),
 
       // Form handlers
@@ -114,29 +114,25 @@
         this.goToParentPage();
       },
 
-      async loadData() {
-        await this.loadUserCreateInfo();
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.loadData();
+        await this.loadUserCreateInfo();
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.loadData();
-      });
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('users/loadUserCreateInfo');
+      next();
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await this.onLanguageUpdate();
+      next();
     },
 
     mounted() {
