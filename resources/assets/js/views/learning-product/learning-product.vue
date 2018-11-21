@@ -73,7 +73,7 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await loadData({to});
+      await loadData({ to });
       next();
     },
 

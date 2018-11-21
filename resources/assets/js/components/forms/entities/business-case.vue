@@ -357,7 +357,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import EventBus from '@/event-bus.js';
   import FormError from '../error.vue';
@@ -370,7 +370,17 @@
   import ElTreeWrap from '../el-tree-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
-  import ListsAPI from '@api/lists';
+  const loadData = async () => {
+    await store.dispatch('lists/loadLists', [
+      'request-origin',
+      'school-priority',
+      'community',
+      'departmental-results-framework-indicator',
+      'internal-resource',
+      'recurrence',
+      'risk-type'
+    ]);
+  };
 
   export default {
     name: 'business-case',
@@ -388,19 +398,44 @@
 
     data() {
       return {
-        requestOriginList: [],
         isRequestOriginOther: false,
-        schoolPriorityList: [],
-        communityList: [],
-        departmentalResultsFrameworkIndicatorList: [],
-        internalResourceList: [],
-        recurrenceList: [],
-        isInternalResourceOther: false,
-        riskTypeList: []
+        isInternalResourceOther: false
       }
     },
 
     computed: {
+      ...mapGetters('lists', {
+        getList: 'list'
+      }),
+
+      requestOriginList() {
+        return this.getList('request-origin');
+      },
+
+      schoolPriorityList() {
+        return this.getList('school-priority');
+      },
+
+      communityList() {
+        return this.getList('community');
+      },
+
+      departmentalResultsFrameworkIndicatorList() {
+        return this.getList('departmental-results-framework-indicator');
+      },
+
+      internalResourceList() {
+        return this.getList('internal-resource');
+      },
+
+      recurrenceList() {
+        return this.getList('recurrence');
+      },
+
+      riskTypeList() {
+        return this.getList('risk-type');
+      },
+
       form: {
         get() {
           return this.formData;
@@ -417,21 +452,6 @@
         this.$emit('update:value', tab.index);
       },
 
-      async loadData() {
-        let lists = await ListsAPI.getLists([
-          'request-origin',
-          'school-priority',
-          'community',
-          'departmental-results-framework-indicator',
-          'internal-resource',
-          'recurrence',
-          'risk-type'
-        ]);
-        _.forEach(lists, (list, key) => {
-          this[`${_.camelCase(key)}List`] = list;
-        });
-      },
-
       bindCheckboxes() {
         this.isRequestOriginOther = !!this.form.request_origins_other;
         this.isInternalResourceOther = !!this.form.internal_resource_other;
@@ -439,17 +459,20 @@
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.loadData);
+      EventBus.$off('Store:languageUpdate', loadData);
       EventBus.$off('FormEntity:discardChanges', this.bindCheckboxes);
     },
 
+    beforeCreate() {
+      loadData();
+    },
+
     created() {
-      this.loadData();
       this.bindCheckboxes();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.loadData);
+      EventBus.$on('Store:languageUpdate', loadData);
       EventBus.$on('FormEntity:discardChanges', this.bindCheckboxes);
     }
   };

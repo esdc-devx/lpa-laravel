@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
   import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
@@ -112,8 +112,6 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  import ListsAPI from '@api/lists';
-
   const namespace = 'learningProducts';
 
   const loadData = async function () {
@@ -123,7 +121,8 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadLearningProductCreateInfo`)
+      store.dispatch(`${namespace}/loadLearningProductCreateInfo`),
+      store.dispatch('lists/loadList', 'learning-product-type')
     );
 
     // Exception handled by interceptor
@@ -188,16 +187,6 @@
       }
     },
 
-    computed: {
-      ...mapState(`${namespace}`, [
-        'projects'
-      ]),
-      ...mapGetters({
-        viewingLearningProduct: `${namespace}/viewing`,
-        organizationalUnits: `${namespace}/organizationalUnits`
-      })
-    },
-
     data() {
       return {
         form: {
@@ -211,7 +200,6 @@
         },
         innerProjects: [],
         learningProductType: [],
-        learningProductTypeList: [],
         learningProductTypeOptions: {
           label: 'name',
           value: 'id'
@@ -220,9 +208,37 @@
       }
     },
 
+    computed: {
+      ...mapState(`${namespace}`, [
+        'projects'
+      ]),
+
+      ...mapGetters({
+        viewingLearningProduct: `${namespace}/viewing`,
+        organizationalUnits: `${namespace}/organizationalUnits`,
+        getList: 'lists/list'
+      }),
+
+      learningProductTypeList: {
+        get() {
+          return this.formatLearningProductList(this.getList('learning-product-type'));
+        },
+        set(val) {
+          this.setList({
+            name: 'learning-product-type',
+            list: val
+          });
+        }
+      }
+    },
+
     methods: {
       ...mapActions({
         createLearningProduct: `${namespace}/create`
+      }),
+
+      ...mapMutations({
+        setList: 'lists/setList'
       }),
 
       // Form handlers
@@ -273,7 +289,6 @@
       if (store.state.learningProducts.permissions.canCreate) {
         await loadData();
         next(async (vm) => {
-          vm.learningProductTypeList = vm.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
           vm.innerProjects = _.cloneDeep(vm.projects);
           // Add LPA number to each project name.
           _.forEach(vm.innerProjects, project => {
@@ -290,7 +305,6 @@
       await this.$store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
       if (this.$store.state.learningProducts.permissions.canCreate) {
         await this.onLanguageUpdate();
-        this.learningProductTypeList = this.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
         this.innerProjects = _.cloneDeep(this.projects);
         // Add LPA number to each project name.
         _.forEach(this.innerProjects, project => {

@@ -142,7 +142,7 @@
       store.dispatch('processes/loadInstance', processId),
       store.dispatch('processes/loadCanEditForm', formId),
       store.dispatch('processes/loadCanClaimForm', formId),
-      store.dispatch('processes/loadCanUnclaimForm', formId),      
+      store.dispatch('processes/loadCanUnclaimForm', formId),
       store.dispatch('processes/loadCanReleaseForm', formId)
     );
     if (hasToLoadEntity) {
@@ -514,7 +514,7 @@
 
     beforeRouteEnter(to, from, next) {
       // Exception handled by interceptor
-      loadData({to}).then(next);
+      loadData({ to }).then(next);
     },
 
     async beforeRouteLeave(to, from, next) {
