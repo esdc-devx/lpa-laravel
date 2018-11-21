@@ -47,7 +47,7 @@ async function beforeProceed(to, from, next) {
 // This will check to see if the user is authenticated or not.
 async function isAuthenticated(to, from, next) {
   try {
-    let response = await store.dispatch('users/loadCurrentUser');
+    await store.dispatch('users/loadCurrentUser');
     if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
       return true;
     }

@@ -57,7 +57,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import TableUtils from '@mixins/table/utils.js';
 
