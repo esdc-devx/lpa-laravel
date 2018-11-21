@@ -6,9 +6,8 @@ export default {
    * @param {string} listName
    * @return {collection} - The requested list content.
    */
-  async getList(listName) {
-    let response = await axios.get('lists/' + listName);
-    return response.data;
+  getList(listName) {
+    return axios.get('lists/' + listName);
   },
 
   /**
@@ -16,12 +15,11 @@ export default {
    * @param {array} listNames - An array of list names.
    * @return {object} - The requested lists content.
    */
-  async getLists(listNames) {
-    let response = await axios.get('lists', {
+  getLists(listNames) {
+    return axios.get('lists', {
       params: {
         include: listNames
       }
     });
-    return response.data;
   }
 };

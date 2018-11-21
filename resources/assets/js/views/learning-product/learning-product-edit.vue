@@ -167,15 +167,14 @@
         // the messages are in the correct language
         this.resetErrors();
 
-        // Re-fetch organizational unit list and update the dropdown values.
-        let response = await this.loadLearningProductEditInfo(this.learningProductId);
+        await loadData.apply(this);
       }
     },
 
     async beforeRouteEnter(to, from, next) {
       await store.dispatch('learningProducts/loadCanEdit', to.params.learningProductId);
       if (store.state.learningProducts.permissions.canEdit) {
-        await loadData({to});
+        await loadData({ to });
         next();
       } else {
         router.replace({ name: 'forbidden', params: { '0': to.path } });
