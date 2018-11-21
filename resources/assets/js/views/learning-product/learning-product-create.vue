@@ -200,7 +200,6 @@
         },
         innerProjects: [],
         learningProductType: [],
-        learningProductTypeList: [],
         learningProductTypeOptions: {
           label: 'name',
           value: 'id'
