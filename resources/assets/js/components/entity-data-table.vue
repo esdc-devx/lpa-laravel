@@ -190,12 +190,13 @@
 
       getFilters(attr) {
         let filters = [];
-        if (!this.attributes[attr].isFilterable) {
-          return filters;
+        // this allows us to parse attributes passed in like:
+        // current_process.definition
+        let parsedAttr = attr.indexOf('.') ? attr.split('.')[0] : attr;
+        if (this.attributes[attr].isFilterable) {
+          return this.getColumnFilters(this.parsedData, parsedAttr);
         } else if (this.attributes[attr].areFiltersSorted) {
-          filters = this.sortFilterEntries(this.parsedData, attr);
-        } else {
-          filters = this.getColumnFilters(this.parsedData, attr);
+          return this.sortFilterEntries(this.parsedData, parsedAttr);
         }
         return filters;
       },

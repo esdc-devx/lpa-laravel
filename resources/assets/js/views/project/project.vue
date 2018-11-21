@@ -41,6 +41,7 @@
               :data="projectLearningProducts"
               :attributes="dataTableAttributes.learningProducts"
               @rowClick="onLearningProductRowClick"
+              @formatData="onFormatData"
             />
           </el-tab-pane>
           <el-tab-pane>
@@ -227,6 +228,10 @@
         startProcess: `processes/start`,
         loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
       }),
+
+      onFormatData(normEntity) {
+        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
+      },
 
       onLearningProductRowClick(learningProduct) {
         this.scrollToTop();

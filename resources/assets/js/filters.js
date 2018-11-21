@@ -14,15 +14,15 @@ Vue.mixin({
   methods: {
     getColumnFilters(list, attr) {
       // grab the attrs values,
-      // put them in an array, remove dupplicates, remove falsy values,
+      // put them in an array, remove dupplicates
       // and then rearrange its format to match ElementUI's
       // @note: flatMapDeep is mainly used in user-list
       // since we may have multiple organizational units associated to a user
       return _.chain(list)
               .mapValues(attr)
-              .toArray().flatMapDeep().uniq().compact()
+              .toArray().flatMapDeep().uniq()
               .map((val, key) => {
-                let text = val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
+                let text = _.isNull(val) || val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
                 return { text, value: val };
               })
               .value();
