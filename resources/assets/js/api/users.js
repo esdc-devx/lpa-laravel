@@ -9,8 +9,8 @@ export default {
     return request.post('logout');
   },
 
-  async getUsers() {
-    return await axios.get('users');
+  getUsers() {
+    return axios.get('users');
   },
 
   async getUser(id) {
@@ -18,31 +18,30 @@ export default {
     return await axios.get(`users/${request}`);
   },
 
-  async create(user) {
-    return await axios.post('users', user);
+  create(user) {
+    return axios.post('users', user);
   },
 
   async search(name) {
-    let response = await axios.get('users/search', {
+    return axios.get('users/search', {
       showMainLoading: false,
       params: { name: name }
     });
-    return response.data;
   },
 
-  async update(user) {
-    return await axios.put(`users/${user.id}`, user);
+  update(user) {
+    return axios.put(`users/${user.id}`, user);
   },
 
-  async delete(id) {
-    return await axios.delete(`users/${id}`);
+  delete(id) {
+    return axios.delete(`users/${id}`);
   },
 
-  async getUserCreateInfo() {
-    return await axios.get('users/create');
+  getUserCreateInfo() {
+    return axios.get('users/create');
   },
 
-  async getUserEditInfo(id) {
-    return await axios.get(`users/${id}/edit`);
+  getUserEditInfo(id) {
+    return axios.get(`users/${id}/edit`);
   }
 };
