@@ -3,47 +3,47 @@ import axios from '@axios/interceptor';
 
 export default {
 
-  async getLearningProducts() {
-    return await axios.get(`learning-products`);
+  getLearningProducts() {
+    return axios.get(`learning-products`);
   },
 
-  async getProjectLearningProducts(projectId) {
-    return await axios.get(`learning-products/?project_id=${projectId}`);
+  getProjectLearningProducts(projectId) {
+    return axios.get(`learning-products/?project_id=${projectId}`);
   },
 
-  async getLearningProduct(id) {
-    return await axios.get(`learning-products/${id}`);
+  getLearningProduct(id) {
+    return axios.get(`learning-products/${id}`);
   },
 
-  async getCreateInfo() {
-    return await axios.get('learning-products/create');
+  getCreateInfo() {
+    return axios.get('learning-products/create');
   },
 
-  async getEditInfo(id) {
-    return await axios.get(`learning-products/${id}/edit`);
+  getEditInfo(id) {
+    return axios.get(`learning-products/${id}/edit`);
   },
 
-  async create(learningProduct) {
-    return await axios.post('learning-products', learningProduct);
+  create(learningProduct) {
+    return axios.post('learning-products', learningProduct);
   },
 
-  async update(id, data) {
-    return await axios.put(`learning-products/${id}`, data);
+  update(id, data) {
+    return axios.put(`learning-products/${id}`, data);
   },
 
-  async delete(id) {
-    await axios.delete(`learning-products/${id}`);
+  delete(id) {
+    axios.delete(`learning-products/${id}`);
   },
 
-  async canCreate() {
-    return await axios.get('authorization/learning-product/create');
+  canCreate() {
+    return axios.get('authorization/learning-product/create');
   },
 
-  async canDelete(id) {
-    return await axios.get(`authorization/learning-product/delete/${id}`);
+  canDelete(id) {
+    return axios.get(`authorization/learning-product/delete/${id}`);
   },
 
-  async canEdit(id) {
-    return await axios.get(`authorization/learning-product/edit/${id}`);
+  canEdit(id) {
+    return axios.get(`authorization/learning-product/edit/${id}`);
   }
 };

@@ -14,6 +14,7 @@ import projects from './modules/projects.js';
 import processes from './modules/processes.js';
 import users from './modules/users.js';
 import learningProducts from './modules/learning-products.js';
+import lists from './modules/lists.js';
 
 Vue.use(Vuex);
 
@@ -26,7 +27,8 @@ window.store = new Vuex.Store({
     projects,
     processes,
     users,
-    learningProducts
+    learningProducts,
+    lists
   },
   // https://vuex.vuejs.org/en/strict.html
   strict: process.env.NODE_ENV !== 'production'
