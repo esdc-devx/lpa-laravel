@@ -146,11 +146,14 @@
       },
 
       async update() {
-        await this.updateLearningProduct(this.form.id, {
-          name: this.form.name,
-          organizational_unit_id: this.form.organizational_unit.id,
-          manager: this.form.manager.username,
-          primary_contact: this.form.primary_contact.username
+        await this.updateLearningProduct({
+          id: this.form.id,
+          data: {
+            name: this.form.name,
+            organizational_unit_id: this.form.organizational_unit.id,
+            manager: this.form.manager.username,
+            primary_contact: this.form.primary_contact.username
+          }
         });
 
         this.isSubmitting = false;

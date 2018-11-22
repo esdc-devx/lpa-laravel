@@ -71,7 +71,7 @@ export default {
       commit('setViewing', response.data);
     },
 
-    async update({ commit }, { id , data }) {
+    async update({ commit }, { id, data }) {
       await LearningProductAPI.update(id, data);
     },
 
