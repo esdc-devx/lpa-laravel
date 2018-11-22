@@ -9,7 +9,6 @@ use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Process\ProcessInstanceFormAssessment;
 use App\Models\Process\ProcessInstanceStep;
-use App\Models\Process\ProcessNotification as ProcessNotificationModel;
 use App\Models\State;
 use App\Models\User\User;
 use App\Notifications\ProcessNotification;
@@ -288,7 +287,7 @@ class ProcessManager {
      * Handle logic to send a process notification to the appropriate organizational units.
      * Process notifications are triggered from the process engine.
      *
-     * @param  ProcessNotificationModel $model
+     * @param  App\Models\Process\ProcessNotificationModel $model
      * @param  ProcessInstance $processInstance
      * @param  array $addressees
      * @return void
