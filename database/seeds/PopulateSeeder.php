@@ -14,6 +14,9 @@ class PopulateSeeder extends Seeder
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
+        // Turn off process notifications during seeding process.
+        config(['mail.send_process_notifications' => false]);
+
         $this->call([
             ProjectTableSeeder::class,
             LearningProductTableSeeder::class,

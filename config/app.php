@@ -245,6 +245,7 @@ return [
         'process-form-decision'                    => App\Models\Process\ProcessFormDecision::class,
         'process-instance'                         => App\Models\Process\ProcessInstance::class,
         'process-instance-form'                    => App\Models\Process\ProcessInstanceForm::class,
+        'process-notification'                     => App\Models\Process\ProcessNotification::class,
         'project'                                  => App\Models\Project\Project::class,
         'recurrence'                               => App\Models\Project\BusinessCase\Recurrence::class,
         'request-origin'                           => App\Models\Project\BusinessCase\RequestOrigin::class,
@@ -252,5 +253,6 @@ return [
         'role'                                     => App\Models\User\Role::class,
         'school-priority'                          => App\Models\Project\BusinessCase\SchoolPriority::class,
         'state'                                    => App\Models\State::class,
+        'user'                                     => App\Models\User\User::class,
     ],
 ];

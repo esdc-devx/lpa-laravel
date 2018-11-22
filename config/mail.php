@@ -120,4 +120,31 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Mailboxes
+    |--------------------------------------------------------------------------
+    |
+    | These configurations are used to identify the email addresses the process notifications
+    | should be sent to. The dev mailbox will be used when the environment is anything
+    | other than production. The business mailbox should be set to the mailbox used by
+    | the team managing the application on the business side.
+    |
+     */
+
+    'mailboxes' => [
+        'dev' => env('MAIL_BOX_DEV', ''),
+        'business' => env('MAIL_BOX_BUSINESS', ''),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Process notifications
+    |--------------------------------------------------------------------------
+    |
+    | Turn on or off any process email notifications.
+    |
+    */
+
+    'send_process_notifications' => env('SEND_PROCESS_NOTIFICATIONS', false),
 ];

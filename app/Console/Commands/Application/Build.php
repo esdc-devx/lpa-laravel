@@ -135,7 +135,7 @@ class Build extends BaseCommand
         ];
 
         Storage::disk('js')->put('version.js',
-            str_replace(array_keys($replace), array_values($replace), Storage::get('stubs/version.stub'))
+            str_placeholder($replace, Storage::get('stubs/version.stub'))
         );
     }
 

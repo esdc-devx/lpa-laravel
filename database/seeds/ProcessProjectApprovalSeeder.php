@@ -5,6 +5,7 @@ use App\Models\Process\ProcessDefinition;
 use App\Models\Process\ProcessStep;
 use App\Models\Process\ProcessForm;
 use App\Models\Process\ProcessFormAssessment;
+use App\Models\Process\ProcessNotification;
 
 class ProcessProjectApprovalSeeder extends Seeder
 {
@@ -42,6 +43,33 @@ class ProcessProjectApprovalSeeder extends Seeder
                     ],
                 ],
             ],
+            'notifications' => [
+                [
+                    'name_key'   => 'project-ready-for-gate-one-approval',
+                    'name_en'    => 'Project Ready for Gate One Approval',
+                    'name_fr'    => 'Projet prêt pour Jalon 1',
+                ],
+                [
+                    'name_key'   => 'business-case-rejected',
+                    'name_en'    => 'Business Case Requires Adjustements',
+                    'name_fr'    => 'Plan d\'affaire nécessite des ajustements',
+                ],
+                [
+                    'name_key'   => 'planned-product-list-rejected',
+                    'name_en'    => 'Planned Product List Requires Adjustments',
+                    'name_fr'    => 'Liste de produits planifiés nécessite des ajustements',
+                ],
+                [
+                    'name_key'   => 'project-cancelled',
+                    'name_en'    => 'Project Cancelled',
+                    'name_fr'    => 'Projet annulé',
+                ],
+                [
+                    'name_key'   => 'project-approved',
+                    'name_en'    => 'Project Approved',
+                    'name_fr'    => 'Projet approuvé',
+                ],
+            ],
         ];
     }
 
@@ -53,6 +81,9 @@ class ProcessProjectApprovalSeeder extends Seeder
     public function run()
     {
         $data = $this->data();
+
+        // Temporarily use Faker to generate some fake data.
+        $faker = \Faker\Factory::create();
 
         // Generate "Project Approval" process data structure.
         $processDefinitionId = ProcessDefinition::create([
@@ -90,6 +121,20 @@ class ProcessProjectApprovalSeeder extends Seeder
                     ]);
                 }
             }
+        }
+
+        // Generate process notifications content.
+        foreach ($data['notifications'] as $notification) {
+            ProcessNotification::create([
+                'process_definition_id' => $processDefinitionId,
+                'name_key'              => $notification['name_key'],
+                'name_en'               => $notification['name_en'],
+                'name_fr'               => $notification['name_fr'],
+                'subject_en'            => $notification['subject_en'] ?? $notification['name_en'],
+                'subject_fr'            => $notification['subject_fr'] ?? $notification['name_fr'],
+                'body_en'               => $notification['body_en'] ?? $faker->paragraph,
+                'body_fr'               => $notification['body_fr'] ?? $faker->paragraph,
+            ]);
         }
     }
 }

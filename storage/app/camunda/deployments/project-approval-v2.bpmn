@@ -31,7 +31,7 @@
     <bpmn:startEvent id="StartEvent_1qmhyoy" name="New">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript"><![CDATA[// Define constants.
+          <camunda:script scriptFormat="javascript"><![CDATA[// Constants
 
 // States
 execution.setVariable("STATE_ENTITY_NEW", "new");
@@ -56,17 +56,24 @@ execution.setVariable("DECISION_FORM_APPROVED", "approved");
 execution.setVariable("DECISION_FORM_REJECTED", "rejected");  
 execution.setVariable("DECISION_FORM_NONE", "none");
 
+// Process Definition Key
+execution.setVariable("PROCESS_DEFINITION_KEY", execution.getProcessEngineServices().getRepositoryService().getProcessDefinition(execution.getProcessDefinitionId()).getKey());
+
 // Message Keys
 execution.setVariable("MESSAGE_KEY_PROJECT_READY_FOR_GATE_ONE_APPROVAL", "project-ready-for-gate-one-approval");
 execution.setVariable("MESSAGE_KEY_BUSINESS_CASE_REJECTED", "business-case-rejected");
-execution.setVariable("MESSAGE_KEY_PLANNED_PRODUCT_LIST_REJECTED", "plan-product-list-rejected");
+execution.setVariable("MESSAGE_KEY_PLANNED_PRODUCT_LIST_REJECTED", "planned-product-list-rejected");
 execution.setVariable("MESSAGE_KEY_PROJECT_CANCELLED", "project-cancelled");
 execution.setVariable("MESSAGE_KEY_PROJECT_APPROVED", "project-approved");
 
-// Message service URL path
-execution.setVariable("MESSAGE_URL_PATH", "notifications");
+// Process Notification Path
+execution.setVariable("PROCESS_NOTIFICATION_PATH", execution.getVariable("applicationUrl") + "/notifications/" + execution.getVariable("PROCESS_DEFINITION_KEY"));
 
-// Set process variables.
+
+// Variables
+
+// Process Instance Id
+execution.setVariable("processInstanceId", execution.getProcessInstanceId());
 
 // Process States
 execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_RUNNING);
@@ -226,14 +233,70 @@ if (stateFormBusinessCase == STATE_FORM_SUBMITTED || stateFormBusinessCase == ST
       <bpmn:outgoing>SequenceFlow_1dwhsl5</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1kns0jx" name="Business Case Requires Adjustments">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_0riori8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1h268hs</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_BUSINESS_CASE_REJECTED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0bg1r6e" name="Planned Product List Requires Adjustments">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_19wcved</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0zlpm1b</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PLANNED_PRODUCT_LIST_REJECTED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:userTask id="correct-business-case" name="Correct Business Case" camunda:formKey="business-case" camunda:candidateGroups="${owner}">
       <bpmn:extensionElements>
@@ -265,14 +328,70 @@ if (stateFormPlannedProductList == STATE_FORM_SUBMITTED || stateFormPlannedProdu
     <bpmn:sequenceFlow id="SequenceFlow_0zlpm1b" sourceRef="IntermediateThrowEvent_0bg1r6e" targetRef="correct-planned-product-list" />
     <bpmn:sequenceFlow id="SequenceFlow_1h268hs" sourceRef="IntermediateThrowEvent_1kns0jx" targetRef="correct-business-case" />
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_16do5bj" name="Project Approved">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_19ti0wn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1loh69n</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PROJECT_APPROVED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1yyy271" name="Project Cancelled">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_13ek50h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kx4lyd</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PROJECT_CANCELLED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:dataObjectReference id="DataObjectReference_1re9a8i" name="Planned Product List Info. Sheet" dataObjectRef="DataObject_0exiqpp" />
     <bpmn:dataObject id="DataObject_0exiqpp" />
@@ -286,12 +405,11 @@ if (stateFormPlannedProductList == STATE_FORM_SUBMITTED || stateFormPlannedProdu
           <camunda:connector>
             <camunda:inputOutput>
               <camunda:inputParameter name="url">
-                <camunda:script scriptFormat="javascript"><![CDATA[var url = execution.getVariable("applicationUrl");
-var path = execution.getVariable("MESSAGE_URL_PATH");
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
 var mk = execution.getVariable("MESSAGE_KEY_PROJECT_READY_FOR_GATE_ONE_APPROVAL");
 var pid = execution.getProcessInstanceId();
 
-url + '/' + path + '/' + mk + '/' + pid; ]]></camunda:script>
+pnp + '/' + mk + '/' + pid]]></camunda:script>
               </camunda:inputParameter>
               <camunda:inputParameter name="method">POST</camunda:inputParameter>
               <camunda:inputParameter name="headers">
@@ -303,11 +421,8 @@ url + '/' + path + '/' + mk + '/' + pid; ]]></camunda:script>
                 <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
 var al = '["curriculum-management"]';
 
-'{"authToken":"'+at+'","addresseeList":'+al+'}';
-]]></camunda:script>
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
               </camunda:inputParameter>
-              <camunda:outputParameter name="messageProjectReadyForGateOneApprovalStatusCode">${statusCode}</camunda:outputParameter>
-              <camunda:outputParameter name="messageProjectReadyForGateOneApprovalResponse">${response}</camunda:outputParameter>
             </camunda:inputOutput>
             <camunda:connectorId>http-connector</camunda:connectorId>
           </camunda:connector>

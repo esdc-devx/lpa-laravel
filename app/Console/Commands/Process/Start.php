@@ -66,7 +66,7 @@ class Start extends BaseCommand
             if ($entity[0] !== $this->definition->entity_type) {
                 return $this->error('Unsupported entity type: ' . $entity[0]);
             }
-            $entity = entity($entity[0])->findOrFail($entity[1]);
+            $entity = entity($entity[0], $entity[1]);
         }
 
         return $entity;

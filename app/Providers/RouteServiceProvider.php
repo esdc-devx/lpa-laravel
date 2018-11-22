@@ -2,11 +2,12 @@
 
 namespace App\Providers;
 
-use App\Models\Process\ProcessDefinition;
+use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
+use App\Models\Process\ProcessNotification;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -32,14 +33,14 @@ class RouteServiceProvider extends ServiceProvider
          * Configure route model bindings.
          */
 
-        // Resolve process definition from its key.
-        Route::bind('processDefinition', function ($processDefinitionKey) {
-            return ProcessDefinition::getByKey($processDefinitionKey)->firstOrFail();
-        });
-
         // Resolve model class from entity type string.
         Route::bind('entityType', function($entityTypeKey) {
             return entity($entityTypeKey);
+        });
+
+        // Resolve process instance from engine process instance id.
+        Route::bind('engineProcessInstanceId', function($engineProcessInstanceId) {
+            return ProcessInstance::whereEngineProcessInstanceId($engineProcessInstanceId)->firstOrFail();
         });
 
         // Resolve process instance form with its form data entity.
@@ -50,6 +51,12 @@ class RouteServiceProvider extends ServiceProvider
             // Format form data lists as an array of ids to make it easier when working with forms.
             $processInstanceForm->formData->formatListsOutput();
             return $processInstanceForm;
+        });
+
+        // Resolve process notification from a process definition key and a notification key.
+        Route::bind('notification', function($notification) {
+            $processDefinitionKey = request()->route()->parameter('processDefinition');
+            return ProcessNotification::resolve($processDefinitionKey, $notification);
         });
     }
 
@@ -109,7 +116,7 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapProcessEngineRoutes()
     {
         Route::prefix('process-engine')
-            ->middleware('json', 'auth.process-engine')
+            ->middleware('json', 'auth.process-engine', 'bindings')
             ->namespace($this->namespace)
             ->group(base_path('routes/process_engine.php'));
     }

@@ -20,6 +20,7 @@ class CreateProcessInstancesTable extends Migration
             $table->unsignedInteger('entity_id');
             $table->string('engine_process_instance_id')->unique()->index();
             $table->string('engine_auth_token');
+            $table->boolean('send_notifications');
             $table->unsignedInteger('entity_previous_state_id')->nullable();
             $table->unsignedInteger('state_id')->nullable();
             // Audit and timestamps

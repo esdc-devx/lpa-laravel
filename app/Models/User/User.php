@@ -94,8 +94,13 @@ class User extends BaseModel implements
         return false;
     }
 
-    public function scopeAdmin($query)
+    /**
+     * Return system admin account.
+     *
+     * @return User
+     */
+    public static function admin()
     {
-        return $query->where('username', config('auth.admin.username'));
+        return (new static)->whereUsername(config('auth.admin.username'))->firstOrFail();
     }
 }
