@@ -4,12 +4,15 @@ export default {
   namespaced: true,
 
   state: {
+    activeStep: 0,
     definitions: [],
-    canEditForm: false,
-    canClaimForm: false,
-    canUnclaimForm: false,
-    canSubmitForm: false,
-    canReleaseForm: false,
+    permissions: {
+      canEditForm: false,
+      canClaimForm: false,
+      canUnclaimForm: false,
+      canSubmitForm: false,
+      canReleaseForm: false
+    },
     viewing: {
       definition: {
         name: ''
@@ -31,6 +34,21 @@ export default {
   },
 
   getters: {
+    activeStep(state) {
+      if (state.viewing.state.name_key === 'completed') {
+        return state.viewing.steps.length - 1;
+      }
+
+      let active = 0;
+      // grab the last step that is not locked
+      _.forEach(state.viewing.steps, (step, i) => {
+        if (step.state.name_key !== 'locked') {
+          active = i;
+        }
+      });
+      return active;
+    },
+
     definitions(state) {
       return state.definitions;
     },
@@ -111,60 +129,66 @@ export default {
       await ProcessAPI.releaseForm(formId, username);
     },
 
-    async canCancelProcess({ commit }, processId) {
-      let response = await ProcessAPI.canCancelProcess(processId);
-      return response.data.allowed;
+    async loadCanCancel({ commit }, processId) {
+      let response = await ProcessAPI.canCancel(processId);
+      commit('setPermission', {
+        name: 'canCancel',
+        isAllowed: response.data.allowed
+      });
     },
 
     async loadCanEditForm({ commit }, formId) {
       let response = await ProcessAPI.canEditForm(formId);
-      commit('setCanEditForm', response.data.allowed);
+      commit('setPermission', {
+        name: 'canEditForm',
+        isAllowed: response.data.allowed
+      });
     },
 
     async loadCanClaimForm({ commit }, formId) {
       let response = await ProcessAPI.canClaimForm(formId);
-      commit('setCanClaimForm', response.data.allowed);
+      commit('setPermission', {
+        name: 'canClaimForm',
+        isAllowed: response.data.allowed
+      });
     },
 
     async loadCanUnclaimForm({ commit }, formId) {
       let response = await ProcessAPI.canUnclaimForm(formId);
-      commit('setCanUnclaimForm', response.data.allowed);
+      commit('setPermission', {
+        name: 'canUnclaimForm',
+        isAllowed: response.data.allowed
+      });
     },
 
     async loadCanSubmitForm({ commit }, formId) {
       let response = await ProcessAPI.canSubmitForm(formId);
-      commit('setCanSubmitForm', response.data.allowed);
+      commit('setPermission', {
+        name: 'canSubmitForm',
+        isAllowed: response.data.allowed
+      });
     },
 
     async loadCanReleaseForm({ commit }, formId) {
       let response = await ProcessAPI.canReleaseForm(formId);
-      commit('setCanReleaseForm', response.data.allowed);
+      commit('setPermission', {
+        name: 'canReleaseForm',
+        isAllowed: response.data.allowed
+      });
     }
   },
 
   mutations: {
+    setActiveStep(state, activeStep) {
+      state.activeStep = activeStep;
+    },
+
     setDefinitions(state, definitions) {
       state.definitions = definitions;
     },
 
-    setCanEditForm(state, allowed) {
-      state.canEditForm = allowed;
-    },
-
-    setCanClaimForm(state, allowed) {
-      state.canClaimForm = allowed;
-    },
-
-    setCanUnclaimForm(state, allowed) {
-      state.canUnclaimForm = allowed;
-    },
-
-    setCanSubmitForm(state, allowed) {
-      state.canSubmitForm = allowed;
-    },
-
-    setCanReleaseForm(state, allowed) {
-      state.canReleaseForm = allowed;
+    setPermission(state, { name, isAllowed }) {
+      state.permissions[name] = isAllowed;
     },
 
     setViewing(state, viewing) {

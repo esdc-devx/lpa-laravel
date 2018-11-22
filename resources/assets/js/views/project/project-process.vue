@@ -26,8 +26,8 @@
               size="small"
               type="danger"
               v-if="hasRole('admin')"
-              :disabled="!rights.canCancelProcess"
-              @click="onCancelProcess"
+              :disabled="!permissions.canCancel"
+              @click="onCancel"
               plain>
               {{ trans('components.notice.title.cancel_process') }} <i class="el-icon-close"></i>
             </el-button>
@@ -45,7 +45,7 @@
           <el-steps :active="activeStep" finish-status="finish" align-center>
             <el-step
               v-for="(step, index) in steps"
-              :class="{ 'is-selected': selectedIndex === index }"
+              :class="{ 'is-selected': activeStep === index }"
               :title="trans('entities.process.step', { num: index + 1 })"
               :description="step.definition.name"
               :key="index"
@@ -121,12 +121,35 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
   import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
 
-  let namespace = 'processes';
+  const namespace = 'processes';
+
+  const loadData = async function ({ to } = {}) {
+    const { projectId, processId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch('projects/loadProject', projectId),
+      store.dispatch(`${namespace}/loadInstance`, processId),
+      store.dispatch(`${namespace}/loadCanCancel`, processId)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'project-process',
@@ -137,34 +160,35 @@
 
     data() {
       return {
-        processId: null,
-        activeStep: 0,
-        rights: {
-          canCancelProcess: false
-        }
+        projectId: null,
+        processId: null
       }
     },
 
     computed: {
+      ...mapState(`${namespace}`, [
+        'permissions'
+      ]),
       ...mapGetters({
-        viewingProcess: `${namespace}/viewing`
+        viewingProcess: `${namespace}/viewing`,
+        activeStepStore: `${namespace}/activeStep`
       }),
-
-      selectedIndex: {
-        get() {
-          return this.activeStep;
-        },
-        set(val) {
-          this.activeStep = val;
-        }
-      },
 
       steps() {
         return _.sortBy(this.viewingProcess.steps, 'definition.display_sequence');
       },
 
       forms() {
-        return _.sortBy(this.viewingProcess.steps[this.selectedIndex].forms, 'definition.display_sequence');
+        return _.sortBy(this.viewingProcess.steps[this.activeStep].forms, 'definition.display_sequence');
+      },
+
+      activeStep: {
+        get() {
+          return this.activeStepStore;
+        },
+        set(val) {
+          this.setActiveStep(val);
+        }
       }
     },
 
@@ -172,9 +196,13 @@
       ...mapActions({
         loadProject: 'projects/loadProject',
         loadProcessInstance: `${namespace}/loadInstance`,
-        cancelProcessInstance: `${namespace}/cancelInstance`,
-        canCancelProcess: `${namespace}/canCancelProcess`
+        cancelProcessInstance: `${namespace}/cancelInstance`
       }),
+
+      ...mapMutations(`${namespace}`, [
+        'setPermission',
+        'setActiveStep'
+      ]),
 
       viewForm(form) {
         this.$router.push(`${this.processId}/form/${form.id}`);
@@ -184,36 +212,22 @@
         return row.state.name_key;
       },
 
-      getActiveStep() {
-        // when process is completed, just use the last step as the active one
-        if (this.viewingProcess.state.name_key === 'completed') {
-          return this.viewingProcess.steps.length - 1;
-        }
-
-        let active = 0;
-        // grab the last step that is not locked
-        _.forEach(this.viewingProcess.steps, (step, i) => {
-          if (step.state.name_key !== 'locked') {
-            active = i;
-          }
-        });
-        return active;
-      },
-
       onStepChange(index) {
-        this.selectedIndex = index;
+        this.activeStep = index;
       },
 
-      onCancelProcess() {
+      onCancel() {
         this.confirmCancelProcess().then(async () => {
           try {
             let response = await this.cancelProcessInstance(this.processId);
             this.notifySuccess({
               message: this.trans('components.notice.message.process_cancelled')
             });
-            // Reload process intance info.
-            await this.triggerLoadProcessInstance();
-            this.rights.canCancelProcess = false;
+            await loadData.apply(this);
+            this.setPermission({
+              name: 'canCancel',
+              isAllowed: false
+            });
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
@@ -221,50 +235,25 @@
             }
           }
         }).catch(() => false);
-      },
-
-      async triggerLoadProject() {
-        let projectId = this.$route.params.projectId;
-        await this.loadProject(projectId);
-      },
-
-      async triggerLoadProcessInstance() {
-        let processId = this.$route.params.processId;
-        await this.loadProcessInstance(processId);
-
-        this.selectedIndex = this.getActiveStep();
-      },
-
-      async loadData() {
-        await axios.all([
-          this.triggerLoadProject(),
-          this.triggerLoadProcessInstance()
-        ]);
-      },
-
-      async loadPermissions() {
-        this.processId = this.$route.params.processId;
-        this.rights.canCancelProcess = await this.canCancelProcess(this.processId);
       }
     },
 
     // This makes sure that before entering the route, that we set the active step
     // so that when the page is rendered, the correct step is selected.
-    beforeRouteEnter(to, from, next) {
-      axios.all([
-        store.dispatch('projects/loadProject', to.params.projectId),
-        store.dispatch('processes/loadInstance', to.params.processId)
-      ]).then(() => {
-        next(vm => {
-          vm.selectedIndex = vm.getActiveStep();
-          vm.loadPermissions();
-        });
-      });
+    async beforeRouteEnter(to, from, next) {
+      await loadData({ to });
+      next();
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.loadData().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await loadData.apply(this);
+      next();
+    },
+
+    created() {
+      this.projectId = this.$route.params.projectId;
+      this.processId = this.$route.params.processId;
     }
   };
 </script>

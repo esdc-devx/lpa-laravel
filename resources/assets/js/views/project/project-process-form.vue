@@ -21,7 +21,7 @@
               }}
               <el-button-wrap
                 v-if="viewingFormInfo.current_editor && hasRole('admin')"
-                :disabled="!canReleaseForm"
+                :disabled="!permissions.canReleaseForm"
                 @click.native="onReleaseForm"
                 :tooltip="trans('components.tooltip.release_form')"
                 class="release-form"
@@ -34,7 +34,7 @@
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
             <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_by.name : trans('entities.general.none') }}</dd>
-            <dd>{{ viewingFormInfo.updated_at }}</dd>
+            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_at : '' }}</dd>
           </dl>
         </info-box>
       </el-col>
@@ -99,7 +99,7 @@
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!permissions.canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -128,21 +128,22 @@
 
   import ProcessAPI from '@api/processes';
 
-  let namespace = 'projects';
+  const namespace = 'projects';
 
-  const loadData = async ({ to, hasToLoadEntity = true }) => {
-    let { projectId, processId, formId } = to ? to.params : this;
+  const loadData = async function ({ to, hasToLoadEntity = true } = {}) {
+    const { projectId, processId, formId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
 
     let requests = [];
     requests.push(
-      store.dispatch('projects/loadProject', projectId),
+      store.dispatch(`${namespace}/loadProject`, projectId),
       store.dispatch('processes/loadInstance', processId),
       store.dispatch('processes/loadCanEditForm', formId),
       store.dispatch('processes/loadCanClaimForm', formId),
-      store.dispatch('processes/loadCanUnclaimForm', formId),      
+      store.dispatch('processes/loadCanUnclaimForm', formId),
+      store.dispatch('processes/loadCanSubmitForm', formId),
       store.dispatch('processes/loadCanReleaseForm', formId)
     );
     if (hasToLoadEntity) {
@@ -150,7 +151,13 @@
     }
 
     // Exception handled by interceptor
-    await axios.all(requests);
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
   };
 
   export default {
@@ -184,11 +191,7 @@
 
     computed: {
       ...mapState('processes', [
-        'canEditForm',
-        'canClaimForm',
-        'canUnclaimForm',
-        'canSubmitForm',
-        'canReleaseForm'
+        'permissions',
       ]),
 
       ...mapGetters({
@@ -512,9 +515,17 @@
       }
     },
 
-    beforeRouteEnter(to, from, next) {
+    async beforeRouteEnter(to, from, next) {
       // Exception handled by interceptor
-      loadData({to}).then(next);
+      await loadData({ to });
+      next();
+    },
+
+    async beforeRouteUpdate(to, from, next) {
+      await loadData.apply(this, {
+        hasToLoadEntity: false
+      });
+      next();
     },
 
     async beforeRouteLeave(to, from, next) {
@@ -539,13 +550,6 @@
         });
         next();
       }
-    },
-
-    beforeRouteUpdate(to, from, next) {
-      loadData({
-        to,
-        hasToLoadEntity: false
-      }).then(next);
     },
 
     created() {

@@ -52,7 +52,28 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  let namespace = 'projects';
+  const namespace = 'projects';
+
+  const loadData = async function ({ to } = {}) {
+    const { projectId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadProjectEditInfo`, projectId)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'project-edit',
@@ -105,49 +126,43 @@
         this.goToParentPage();
       },
 
-      async loadData() {
-        let projectId = this.$route.params.projectId;
-        try {
-          await this.loadProjectEditInfo(projectId);
-          this.form.project = Object.assign({}, this.viewingProject);
-          // replace our internal organizational_units with only the ids
-          // since ElementUI only need ids to populate the selected options
-          this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
-        // only reload the dropdowns, not the project
-        let projectId = this.$route.params.projectId;
-        await this.loadProjectEditInfo(projectId);
+        await loadData.apply(this);
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      store.dispatch('projects/canEditProject', to.params.projectId)
-        .then(allowed => {
-          if (allowed) {
-            next(vm => {
-              vm.loadData();
-            });
-          } else {
-            router.replace({ name: 'forbidden', params: { '0': to.path } });
-          }
-        });
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('projects/loadCanEdit', to.params.projectId);
+      if (store.state.projects.permissions.canEdit) {
+        await loadData({ to });
+        next();
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await this.$store.dispatch('projects/loadCanEdit', to.params.projectId);
+      if (this.$store.state.projects.permissions.canEdit) {
+        await this.onLanguageUpdate();
+        next();
+      } else {
+        this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
+    },
+
+     created() {
+      // store the reference to the current form id
+      this.projectId = this.$route.params.projectId;
+      this.form.project = _.cloneDeep(this.viewingProject);
+      // replace our internal organizational_units with only the ids
+      // since ElementUI only need ids to populate the selected options
+      this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
     }
   };
 </script>
