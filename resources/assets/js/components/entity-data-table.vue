@@ -11,13 +11,13 @@
     @header-click="headerClick"
     :sort-method="$helpers.localeSort">
     <el-table-column
-      v-for="(attr, index) in columns"
-      :key="index"
-      :label="labels[index]"
+      v-for="(attr, i) in normalizedColumns"
+      :key="i"
+      :label="labels[i]"
       :prop="attr"
       :column-key="attr"
-      :filters="getFilters(attr)"
-      :min-width="minWidths[index]"
+      :filters="getFilters(attr, i)"
+      :min-width="minWidths[i]"
       sortable="custom"
     >
       <template slot-scope="scope">
@@ -100,11 +100,11 @@
       ]),
 
       /**
-       * Gets all the root keys of the attributes as props
+       * Gets all the root keys of the attributes as sorted props
        * @return { Array }
        */
       props() {
-        return _.keys(this.attributes);
+        return _.keys(this.attributes).sort();
       },
 
       /**
@@ -112,16 +112,28 @@
        * @return { Array }
        */
       columns() {
-        let columns = _.keys(_.pickBy(this.attributes, (val, key) => {
+        let columns = _.chain(this.attributes).pickBy((val, key) => {
           if (val.isColumn === false) {
             return false;
           }
           return true;
-        }));
+        }).keys().value();
+
         if (!columns.length) {
           this.$log.error('Columns are required to render the data-table. Make sure you specified which attributes are columns using `isColumn` property.')
         }
         return columns;
+      },
+
+      /**
+       * Creates a simlified version of columns, which only keeps the first part of the property path
+       * e.g.: current_process.definition => current_process
+       * @return { Array }
+       */
+      normalizedColumns() {
+        return this.columns.map(column => {
+          return column.indexOf('.') !== -1 ? column.split('.')[0] : column;
+        });
       },
 
       /**
@@ -145,16 +157,16 @@
        * so that we only get what we need on rendering.
        * E.g.: entity.organizational_unit.name -> entity.organizational_unit
        *       entity.organizational_units[x].name -> entity.organizational_units[x]
-       *       current_process.definition.name -> current_process
+       *       entity.current_process.definition.name -> entity.current_process
+       * @return { Array }
        */
       parsedData() {
-        let entityProps = _.cloneDeep(this.props);
-        return _.map(_.cloneDeep(this.data), entity => {
+        return _.cloneDeep(this.data).map(entity => {
           // equivalent of _.pick, but keeps the property if it is found in the attributes
           // but is undefined / null
           let normEntity = _.pickBy(entity, (val, key) => {
             // if key is found in desired column names
-            if (entityProps.includes(key)) {
+            if (this.props.includes(key)) {
               return true;
             } else {
               // else, loop through every desired entity props
@@ -164,7 +176,7 @@
               // we cannot put current_process.definition in the props
               // hence why we need to check if the column name
               // current_process is found in current_process.definition string
-              for (const attr of entityProps) {
+              for (const attr of this.props) {
                 if (attr.indexOf(key) !== -1) {
                   return true;
                 }
@@ -174,27 +186,19 @@
           // formatting
           this.$emit('formatData', normEntity);
 
-          // sort the props so that we have an array properly indexed
-          // to reference later on
-          entityProps.sort();
-          // sort here as well to make correlation possible with the column names
-          let normEntityKeysSorted = _.keys(normEntity).sort();
-          for (let i = 0; i < normEntityKeysSorted.length; i++) {
-            let key = normEntityKeysSorted[i];
-            let column = _.get(normEntity, key);
+          // sort to make correlation possible with the props
+          _.keys(normEntity).sort().forEach((key, i) => {
+            let value = _.get(normEntity, key);
             // check if we need to return the name of the path to the value
             // given in the entity props
-
-            if (_.isArray(column)) {
-              normEntity[key] = _.map(normEntity[entityProps[i]], 'name');
+            if (_.isArray(value)) {
+              this.$set(normEntity, key, _.map(normEntity[this.props[i]], 'name'));
             } else if (_.isObject(_.get(normEntity, key))) {
-              normEntity[key] = _.get(normEntity, entityProps[i]).name;
-            } else if (_.isNull(normEntity[key])) {
-              // since we dcannot filter on null values
-              // we need to re-assign the value to '-' so that we can filter on something
-              normEntity[key] = this.trans('entities.general.none');
+              this.$set(normEntity, key, _.get(normEntity, this.props[i]).name);
+            } else if (_.isNull(value)) {
+              this.$set(normEntity, key, this.trans('entities.general.na'));
             }
-          }
+          });
           return normEntity;
         });
       }
@@ -219,8 +223,12 @@
         document.querySelectorAll('.content-wrap')[0].scrollTop = 0
       },
 
-      // handle click on sortable and filterable columns
-      // since ElementUI has no behavior when clicking a column that has both methods
+      /**
+       * Handle click on sortable and filterable columns
+       * since ElementUI has no behavior when clicking a column that has both methods
+       * @param { Object } col - The column data that was clicked
+       * @param { Object } e - Event triggered
+       */
       headerClick(col, e) {
         if (!this.$refs.table) {
           this.$log.warn('[Mixin][Table][utils] Missing ref="table" reference on the table element.');
@@ -238,22 +246,43 @@
        * and format it so that we do not show '-' as options
        * @note: flatMapDeep is mainly used in user-list
        *        since we may have multiple organizational units associated to a user
+       * @param { Array } list - The data to get filters from
+       * @param { String } attr - the attribute to look for the the data
+       * @param { Boolean } isSorted - Whether or not the filters are sorted alphabetically based on language
        */
       getColumnFilters(list, attr, isSorted) {
         let filters = _.chain(list)
                 .mapValues(attr)
                 .toArray().flatMapDeep().uniq()
                 .map((val, key) => {
-                  let text = val === this.trans('entities.general.none') ? this.trans('entities.general.na') : val;
-                  return { text, value: val };
+                  return { text: val, value: val };
                 })
                 .value();
         return isSorted ? filters.sort((a, b) => this.$helpers.localeSort(a, b, 'text')) : filters;
       },
 
       /**
+       * Gets the filters based on the attr from the normalizedColumns.
+       * Since we need to reference the attributes, which contains the complex naming (e.g.: 'current_process.definition')
+       * we need to also pass an index to be able to reference the same attr passed in from the non-normalized columns
+       * @param { String } attr
+       * @param { Number } i
+       * @return { Array }
+       */
+      getFilters(attr, i) {
+        if (this.attributes[this.columns[i]].isFilterable) {
+          return this.getColumnFilters(
+            this.parsedData,
+            attr,
+            this.attributes[this.columns[i]].areFiltersSorted
+          );
+        }
+        return [];
+      },
+
+      /**
        * Called upon changing the filters on a column
-       * @param Object columFilters - column's filters
+       * @param { Object } columFilters - column's filters
        */
       onFilterChange(columFilters) {
         // store the current filter changed
@@ -262,7 +291,7 @@
         let filter = _.values(columFilters)[0];
         if (filter.length) {
           // apply filter
-          this.filters[_.keys(columFilters)[0]] = _.values(columFilters)[0];
+          this.$set(this.filters, _.keys(columFilters)[0], _.values(columFilters)[0]);
         } else {
           // filter removed
           delete this.filters[_.keys(columFilters)[0]];
@@ -296,21 +325,6 @@
 
       isArray(rowValue) {
         return _.isArray(rowValue);
-      },
-
-      getFilters(attr) {
-        let filters = [];
-        // this allows us to parse attributes passed in like:
-        // current_process.definition
-        let parsedAttr = attr.indexOf('.') ? attr.split('.')[0] : attr;
-        if (this.attributes[attr].isFilterable) {
-          return this.getColumnFilters(
-            this.parsedData,
-            parsedAttr,
-            this.attributes[attr].areFiltersSorted
-          );
-        }
-        return filters;
       },
 
       onRowClick(entity) {
