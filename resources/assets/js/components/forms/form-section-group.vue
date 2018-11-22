@@ -59,7 +59,9 @@
         type: Number,
         default: 0
       },
-      value: Array
+      value: {
+        type: Array
+      }
     },
 
     computed: {

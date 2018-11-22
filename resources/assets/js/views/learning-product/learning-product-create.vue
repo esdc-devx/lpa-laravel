@@ -101,7 +101,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
 
   import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
@@ -112,9 +112,28 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  import ListsAPI from '@api/lists';
+  const namespace = 'learningProducts';
 
-  let namespace = 'learningProducts';
+  const loadData = async function () {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadLearningProductCreateInfo`),
+      store.dispatch('lists/loadList', 'learning-product-type')
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'learning-product-create',
@@ -128,13 +147,13 @@
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
 
     watch: {
-      learningProductType: function(value) {
+      learningProductType: function (value) {
         // Update learning product type and sub type id when interacting with cascader control.
         this.form.type_id = value[0];
         this.form.sub_type_id = value[1];
       },
 
-      'form.project_id': function(projectId) {
+      'form.project_id': function (projectId) {
         if (!projectId) {
           this.projectSelected = false;
           this.learningProductType = [];
@@ -143,7 +162,7 @@
 
         this.projectSelected = true;
 
-        let project = _.find(this.projects, { id: projectId });
+        let project = _.find(this.innerProjects, { id: projectId });
         let availableProductTypes = _.cloneDeep(project.available_learning_product_types);
 
         // If a learning product type was entered beforehand, clear its value.
@@ -168,13 +187,6 @@
       }
     },
 
-    computed: {
-      ...mapGetters({
-        viewingLearningProduct: `${namespace}/viewing`,
-        organizationalUnits: `${namespace}/organizationalUnits`
-      })
-    },
-
     data() {
       return {
         form: {
@@ -186,8 +198,6 @@
           manager: {},
           primary_contact: {}
         },
-        projects: [],
-        learningProductTypeList: [],
         learningProductType: [],
         learningProductTypeOptions: {
           label: 'name',
@@ -197,10 +207,46 @@
       }
     },
 
+    computed: {
+      ...mapState(`${namespace}`, [
+        'projects'
+      ]),
+
+      ...mapGetters({
+        viewingLearningProduct: `${namespace}/viewing`,
+        organizationalUnits: `${namespace}/organizationalUnits`,
+        getList: 'lists/list'
+      }),
+
+      learningProductTypeList: {
+        get() {
+          return this.formatLearningProductList(this.getList('learning-product-type'));
+        },
+        set(val) {
+          this.setList({
+            name: 'learning-product-type',
+            list: val
+          });
+        }
+      },
+
+      innerProjects() {
+        let projects = _.cloneDeep(this.projects);
+        // Add LPA number to each project name.
+        _.forEach(projects, project => {
+          project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
+        });
+        return projects;
+      }
+    },
+
     methods: {
       ...mapActions({
-        createLearningProduct: `${namespace}/create`,
-        loadLearningProductCreateInfo: `${namespace}/loadLearningProductCreateInfo`
+        createLearningProduct: `${namespace}/create`
+      }),
+
+      ...mapMutations({
+        setList: 'lists/setList'
       }),
 
       // Form handlers
@@ -236,42 +282,35 @@
         return list;
       },
 
-      async loadData() {
-        this.learningProductTypeList = this.formatLearningProductList(await ListsAPI.getList('learning-product-type'));
-        let response = await this.loadLearningProductCreateInfo();
-        this.projects = response.projects;
-        // Add LPA number to each project name.
-        _.forEach(this.projects, project => {
-          project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
-        });
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.loadData();
+        await loadData();
       }
     },
 
-    beforeRouteEnter(to, from, next) {
-      store.dispatch('learningProducts/canCreate', to.params.learningProductId)
-        .then(allowed => {
-          if (allowed) {
-            next(vm => {
-              vm.loadData();
-            });
-          } else {
-            router.replace({ name: 'forbidden', params: { '0': to.path } });
-          }
-        });
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
+      if (store.state.learningProducts.permissions.canCreate) {
+        await loadData();
+        next();
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate().then(next);
+    async beforeRouteUpdate(to, from, next) {
+      await this.$store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
+      if (this.$store.state.learningProducts.permissions.canCreate) {
+        await this.onLanguageUpdate();
+        next();
+      } else {
+        this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     mounted() {

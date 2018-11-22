@@ -126,7 +126,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import EventBus from '@/event-bus.js';
   import FormError from '../error.vue';
@@ -136,7 +136,9 @@
   import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
 
-  import ListsAPI from '@api/lists';
+  const loadData = async () => {
+    await store.dispatch('lists/loadList', 'process-form-decision');
+  };
 
   export default {
     name: 'gate-one-approval',
@@ -154,7 +156,6 @@
 
     data() {
       return {
-        processFormDecisionList: [],
         assessment_date_options: {
           disabledDate(time) {
             return time.getTime() < new Date('2000-01-01') || time.getTime() > new Date();
@@ -164,6 +165,10 @@
     },
 
     computed: {
+      ...mapGetters('lists', {
+        getList: 'list'
+      }),
+
       form: {
         get() {
           return this.formData;
@@ -171,6 +176,10 @@
         set(data) {
           this.$emit('update:formData', data);
         }
+      },
+
+      processFormDecisionList() {
+        return this.getList('process-form-decision');
       }
     },
 
@@ -191,23 +200,19 @@
         } else {
           this.form.entity_cancellation_rationale = null;
         }
-      },
-
-      async loadData() {
-        this.processFormDecisionList = await ListsAPI.getList('process-form-decision');
-      },
+      }
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.loadData);
+      EventBus.$off('Store:languageUpdate', loadData);
     },
 
-    created() {
-      this.loadData();
+    beforeCreate() {
+      loadData();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.loadData);
+      EventBus.$on('Store:languageUpdate', loadData);
     }
   };
 </script>

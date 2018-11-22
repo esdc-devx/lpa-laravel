@@ -45,7 +45,7 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+  import { mapGetters } from 'vuex';
 
   import EventBus from '@/event-bus.js';
   import FormError from '../error.vue';
@@ -54,7 +54,10 @@
   import FormSectionGroup from '../form-section-group';
   import InputWrap from '../input-wrap';
   import ElPopoverWrap from '../../el-popover-wrap';
-  import ListsAPI from '@api/lists';
+
+  const loadData = async () => {
+    await store.dispatch('lists/loadList', 'learning-product-type');
+  };
 
   export default {
     name: 'planned-product-list',
@@ -70,13 +73,11 @@
       errorTabs: Array
     },
 
-    data() {
-      return {
-        typeList: []
-      }
-    },
-
     computed: {
+      ...mapGetters('lists', {
+        getList: 'list'
+      }),
+
       form: {
         get() {
           return this.formData;
@@ -84,6 +85,10 @@
         set(data) {
           this.$emit('update:formData', data);
         }
+      },
+
+      typeList() {
+        return this.getList('learning-product-type');
       }
     },
 
@@ -98,23 +103,19 @@
       // used in order to sync the tab index with the parent
       onTabClick(tab, e) {
         this.$emit('update:value', tab.index);
-      },
-
-      async loadData() {
-        this.typeList = await ListsAPI.getList('learning-product-type');
       }
     },
 
     beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', this.loadData);
+      EventBus.$off('Store:languageUpdate', loadData);
     },
 
-    created() {
-      this.loadData();
+    beforeCreate() {
+      loadData();
     },
 
     mounted() {
-      EventBus.$on('Store:languageUpdate', this.loadData);
+      EventBus.$on('Store:languageUpdate', loadData);
     }
   };
 </script>
