@@ -51,13 +51,13 @@ class ProcessProjectApprovalSeeder extends Seeder
                 ],
                 [
                     'name_key'   => 'business-case-rejected',
-                    'name_en'    => 'Business Case Rejected',
-                    'name_fr'    => 'Plan d\'affaire refusé',
+                    'name_en'    => 'Business Case Requires Adjustements',
+                    'name_fr'    => 'Plan d\'affaire nécessite des ajustements',
                 ],
                 [
                     'name_key'   => 'planned-product-list-rejected',
-                    'name_en'    => 'Planned Product List Rejected',
-                    'name_fr'    => 'Liste de produits planifiés refusée',
+                    'name_en'    => 'Planned Product List Requires Adjustments',
+                    'name_fr'    => 'Liste de produits planifiés nécessite des ajustements',
                 ],
                 [
                     'name_key'   => 'project-cancelled',
