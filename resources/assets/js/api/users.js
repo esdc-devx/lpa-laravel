@@ -13,16 +13,16 @@ export default {
     return axios.get('users');
   },
 
-  async getUser(id) {
+  getUser(id) {
     let request = !_.isUndefined(id) ? id : 'current';
-    return await axios.get(`users/${request}`);
+    return axios.get(`users/${request}`);
   },
 
   create(user) {
     return axios.post('users', user);
   },
 
-  async search(name) {
+  search(name) {
     return axios.get('users/search', {
       showMainLoading: false,
       params: { name: name }
