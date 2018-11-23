@@ -81,6 +81,10 @@
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
       next();
+    },
+
+    created() {
+      this.learningProductId = this.$route.params.learningProductId;
     }
   };
 </script>

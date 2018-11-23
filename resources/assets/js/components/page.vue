@@ -60,17 +60,11 @@
         'confirmBeforeLeaving'
       ]),
 
-      /**
-       * Async fetching function that provides a switch
-       * to handle initial load duty
-       */
-      async loadData() {},
-
+      // @todo: reconsider the utility of having this here
+      // when lpa-6133 is done
       async loadPermissions() {},
 
-      onLanguageUpdate() {
-        this.loadData();
-      },
+      async onLanguageUpdate() {},
 
       bindEvents() {
         // loop through listeners of the current page,
