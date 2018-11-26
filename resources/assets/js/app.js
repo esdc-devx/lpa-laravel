@@ -18,7 +18,7 @@ import store from '@/store/';
 
 import Logger from '@/plugins/logger';
 import Helpers from '@/helpers';
-import '@/polyfills';
+import "@babel/polyfill";
 import '@/filters';
 import '@/directives';
 import Notify from '@mixins/notify';
