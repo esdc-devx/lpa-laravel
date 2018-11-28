@@ -210,6 +210,7 @@
           // @fixme: should reload permissions (or at least canRelease)
           if (val) {
             try {
+              await this.refreshData();
               await this.claimForm(this.formId);
               if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
                 await this.loadCanSubmitForm(this.formId);
