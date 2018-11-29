@@ -496,10 +496,7 @@
           this.loadCanEditForm(this.formId),
           this.loadCanClaimForm(this.formId),
           this.loadCanUnclaimForm(this.formId),
-          this.loadCanReleaseForm({
-            formId: this.formId,
-            username: this.getCurrentEditorUsername()
-          })
+          this.loadCanReleaseForm(this.formId)
         );
         if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
           requests.push(this.loadCanSubmitForm(this.formId));
