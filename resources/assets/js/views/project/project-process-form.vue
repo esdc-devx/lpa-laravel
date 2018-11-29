@@ -216,20 +216,11 @@
                 await this.loadCanSubmitForm(this.formId);
               }
             } catch (e) {
-              if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-                try {
-                  await this.refreshData();
-                } catch (e) {
-                  // Exception handled by interceptor
-                  if (!e.response) {
-                    throw e;
-                  }
-                }
-              } else {
+              // Exception handled by interceptor
+              if (!e.response) {
                 throw e;
               }
             }
-
           // unclaiming
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
