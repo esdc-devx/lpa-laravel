@@ -51,7 +51,7 @@ class ProcessProjectApprovalSeeder extends Seeder
                 ],
                 [
                     'name_key'   => 'business-case-rejected',
-                    'name_en'    => 'Business Case Requires Adjustements',
+                    'name_en'    => 'Business Case Requires Adjustments',
                     'name_fr'    => 'Plan d\'affaire nécessite des ajustements',
                 ],
                 [
