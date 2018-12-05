@@ -1,10 +1,10 @@
 <template>
   <div class="project content">
     <el-row :gutter="20" class="equal-height">
-      <el-col :span="canBeVisible ? 18 : 24">
-        <project-info :project="viewingProject"/>
+      <el-col :span="canActionsBeVisible ? 18 : 24">
+        <project-info :project="viewingProject" @onAfterDelete="onAfterDelete"/>
       </el-col>
-      <el-col :span="6" v-if="canBeVisible">
+      <el-col :span="6" v-if="canActionsBeVisible">
         <el-card shadow="never" class="project-actions">
           <div slot="header">
             <h3>{{ trans('entities.process.actions') }}</h3>
@@ -18,10 +18,10 @@
               </li>
             </template>
             <template v-else>
-              <li v-for="(process, index) in definitions" :key="index">
+              <li v-for="(process, index) in processDefinitions" :key="index">
                 <el-button
                   type="primary"
-                  :disabled="!processDefinitionPermissions[process.name_key]"
+                  :disabled="!processPermissions[process.name_key]"
                   @click="triggerStartProcess(process.name, process.name_key)">
                     {{ process.name }}
                 </el-button>
@@ -36,53 +36,22 @@
         <el-tabs type="border-card">
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
-            <learning-product-data-tables
-              :data="projectLearningProducts" />
+            <entity-data-table
+              entityType="learning-product"
+              :data="projectLearningProducts"
+              :attributes="dataTableAttributes.learningProducts"
+              @rowClick="onLearningProductRowClick"
+              @formatData="onFormatData"
+            />
           </el-tab-pane>
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
-            <data-tables
-              ref="table"
-              :search-def="{show: false}"
-              :data="dataTables.processesHistory.normalizedList"
-              :pagination-def="paginationDef"
-              :custom-filters="customFilters"
-              @filter-change="onFilterChange"
-              @row-click="viewProcess"
-              :sort-method="$helpers.localeSort">
-              <el-table-column
-                prop="definition.name"
-                sortable="custom"
-                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'name')"
-                :label="trans('entities.general.name')">
-              </el-table-column>
-              <el-table-column
-                prop="created_at"
-                sortable="custom"
-                :label="trans('entities.process.started')">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.created_at }}</span>
-                  <br>
-                  <span>{{ scope.row.created_by.name }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="updated_at"
-                sortable="custom"
-                :label="trans('entities.general.updated')">
-                <template slot-scope="scope">
-                  <span>{{ scope.row.updated_at }}</span>
-                  <br>
-                  <span>{{ scope.row.updated_by.name }}</span>
-                </template>
-              </el-table-column>
-              <el-table-column
-                prop="state"
-                sortable="custom"
-                :filters="getColumnFilters(dataTables.processesHistory.normalizedList, 'state')"
-                :label="trans('entities.general.status')">
-              </el-table-column>
-            </data-tables>
+            <entity-data-table
+              entityType="process"
+              :data="viewingHistory"
+              :attributes="dataTableAttributes.processHistory"
+              @rowClick="onProcessRowClick"
+            />
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -92,33 +61,156 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
-  import PageUtils from '@mixins/page/utils.js';
-  import TableUtils from '@mixins/table/utils.js';
-  import ProjectInfo from '@components/project-info.vue';
-  import LearningProductDataTables from '@components/data-tables/learning-product-data-tables.vue';
+  import { mapState, mapGetters, mapActions } from 'vuex';
 
-  let namespace = 'projects';
+  import Page from '@components/page';
+  import ProjectInfo from '@components/project-info.vue';
+  import EntityDataTable from '@components/entity-data-table.vue';
+
+  const namespace = 'projects';
+
+  const loadData = async function ({ to } = {}) {
+    const { projectId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch('projects/loadProject', projectId),
+      store.dispatch('processes/loadDefinitions', 'project'),
+      store.dispatch('processes/loadHistory', {
+        entityType: 'project',
+        entityId: projectId
+      }),
+      store.dispatch('learningProducts/loadProjectLearningProducts', projectId),
+      store.dispatch('projects/loadCanEdit', projectId),
+      store.dispatch('projects/loadCanDelete', projectId)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests).then(async () => {
+        // load all the permissions in the store
+        // so that we can access them afterwards
+        try {
+          await axios.all(store.state.processes.definitions.map(
+            ({name_key}) => store.dispatch('projects/loadCanStartProcess', {
+              projectId: projectId,
+              processDefinitionNameKey: name_key
+            })
+          ));
+        } catch (e) {
+          if (!e.response) {
+            throw e;
+          }
+        }
+      });
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'project',
 
-    mixins: [ PageUtils, TableUtils ],
+    extends: Page,
 
-    components: { ProjectInfo, LearningProductDataTables },
+    components: { ProjectInfo, EntityDataTable },
 
     computed: {
+      ...mapState(`${namespace}`, [
+        'processPermissions'
+      ]),
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         viewingProject: `${namespace}/viewing`,
-        definitions: `processes/definitions`,
         viewingHistory: 'processes/viewingHistory',
+        processDefinitions: `processes/definitions`,
         projectLearningProducts: 'learningProducts/projectLearningProducts'
       }),
 
-      canBeVisible() {
+      dataTableAttributes: {
+        get() {
+          return {
+            learningProducts: {
+              id: {
+                label: this.trans('entities.general.lpa_num'),
+                minWidth: 12
+              },
+              name: {
+                label: this.trans('entities.general.name'),
+                minWidth: 36
+              },
+              type: {
+                label: this.trans('entities.learning_product.type'),
+                minWidth: 13,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              sub_type: {
+                isColumn: false
+              },
+              organizational_unit: {
+                label: this.$tc('entities.general.organizational_units'),
+                minWidth: 25,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated'),
+                minWidth: 20
+              },
+              updated_by: {
+                isColumn: false
+              },
+              state: {
+                label: this.trans('entities.general.status'),
+                minWidth: 14,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              'current_process.definition': {
+                label: this.trans('entities.process.current'),
+                minWidth: 21,
+                isFilterable: true
+              }
+            },
+
+            processHistory: {
+              id: {
+                isColumn: false
+              },
+              entity_id: {
+                isColumn: false
+              },
+              definition: {
+                label: this.trans('entities.general.name')
+              },
+              created_at: {
+                label: this.trans('entities.process.started')
+              },
+              created_by: {
+                isColumn: false
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated')
+              },
+              updated_by: {
+                isColumn: false
+              },
+              state: {
+                label: this.trans('entities.general.status'),
+                areFiltersSorted: true,
+                isFilterable: true
+              }
+            }
+          }
+        }
+      },
+
+      canActionsBeVisible() {
         return this.hasRole('owner') || this.hasRole('admin');
       }
     },
@@ -126,33 +218,27 @@
     data() {
       return {
         processDefinitionPermissions: {},
-        dataTables: {
-          processesHistory: {
-            normalizedList: [],
-            normalizedListAttrs: [
-              'id', 'entity_id', 'definition.name', 'created_at', 'updated_at', 'created_by', 'updated_by', 'state.name'
-            ]
-          }
-        }
       };
     },
 
     methods: {
       ...mapActions({
-        loadProject: `${namespace}/loadProject`,
-        canStartProcess: `${namespace}/canStartProcess`,
-        loadProcessDefinitions: `processes/loadDefinitions`,
         startProcess: `processes/start`,
-        loadProcessHistory: 'processes/loadHistory',
         loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
       }),
 
-      viewProcess(process) {
-        this.$router.push(`${process.entity_id}/process/${process.id}`);
+      onFormatData(normEntity) {
+        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
       },
 
-      onHeaderClick(col, e) {
-        this.headerClick(col, e);
+      onLearningProductRowClick(learningProduct) {
+        this.scrollToTop();
+        this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
+      },
+
+      onProcessRowClick(process) {
+        this.scrollToTop();
+        this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
       triggerStartProcess(processName, processNameKey) {
@@ -168,12 +254,11 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.process_started')
             });
-            let projectId = this.$route.params.projectId;
-            this.$router.push(`${projectId}/process/${response.process_instance.id}`);
+            this.$router.push(`${this.projectId}/process/${response.process_instance.id}`);
           } catch (e) {
             if (e.response) {
               // on error, re-fetch the info just to be in-sync
-              this.fetch();
+              loadData.apply(this);
             } else {
               throw e;
             }
@@ -182,70 +267,28 @@
       },
 
       continueToProcess(processId) {
-        let projectId = this.$route.params.projectId;
-        this.$router.push(`${projectId}/process/${processId}`);
+        this.$router.push(`${this.projectId}/process/${processId}`);
       },
 
-      async getProcessDefinitionPermissions() {
-        let definition;
-        for (let i = 0; i < this.definitions.length; i++) {
-          definition = this.definitions[i];
-          // add reactive properties
-          this.$set(
-            this.processDefinitionPermissions,
-            definition.name_key,
-            await this.canStartProcess({ projectId: this.$route.params.projectId, processDefinitionNameKey: definition.name_key })
-          );
-        }
-      },
-
-      async fetch(isInitialLoad = true) {
-        try {
-          let projectId = this.$route.params.projectId;
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadProject(projectId);
-          }
-          await this.loadProcessDefinitions('project');
-          await this.loadProcessHistory({ entityType: 'project', entityId: projectId });
-
-          this.dataTables.processesHistory.normalizedList = _.map(this.viewingHistory, process => {
-            let normProcess = _.pick(process, this.dataTables.processesHistory.normalizedListAttrs);
-            normProcess.state = normProcess.state.name;
-            normProcess.name = normProcess.definition.name;
-            return normProcess;
-          });
-
-          await this.loadProjectLearningProducts(projectId);
-          this.getProcessDefinitionPermissions();
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
-      async onLanguageUpdate() {
-        this.fetch(false);
+      onAfterDelete() {
+        this.goToParentPage();
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
+    async beforeRouteEnter(to, from, next) {
+      // Exception handled by interceptor
+      await loadData({ to });
       next();
     },
 
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
+    // called when url params change, e.g: language
+    async beforeRouteUpdate(to, from, next) {
+      await loadData.apply(this);
+      next();
     },
 
-    mounted() {
-      EventBus.$emit('App:ready');
+    created() {
+      this.projectId = this.$route.params.projectId;
     }
   };
 </script>

@@ -2,17 +2,17 @@
   <div class="project-info">
     <info-box>
       <div slot="header">
-        <h2><i class="el-icon-lpa-projects"></i>{{ projectProp.name }}</h2>
+        <h2><i class="el-icon-lpa-projects"></i>{{ project.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
           <el-button-wrap
-            :disabled="!rights.canEdit"
+            :disabled="!permissions.canEdit"
             @click.native="edit()"
             :tooltip="trans('components.tooltip.edit_project')"
             size="mini"
             icon="el-icon-lpa-edit"
             plain />
           <el-button-wrap
-            :disabled="!rights.canDelete"
+            :disabled="!permissions.canDelete"
             @click.native="deleteProjectConfirm()"
             :tooltip="trans('components.tooltip.delete_project')"
             type="danger"
@@ -23,82 +23,75 @@
       </div>
       <dl>
         <dt>{{ trans('entities.general.lpa_num') }}</dt>
-        <dd>{{ projectProp.id | LPANumFilter }}</dd>
+        <dd>{{ project.id | LPANumFilter }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.status') }}</dt>
-        <dd>{{ projectProp.state.name }}</dd>
+        <!--
+          check for the state here since when we move to another page
+          the project is refrehed and we might not have the property state
+        -->
+        <dd>{{ project.state ? project.state.name : trans('entities.general.none') }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.process.current') }}</dt>
-        <dd>{{ projectProp.current_process ? projectProp.current_process.definition.name : trans('entities.general.na') }}</dd>
+        <dd>{{ project.current_process ? project.current_process.definition.name : trans('entities.general.none') }}</dd>
       </dl>
       <dl>
         <dt>{{ $tc('entities.general.organizational_units') }}</dt>
-        <dd>{{ projectProp.organizational_unit.name }}</dd>
+        <dd>{{ project.organizational_unit.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.director') }}</dt>
-        <dd>{{ projectProp.organizational_unit.director.name }}</dd>
+        <dd>{{ project.organizational_unit.director.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.created') }}</dt>
-        <dd>{{ projectProp.created_by.name }}</dd>
-        <dd>{{ projectProp.created_at }}</dd>
+        <dd>{{ project.created_by.name }}</dd>
+        <dd>{{ project.created_at }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.updated') }}</dt>
-        <dd>{{ projectProp.updated_by.name }}</dd>
-        <dd>{{ projectProp.updated_at }}</dd>
+        <dd>{{ project.updated_by.name }}</dd>
+        <dd>{{ project.updated_at }}</dd>
       </dl>
     </info-box>
   </div>
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapGetters, mapActions } from 'vuex';
 
   import InfoBox from '@components/info-box.vue';
   import ElButtonWrap from '@components/el-button-wrap.vue';
 
-  import PageUtils from '@mixins/page/utils.js';
-
-  let namespace = 'projects';
+  const namespace = 'projects';
 
   export default {
     name: 'project-info',
 
     components: { InfoBox, ElButtonWrap },
 
-    mixins: [ PageUtils ],
-
-    props: [ 'project' ],
-
-    data() {
-      return {
-        rights: {
-          canEdit: false,
-          canDelete: false
-        }
-      };
+    props: {
+      project: {
+        type: Object,
+        required: true
+      }
     },
 
     computed: {
+      ...mapState(`${namespace}`, [
+        'permissions'
+      ]),
       ...mapGetters({
         language: 'language',
         hasRole: 'users/hasRole'
-      }),
-
-      projectProp() {
-        return this.project;
-      }
+      })
     },
 
     methods: {
       ...mapActions({
-        deleteProject: `${namespace}/delete`,
-        canEditProject: `${namespace}/canEditProject`,
-        canDeleteProject: `${namespace}/canDeleteProject`
+        deleteProject: `${namespace}/delete`
       }),
 
       edit() {
@@ -115,7 +108,7 @@
             this.notifySuccess({
               message: this.trans('components.notice.message.project_deleted')
             });
-            this.goToParentPage();
+            this.$emit('onAfterDelete');
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
@@ -124,12 +117,6 @@
           }
         }).catch(() => false);
       }
-    },
-
-    async created() {
-      let projectId = this.$route.params.projectId;
-      this.rights.canEdit = await this.canEditProject(projectId);
-      this.rights.canDelete = await this.canDeleteProject(projectId);
     }
   };
 </script>

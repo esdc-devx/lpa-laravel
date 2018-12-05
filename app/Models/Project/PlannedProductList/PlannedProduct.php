@@ -8,7 +8,10 @@ use App\Models\LearningProduct\LearningProductType;
 class PlannedProduct extends BaseModel
 {
     protected $fillable = [
-        'planned_product_list_id', 'type_id', 'sub_type_id', 'quantity',
+        'planned_product_list_id',
+        'type_id',
+        'sub_type_id',
+        'quantity',
     ];
 
     public $timestamps = false;

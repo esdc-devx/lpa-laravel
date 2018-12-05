@@ -45,29 +45,49 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
+  import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
-  import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
-
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import InputWrap from '@components/forms/input-wrap';
 
+  import FormUtils from '@mixins/form/utils.js';
+
   let namespace = 'projects';
+
+  const loadData = async function () {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadProjectCreateInfo`)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'project-create',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 
     computed: {
       ...mapGetters({
-        language: 'language',
         viewingProject: `${namespace}/viewing`,
         organizationalUnits: `${namespace}/organizationalUnits`
       })
@@ -84,8 +104,7 @@
 
     methods: {
       ...mapActions({
-        createProject: `${namespace}/create`,
-        loadProjectCreateInfo: `${namespace}/loadProjectCreateInfo`
+        createProject: `${namespace}/create`
       }),
 
       // Form handlers
@@ -104,29 +123,38 @@
         this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
       },
 
-      async fetch() {
-        await this.loadProjectCreateInfo();
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.fetch();
+        await loadData();
+      }
+    },
+
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('projects/loadCanCreate');
+      if (store.state.projects.permissions.canCreate) {
+        await loadData();
+        next();
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
       }
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
-      next();
+    async beforeRouteUpdate(to, from, next) {
+      await this.$store.dispatch('projects/loadCanCreate');
+      if (this.$store.state.projects.permissions.canCreate) {
+        await this.onLanguageUpdate();
+        next();
+      } else {
+        this.$router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
-    async mounted() {
-      EventBus.$emit('App:ready');
-      await this.fetch();
+    mounted() {
       this.autofocus('name');
     }
   };

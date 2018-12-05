@@ -10,6 +10,12 @@ export default {
       name: ''
     },
     all: [],
+    permissions: {
+      canEdit: false,
+      canCreate: false,
+      canDelete: false
+    },
+    processPermissions: {},
     organizationalUnits: []
   },
 
@@ -30,53 +36,65 @@ export default {
   actions: {
     async loadProjectCreateInfo({ commit }) {
       let response = await ProjectsAPI.getProjectCreateInfo();
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      return response.data.data;
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      return response.data;
     },
 
     async loadProjectEditInfo({ commit }, id) {
       let response = await ProjectsAPI.getProjectEditInfo(id);
-      commit('setViewing', response.data.data.project);
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      return response.data.data;
+      commit('setViewing', response.data.project);
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      return response.data;
     },
 
-    async loadProjects({ commit, dispatch }) {
+    async loadProjects({ commit }) {
       let response = await ProjectsAPI.getProjects();
-      commit('setProjects', response.data.data.projects);
-      return response.data.data.projects;
+      commit('setProjects', response.data.projects);
+      return response.data.projects;
     },
 
     async loadProject({ commit }, id) {
       let response = await ProjectsAPI.getProject(id);
-      commit('setViewing', response.data.data.project);
-      return response.data.data;
+      commit('setViewing', response.data.project);
+      return response.data;
     },
 
-    async canCreateProject({ commit }) {
-      let response = await ProjectsAPI.canCreateProject();
-      return response.data.data.allowed;
+    async loadCanCreate({ commit }) {
+      let response = await ProjectsAPI.canCreate();
+      commit('setPermission', {
+        name: 'canCreate',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async canEditProject({ commit }, id) {
-      let response = await ProjectsAPI.canEditProject(id);
-      return response.data.data.allowed;
+    async loadCanEdit({ commit }, id) {
+      let response = await ProjectsAPI.canEdit(id);
+      commit('setPermission', {
+        name: 'canEdit',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async canDeleteProject({ commit }, id) {
-      let response = await ProjectsAPI.canDeleteProject(id);
-      return response.data.data.allowed;
+    async loadCanDelete({ commit }, id) {
+      let response = await ProjectsAPI.canDelete(id);
+      commit('setPermission', {
+        name: 'canDelete',
+        isAllowed: response.data.allowed
+      });
     },
 
-    async canStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
+    async loadCanStartProcess({ commit }, { projectId, processDefinitionNameKey }) {
       let response = await ProjectsAPI.canStartProcess(projectId, processDefinitionNameKey);
-      return response.data.data.allowed;
+      commit('setProcessPermission', {
+        name: processDefinitionNameKey,
+        isAllowed: response.data.allowed
+      });
     },
 
     async create({ commit }, project) {
       let response = await ProjectsAPI.create(project);
-      commit('setViewing', response.data.data);
-      return response.data.data;
+      commit('setViewing', response.data);
+      return response.data;
     },
 
     async update({ commit }, project) {
@@ -91,6 +109,14 @@ export default {
   mutations: {
     setProjects(state, projects) {
       state.all = projects;
+    },
+
+    setProcessPermission(state, { name, isAllowed }) {
+      state.processPermissions[name] = isAllowed;
+    },
+
+    setPermission(state, { name, isAllowed }) {
+      state.permissions[name] = isAllowed;
     },
 
     setViewing(state, project) {

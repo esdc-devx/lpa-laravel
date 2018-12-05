@@ -10,8 +10,10 @@ use App\Models\Process\ProcessInstanceForm;
 use App\Models\Process\ProcessInstanceFormAssessment;
 use App\Models\Process\ProcessInstanceStep;
 use App\Models\State;
+use App\Models\User\User;
+use App\Notifications\ProcessNotification;
+use DB;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
 
 class ProcessManager {
 
@@ -56,9 +58,10 @@ class ProcessManager {
             'key'          => $processDefinition->name_key,
             'business_key' => "$entityType:{$entity->id}",
             'variables'    => [
-                'authToken'     => ['value' => $authToken, 'type' => 'String'],
-                'owner'         => ['value' => $entity->organizationalUnit->name_key, 'type' => 'String'],
-                'stateEntity'   => ['value' => $entity->state->name_key, 'type' => 'String']
+                'applicationUrl' => ['type' => 'String', 'value' => config('camunda.app.url')],
+                'authToken'      => ['type' => 'String', 'value' => $authToken],
+                'owner'          => ['type' => 'String', 'value' => $entity->organizationalUnit->name_key],
+                'stateEntity'    => ['type' => 'String', 'value' => $entity->state->name_key],
             ]
         ])->id;
 
@@ -75,6 +78,7 @@ class ProcessManager {
                 'process_definition_id'      => $processDefinition->id,
                 'engine_process_instance_id' => $engineProcessInstanceId,
                 'engine_auth_token'          => $authToken,
+                'send_notifications'         => config('mail.send_process_notifications'),
                 'created_by'                 => $user->id,
                 'updated_by'                 => $user->id,
             ]);
@@ -190,7 +194,7 @@ class ProcessManager {
         }
 
         // Fetch entity associated with process instance.
-        $entity = entity($this->processInstance->entity_type)->findOrFail($this->processInstance->entity_id);
+        $entity = entity($this->processInstance->entity_type, $this->processInstance->entity_id);
 
         // If process instance is no longer active in Camunda, remove mapping with entity.
         if ($this->processStates['process-instance']->name_key !== 'running') {
@@ -223,8 +227,7 @@ class ProcessManager {
         }
 
         // Resolve entity tied to process instance.
-        $entity = entity($this->processInstance->entity_type)
-            ->findOrFail($this->processInstance->entity_id);
+        $entity = entity($this->processInstance->entity_type, $this->processInstance->entity_id);
 
         // Resolve and associate form data entities.
         $this->resolveProcessInstanceFormsData()->processInstanceFormsData->each(function($formData, $key) use ($entity) {
@@ -270,8 +273,7 @@ class ProcessManager {
         });
 
         // Remove current process instance association from entity.
-        $entity = entity($this->processInstance->entity_type)
-            ->findOrFail($this->processInstance->entity_id);
+        $entity = entity($this->processInstance->entity_type, $this->processInstance->entity_id);
         $entity->currentProcess()->dissociate();
 
         // Revert entity state to what it was before starting the process and update timestamps/audit.
@@ -279,6 +281,21 @@ class ProcessManager {
         $entity->updateAudit();
 
         return $this->fireEvent('Cancelled');
+    }
+
+    /**
+     * Handle logic to send a process notification to the appropriate organizational units.
+     * Process notifications are triggered from the process engine.
+     *
+     * @param  App\Models\Process\ProcessNotificationModel $model
+     * @param  ProcessInstance $processInstance
+     * @param  array $addressees
+     * @return void
+     */
+    public function sendNotification($model, $processInstance, $addressees)
+    {
+        $notification = new ProcessNotification($model, $processInstance);
+        $this->resolveNotificationAddressees($addressees)->each->notify($notification);
     }
 
     /**
@@ -404,5 +421,26 @@ class ProcessManager {
         }
 
         return $this;
+    }
+
+    /**
+     * Resolve organizational units to sent notification from an array of name_key
+     * and also ensure that process notifications will get sent to
+     * dev mailbox config when not on a production environment.
+     *
+     * @param  Array $addressees
+     * @return Illuminate\Support\Collection
+     */
+    protected function resolveNotificationAddressees($addressees)
+    {
+        // Only send email to actual organizational units when environment is set to production.
+        if (config('app.env') === 'production') {
+            return OrganizationalUnit::whereIn('name_key', $addressees)->get();
+        }
+
+        // Otherwise, use admin account as receiver and update email to dev mailbox config before sending the email.
+        return collect([
+            User::admin()->fill(['email' => config('mail.mailboxes.dev')])
+        ]);
     }
 }

@@ -16,7 +16,7 @@ class ProjectTableSeeder extends Seeder
 
         factory(Project::class, 50)->create()
             ->take(10)->each(function($project) {
-                // Complete Project Approval process for the first 5 projects.
+                // Complete Project Approval process for the first 10 projects.
                 ProcessFactory::startProcess('project-approval', $project)->complete();
             });
     }

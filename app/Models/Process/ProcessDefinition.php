@@ -9,13 +9,36 @@ class ProcessDefinition extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $hidden = ['id'];
-    protected $localizable = ['name'];
+    protected $fillable = [
+        'entity_type',
+        'name_key',
+        'name_en',
+        'name_fr',
+    ];
+
+    protected $localizable = [
+        'name',
+    ];
 
     public $timestamps = false;
+
+    public function getRouteKeyName()
+    {
+        return 'name_key';
+    }
 
     public function steps()
     {
         return $this->hasMany(ProcessStep::class);
+    }
+
+    public function forms()
+    {
+        return $this->hasManyThrough(ProcessForm::class, ProcessStep::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(ProcessNotification::class);
     }
 }

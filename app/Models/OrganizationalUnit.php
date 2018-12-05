@@ -3,13 +3,26 @@
 namespace App\Models;
 
 use App\Models\ListableModel;
-use App\Models\Traits\UsesKeyNameField;
 use App\Models\User\User;
+use Illuminate\Notifications\Notifiable;
 
 class OrganizationalUnit extends ListableModel
 {
+    use Notifiable;
+
     protected $casts = [
         'owner' => 'boolean',
+    ];
+
+    protected $fillable = [
+        'parent_id',
+        'name_key',
+        'name_en',
+        'name_fr',
+        'active',
+        'owner',
+        'email',
+        'director',
     ];
 
     public $timestamps = true;

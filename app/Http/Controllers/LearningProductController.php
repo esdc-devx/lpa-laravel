@@ -27,7 +27,7 @@ class LearningProductController extends APIController
     {
 
         $learningProducts = LearningProduct::with([
-            'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition'
+            'type', 'subType', 'state', 'organizationalUnit', 'currentProcess.definition', 'updatedBy'
         ]);
 
         // Filter on specific project.

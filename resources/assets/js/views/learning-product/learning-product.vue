@@ -2,7 +2,7 @@
   <div class="entity content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <learning-product-info :learningProduct="viewingLearningProduct" v-on:learning-product-info:operation-denied="fetch(false)"/>
+        <learning-product-info :learningProduct="viewingLearningProduct" @onAfterDelete="onAfterDelete"/>
       </el-col>
     </el-row>
   </div>
@@ -11,22 +11,45 @@
 <script>
   import _ from 'lodash';
   import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
-  import PageUtils from '@mixins/page/utils.js';
-  import TableUtils from '@mixins/table/utils.js';
+
+  import Page from '@components/page';
   import LearningProductInfo from '@components/learning-product-info.vue';
 
-  let namespace = 'learningProducts';
+  const namespace = 'learningProducts';
+
+  const loadData = async function ({ to } = {}) {
+    const { learningProductId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+
+    requests.push(
+      store.dispatch(`${namespace}/loadLearningProduct`, learningProductId),
+      store.dispatch(`${namespace}/loadCanEdit`, learningProductId),
+      store.dispatch(`${namespace}/loadCanDelete`, learningProductId)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'learning-products',
+
+    extends: Page,
 
     components: { LearningProductInfo },
 
     computed: {
       ...mapGetters({
-        language: 'language',
-        hasRole: 'users/hasRole',
         viewingLearningProduct: `${namespace}/viewing`
       }),
 
@@ -44,41 +67,24 @@
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
-      async fetch(isInitialLoad = true) {
-        try {
-          let learningProductId = this.$route.params.learningProductId;
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadLearningProduct(learningProductId);
-          }
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
-      async onLanguageUpdate() {
-        this.fetch(false);
+      onAfterDelete() {
+        this.goToParentPage();
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
+    async beforeRouteEnter(to, from, next) {
+      await loadData({ to });
       next();
     },
 
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
+    // called when url params change, e.g: language
+    async beforeRouteUpdate(to, from, next) {
+      await loadData.apply(this);
+      next();
     },
 
-    mounted() {
-      EventBus.$emit('App:ready');
+    created() {
+      this.learningProductId = this.$route.params.learningProductId;
     }
   };
 </script>

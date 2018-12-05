@@ -46,7 +46,7 @@ export default {
     return axios.put(`process-instance-forms/${formId}/submit`, form);
   },
 
-  canCancelProcess(processId) {
+  canCancel(processId) {
     return axios.get(`authorization/process-instance/cancel/${processId}`);
   },
 
@@ -66,7 +66,7 @@ export default {
     return axios.get(`authorization/process-instance-form/submit/${formId}`);
   },
 
-  canReleaseForm(formId, username) {
-    return axios.get(`authorization/process-instance-form/release/${formId}?editor=${username}`);
+  canReleaseForm(formId) {
+    return axios.get(`authorization/process-instance-form/release/${formId}`);
   }
 };

@@ -52,31 +52,31 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-
+  import Page from '@components/page';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import FormError from '@components/forms/error.vue';
   import UserSearch from '@components/forms/user-search';
-  import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
 
-  let namespace = 'users';
+  import FormUtils from '@mixins/form/utils.js';
+
+  const namespace = 'users';
 
   export default {
     name: 'admin-user-create',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 
     computed: {
-      ...mapGetters({
-        language: 'language',
-        organizationalUnits: `${namespace}/organizationalUnits`,
-        roles: `${namespace}/roles`
+      ...mapGetters(`${namespace}`, {
+        organizationalUnits: 'organizationalUnits',
+        roles: 'roles'
       })
     },
 
@@ -91,10 +91,10 @@
     },
 
     methods: {
-      ...mapActions({
-        searchUser: `${namespace}/search`,
-        createUser: `${namespace}/create`,
-        loadUserCreateInfo: `${namespace}/loadUserCreateInfo`
+      ...mapActions(`${namespace}`, {
+        searchUser: 'search',
+        createUser: 'create',
+        loadUserCreateInfo: 'loadUserCreateInfo'
       }),
 
       // Form handlers
@@ -114,30 +114,28 @@
         this.goToParentPage();
       },
 
-      async triggerLoadUserCreateInfo() {
-        await this.loadUserCreateInfo();
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.triggerLoadUserCreateInfo();
+        await this.loadUserCreateInfo();
       }
     },
 
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('users/loadUserCreateInfo');
+      next();
+    },
+
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
+    async beforeRouteUpdate(to, from, next) {
+      await this.onLanguageUpdate();
       next();
     },
 
     mounted() {
-      EventBus.$emit('App:ready');
-
-      this.triggerLoadUserCreateInfo();
       this.autofocus('name');
     }
   };

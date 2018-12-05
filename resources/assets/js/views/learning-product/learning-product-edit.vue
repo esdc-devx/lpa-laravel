@@ -64,34 +64,57 @@
         </el-form-item>
       </el-form>
     </el-card>
-    {{ form.organizational_unit_id }}
   </div>
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-  import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
+  import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import ElSelectWrap from '@components/forms/el-select-wrap';
   import UserSearch from '@components/forms/user-search';
   import InputWrap from '@components/forms/input-wrap';
+
+  import FormUtils from '@mixins/form/utils.js';
+
   import LearningProductAPI from '@api/learning-products';
 
-  let namespace = 'learningProducts';
+  const namespace = 'learningProducts';
+
+  const loadData = async function ({ to, hasToLoadEntity = true } = {}) {
+    const { learningProductId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+
+    if (hasToLoadEntity) {
+      requests.push(store.dispatch(`${namespace}/loadLearningProductEditInfo`, learningProductId));
+    }
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'learning-product-edit',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
-
 
     data() {
       return {
@@ -101,14 +124,21 @@
           organizational_unit: {},
           manager: {},
           primary_contact: {}
-        },
-        organizationalUnits: []
+        }
       }
+    },
+
+    computed: {
+      ...mapState(`${namespace}`, {
+        viewingLearningProduct: 'viewing',
+        organizationalUnits: 'organizationalUnits'
+      })
     },
 
     methods: {
       ...mapActions({
-        loadLearningProductEditInfo: `${namespace}/loadLearningProductEditInfo`
+        loadLearningProductEditInfo: `${namespace}/loadLearningProductEditInfo`,
+        updateLearningProduct: `${namespace}/update`
       }),
 
       async onSubmit() {
@@ -116,11 +146,14 @@
       },
 
       async update() {
-        await LearningProductAPI.update(this.form.id, {
-          name: this.form.name,
-          organizational_unit_id: this.form.organizational_unit.id,
-          manager: this.form.manager.username,
-          primary_contact: this.form.primary_contact.username
+        await this.updateLearningProduct({
+          id: this.form.id,
+          data: {
+            name: this.form.name,
+            organizational_unit_id: this.form.organizational_unit.id,
+            manager: this.form.manager.username,
+            primary_contact: this.form.primary_contact.username
+          }
         });
 
         this.isSubmitting = false;
@@ -131,46 +164,35 @@
         this.goToParentPage();
       },
 
-      async fetch() {
-        try {
-          // Load form information.
-          let editInfo = await this.loadLearningProductEditInfo(this.learningProductId);
-          this.form = _.cloneDeep(editInfo.learning_product);
-          this.organizationalUnits = editInfo.organizational_units;
-
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
 
-        // Re-fetch organizational unit list and update the dropdown values.
-        let response = await this.loadLearningProductEditInfo(this.learningProductId);
-        this.organizationalUnits = response.organizational_units;
+        await loadData.apply(this);
+      }
+    },
+
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('learningProducts/loadCanEdit', to.params.learningProductId);
+      if (store.state.learningProducts.permissions.canEdit) {
+        await loadData({ to });
+        next();
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
       }
     },
 
     // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
+    async beforeRouteUpdate(to, from, next) {
+      await this.onLanguageUpdate();
       next();
     },
 
-    async created() {
+    created() {
       this.learningProductId = this.$route.params.learningProductId;
-      await this.fetch();
-    },
-
-    mounted() {
-      EventBus.$emit('App:ready');
+      this.form = _.cloneDeep(this.viewingLearningProduct);
     }
   };
 </script>

@@ -61,36 +61,35 @@
 <script>
   import { mapGetters, mapActions } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-
+  import Page from '@components/page';
   import ElSelectWrap from '@components/forms/el-select-wrap';
 
   import FormUtils from '@mixins/form/utils.js';
-  import PageUtils from '@mixins/page/utils.js';
-  import HttpStatusCodes from '@axios/http-status-codes';
 
-  let namespace = 'users';
+  const namespace = 'users';
 
   export default {
     name: 'user-edit',
 
+    extends: Page,
+
     inject: ['$validator'],
 
-    mixins: [ FormUtils, PageUtils ],
+    mixins: [ FormUtils ],
 
     components: { ElSelectWrap },
 
     computed: {
-      ...mapGetters({
-        language: 'language',
-        viewingUser: `${namespace}/viewing`,
-        organizationalUnits: `${namespace}/organizationalUnits`,
-        roles: `${namespace}/roles`
+      ...mapGetters(`${namespace}`, {
+        viewingUser: 'viewing',
+        organizationalUnits: 'organizationalUnits',
+        roles: 'roles'
       })
     },
 
     data() {
       return {
+        userId: null,
         form: {
           user: {}
         }
@@ -98,9 +97,9 @@
     },
 
     methods: {
-      ...mapActions({
-        updateUser: `${namespace}/update`,
-        loadUserEditInfo: `${namespace}/loadUserEditInfo`
+      ...mapActions(`${namespace}`, {
+        updateUser: 'update',
+        loadUserEditInfo: 'loadUserEditInfo'
       }),
 
       search(name) {
@@ -125,52 +124,34 @@
         this.goToParentPage();
       },
 
-      async fetch(isInitialLoad = true) {
-        let userId = this.$route.params.userId;
-        try {
-          // @note: project info is loaded in the router's beforeEnter
-          // do not reload the project info on page load
-          if (!isInitialLoad) {
-            await this.loadUserEditInfo(userId);
-          }
-          this.form.user = Object.assign({}, this.viewingUser);
-          // replace our internal organizational_units with only the ids
-          // since ElementUI only need ids to populate the selected options
-          this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
-          this.form.user.roles = _.map(this.viewingUser.roles, 'id');
-        } catch (e) {
-          // Exception handled by interceptor
-          if (!e.response) {
-            throw e;
-          }
-        }
-      },
-
       async onLanguageUpdate() {
         // since on submit the backend returns already translated error messages,
         // we need to reset the validator messages so that on next submit
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the user
-        let userId = this.$route.params.userId;
-        await this.loadUserEditInfo(userId);
+        await this.loadUserEditInfo(this.userId);
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
+    async beforeRouteEnter(to, from, next) {
+      await store.dispatch('users/loadUserEditInfo', to.params.userId)
       next();
     },
 
-    beforeRouteEnter(to, from, next) {
-      next(vm => {
-        vm.fetch();
-      });
+    // called when url params change, e.g: language
+    async beforeRouteUpdate(to, from, next) {
+      await this.onLanguageUpdate();
+      next();
     },
 
-    mounted() {
-      EventBus.$emit('App:ready');
+    created() {
+      this.userId = this.$route.params.userId;
+      this.form.user = Object.assign({}, this.viewingUser);
+      // replace our internal organizational_units with only the ids
+      // since ElementUI only need ids to populate the selected options
+      this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
+      this.form.user.roles = _.map(this.viewingUser.roles, 'id');
     }
   };
 </script>

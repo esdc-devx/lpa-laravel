@@ -24,30 +24,27 @@
         <bpmn:flowNodeRef>IntermediateThrowEvent_1kns0jx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>IntermediateThrowEvent_0bg1r6e</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>correct-business-case</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>IntermediateThrowEvent_1wie0va</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>message_project_ready_for_gate_one_approval</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:sequenceFlow id="SequenceFlow_1lmya5m" sourceRef="prepare-business-case" targetRef="prepare-planned-product-list" />
     <bpmn:startEvent id="StartEvent_1qmhyoy" name="New">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
-          <camunda:script scriptFormat="javascript"><![CDATA[// Define constants.
+          <camunda:script scriptFormat="javascript"><![CDATA[// Constants
 
-// Entity States
+// States
 execution.setVariable("STATE_ENTITY_NEW", "new");
 execution.setVariable("STATE_ENTITY_APPROVED", "approved");
 execution.setVariable("STATE_ENTITY_CANCELLED", "cancelled");
 
-// Process States
 execution.setVariable("STATE_PROCESS_INSTANCE_RUNNING", "running");
 execution.setVariable("STATE_PROCESS_INSTANCE_COMPLETED", "completed");
 
-// Step States
 execution.setVariable("STATE_STEP_LOCKED", "locked");
 execution.setVariable("STATE_STEP_UNLOCKED", "unlocked");
 execution.setVariable("STATE_STEP_COMPLETED", "completed");
 
-// Form States
 execution.setVariable("STATE_FORM_LOCKED", "locked");  
 execution.setVariable("STATE_FORM_UNLOCKED", "unlocked");  
 execution.setVariable("STATE_FORM_SUBMITTED", "submitted");  
@@ -59,8 +56,24 @@ execution.setVariable("DECISION_FORM_APPROVED", "approved");
 execution.setVariable("DECISION_FORM_REJECTED", "rejected");  
 execution.setVariable("DECISION_FORM_NONE", "none");
 
+// Process Definition Key
+execution.setVariable("PROCESS_DEFINITION_KEY", execution.getProcessEngineServices().getRepositoryService().getProcessDefinition(execution.getProcessDefinitionId()).getKey());
 
-// Set process variables.
+// Message Keys
+execution.setVariable("MESSAGE_KEY_PROJECT_READY_FOR_GATE_ONE_APPROVAL", "project-ready-for-gate-one-approval");
+execution.setVariable("MESSAGE_KEY_BUSINESS_CASE_REJECTED", "business-case-rejected");
+execution.setVariable("MESSAGE_KEY_PLANNED_PRODUCT_LIST_REJECTED", "planned-product-list-rejected");
+execution.setVariable("MESSAGE_KEY_PROJECT_CANCELLED", "project-cancelled");
+execution.setVariable("MESSAGE_KEY_PROJECT_APPROVED", "project-approved");
+
+// Process Notification Path
+execution.setVariable("PROCESS_NOTIFICATION_PATH", execution.getVariable("applicationUrl") + "/notifications/" + execution.getVariable("PROCESS_DEFINITION_KEY"));
+
+
+// Variables
+
+// Process Instance Id
+execution.setVariable("processInstanceId", execution.getProcessInstanceId());
 
 // Process States
 execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_RUNNING);
@@ -105,12 +118,12 @@ task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_UNLOCKED);
       <bpmn:incoming>SequenceFlow_1lmya5m</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1ergn66</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1ergn66" sourceRef="prepare-planned-product-list" targetRef="IntermediateThrowEvent_1wie0va" />
-    <bpmn:sequenceFlow id="SequenceFlow_0qvbw3z" sourceRef="IntermediateThrowEvent_1wie0va" targetRef="assess-gate-one-approval" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ergn66" sourceRef="prepare-planned-product-list" targetRef="message_project_ready_for_gate_one_approval" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qvbw3z" sourceRef="message_project_ready_for_gate_one_approval" targetRef="assess-gate-one-approval" />
     <bpmn:sequenceFlow id="SequenceFlow_13ek50h" name="Yes" sourceRef="ExclusiveGateway_03icrnh" targetRef="IntermediateThrowEvent_1yyy271">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_07jx9n1" sourceRef="ExclusiveGateway_0qosetf" targetRef="IntermediateThrowEvent_1wie0va" />
+    <bpmn:sequenceFlow id="SequenceFlow_07jx9n1" sourceRef="ExclusiveGateway_0qosetf" targetRef="message_project_ready_for_gate_one_approval" />
     <bpmn:endEvent id="EndEvent_0geci4e" name="Cancelled">
       <bpmn:incoming>SequenceFlow_0kx4lyd</bpmn:incoming>
       <bpmn:terminateEventDefinition />
@@ -220,14 +233,70 @@ if (stateFormBusinessCase == STATE_FORM_SUBMITTED || stateFormBusinessCase == ST
       <bpmn:outgoing>SequenceFlow_1dwhsl5</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1kns0jx" name="Business Case Requires Adjustments">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_0riori8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1h268hs</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_BUSINESS_CASE_REJECTED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_0bg1r6e" name="Planned Product List Requires Adjustments">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_19wcved</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0zlpm1b</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PLANNED_PRODUCT_LIST_REJECTED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:userTask id="correct-business-case" name="Correct Business Case" camunda:formKey="business-case" camunda:candidateGroups="${owner}">
       <bpmn:extensionElements>
@@ -259,27 +328,110 @@ if (stateFormPlannedProductList == STATE_FORM_SUBMITTED || stateFormPlannedProdu
     <bpmn:sequenceFlow id="SequenceFlow_0zlpm1b" sourceRef="IntermediateThrowEvent_0bg1r6e" targetRef="correct-planned-product-list" />
     <bpmn:sequenceFlow id="SequenceFlow_1h268hs" sourceRef="IntermediateThrowEvent_1kns0jx" targetRef="correct-business-case" />
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_16do5bj" name="Project Approved">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_19ti0wn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1loh69n</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PROJECT_APPROVED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1yyy271" name="Project Cancelled">
+      <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_13ek50h</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0kx4lyd</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PROJECT_CANCELLED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:dataObjectReference id="DataObjectReference_1re9a8i" name="Planned Product List Info. Sheet" dataObjectRef="DataObject_0exiqpp" />
     <bpmn:dataObject id="DataObject_0exiqpp" />
-    <bpmn:intermediateThrowEvent id="IntermediateThrowEvent_1wie0va" name="Project Ready for Assessment">
+    <bpmn:intermediateThrowEvent id="message_project_ready_for_gate_one_approval" name="Project Ready for Gate 1 Approval">
       <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_1ergn66</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_07jx9n1</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0qvbw3z</bpmn:outgoing>
-      <bpmn:messageEventDefinition />
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_PROJECT_READY_FOR_GATE_ONE_APPROVAL");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["curriculum-management"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
     <bpmn:dataObjectReference id="DataObjectReference_01qhcqc" name="Busines Case Info. Sheet" dataObjectRef="DataObject_0wghrk3" />
     <bpmn:dataObject id="DataObject_0wghrk3" />
-    <bpmn:association id="Association_054gy47" sourceRef="IntermediateThrowEvent_1wie0va" targetRef="TextAnnotation_1dpxwpn" />
+    <bpmn:association id="Association_054gy47" sourceRef="message_project_ready_for_gate_one_approval" targetRef="TextAnnotation_1dpxwpn" />
     <bpmn:association id="Association_0smoe4v" sourceRef="IntermediateThrowEvent_1yyy271" targetRef="TextAnnotation_1voafcj" />
     <bpmn:association id="Association_04klfuw" sourceRef="IntermediateThrowEvent_16do5bj" targetRef="TextAnnotation_1voafcj" />
     <bpmn:textAnnotation id="TextAnnotation_1voafcj">    <bpmn:text>To Learning Product Owner</bpmn:text>
@@ -331,10 +483,10 @@ if (stateFormPlannedProductList == STATE_FORM_SUBMITTED || stateFormPlannedProdu
       <bpmndi:BPMNShape id="Lane_19kf457_di" bpmnElement="Lane_19kf457">
         <dc:Bounds x="104" y="338" width="1458" height="410" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="IntermediateThrowEvent_02ufgcu_di" bpmnElement="IntermediateThrowEvent_1wie0va">
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_02ufgcu_di" bpmnElement="message_project_ready_for_gate_one_approval">
         <dc:Bounds x="553" y="847" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="581" y="879" width="80" height="24" />
+          <dc:Bounds x="589" y="878" width="89" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1v0mvhh_di" bpmnElement="Lane_1v0mvhh">

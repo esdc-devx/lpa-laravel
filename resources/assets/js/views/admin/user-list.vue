@@ -3,176 +3,111 @@
     <div class="controls">
       <el-button @click="goToPage('admin-user-create')">{{ trans('pages.user_list.create_user') }}</el-button>
     </div>
-    <el-table
-      :default-sort="{prop: 'id', order: 'ascending'}"
-      :data="parsedUsers"
-      @cell-click="editUser">
-      <el-table-column
-        sortable
-        prop="id"
-        label="Index"
-        width="180">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="username"
-        :label="trans('entities.user.username')">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="name"
-        :label="trans('entities.general.full_name')">
-      </el-table-column>
-      <el-table-column
-        sortable
-        prop="email"
-        :label="trans('entities.user.email')">
-      </el-table-column>
-      <el-table-column
-        :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
-        :filter-method="filterGroup"
-        filter-placement="bottom-start"
-        prop="organizational_units"
-        :label="$tc('entities.general.organizational_units', 2)">
-        <template slot-scope="scope">
-          <el-tag
-            v-for="item in scope.row.organizational_units"
-            :key="item.id"
-            type="info"
-            size="small"
-            :title="item">{{item}}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :filters="[{ text: 'Home', value: 'Home' }, { text: 'Office', value: 'Office' }]"
-        :filter-method="filterGroup"
-        filter-placement="bottom-start"
-        prop="roles"
-        :label="trans('entities.user.roles')">
-        <template slot-scope="scope">
-          <el-tag
-            v-for="item in scope.row.roles"
-            :key="item.id"
-            type="info"
-            size="small"
-            :title="item">{{item}}</el-tag>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <el-pagination
-      background
-      @current-change="handlePageChange"
-      :current-page.sync="currentPage"
-      :page-size="pagination.per_page"
-      layout="total, prev, pager, next"
-      :total="pagination.total">
-    </el-pagination>
+    <entity-data-table
+      entityType="user"
+      :data="users"
+      :attributes="dataTableAttributes.users"
+      @rowClick="onUserRowClick"
+    />
   </div>
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
+  import { mapGetters } from 'vuex';
 
-  import PageUtils from '@mixins/page/utils.js';
+  import Page from '@components/page';
+  import EntityDataTable from '@components/entity-data-table.vue';
 
-  let namespace = 'users';
+  const namespace = 'users';
+
+  const loadData = async () => {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch(`${namespace}/loadUsers`)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
 
   export default {
     name: 'admin-user-list',
 
-    mixins: [ PageUtils ],
+    extends: Page,
+
+    components: { EntityDataTable },
 
     computed: {
-      ...mapGetters({
-        users: `${namespace}/all`,
-        pagination: `${namespace}/pagination`
-      })
-    },
+      ...mapGetters(`${namespace}`, {
+        users: 'all'
+      }),
 
-    data() {
-      return {
-        user: {
-          id: null,
-          name: null
-        },
-        parsedUsers: [],
-        currentPage: 1
+      dataTableAttributes: {
+        get() {
+          return {
+            users: {
+              id: {
+                isColumn: false
+              },
+              name: {
+                label: this.trans('entities.general.full_name'),
+                minWidth: 20
+              },
+              email: {
+                label: this.trans('entities.user.email'),
+                minWidth: 20
+              },
+              organizational_units: {
+                label: this.$tc('entities.general.organizational_units', 2),
+                minWidth: 25,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              roles: {
+                label: this.trans('entities.user.roles'),
+                minWidth: 16,
+                areFiltersSorted: true,
+                isFilterable: true
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated'),
+                minWidth: 14
+              },
+              updated_by: {
+                isColumn: false
+              }
+            }
+          }
+        }
       }
     },
 
     methods: {
-      ...mapActions({
-        loadUsers: `${namespace}/loadUsers`
-      }),
-
-      parseUsers() {
-        // clone the array without reference
-        this.parsedUsers = JSON.parse(JSON.stringify(this.users));
-        _.map(this.parsedUsers, item => {
-          // concat all organizational units into a string seperated by commas
-          item.organizational_units = _.map(item.organizational_units, 'name');
-          item.roles = _.map(item.roles, 'name');
-        });
-      },
-
-      // Pagination
-      handlePageChange(newCurrentPage) {
+      onUserRowClick(user) {
         this.scrollToTop();
-        this.fetch(newCurrentPage);
-      },
-
-      scrollToTop() {
-        document.querySelectorAll('.el-main')[0].scrollTop = 0;
-        // IE11 scroll to top
-        document.querySelectorAll('.content-wrap')[0].scrollTop = 0
-      },
-
-      // Form handlers
-      editUser(user, column) {
-        this.scrollToTop();
-        this.$router.push(`${namespace}/edit/${user.id}`);
-      },
-
-      // Filters
-      findUser(id) {
-        return this.users[this.findUserIndex(id)];
-      },
-
-      findUserIndex(id) {
-        for (var i = 0; i < this.users.length; i++) {
-          if (this.users[i].id == id) {
-            return i;
-          }
-        }
-      },
-
-      filterGroup(value, row) {
-        return row.group === value;
-      },
-
-      async fetch(page) {
-        this.$parent.$el.scrollTop = 0;
-        page = _.isUndefined(page) ? this.currentPage : page;
-        await this.loadUsers(page);
-        this.parseUsers();
-      },
-
-      async onLanguageUpdate() {
-        await this.fetch();
+        this.$router.push(`/${this.language}/admin/users/${user.id}/edit`);
       }
     },
 
-    // called when url params change, e.g: language
-    beforeRouteUpdate(to, from, next) {
-      this.onLanguageUpdate();
+    async beforeRouteEnter(to, from, next) {
+      await loadData();
       next();
     },
 
-    mounted() {
-      EventBus.$emit('App:ready');
-      this.fetch();
+    // called when url params change, e.g: language
+    async beforeRouteUpdate(to, from, next) {
+      await loadData();
+      next();
     }
   };
 </script>

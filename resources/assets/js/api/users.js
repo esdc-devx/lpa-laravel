@@ -9,9 +9,8 @@ export default {
     return request.post('logout');
   },
 
-  getUsers(page) {
-    let query = !_.isUndefined(page) ? `?page=${page}` : '';
-    return axios.get(`users${query}`);
+  getUsers() {
+    return axios.get('users');
   },
 
   getUser(id) {
@@ -23,12 +22,11 @@ export default {
     return axios.post('users', user);
   },
 
-  async search(name) {
-    let response = await axios.get('users/search', {
+  search(name) {
+    return axios.get('users/search', {
       showMainLoading: false,
       params: { name: name }
     });
-    return response.data.data;
   },
 
   update(user) {

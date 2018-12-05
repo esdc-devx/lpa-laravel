@@ -14,7 +14,6 @@ export default {
     all: [],
     organizationalUnits: [],
     roles: [],
-    pagination: {},
     currentUserLoadStatus: LoadStatus.NOT_LOADED
   },
 
@@ -53,10 +52,6 @@ export default {
       return function (user) {
         return !! (user && state.current.username === user.username);
       };
-    },
-
-    pagination(state) {
-      return state.pagination;
     }
   },
 
@@ -65,21 +60,17 @@ export default {
       await UserAPI.logout();
     },
 
-    async loadUsers({ commit }, page) {
-      let response = await UserAPI.getUsers(page);
-      commit('setUsers', response.data.data);
-      commit('setPagination', response.data.meta);
-      return response.data.data;
+    async loadUsers({ commit }) {
+      let response = await UserAPI.getUsers();
+      commit('setUsers', response.data);
     },
 
     async loadCurrentUser({ commit }) {
       commit('setCurrentUserLoadStatus', LoadStatus.LOADING_STARTED);
-      let response;
       try {
-        response = await UserAPI.getUser();
-        commit('setCurrentUser', response.data.data);
+        let response = await UserAPI.getUser();
+        commit('setCurrentUser', response.data);
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_SUCCESS);
-        return response.data.data;
       } catch (e) {
         commit('setCurrentUserLoadStatus', LoadStatus.LOADING_FAILED);
         throw e;
@@ -88,41 +79,37 @@ export default {
 
     async loadViewingUser({ commit }, id) {
       let response = await UserAPI.getUser(id);
-      commit('setViewing', response.data.data);
-      return response.data.data;
+      commit('setViewing', response.data);
     },
 
     async loadUserCreateInfo({ commit }) {
       let response = await UserAPI.getUserCreateInfo();
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      commit('setRoles', response.data.data.roles);
-      return response.data.data;
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      commit('setRoles', response.data.roles);
     },
 
     async loadUserEditInfo({ commit }, id) {
       let response = await UserAPI.getUserEditInfo(id);
-      commit('setViewing', response.data.data.user);
-      commit('setOrganizationalUnits', response.data.data.organizational_units);
-      commit('setRoles', response.data.data.roles);
-      return response.data.data;
+      commit('setViewing', response.data.user);
+      commit('setOrganizationalUnits', response.data.organizational_units);
+      commit('setRoles', response.data.roles);
     },
 
     // CRUD methods
-    async create({ commit }, user) {
-      await UserAPI.create(user);
+    create({ commit }, user) {
+      UserAPI.create(user);
     },
 
-    async search({ commit }, name) {
-      let response = await UserAPI.search(name);
-      return response.data.data;
+    search({ commit }, name) {
+      return UserAPI.search(name);
     },
 
-    async update({ commit }, user) {
-      await UserAPI.update(user);
+    update({ commit }, user) {
+      UserAPI.update(user);
     },
 
-    async delete({ commit }, id) {
-      await UserAPI.delete(id);
+    delete({ commit }, id) {
+      UserAPI.delete(id);
     }
   },
 
@@ -149,10 +136,6 @@ export default {
 
     setRoles(state, roles) {
       state.roles = roles;
-    },
-
-    setPagination(state, pagination) {
-      state.pagination = pagination;
     }
   }
 };

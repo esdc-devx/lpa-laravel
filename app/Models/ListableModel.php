@@ -8,9 +8,22 @@ class ListableModel extends LocalizableModel
 {
     use UsesKeyNameField;
 
-    protected $guarded = [];
-    protected $hidden = ['pivot'];
-    protected $localizable = ['name'];
+    protected $fillable = [
+        'parent_id',
+        'name_key',
+        'name_en',
+        'name_fr',
+        'active',
+    ];
+
+    protected $hidden = [
+        'pivot',
+    ];
+
+    protected $localizable = [
+        'name',
+    ];
+
     protected $parent = 'parent_id';
 
     public $timestamps = false;

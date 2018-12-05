@@ -15,7 +15,16 @@ class ProcessInstanceForm extends BaseModel
 {
     use UsesUserAudit;
 
-    protected $hidden = ['process_form_id', 'process_instance_id', 'state_id', 'process_instance_step_id', 'organizational_unit_id', 'created_at', 'created_by'];
+    protected $fillable = [
+        'process_form_id',
+        'process_instance_step_id',
+        'state_id',
+        'organizational_unit_id',
+        'current_editor',
+        'engine_task_id',
+        'created_by',
+        'updated_by',
+    ];
 
     public function definition()
     {
@@ -131,9 +140,7 @@ class ProcessInstanceForm extends BaseModel
         $processInstance = $this->step->processInstance->updateAudit();
 
         // Update entity audit and timestamps.
-        entity($processInstance->entity_type)
-            ->find($processInstance->entity_id)
-            ->updateAudit();
+        entity($processInstance->entity_type, $processInstance->entity_id)->updateAudit();
 
         return $this;
     }

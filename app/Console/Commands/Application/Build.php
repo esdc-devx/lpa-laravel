@@ -51,8 +51,8 @@ class Build extends BaseCommand
     // Last commit timestamp.
     protected $gitCommitTimestamp;
 
-    // Latest version tag.
-    protected $gitVersionTag;
+    // Current version.
+    protected $gitVersion;
 
     /**
      * Execute the console command.
@@ -62,7 +62,7 @@ class Build extends BaseCommand
     public function handle()
     {
         // Validate environment argument.
-        if ( ! in_array($this->argument('env'), ['dev', 'prod'])) {
+        if (! in_array($this->argument('env'), ['dev', 'prod'])) {
             $this->error('Unsupported build option: ' . $this->argument('env'));
         }
 
@@ -71,7 +71,7 @@ class Build extends BaseCommand
         $updated = Carbon::parse($this->gitCommitTimestamp)->diffForHumans();
         $this->info("Branch: {$this->gitCurrentBranch}");
         $this->info("Commit: {$this->gitCommitHash} (updated $updated)");
-        $this->info("Version: {$this->gitVersionTag}");
+        $this->info("Version: {$this->gitVersion}");
 
         // Confirm if we want to create a new version file to be compiled during JS compiling operation.
         if ($this->option('force') || $this->confirm('Create new version file?')) {
@@ -115,7 +115,7 @@ class Build extends BaseCommand
         $this->gitCurrentBranch = exec('git rev-parse --abbrev-ref HEAD');
         $this->gitCommitHash = exec('git rev-parse --short HEAD');
         $this->gitCommitTimestamp = exec("git show -s --format=%ci {$this->gitCommitHash}");
-        $this->gitVersionTag = exec('git describe --abbrev=0 --tags');
+        $this->gitVersion = str_after($this->gitCurrentBranch, 'release/');
     }
 
     /**
@@ -129,13 +129,13 @@ class Build extends BaseCommand
         $this->newline('Creating version file...');
 
         $replace = [
-            '@version' => $this->gitVersionTag,
+            '@version' => $this->gitVersion,
             '@build'   => $this->gitCommitHash,
             '@date'    => Carbon::now()->format('Y-m-d H:i:s'),
         ];
 
         Storage::disk('js')->put('version.js',
-            str_replace(array_keys($replace), array_values($replace), Storage::get('stubs/version.stub'))
+            str_placeholder($replace, Storage::get('stubs/version.stub'))
         );
     }
 
@@ -191,7 +191,7 @@ class Build extends BaseCommand
                 $baseFilePath = str_replace('\\', '/', $baseFilePath);
 
                 // Validate if file should be added to the package.
-                if ( ! is_dir($filePath) && $this->validateFile($baseFilePath)) {
+                if (! is_dir($filePath) && $this->validateFile($baseFilePath)) {
                     $archive->addFile($filePath, $baseFilePath);
                 }
             }

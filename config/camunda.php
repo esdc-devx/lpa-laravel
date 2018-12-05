@@ -17,6 +17,7 @@ return [
 
     // Application configurations.
     'app' => [
+        'url'        => env('CAMUNDA_APP_URL', 'http://localhost/process-engine'),
         'user_model' => 'App\Models\User\User',
         'storage'    => [
             'create' => [

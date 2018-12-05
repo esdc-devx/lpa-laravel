@@ -18,13 +18,20 @@ class Project extends BaseModel
 {
     use SoftDeletes, UsesUserAudit, HasProcesses;
 
-    protected $hidden = [
-        'organizational_unit_id', 'state_id', 'process_instance_id',
-        'business_case_id', 'planned_product_list_id', 'gate_one_approval_id',
+    protected $fillable = [
+        'name',
+        'organizational_unit_id',
+        'state_id',
+        'process_instance_id',
+        'business_case_id',
+        'planned_product_list_id',
+        'gate_one_approval_id',
+        'created_by',
+        'updated_by',
     ];
 
     protected $dates = [
-        'deleted_at'
+        'deleted_at',
     ];
 
     public function businessCase()
@@ -41,7 +48,6 @@ class Project extends BaseModel
     {
         return $this->belongsTo(GateOneApproval::class);
     }
-
 
     public function learningProducts()
     {

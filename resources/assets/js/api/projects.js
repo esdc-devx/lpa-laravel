@@ -18,15 +18,15 @@ export default {
     return axios.get(`projects/${id}/edit`);
   },
 
-  canCreateProject() {
+  canCreate() {
     return axios.get('authorization/project/create');
   },
 
-  canEditProject(id) {
+  canEdit(id) {
     return axios.get(`authorization/project/edit/${id}`);
   },
 
-  canDeleteProject(id) {
+  canDelete(id) {
     return axios.get(`authorization/project/delete/${id}`);
   },
 
