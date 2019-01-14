@@ -149,12 +149,14 @@ class OrganizationalUnitTableSeeder extends Seeder
             $director = $this->users->findOrCreate($organizationalUnit['director_username']);
 
             OrganizationalUnit::create([
-                'owner'    => $organizationalUnit['owner'],
-                'email'    => $faker->email,
-                'director' => $director->id,
-                'name_key' => $organizationalUnit['name_key'],
-                'name_en'  => $organizationalUnit['name_en'],
-                'name_fr'  => $organizationalUnit['name_fr'],
+                'owner'      => $organizationalUnit['owner'],
+                'email'      => $faker->email,
+                'director'   => $director->id,
+                'name_key'   => $organizationalUnit['name_key'],
+                'name_en'    => $organizationalUnit['name_en'],
+                'name_fr'    => $organizationalUnit['name_fr'],
+                'created_by' => auth()->user()->id,
+                'updated_by' => auth()->user()->id,
             ]);
         }
     }

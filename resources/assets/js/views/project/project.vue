@@ -2,7 +2,10 @@
   <div class="project content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canActionsBeVisible ? 18 : 24">
-        <project-info :project="viewingProject" @onAfterDelete="onAfterDelete"/>
+        <project-info
+          :project="viewing"
+          @delete="onDelete"
+        />
       </el-col>
       <el-col :span="6" v-if="canActionsBeVisible">
         <el-card shadow="never" class="project-actions">
@@ -10,9 +13,9 @@
             <h3>{{ trans('entities.process.actions') }}</h3>
           </div>
           <ul class="project-actions-list">
-            <template v-if="viewingProject.current_process">
+            <template v-if="viewing.current_process">
               <li>
-                <el-button type="primary" @click="continueToProcess(viewingProject.current_process.id)">
+                <el-button type="primary" @click="continueToProcess(viewing.current_process.id)">
                   {{ trans('entities.process.view_current') }}
                 </el-button>
               </li>
@@ -37,7 +40,6 @@
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
             <entity-data-table
-              entityType="learning-product"
               :data="projectLearningProducts"
               :attributes="dataTableAttributes.learningProducts"
               @rowClick="onLearningProductRowClick"
@@ -47,7 +49,6 @@
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
             <entity-data-table
-              entityType="process"
               :data="viewingHistory"
               :attributes="dataTableAttributes.processHistory"
               @rowClick="onProcessRowClick"
@@ -61,31 +62,33 @@
 
 <script>
   import _ from 'lodash';
-  import { mapState, mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import ProjectInfo from '@components/project-info.vue';
   import EntityDataTable from '@components/entity-data-table.vue';
 
-  const namespace = 'projects';
+  import HttpStatusCodes from '@axios/http-status-codes';
+
+  import Project from '@/store/models/Project';
 
   const loadData = async function ({ to } = {}) {
-    const { projectId } = to ? to.params : this;
+    const { entityId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
 
     let requests = [];
     requests.push(
-      store.dispatch('projects/loadProject', projectId),
-      store.dispatch('processes/loadDefinitions', 'project'),
-      store.dispatch('processes/loadHistory', {
+      store.dispatch('entities/projects/load', entityId),
+      store.dispatch('entities/processes/loadDefinitions', 'project'),
+      store.dispatch('entities/processes/loadHistory', {
         entityType: 'project',
-        entityId: projectId
+        entityId
       }),
-      store.dispatch('learningProducts/loadProjectLearningProducts', projectId),
-      store.dispatch('projects/loadCanEdit', projectId),
-      store.dispatch('projects/loadCanDelete', projectId)
+      store.dispatch('learningProducts/loadProjectLearningProducts', entityId),
+      store.dispatch('authorizations/projects/loadCanEdit', entityId),
+      store.dispatch('authorizations/projects/loadCanDelete', entityId)
     );
 
     // Exception handled by interceptor
@@ -94,9 +97,9 @@
         // load all the permissions in the store
         // so that we can access them afterwards
         try {
-          await axios.all(store.state.processes.definitions.map(
-            ({name_key}) => store.dispatch('projects/loadCanStartProcess', {
-              projectId: projectId,
+          await axios.all(store.state.entities.processes.definitions.map(
+            ({name_key}) => store.dispatch('authorizations/projects/loadCanStartProcess', {
+              projectId: entityId,
               processDefinitionNameKey: name_key
             })
           ));
@@ -120,16 +123,35 @@
 
     components: { ProjectInfo, EntityDataTable },
 
+    props: {
+      entityId: {
+        type: String,
+        required: true
+      }
+    },
+
+    data() {
+      return {
+        processDefinitionPermissions: {},
+        localViewing: null
+      };
+    },
+
     computed: {
-      ...mapState(`${namespace}`, [
+      ...mapState('authorizations/projects', [
         'processPermissions'
       ]),
-      ...mapGetters({
-        viewingProject: `${namespace}/viewing`,
-        viewingHistory: 'processes/viewingHistory',
-        processDefinitions: `processes/definitions`,
-        projectLearningProducts: 'learningProducts/projectLearningProducts'
+      ...mapState('entities/processes', {
+        viewingHistory: 'viewingHistory',
+        processDefinitions: 'definitions'
       }),
+      ...mapState('learningProducts', [
+        'projectLearningProducts'
+      ]),
+
+      viewing() {
+        return this.localViewing || Project.find(this.entityId);
+      },
 
       dataTableAttributes: {
         get() {
@@ -215,17 +237,14 @@
       }
     },
 
-    data() {
-      return {
-        processDefinitionPermissions: {},
-      };
-    },
-
     methods: {
       ...mapActions({
-        startProcess: `processes/start`,
-        loadProjectLearningProducts: 'learningProducts/loadProjectLearningProducts'
+        startProcess: 'entities/processes/start'
       }),
+
+      ...mapActions('entities/projects', [
+        '$$delete'
+      ]),
 
       onFormatData(normEntity) {
         normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
@@ -250,27 +269,35 @@
           })
         }).then(async () => {
           try {
-            let response = await this.startProcess({ nameKey: processNameKey, entityId: this.viewingProject.id });
+            let process = await this.startProcess({ nameKey: processNameKey, entityId: this.viewing.id });
             this.notifySuccess({
               message: this.trans('components.notice.message.process_started')
             });
-            this.$router.push(`${this.projectId}/process/${response.process_instance.id}`);
+            this.$router.push(`${this.entityId}/process/${process.id}`);
           } catch (e) {
-            if (e.response) {
+            if (!e.response) {
+              throw e;
+            } else if (e.response.status === HttpStatusCodes.FORBIDDEN) {
               // on error, re-fetch the info just to be in-sync
               loadData.apply(this);
-            } else {
-              throw e;
             }
           }
         }).catch(() => false);
       },
 
       continueToProcess(processId) {
-        this.$router.push(`${this.projectId}/process/${processId}`);
+        this.$router.push(`${this.entityId}/process/${processId}`);
       },
 
-      onAfterDelete() {
+      async onDelete() {
+        // store a local version of the project to be deleted
+        // so that when we reload the list in the store while transitioning to the project-list
+        // that we still have acces to the info
+        this.localViewing = {...this.viewing};
+        await this.$$delete(this.viewing.id);
+        this.notifySuccess({
+          message: this.trans('components.notice.message.project_deleted')
+        });
         this.goToParentPage();
       }
     },
@@ -285,10 +312,6 @@
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
       next();
-    },
-
-    created() {
-      this.projectId = this.$route.params.projectId;
     }
   };
 </script>

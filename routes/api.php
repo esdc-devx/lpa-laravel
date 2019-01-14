@@ -29,6 +29,11 @@ Route::middleware('auth:api')->group(function () {
         'parameters' => ['learning-products' => 'learningProduct']
     ]);
 
+    // Organizational Unit routes.
+    Route::get('organizational-units', 'OrganizationalUnitController@index')->name('organizational-units.index');
+    Route::get('organizational-units/{organizationalUnit}/edit', 'OrganizationalUnitController@edit')->name('organizational-units.edit');
+    Route::put('organizational-units/{organizationalUnit}', 'OrganizationalUnitController@update')->name('organizational-units.update');
+
     // Process definition routes.
     Route::get('process-definitions/{entityType}', 'ProcessDefinitionController@show')->name('process-definitions.show');
     Route::post('process-definitions/{processDefinition}', 'ProcessDefinitionController@startProcess')->name('process-definitions.start-process');
@@ -49,6 +54,13 @@ Route::middleware('auth:api')->group(function () {
     // List entities routes.
     Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
     Route::get('lists', 'ListController@showMultiple')->name('lists.show-multiple');
+
+    // Information sheets routes.
+    Route::get('information-sheets/{entityType}/{entityId}', 'InformationSheetController@show')->name('information-sheets.show');
+
+    /**
+     * Authorization routes.
+     */
 
     // Project authorization routes.
     // @todo: Refactor into one generic route? i.e. authorization/{entityType}/{action}

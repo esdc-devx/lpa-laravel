@@ -9,6 +9,9 @@
           <el-button class="action" @click="$router.push(`admin/users`)">
             {{ trans('base.navigation.admin_user_list') }}
           </el-button>
+          <el-button class="action" @click="$router.push(`admin/organizational-units`)">
+            {{ trans('base.navigation.admin_organizational_unit_list') }}
+          </el-button>
         </el-card>
       </el-col>
     </el-row>

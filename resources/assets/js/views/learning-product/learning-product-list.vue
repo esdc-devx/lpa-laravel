@@ -4,8 +4,7 @@
       <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
     </div>
     <entity-data-table
-      entityType="learning-product"
-      :data="learningProducts"
+      :data="all"
       :attributes="dataTableAttributes.learningProducts"
       @rowClick="onLearningProductRowClick"
       @formatData="onFormatData"
@@ -15,12 +14,10 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'vuex';
 
   import Page from '@components/page';
   import EntityDataTable from '@components/entity-data-table.vue';
-
-  const namespace = 'learningProducts';
 
   const loadData = async () => {
     // we need to access the store directly
@@ -29,7 +26,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadLearningProducts`)
+      store.dispatch('learningProducts/loadAll')
     );
 
     // Exception handled by interceptor
@@ -50,9 +47,9 @@
     components: { EntityDataTable },
 
     computed: {
-      ...mapGetters({
-        learningProducts: `${namespace}/all`
-      }),
+      ...mapState('learningProducts', [
+        'all'
+      ]),
 
       dataTableAttributes: {
         get() {

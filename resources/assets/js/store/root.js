@@ -1,10 +1,7 @@
-import Vue from 'vue';
-
 import EventBus from '@/event-bus';
 
 import { Validator } from 'vee-validate';
 import axios from '@axios/interceptor';
-import * as types from './mutations-types';
 import Config from '@/config';
 
 import Constants from '@/constants.js';
@@ -19,88 +16,33 @@ export const state = {
   mainLoadingCount: 0
 };
 
-export const getters = {
-  language(state) {
-    return state.language;
-  },
-
-  languages(state) {
-    return state.languages;
-  },
-
-  isAppLoading(state) {
-    return state.isAppLoading;
-  },
-
-  isMainLoading(state) {
-    return state.isMainLoading;
-  },
-
-  mainLoadingCount(state) {
-    return state.mainLoadingCount;
-  },
-
-};
+export const getters = {};
 
 export const actions = {
-  // Localization handlers
-  setLanguage({ commit }, context) {
-    commit(types.SET_LANGUAGE, context);
-  },
-
   async loadLanguages({ commit }, context) {
     let response;
     try {
       response = await axios.get('locales');
-      commit(types.SET_LANGUAGES, response.data);
+      commit('setLanguages', response.data);
       return response.data;
     } catch (e) {
       throw e;
     }
   },
 
-  // Loading handlers
-  showAppLoading({ commit }, context) {
-    commit(types.TOGGLE_APP_LOADING, true);
-  },
-
-  hideAppLoading({ commit }, context) {
-    commit(types.TOGGLE_APP_LOADING, false);
-  },
-
-  // This is how it goes when we show a main loading.
-  // For example:
-  // user toggles language, showMainLoadingCount = 1
-  // sends an event that language is toggling,
-  // components show main loading and fetch data, showMainLoadingCount = 2
-  // route is transitioned, language is set and hideMainLoading is called, showMainLoadingCount = 1
-  // component fetch is done, showMainLoadingCount = 0 => hideMainLoading
-  showMainLoading({ commit, state }, context) {
-    // grab the actual mainLoadingCount value and increase it
-    if (state.mainLoadingCount === 0) {
-      commit(types.TOGGLE_MAIN_LOADING, true);
-    }
-    commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount + 1);
-  },
-
   hideMainLoading({ commit }, context) {
     setTimeout(() => {
       if (state.mainLoadingCount === 1) {
-        commit(types.TOGGLE_MAIN_LOADING, false);
+        commit('toggleMainLoading', false);
       }
-      commit(types.MAIN_LOADING_COUNT, state.mainLoadingCount - 1);
+      commit('setMainLoadingCount', state.mainLoadingCount - 1);
     }, Constants.DELAY_HIDE_MAIN_LOADING);
-  },
-
-  confirmBeforeLeaving({ commit }, context) {
-    commit(types.SHOULD_CONFIRM_BEFORE_LEAVING, context);
   }
 };
 
 export const mutations = {
-  [types.SET_LANGUAGE](state, lang = state.language) {
+  setLanguage(state, lang = state.language) {
     state.language = lang;
-    localStorage.setItem('language', lang);
 
     // change the locale of the translation plugin
     // this makes sure that when using the browser back-forward buttons
@@ -117,11 +59,35 @@ export const mutations = {
     EventBus.$emit('Store:languageUpdate', lang);
   },
 
-  [types.SET_LANGUAGES](state, languages) {
+  setLanguages(state, languages) {
     state.languages = languages;
   },
 
-  [types.TOGGLE_APP_LOADING](state, isShown) {
+  // Loading handlers
+  showAppLoading(state, context) {
+    this.commit('toggleAppLoading', true);
+  },
+
+  hideAppLoading(state, context) {
+    this.commit('toggleAppLoading', false);
+  },
+
+  // This is how it goes when we show a main loading.
+  // For example:
+  // user toggles language, showMainLoadingCount = 1
+  // sends an event that language is toggling,
+  // components show main loading and fetch data, showMainLoadingCount = 2
+  // route is transitioned, language is set and hideMainLoading is called, showMainLoadingCount = 1
+  // component fetch is done, showMainLoadingCount = 0 => hideMainLoading
+  showMainLoading(state, context) {
+    // grab the actual mainLoadingCount value and increase it
+    if (state.mainLoadingCount === 0) {
+      this.commit('toggleMainLoading', true);
+    }
+    this.commit('setMainLoadingCount', state.mainLoadingCount + 1);
+  },
+
+  toggleAppLoading(state, isShown) {
     let spinner = document.querySelectorAll('.loading-spinner')[0];
     if (spinner) {
       if (!isShown) {
@@ -132,19 +98,18 @@ export const mutations = {
         spinner.classList.remove('fade-out');
       }
     }
-
     state.isAppLoading = isShown;
   },
 
-  [types.TOGGLE_MAIN_LOADING](state, isShown) {
+  toggleMainLoading(state, isShown) {
     state.isMainLoading = isShown;
   },
 
-  [types.MAIN_LOADING_COUNT](state, count) {
+  setMainLoadingCount(state, count) {
     state.mainLoadingCount = count;
   },
 
-  [types.SHOULD_CONFIRM_BEFORE_LEAVING](state, val) {
+  setShouldConfirmBeforeLeaving(state, val) {
     state.shouldConfirmBeforeLeaving = val;
   },
 

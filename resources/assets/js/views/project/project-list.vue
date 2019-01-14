@@ -4,8 +4,7 @@
       <el-button @click="goToPage('project-create')">{{ trans('pages.project_list.create_project') }}</el-button>
     </div>
     <entity-data-table
-      entityType="project"
-      :data="projects"
+      :data="all"
       :attributes="dataTableAttributes.projects"
       @rowClick="onProjectRowClick"
     />
@@ -14,13 +13,12 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
-
   import EntityDataTable from '@components/entity-data-table.vue';
 
-  const namespace = 'projects';
+  import Project from '@/store/models/Project';
 
   const loadData = async () => {
     // we need to access the store directly
@@ -29,7 +27,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadProjects`)
+      store.dispatch('entities/projects/loadAll')
     );
 
     // Exception handled by interceptor
@@ -50,9 +48,9 @@
     components: { EntityDataTable },
 
     computed: {
-      ...mapGetters({
-        projects: `${namespace}/all`
-      }),
+      all() {
+        return Project.all();
+      },
 
       dataTableAttributes: {
         get() {
@@ -72,6 +70,9 @@
               },
               updated_at: {
                 label: this.trans('entities.general.updated')
+              },
+              updated_by: {
+                isColumn: false
               },
               state: {
                 label: this.trans('entities.general.status'),

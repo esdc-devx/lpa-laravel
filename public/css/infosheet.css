@@ -1,0 +1,78 @@
+body {
+    padding: 20px;
+    background-color: #eaf0f8;
+    box-sizing: border-box;
+}
+h1 {
+    margin: 0;
+    border-bottom: 1px solid #000;
+}
+h1 .el-icon-lpa-owl {
+    width: 36px;
+    height: 36px;
+}
+header .date {
+    text-align: right;
+}
+header .print {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+}
+header .print i {
+    font-size: 26px;
+}
+.el-card {
+    margin: 20px 0;
+    page-break-inside: avoid;
+}
+.el-card__header h2 {
+    font-size: 18px;
+    text-transform: uppercase;
+    margin: 0;
+}
+.el-card__header .toggle {
+    background-color: #524f74;
+    color: #fff;
+    padding: 4px 8px;
+    margin-right: 12px;
+    border-radius: 3px;
+}
+.el-card .el-card__body {
+    display: block;
+}
+.el-card.hide .el-card__body {
+    display: none;
+}
+.el-card .form-section {
+    margin-top: 32px;
+}
+.el-card h3 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 4px;
+    text-transform: uppercase;
+}
+.el-card h4 {
+    margin-bottom: 0;
+}
+.el-card dt {
+    font-weight: bold;
+    display: block;
+}
+.el-card dd {
+    margin: 0 0 12px 0;
+}
+.el-card .form-group {
+    border-top: 1px solid #eaeaea;
+    border-bottom: 1px solid #eaeaea;
+    border-left: 6px solid #eaeaea;
+    border-right: 1px solid #eaeaea;
+    padding-left: 14px;
+    margin: 14px 0;
+}
+.el-card .form-group h5 {
+    text-transform: uppercase;
+}
+.el-card .form-group dl {
+    margin: 14px;
+}

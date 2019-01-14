@@ -50,7 +50,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
@@ -59,8 +59,6 @@
   import UserSearch from '@components/forms/user-search';
 
   import FormUtils from '@mixins/form/utils.js';
-
-  const namespace = 'users';
 
   export default {
     name: 'admin-user-create',
@@ -74,10 +72,10 @@
     components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 
     computed: {
-      ...mapGetters(`${namespace}`, {
-        organizationalUnits: 'organizationalUnits',
-        roles: 'roles'
-      })
+      ...mapState('users', [
+        'organizationalUnits',
+        'roles'
+      ])
     },
 
     data() {
@@ -91,21 +89,20 @@
     },
 
     methods: {
-      ...mapActions(`${namespace}`, {
-        searchUser: 'search',
-        createUser: 'create',
-        loadUserCreateInfo: 'loadUserCreateInfo'
-      }),
+      ...mapActions('users', [
+        'create',
+        'loadCreateInfo'
+      ]),
 
       // Form handlers
       onSubmit() {
-        this.submit(this.create);
+        this.submit(this.handleCreate);
       },
 
-      async create() {
+      async handleCreate() {
         let formData = Object.assign({}, this.form);
         formData.username = this.form.user.username;
-        await this.createUser(formData);
+        await this.create(formData);
 
         this.isSubmitting = false;
         this.notifySuccess({
@@ -120,12 +117,12 @@
         // the messages are in the correct language
         this.resetErrors();
 
-        await this.loadUserCreateInfo();
+        await this.loadCreateInfo();
       }
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('users/loadUserCreateInfo');
+      await store.dispatch('users/loadCreateInfo');
       next();
     },
 

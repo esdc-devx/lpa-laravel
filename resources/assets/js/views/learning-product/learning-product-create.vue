@@ -112,8 +112,6 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  const namespace = 'learningProducts';
-
   const loadData = async function () {
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
@@ -121,7 +119,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadLearningProductCreateInfo`),
+      store.dispatch('learningProducts/loadCreateInfo'),
       store.dispatch('lists/loadList', 'learning-product-type')
     );
 
@@ -208,13 +206,13 @@
     },
 
     computed: {
-      ...mapState(`${namespace}`, [
-        'projects'
+      ...mapState('learningProducts', [
+        'projects',
+        'organizationalUnits',
+        'viewing'
       ]),
 
       ...mapGetters({
-        viewingLearningProduct: `${namespace}/viewing`,
-        organizationalUnits: `${namespace}/organizationalUnits`,
         getList: 'lists/list'
       }),
 
@@ -241,9 +239,9 @@
     },
 
     methods: {
-      ...mapActions({
-        createLearningProduct: `${namespace}/create`
-      }),
+      ...mapActions('learningProducts',[
+        'create'
+      ]),
 
       ...mapMutations({
         setList: 'lists/setList'
@@ -251,22 +249,22 @@
 
       // Form handlers
       async onSubmit() {
-        this.submit(this.create);
+        this.submit(this.handleCreate);
       },
 
-      async create() {
+      async handleCreate() {
         // Update form data before submission to only submit usernames.
         let formData = Object.assign({}, this.form);
         formData.manager = this.form.manager.username;
         formData.primary_contact = this.form.primary_contact.username;
-        await this.createLearningProduct(formData);
+        await this.create(formData);
 
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.learning_product_created')
         });
 
-        this.$router.push(`/${this.language}/learning-products/${this.viewingLearningProduct.id}`);
+        this.$router.push(`/${this.language}/learning-products/${this.viewing.id}`);
       },
 
       // Remove children attribute when empty and disable all terms by default.

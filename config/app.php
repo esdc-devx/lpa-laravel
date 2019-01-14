@@ -164,6 +164,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\BladeServiceProvider::class,
         App\Providers\DatabaseServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
@@ -236,6 +237,8 @@ return [
         'course'                                   => App\Models\LearningProduct\Course::class,
         'departmental-results-framework-indicator' => App\Models\Project\BusinessCase\DepartmentalResultsFrameworkIndicator::class,
         'gate-one-approval'                        => App\Models\Project\GateOneApproval\GateOneApproval::class,
+        'information-sheet'                        => App\Models\InformationSheet\InformationSheet::class,
+        'information-sheet-definition'             => App\Models\InformationSheet\InformationSheetDefinition::class,
         'internal-resource'                        => App\Models\Project\BusinessCase\InternalResource::class,
         'learning-product'                         => App\Models\LearningProduct\LearningProduct::class,
         'learning-product-type'                    => App\Models\LearningProduct\LearningProductType::class,

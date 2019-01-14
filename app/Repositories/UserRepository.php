@@ -143,9 +143,6 @@ class UserRepository extends BaseEloquentRepository
             $user->roles()->sync($data['roles']);
         }
 
-        // Update timestamps.
-        $user->touch();
-
         // Dispatch UserSaved event and return its updated value.
         $user = $this->with('roles')->getById($id);
         event(new UserSaved($user));

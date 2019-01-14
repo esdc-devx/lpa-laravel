@@ -15,6 +15,11 @@ class Spending extends BaseModel
         'comments',
     ];
 
+    protected $with = [
+        'internalResource',
+        'recurrence',
+    ];
+
     public $timestamps = false;
 
     public function internalResource()

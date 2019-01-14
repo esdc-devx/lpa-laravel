@@ -29,7 +29,7 @@ class CreateBusinessCasesTable extends Migration
             $table->unsignedInteger('expected_annual_participant_number')->nullable();
             // Costs and Resources fields.
             $table->string('cost_centre')->nullable();
-            $table->string('other_operational_considerations')->nullable();
+            $table->text('other_operational_considerations')->nullable();
             // Comments field.
             $table->text('comments')->nullable();
 

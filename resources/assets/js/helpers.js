@@ -15,7 +15,7 @@ export const helpers = {
   localeSort(a, b, attr = null) {
     // if we are dealing with an object, we want to sort by a certain attribute
     if (_.isObject(a) && _.isObject(b) && !_.isNull(attr)) {
-      let collator = new Intl.Collator(store.getters.language);
+      let collator = new Intl.Collator(store.state.language);
       let flag = a[attr] - b[attr];
       return _.isNaN(flag) ? collator.compare(a[attr], b[attr]) : flag;
     } else {
@@ -30,7 +30,7 @@ export const helpers = {
       // return _.isNaN(flag) ? aName.localeCompare(bName, this.language) : flag;
 
       // Perf issues but a bit faster than localeCompare...
-      let collator = new Intl.Collator(store.getters.language);
+      let collator = new Intl.Collator(store.state.language);
       let flag = aName - bName;
       return _.isNaN(flag) ? collator.compare(aName, bName) : flag;
     }

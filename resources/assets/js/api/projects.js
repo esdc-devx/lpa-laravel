@@ -2,19 +2,34 @@ import _ from 'lodash';
 import axios from '@axios/interceptor';
 
 export default {
-  getProjects() {
-    return axios.get(`projects`);
+  create(project) {
+    return axios.post('projects', project);
   },
 
-  getProject(id) {
+  update(project) {
+    return axios.put(`projects/${project.id}`, {
+      name: project.name,
+      organizational_unit: project.organizational_unit
+    });
+  },
+
+  delete(id) {
+    return axios.delete(`projects/${id}`);
+  },
+
+  get(id) {
     return axios.get(`projects/${id}`);
   },
 
-  getProjectCreateInfo() {
+  getAll() {
+    return axios.get(`projects`);
+  },
+
+  getCreateInfo() {
     return axios.get('projects/create');
   },
 
-  getProjectEditInfo(id) {
+  getEditInfo(id) {
     return axios.get(`projects/${id}/edit`);
   },
 
@@ -36,20 +51,5 @@ export default {
 
   getProcess(projectId, processId) {
     return axios.get(`projects/${projectId}/process/${processId}`);
-  },
-
-  create(project) {
-    return axios.post('projects', project);
-  },
-
-  update(project) {
-    return axios.put(`projects/${project.id}`, {
-      name: project.name,
-      organizational_unit: project.organizational_unit
-    });
-  },
-
-  delete(id) {
-    return axios.delete(`projects/${id}`);
   }
 };

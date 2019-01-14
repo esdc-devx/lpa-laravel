@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import axios from 'axios';
+
 import axiosDefaults from './defaults';
 import HttpStatusCodes from './http-status-codes';
 import router from '@/router';
@@ -21,7 +22,7 @@ Object.assign(axios.defaults, axiosDefaults);
 axios.interceptors.request.use(
   config => {
     if (config.showMainLoading) {
-      store.dispatch('showMainLoading'); // Show Main loading animation before sending any request.
+      store.commit('showMainLoading'); // Show Main loading animation before sending any request.
     }
     return config;
   },
@@ -73,15 +74,12 @@ axios.interceptors.response.use(
           confirmButtonText: trans('base.actions.ok'),
           callback: action => {
             // we need to change the location manually since the backend handles the login page
-            window.location.href = `/${store.getters.language}/login`;
+            window.location.href = `/${store.state.language}/login`;
           }
         });
     } else if (status === HttpStatusCodes.NOT_FOUND) {
       let newPath = router.history.pending ? router.history.pending.path : router.history.current.path;
-      // cannot redirect user to same path,
-      // so we need to change it while keeping the path to be accessed
-      // thus we add '/404' at the end
-      router.replace({ name: 'not-found', params: { '0': newPath + '/404' } });
+      router.replace({ name: 'not-found', params: { '0': newPath } });
     } else if (status === HttpStatusCodes.FORBIDDEN) {
       Notify.notifyError({
         title: errorResponse.type,
@@ -109,8 +107,6 @@ axios.interceptors.response.use(
 
 EventBus.$on('Store:languageUpdate', onLanguageChange);
 
-if (Config.DEBUG) {
-  window.axios = axios;
-}
+window.axios = axios;
 
 export default axios;

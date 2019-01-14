@@ -2,7 +2,7 @@
   <div class="learning-product-edit content">
     <el-card shadow="never">
       <span slot="header">
-        <h2><i class="el-icon-lpa-learning-products"></i>{{ trans('pages.learning_product_edit.title') }}</h2>
+        <h2><i class="el-icon-lpa-edit"></i>{{ trans('pages.learning_product_edit.title') }}</h2>
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
@@ -81,10 +81,8 @@
 
   import LearningProductAPI from '@api/learning-products';
 
-  const namespace = 'learningProducts';
-
   const loadData = async function ({ to, hasToLoadEntity = true } = {}) {
-    const { learningProductId } = to ? to.params : this;
+    const { entityId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
@@ -92,7 +90,7 @@
     let requests = [];
 
     if (hasToLoadEntity) {
-      requests.push(store.dispatch(`${namespace}/loadLearningProductEditInfo`, learningProductId));
+      requests.push(store.dispatch('learningProducts/loadEditInfo', entityId));
     }
 
     // Exception handled by interceptor
@@ -116,9 +114,15 @@
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError, UserSearch },
 
+    props: {
+      entityId: {
+        type: String,
+        required: true
+      }
+    },
+
     data() {
       return {
-        learningProductId: null,
         form: {
           name: '',
           organizational_unit: {},
@@ -129,24 +133,23 @@
     },
 
     computed: {
-      ...mapState(`${namespace}`, {
-        viewingLearningProduct: 'viewing',
-        organizationalUnits: 'organizationalUnits'
-      })
+      ...mapState('learningProducts', [
+        'viewing',
+        'organizationalUnits'
+      ])
     },
 
     methods: {
-      ...mapActions({
-        loadLearningProductEditInfo: `${namespace}/loadLearningProductEditInfo`,
-        updateLearningProduct: `${namespace}/update`
-      }),
+      ...mapActions('learningProducts', [
+        'update'
+      ]),
 
       async onSubmit() {
-        this.submit(this.update);
+        this.submit(this.handleUpdate);
       },
 
-      async update() {
-        await this.updateLearningProduct({
+      async handleUpdate() {
+        await this.update({
           id: this.form.id,
           data: {
             name: this.form.name,
@@ -175,7 +178,7 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('learningProducts/loadCanEdit', to.params.learningProductId);
+      await store.dispatch('learningProducts/loadCanEdit', to.params.entityId);
       if (store.state.learningProducts.permissions.canEdit) {
         await loadData({ to });
         next();
@@ -186,13 +189,17 @@
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
-      await this.onLanguageUpdate();
-      next();
+      await store.dispatch('learningProducts/loadCanEdit', to.params.entityId);
+      if (store.state.learningProducts.permissions.canEdit) {
+        await this.onLanguageUpdate();
+        next();
+      } else {
+        router.replace({ name: 'forbidden', params: { '0': to.path } });
+      }
     },
 
     created() {
-      this.learningProductId = this.$route.params.learningProductId;
-      this.form = _.cloneDeep(this.viewingLearningProduct);
+      this.form = _.cloneDeep(this.viewing);
     }
   };
 </script>
@@ -209,7 +216,6 @@
       padding-left: 34px;
       display: inline-block;
       i {
-        @include svg(learning-product, $--color-primary);
         width: 24px;
         position: absolute;
         left: 0;

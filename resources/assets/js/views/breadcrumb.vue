@@ -10,7 +10,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'vuex';
 
   export default {
     name: 'breadcrumb',
@@ -23,7 +23,7 @@
     },
 
     computed: {
-      ...mapGetters([
+      ...mapState([
         'language'
       ])
     },
@@ -43,15 +43,18 @@
         }
 
         if (matched.length > 1) {
-          throw new Error('[breadcrumb] Route childrens not supported yet');
+          this.$log.error('[breadcrumb] Route childrens not supported yet');
           return false;
         }
         return true;
       },
 
       /**
-       * Takes a regex string and replace the params by the actual values
+       * Takes a regex string and replace the params by the actual values.
        * Example: 'projects/:id(\d+)/process/:id(\d+)'
+       *       -> 'projects/1/process/1'
+       * Also take into account that values may have been passed
+       * Example: ':entityName(projects)/:entityId(\\d+)/process/:processId(\\d+)'
        *       -> 'projects/1/process/1'
        * @param {String} path
        */
@@ -67,14 +70,22 @@
         if (!regexParams.length) {
           return path;
         }
-        _.map(regexParams, p => {
-          let index = path.split('/').indexOf(p);
+        _.map(regexParams, param => {
+          let index = path.split('/').indexOf(param);
           if (index !== -1) {
-            p = p.match(/:\w+/g)[0];
+            // matches :param(.*) and returns only :param
+            param = param.match(/:\w+/g)[0];
             // first iteration grab the path in params to build up the resolved path
             // afterwards, continue with the partialyResolvedPath so that we keep any previous values
             let newPath = !_.isUndefined(partialyResolvedPath) ? partialyResolvedPath.split('/') : path.split('/');
-            newPath[index] = that.$route.params[p.slice(1)];
+            // if param is not found within the params of the route,
+            // we might have a param that has a value
+            if (_.isUndefined(that.$route.params[param.slice(1)])) {
+              // matches :param(name) and returns name
+              newPath[index] = regexParams[index].match(/:\w+\((\w+)\)/)[1];
+            } else {
+              newPath[index] = that.$route.params[param.slice(1)];
+            }
             newPath = newPath.join('/');
             partialyResolvedPath = newPath;
           }
@@ -110,6 +121,9 @@
         // build up the breadcrumbs data
         for (let i = 0; i < matchedCrumbsArr.length; i++) {
           crumb = _.find(this.$router.options.routes, { name: matchedCrumbsArr[i] });
+          if (!crumb) {
+            this.$log.error(`[breadcrumb] Route not found for name: ${matchedCrumbsArr[i]}`);
+          }
           outputTitle = crumb.meta.title.call(this);
 
           // try to translate the title, or just take it as value

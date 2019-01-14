@@ -42,7 +42,7 @@
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.parent_project') }}</dt>
-        <dd><router-link :to="'/' + language + '/projects/' + learningProduct.project_id">{{ learningProduct.project_id | LPANumFilter }}</router-link></dd>
+        <dd><router-link :to="`/${language}/projects/${learningProduct.project_id}`">{{ learningProduct.project_id | LPANumFilter }}</router-link></dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.learning_product.manager') }}</dt>
@@ -54,13 +54,11 @@
       </dl>
       <dl>
         <dt>{{ trans('entities.general.created') }}</dt>
-        <dd>{{ learningProduct.created_by.name }}</dd>
-        <dd>{{ learningProduct.created_at }}</dd>
+        <dd v-audit:created="learningProduct"></dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.updated') }}</dt>
-        <dd>{{ learningProduct.updated_by.name }}</dd>
-        <dd>{{ learningProduct.updated_at }}</dd>
+        <dd v-audit:updated="learningProduct"></dd>
       </dl>
     </info-box>
   </div>
@@ -71,8 +69,6 @@ import { mapState, mapGetters, mapActions } from 'vuex';
 import HttpStatusCodes from '@axios/http-status-codes';
 import InfoBox from '@components/info-box.vue';
 import ElButtonWrap from '@components/el-button-wrap.vue';
-
-const namespace = 'learningProducts';
 
 export default {
   name: 'learning-product-info',
@@ -87,18 +83,20 @@ export default {
   },
 
   computed: {
-    ...mapState(`${namespace}`, [
+    ...mapState('learningProducts', [
       'permissions'
     ]),
+    ...mapState([
+      'language'
+    ]),
     ...mapGetters({
-      language: 'language',
       hasRole: 'users/hasRole'
     })
   },
 
   methods: {
     ...mapActions({
-      deleteLearningProduct: `${namespace}/delete`
+      deleteLearningProduct: 'learningProducts/delete'
     }),
 
     edit() {

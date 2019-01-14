@@ -17,5 +17,6 @@ return [
         'invalid_state'               => 'The form cannot be edited given its current status.',
         'invalid_organizational_unit' => 'The form can only be edited by a member of the Assigned Organizational Unit.',
         'invalid_process_state'       => 'The form cannot be edited since the process is no longer running.',
+        'unclaim'                     => 'You no longer are the editor for this form.',
     ],
 ];

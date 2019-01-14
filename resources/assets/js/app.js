@@ -18,7 +18,7 @@ import store from '@/store/';
 
 import Logger from '@/plugins/logger';
 import Helpers from '@/helpers';
-import "@babel/polyfill";
+import '@babel/polyfill';
 import '@/filters';
 import '@/directives';
 import Notify from '@mixins/notify';
@@ -55,7 +55,7 @@ setLanguage()
       data.en = data.en || {};
       data.fr = data.fr || {};
       window.i18n = new VueI18n({
-        locale: store.getters.language,
+        locale: store.state.language,
         messages: {
           en: Object.assign(data.en, elementUILocaleEN),
           fr: Object.assign(data.fr, elementUILocaleFR)
@@ -72,13 +72,21 @@ setLanguage()
       Vue.use(VeeValidate, {
         events: 'input',
         strict: false,
-        locale: store.getters.language,
+        locale: store.state.language,
         // modify the defaults for errors and fields
         // since ElementUI already has these properties injected
         errorBagName: 'verrors',
         fieldsBagName: 'vfields',
         dictionary: {
-          fr: veeLocaleFR
+          fr: _.merge(
+            veeLocaleFR,
+            {
+              // Override VeeValidate French translations.
+              messages: {
+                email: field => `Le champ ${field} doit être une adresse courriel valide.`
+              }
+            }
+          )
         },
         // Gives us the ability to inject validation in child components
         // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection

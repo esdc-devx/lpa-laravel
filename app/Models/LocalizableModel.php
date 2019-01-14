@@ -16,7 +16,7 @@ class LocalizableModel extends BaseModel
      *
      * @var boolean
      */
-    protected $hideLocaleSpecificAttributes = true;
+    protected $hideLocaleSpecificAttributes = false;
 
     /**
      * Whether or not to append translatable attributes to array.

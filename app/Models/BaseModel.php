@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\ListableModel;
 use Illuminate\Database\Eloquent\Model;
 
 class BaseModel extends Model
@@ -89,13 +90,13 @@ class BaseModel extends Model
         // Set flag which will be handled in the toArray() method.
         $this->formatListsOutput = true;
 
-        if (isset($this->relationships)) {
-            foreach ($this->relationships as $relationship) {
+        if (! empty($this->with)) {
+            foreach ($this->with as $relationship) {
                 $relatedModelClass = $this->{$relationship}()->getRelated();
 
                 // If relationship is an instance of the BaseModel class and was also loaded,
                 // call formatListsOutput() method recursively.
-                if (get_parent_class($relatedModelClass) === 'App\Models\BaseModel' && $this->relationLoaded($relationship)) {
+                if (get_parent_class($relatedModelClass) === BaseModel::class && $this->relationLoaded($relationship)) {
                     $this->{$relationship}->each(function ($instance) {
                         $instance->formatListsOutput();
                     });
@@ -117,12 +118,12 @@ class BaseModel extends Model
         $output = parent::toArray();
 
         // Check if lists should be re-formatted to return only ids.
-        if ($this->formatListsOutput && isset($this->relationships)) {
-            foreach ($this->relationships as $relationship) {
+        if ($this->formatListsOutput && ! empty($this->with)) {
+            foreach ($this->with as $relationship) {
                 $relatedModelClass = $this->{$relationship}()->getRelated();
 
                 // If relationship extends ListableModel, only return an array of ids.
-                if (get_parent_class($relatedModelClass) === 'App\Models\ListableModel') {
+                if (get_parent_class($relatedModelClass) === ListableModel::class) {
                     if ($attribute = &$output[snake_case($relationship)]) {
                         $attribute = collect($attribute)->pluck('id');
                     }

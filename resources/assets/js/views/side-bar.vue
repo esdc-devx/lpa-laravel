@@ -14,13 +14,13 @@
       :default-active="$route.fullPath"
       :collapse="isCollapsed"
       router>
-      <el-menu-item v-for="(item, index) in menu" :index="'/' + language + item.index" :class="item.classes" :key="index">
+      <el-menu-item v-for="(item, index) in menu" :index="`/${language}${item.index}`" :class="[item.classes, {'disabled': isMainLoading}]" :key="index">
         <i :class="item.icon" />
         <span slot="title">{{ item.text }}</span>
       </el-menu-item>
 
       <!-- Administration menu -->
-      <el-menu-item v-if="hasRole('admin')" :index="'/' + language + '/admin'">
+      <el-menu-item v-if="hasRole('admin')" :index="`/${language}/admin`" :class="{ 'disabled': isMainLoading }">
         <i class="el-icon-lpa-settings" />
         <span slot="title">{{ this.trans('base.navigation.administration') }}</span>
       </el-menu-item>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapState, mapGetters } from 'vuex';
 
   import Config from '@/config.js';
   import BuildInfo from '@/version';
@@ -43,8 +43,11 @@
     mixins: [ MenuUtils ],
 
     computed: {
+      ...mapState([
+        'language',
+        'isMainLoading'
+      ]),
       ...mapGetters({
-        language: 'language',
         hasRole: 'users/hasRole'
       }),
 

@@ -14,6 +14,11 @@ class PlannedProduct extends BaseModel
         'quantity',
     ];
 
+    protected $with = [
+        'type',
+        'subType',
+    ];
+
     public $timestamps = false;
 
     public function type()

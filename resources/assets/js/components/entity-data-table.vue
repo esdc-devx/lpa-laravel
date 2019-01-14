@@ -35,18 +35,10 @@
           </el-tag>
         </template>
         <template v-else-if="attr === 'created_at'">
-          <span>{{ scope.row.created_at }}</span>
-          <template v-if="scope.row.created_by">
-            <br>
-            <span>{{ scope.row.created_by }}</span>
-          </template>
+          <span v-audit:created="scope.row"></span>
         </template>
         <template v-else-if="attr === 'updated_at'">
-          <span>{{ scope.row.updated_at }}</span>
-          <template v-if="scope.row.updated_by">
-            <br>
-            <span>{{ scope.row.updated_by }}</span>
-          </template>
+          <span v-audit:updated="scope.row"></span>
         </template>
         <span v-else>{{ scope.row[attr] }}</span>
       </template>
@@ -56,7 +48,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions, mapMutations } from 'vuex';
+  import { mapActions, mapMutations } from 'vuex';
 
   import Constants from '@/constants.js';
   import EventBus from '@/event-bus.js';
@@ -71,10 +63,6 @@
       },
       attributes: {
         type: Object,
-        required: true
-      },
-      entityType: {
-        type: String,
         required: true
       }
     },
@@ -95,10 +83,6 @@
     },
 
     computed: {
-      ...mapGetters([
-        'language'
-      ]),
-
       /**
        * Gets all the root keys of the attributes as sorted props
        * @return { Array }
@@ -205,10 +189,6 @@
     },
 
     methods: {
-      ...mapActions([
-        'confirmBeforeLanguageChange'
-      ]),
-
       ...mapMutations([
         'addFilteredDataTable',
         'deleteFilteredDataTable'

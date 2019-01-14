@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapMutations } from 'vuex';
   import EventBus from '@/event-bus';
 
   import TopBar from '@views/top-bar.vue';
@@ -40,13 +40,13 @@
     components: { TopBar, SideBar, Breadcrumb, MainContent },
 
     computed: {
-      ...mapGetters([
+      ...mapState([
         'isMainLoading'
       ])
     },
 
     methods: {
-      ...mapActions([
+      ...mapMutations([
         'hideAppLoading'
       ])
     },

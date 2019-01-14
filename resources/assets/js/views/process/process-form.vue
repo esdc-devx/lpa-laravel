@@ -1,5 +1,5 @@
 <template>
-  <div class="project-process-form content">
+  <div class="process-form content">
     <el-row>
       <el-col>
         <info-box>
@@ -8,7 +8,7 @@
             <dd><span :class="'state ' + viewingFormInfo.state.name_key">{{ viewingFormInfo.state.name }}</span></dd>
           </dl>
           <dl>
-            <dt>{{ $tc('entities.general.assigned_organizational_units') }}</dt>
+            <dt>{{ $tc('entities.form.assigned_organizational_units') }}</dt>
             <dd>{{ viewingFormInfo.organizational_unit ? viewingFormInfo.organizational_unit.name : trans('entities.general.none') }}</dd>
           </dl>
           <dl>
@@ -21,7 +21,7 @@
               }}
               <el-button-wrap
                 v-if="viewingFormInfo.current_editor && hasRole('admin')"
-                :disabled="!permissions.canReleaseForm"
+                :disabled="!canReleaseForm"
                 @click.native="onReleaseForm"
                 :tooltip="trans('components.tooltip.release_form')"
                 class="release-form"
@@ -33,8 +33,7 @@
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_by.name : trans('entities.general.none') }}</dd>
-            <dd>{{ viewingFormInfo.updated_by ? viewingFormInfo.updated_at : '' }}</dd>
+            <dd v-audit:updated="viewingFormInfo"></dd>
           </dl>
         </info-box>
       </el-col>
@@ -97,9 +96,9 @@
                 </el-button>
               </div>
               <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
-                <el-button :disabled="!isFormDirty" @click="onCancel" size="mini">{{ trans('base.actions.cancel') }}</el-button>
+                <el-button :disabled="!isFormDirty" @click="onCancel" :loading="isCancelling" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
-                <el-button :disabled="!permissions.canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
+                <el-button :disabled="!canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
               </div>
             </el-footer>
           </div>
@@ -111,7 +110,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapState, mapGetters, mapActions } from 'vuex';
+  import { mapGetters, mapActions } from 'vuex';
   import EventBus from '@/event-bus.js';
 
   import HttpStatusCodes from '@axios/http-status-codes';
@@ -126,28 +125,27 @@
 
   import FormUtils from '@mixins/form/utils';
 
-  import ProcessAPI from '@api/processes';
-
-  const namespace = 'projects';
+  import Process from '@/store/models/Process';
+  import ProcessInstanceForm from '@/store/models/Process-Instance-Form';
 
   const loadData = async function ({ to, hasToLoadEntity = true } = {}) {
-    const { projectId, processId, formId } = to ? to.params : this;
+    const { entityName, entityId, processId, formId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadProject`, projectId),
-      store.dispatch('processes/loadInstance', processId),
-      store.dispatch('processes/loadCanEditForm', formId),
-      store.dispatch('processes/loadCanClaimForm', formId),
-      store.dispatch('processes/loadCanUnclaimForm', formId),
-      store.dispatch('processes/loadCanSubmitForm', formId),
-      store.dispatch('processes/loadCanReleaseForm', formId)
+      store.dispatch(`entities/${entityName}/load`, entityId),
+      store.dispatch('entities/processes/loadInstance', processId),
+      store.dispatch('authorizations/forms/loadCanEditForm', formId),
+      store.dispatch('authorizations/forms/loadCanClaimForm', formId),
+      store.dispatch('authorizations/forms/loadCanUnclaimForm', formId),
+      store.dispatch('authorizations/forms/loadCanSubmitForm', formId),
+      store.dispatch('authorizations/forms/loadCanReleaseForm', formId)
     );
     if (hasToLoadEntity) {
-      requests.push(store.dispatch('processes/loadInstanceForm', formId));
+      requests.push(store.dispatch('entities/forms/loadInstanceForm', formId));
     }
 
     // Exception handled by interceptor
@@ -161,7 +159,7 @@
   };
 
   export default {
-    name: 'project-process-form',
+    name: 'process-form',
 
     extends: Page,
 
@@ -173,31 +171,51 @@
       'TopBar:beforeLogout': 'beforeLogout'
     },
 
+    props: {
+      entityName: {
+        type: String,
+        required: true
+      },
+      entityId: {
+        type: String,
+        required: true
+      },
+      processId: {
+        type: String,
+        required: true
+      },
+      formId: {
+        type: String,
+        required: true
+      }
+    },
+
     data() {
       return {
-        projectId: null,
-        processId: null,
-        formId: null,
         options: {
           hasTabsToValidate: true
         },
         formData: {},
         activeIndex: '0',
+        formWasDirty: false,
         tabsLength: 0,
         formComponent: '',
-        isFormSubmitted: false
+        isCancelling: false
       }
     },
 
     computed: {
-      ...mapState('processes', [
-        'permissions',
-      ]),
+      viewingFormInfo() {
+        return ProcessInstanceForm.find(this.formId);
+      },
 
-      ...mapGetters({
-        viewingProcess: 'processes/viewing',
-        viewingFormInfo: 'processes/viewingFormInfo'
-      }),
+      canSubmitForm() {
+        return ProcessInstanceForm.find(this.formId).permissions.canSubmitForm;
+      },
+
+      canReleaseForm() {
+        return ProcessInstanceForm.find(this.formId).permissions.canReleaseForm;
+      },
 
       isClaimed: {
         get() {
@@ -207,14 +225,9 @@
         // update the value server side
         async set(val) {
           // claiming
-          // @fixme: should reload permissions (or at least canRelease)
           if (val) {
             try {
-              await this.refreshData();
-              await this.claimForm(this.formId);
-              if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-                await this.loadCanSubmitForm(this.formId);
-              }
+              this.handleClaim();
             } catch (e) {
               // Exception handled by interceptor
               if (!e.response) {
@@ -225,11 +238,10 @@
           } else if (this.shouldConfirmBeforeLeaving) {
             this.confirmLoseChanges()
               .then(() => {
-                this.discardChanges();
+                this.handleUnclaim();
               }).catch(() => false);
           } else {
-            // discard without confirming
-            this.discardChanges();
+            this.handleUnclaim();
           }
         }
       },
@@ -258,26 +270,22 @@
 
     watch: {
       isFormDirty: function () {
-        this.confirmBeforeLeaving(this.isFormDirty);
+        this.setShouldConfirmBeforeLeaving(this.isFormDirty);
       }
     },
 
     methods: {
-      ...mapActions({
-        loadProject: `${namespace}/loadProject`,
-        loadProcessInstance: 'processes/loadInstance',
-        loadProcessInstanceForm: 'processes/loadInstanceForm',
-        claimForm: 'processes/claimForm',
-        unclaimForm: 'processes/unclaimForm',
-        saveForm: 'processes/saveForm',
-        submitForm: 'processes/submitForm',
-        releaseForm: 'processes/releaseForm',
-        loadCanEditForm: 'processes/loadCanEditForm',
-        loadCanClaimForm: 'processes/loadCanClaimForm',
-        loadCanUnclaimForm: 'processes/loadCanUnclaimForm',
-        loadCanSubmitForm: 'processes/loadCanSubmitForm',
-        loadCanReleaseForm: 'processes/loadCanReleaseForm'
-      }),
+      ...mapActions('entities/forms', [
+        'claimForm',
+        'unclaimForm',
+        'saveForm',
+        'submitForm',
+        'releaseForm'
+      ]),
+
+      ...mapActions('authorizations/forms', [
+        'loadCanSubmitForm'
+      ]),
 
       prevTabIndex() {
         let index = parseInt(this.activeIndex, 10);
@@ -294,133 +302,26 @@
       },
 
       onCancel() {
+        this.isCancelling = true;
         this.confirmLoseChanges()
-          .then(() => {
-            this.discardChanges(false);
-          }).catch(() => false);
-      },
-
-      discardChanges(shouldUnclaim = true) {
-        this.$helpers.debounceAction(async () => {
-          let formWasDirty = false;
-
-          // if form is dirty, reset the form data
-          if (this.isFormDirty) {
-            formWasDirty = true;
-            // deep copy so that we don't alter the store's data
-            this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
-            EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-          }
-
-          this.$nextTick(() => {
-            // make childrens react on discarding changes
-            EventBus.$emit('FormEntity:discardChanges');
-            // make form section groups react and repopulate themselves
-            EventBus.$emit('FormEntity:resetFormSectionGroup');
+          .then(async () => {
+            // we cannot reloadData here
+            // since if we lost ownership the form will refresh
+            // and we won't be claiming the form anymore
+            this.refreshForm();
+            this.isCancelling = false;
+          }).catch(() => {
+            this.isCancelling = false;
           });
-
-          // remove ownership on form
-          try {
-            // No need to unclaim the form if it was submitted
-            // since the backend will automatically unclaim it.
-            if (!this.isFormSubmitted && shouldUnclaim) {
-              await this.unclaimForm(this.formId);
-            }
-
-            if (formWasDirty) {
-              this.notifyInfo({
-                message: this.trans('components.notice.message.changes_discarded')
-              });
-            }
-          } catch (e) {
-            // Exception handled by interceptor
-            if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-              // reload rights since we are potentially unsynced
-              await this.refreshData();
-            } else {
-              throw e;
-            }
-          }
-          finally {
-            // reset the fields states
-            // so that we get a pristine form
-            // but wait until dom is refreshed before resetting the fields state
-            this.$nextTick(() => {
-              this.resetFieldsState();
-              this.resetErrors();
-            });
-          }
-        });
       },
 
-      getCurrentEditorUsername() {
-        return !_.isEmpty(this.viewingFormInfo.current_editor) ? this.viewingFormInfo.current_editor.username : null;
-      },
-
-      onReleaseForm() {
-        this.confirmReleaseForm().then(async () => {
-          try {
-            await this.releaseForm({
-              formId: this.formId,
-              username: this.getCurrentEditorUsername()
-            });
-            this.notifySuccess({
-              message: this.trans('components.notice.message.form_released')
-            });
-            await this.refreshData();
-          } catch (e) {
-            // Exception handled by interceptor
-            if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-              await this.refreshData();
-            } else {
-              throw e;
-            }
-          }
-        }).catch(() => false);
-      },
-
-      async onSave() {
-        this.isSaving = true;
-        try {
-          await this.saveForm({ formId: this.formId, form: this.formData });
-          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
-          // reset the fields states
-          // so that we get a pristine form with the new values
-          this.resetFieldsState();
-          // make sure to not keep the current errors
-          // so that validated childrens gets a pristine state as well
-          this.resetErrors();
-          this.isSaving = false;
-          this.notifySuccess({
-            message: this.trans('components.notice.message.changes_saved')
-          });
-        } catch (e) {
-          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-            // @fixme: reload info (loadData)
-            this.discardChanges(true);
-            this.loadPermissions();
-            this.isSaving = false;
-          } else {
-            throw e;
-          }
-        }
-      },
-
-      onSubmit() {
-        this.confirmSubmitForm().then(() => {
-          this.submit(this.triggerSubmitForm);
-        }).catch(() => false);
-      },
-
-      async refreshData() {
-        // @fixme: reload info (loadData)
-        this.loadPermissions();
-        let formWasDirty = this.isFormDirty;
-        let oldUpdatedDate = this.viewingFormInfo.updated_at;
-        await this.loadProcessInstanceForm(this.formId);
-
-        // deep copy so that we don't alter the store's data
+      refreshForm() {
+        // keep a copy of current state
+        // so that we can compare later on if the data has changed
+        const formWasDirty = this.isFormDirty;
+        // affect the newly fetched info locally
         this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
+        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
         this.$nextTick(() => {
           // make childrens react on discarding changes
           EventBus.$emit('FormEntity:discardChanges');
@@ -434,12 +335,19 @@
         });
 
         if (formWasDirty) {
-          // when user was kicked out of a form
           this.notifyInfo({
             message: this.trans('components.notice.message.changes_discarded')
           });
         }
-        // check if updated data was fetched
+      },
+
+      async reloadData() {
+        const oldUpdatedDate = this.viewingFormInfo.updated_at;
+        await loadData.apply(this);
+
+        this.refreshForm();
+
+        // check if there was new data that was fetched
         if (oldUpdatedDate !== this.viewingFormInfo.updated_at) {
           this.notifyInfo({
             message: this.trans('components.notice.message.data_refreshed')
@@ -447,23 +355,119 @@
         }
       },
 
-      async triggerSubmitForm() {
+      getCurrentEditorUsername() {
+        return !_.isEmpty(this.viewingFormInfo.current_editor) ? this.viewingFormInfo.current_editor.username : null;
+      },
+
+      onReleaseForm() {
+        this.confirmReleaseForm().then(async () => {
+          try {
+            await this.releaseForm({
+              id: this.formId,
+              username: this.getCurrentEditorUsername()
+            });
+            this.notifySuccess({
+              message: this.trans('components.notice.message.form_released')
+            });
+          } catch (e) {
+            // Exception handled by interceptor
+            if (!e.response) {
+              throw e;
+            }
+          } finally {
+            this.reloadData();
+          }
+        }).catch(() => false);
+      },
+
+      async onSave() {
+        this.isSaving = true;
         try {
-          await this.submitForm({ formId: this.formId, form: this.formData });
+          await this.saveForm({ id: this.formId, form: this.formData });
+          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+          // reset the fields states
+          // so that we get a pristine form with the new values
+          this.resetFieldsState();
+          // make sure to not keep the current errors
+          // so that validated childrens gets a pristine state as well
+          this.resetErrors();
+          this.isSaving = false;
+          this.notifySuccess({
+            message: this.trans('components.notice.message.changes_saved')
+          });
+        } catch (e) {
+          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            await this.reloadData();
+          } else {
+            throw e;
+          }
+        } finally {
+          this.isSaving = false;
+        }
+      },
+
+      onSubmit() {
+        this.confirmSubmitForm().then(() => {
+          this.submit(this.handleSubmit);
+        }).catch(() => false);
+      },
+
+      async handleSubmit() {
+        try {
+          await this.submitForm({ id: this.formId, form: this.formData });
           EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
           this.notifySuccess({
             message: this.trans('components.notice.message.form_submitted')
           });
-          // sets the flag so that we do not unclaim the form after submitting it
-          // since the backend will automatically unclaim it.
-          this.isFormSubmitted = true;
-          this.goToParentPage();
+          this.$nextTick(() => {
+            // reset the fields states
+            // so that we get a pristine form
+            // but wait until dom is refreshed before resetting the fields state
+            this.resetFieldsState();
+            this.goToParentPage();
+          });
         } catch (e) {
           if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
-            // @fixme: reload info (loadData)
-            this.discardChanges(true);
-            this.loadPermissions();
+            this.reloadData();
           } else {
+            throw e;
+          }
+        }
+      },
+
+      async handleClaim() {
+        try {
+          await this.claimForm(this.formId);
+          this.reloadData();
+        } catch (e) {
+          // Exception handled by interceptor
+          // we tried to claim a form that is already owned by someone else, -> refresh data
+          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN) {
+            this.reloadData();
+          } else if (!e.response) {
+            throw e;
+          }
+        }
+      },
+
+      /**
+       * @param { Boolean } isNavigating - Whether or not to refresh data
+       */
+      async handleUnclaim(isNavigating = false) {
+        try {
+          if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
+            await this.unclaimForm(this.formId);
+          }
+          if (!isNavigating && this.isFormDirty) {
+            this.refreshForm();
+          }
+        } catch (e) {
+          // Exception handled by interceptor
+          // we tried to unclaim a form that we no longer own, -> refresh data
+          // @note: if we are in a case that isNavigating is false, do not discard and refresh the data
+          if (e.response && e.response.status === HttpStatusCodes.FORBIDDEN && !isNavigating) {
+            this.reloadData();
+          } else if (!e.response) {
             throw e;
           }
         }
@@ -480,25 +484,10 @@
         });
       },
 
-      // @removeme: this should not exist
-      // as the logic to loadpermissions is done in the loadData
-      loadPermissions() {
-        let requests = [];
-        requests.push(
-          this.loadCanEditForm(this.formId),
-          this.loadCanClaimForm(this.formId),
-          this.loadCanUnclaimForm(this.formId),
-          this.loadCanReleaseForm(this.formId)
-        );
-        if (this.isCurrentUser(this.viewingFormInfo.current_editor)) {
-          requests.push(this.loadCanSubmitForm(this.formId));
-        }
-        axios.all(requests);
-      },
-
       beforeLogout(callback) {
-        this.confirmLoseChanges().then(() => {
-          this.discardChanges();
+        this.confirmLoseChanges().then(async () => {
+          // load only the form info so that we know if we have to unclaim the form or not
+          await this.handleUnclaim(true);
           callback();
         }).catch(() => false);
       }
@@ -517,35 +506,22 @@
       next();
     },
 
-    async beforeRouteLeave(to, from, next) {
-      if (this.shouldConfirmBeforeLeaving && !this.isFormSubmitted) {
+    beforeRouteLeave(to, from, next) {
+      const leave = async () => {
+        this.destroyEvents();
+        await this.handleUnclaim(true);
+        next();
+      };
+      if (this.shouldConfirmBeforeLeaving) {
         this.confirmLoseChanges().then(() => {
-          this.destroyEvents();
-          this.discardChanges();
-          next();
+          leave();
         }).catch(() => false);
       } else {
-        this.destroyEvents();
-        // if user is currently claiming, remove claim
-        if (this.isClaimed) {
-          // just change the value here and let the reactivity take care
-          // of what it should do if user is no longer the editor.
-          this.isClaimed = false;
-        }
-        // this make sure to reset the flag "shouldConfirmBeforeLeaving"
-        this.$nextTick(() => {
-          this.resetFieldsState();
-          this.resetErrors();
-        });
-        next();
+        leave();
       }
     },
 
     created() {
-      // store the reference to the current form id
-      this.projectId = this.$route.params.projectId;
-      this.processId = this.$route.params.processId;
-      this.formId = this.$route.params.formId;
       // deep copy so that we don't alter the store's data
       this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
       this.formComponent = this.viewingFormInfo.definition.name_key;
@@ -559,7 +535,7 @@
   @import '~@sass/abstracts/mixins/helpers';
   @import '~@sass/base/helpers';
 
-  .project-process-form {
+  .process-form {
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;

@@ -1,32 +1,30 @@
 <template>
-  <div class="project-process content">
+  <div class="process content">
     <el-row>
       <el-col>
         <info-box>
           <dl>
             <dt>{{ trans('entities.general.status') }}</dt>
-            <dd><span :class="'state ' + viewingProcess.state.name_key">{{ viewingProcess.state.name }}</span></dd>
+            <dd><span :class="'state ' + viewing.state.name_key">{{ viewing.state.name }}</span></dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.started') }}</dt>
-            <dd>{{ viewingProcess.created_by.name }}</dd>
-            <dd>{{ viewingProcess.created_at }}</dd>
+            <dd v-audit:created="viewing"></dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd>{{ viewingProcess.updated_by.name }}</dd>
-            <dd>{{ viewingProcess.updated_at }}</dd>
+            <dd v-audit:updated="viewing"></dd>
           </dl>
           <dl>
             <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ viewingProcess.engine_process_instance_id }}</dd>
+            <dd>{{ viewing.engine_process_instance_id }}</dd>
           </dl>
           <div class="controls">
             <el-button
               size="small"
               type="danger"
               v-if="hasRole('admin')"
-              :disabled="!permissions.canCancel"
+              :disabled="!canCancel"
               @click="onCancel"
               plain>
               {{ trans('components.notice.title.cancel_process') }} <i class="el-icon-close"></i>
@@ -40,7 +38,7 @@
       <el-col>
         <el-card shadow="never" class="process-steps">
           <div slot="header">
-            <h3>{{ viewingProcess.definition.name }}</h3>
+            <h3>{{ viewing.definition.name }}</h3>
           </div>
           <el-steps :active="activeStep" finish-status="finish" align-center>
             <el-step
@@ -92,7 +90,7 @@
               </template>
             </el-table-column>
             <el-table-column
-              :label="$tc('entities.general.assigned_organizational_units')"
+              :label="$tc('entities.form.assigned_organizational_units')"
               >
               <template slot-scope="scope">
                 <span>{{ scope.row.organizational_unit ? scope.row.organizational_unit.name : trans('entities.general.none') }}</span>
@@ -107,9 +105,24 @@
             <el-table-column
               :label="trans('entities.general.updated')">
               <template slot-scope="scope">
-                <span>{{ scope.row.updated_by ? scope.row.updated_by.name : trans('entities.general.none') }}</span>
-                <br>
-                <span>{{ scope.row.updated_at }}</span>
+                <span v-audit:updated="scope.row"></span>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-lpa-info-sheet"></i> <b>{{ $tc('entities.general.information_sheet', 2) }}</b></span>
+           <el-table
+            class="information-sheets-table"
+            :data="informationSheets"
+            stripe
+          >
+            <el-table-column
+              :label="trans('entities.general.name')"
+            >
+              <template slot-scope="scope">
+                <a :href="'/' + language + '/information-sheets/' + scope.row.id" target="_blank">{{ scope.row.definition.name }}</a>
               </template>
             </el-table-column>
           </el-table>
@@ -121,24 +134,28 @@
 
 <script>
   import _ from 'lodash';
-  import { mapState, mapGetters, mapActions, mapMutations } from 'vuex';
+  import { mapGetters, mapActions, mapMutations } from 'vuex';
+
+  import HttpStatusCodes from '@axios/http-status-codes';
 
   import Page from '@components/page';
   import InfoBox from '@components/info-box.vue';
 
-  const namespace = 'processes';
+  import Process from '@/store/models/Process';
+  import InformationSheet from '@/store/models/Information-Sheet';
 
   const loadData = async function ({ to } = {}) {
-    const { projectId, processId } = to ? to.params : this;
+    const { entityName, entityId, processId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
 
     let requests = [];
     requests.push(
-      store.dispatch('projects/loadProject', projectId),
-      store.dispatch(`${namespace}/loadInstance`, processId),
-      store.dispatch(`${namespace}/loadCanCancel`, processId)
+      store.dispatch(`entities/${entityName}/load`, entityId),
+      store.dispatch('entities/processes/loadInstance', processId),
+      store.dispatch('entities/informationSheets/loadAll', { entityType: 'process-instance', entityId: processId }),
+      store.dispatch('authorizations/processes/loadCanCancel', processId)
     );
 
     // Exception handled by interceptor
@@ -152,55 +169,71 @@
   };
 
   export default {
-    name: 'project-process',
+    name: 'process',
 
     extends: Page,
 
     components: { InfoBox },
 
-    data() {
-      return {
-        projectId: null,
-        processId: null
+    props: {
+      entityName: {
+        type: String,
+        required: true
+      },
+      entityId: {
+        type: String,
+        required: true
+      },
+      processId: {
+        type: String,
+        required: true
       }
     },
 
     computed: {
-      ...mapState(`${namespace}`, [
-        'permissions'
-      ]),
-      ...mapGetters({
-        viewingProcess: `${namespace}/viewing`,
-        activeStepStore: `${namespace}/activeStep`
+      ...mapGetters('entities/processes', {
+        activeStepStore: 'activeStep'
       }),
 
+      viewing() {
+        return Process.find(this.processId);
+      },
+
+      canCancel() {
+        return this.viewing.permissions.canCancel;
+      },
+
       steps() {
-        return _.sortBy(this.viewingProcess.steps, 'definition.display_sequence');
+        return _.sortBy(this.viewing.steps, 'definition.display_sequence');
       },
 
       forms() {
-        return _.sortBy(this.viewingProcess.steps[this.activeStep].forms, 'definition.display_sequence');
+        return _.sortBy(this.viewing.steps[this.activeStep].forms, 'definition.display_sequence');
       },
 
       activeStep: {
         get() {
-          return this.activeStepStore;
+          return this.activeStepStore(this.processId);
         },
         set(val) {
           this.setActiveStep(val);
         }
+      },
+
+      informationSheets() {
+        return InformationSheet.query()
+          .where('entity_id', _.parseInt(this.processId))
+          .where('entity_type', 'process-instance')
+          .get();
       }
     },
 
     methods: {
-      ...mapActions({
-        loadProject: 'projects/loadProject',
-        loadProcessInstance: `${namespace}/loadInstance`,
-        cancelProcessInstance: `${namespace}/cancelInstance`
-      }),
+      ...mapActions('entities/processes', [
+        'cancelInstance'
+      ]),
 
-      ...mapMutations(`${namespace}`, [
-        'setPermission',
+      ...mapMutations('entities/processes', [
         'setActiveStep'
       ]),
 
@@ -219,19 +252,17 @@
       onCancel() {
         this.confirmCancelProcess().then(async () => {
           try {
-            let response = await this.cancelProcessInstance(this.processId);
+            await this.cancelInstance(this.processId);
             this.notifySuccess({
               message: this.trans('components.notice.message.process_cancelled')
             });
             await loadData.apply(this);
-            this.setPermission({
-              name: 'canCancel',
-              isAllowed: false
-            });
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {
               throw e;
+            } else if (e.response.status === HttpStatusCodes.FORBIDDEN) {
+              await loadData.apply(this);
             }
           }
         }).catch(() => false);
@@ -249,11 +280,6 @@
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
       next();
-    },
-
-    created() {
-      this.projectId = this.$route.params.projectId;
-      this.processId = this.$route.params.processId;
     }
   };
 </script>
@@ -263,36 +289,10 @@
   @import '~@sass/abstracts/mixins/helpers';
   @import '~@sass/base/helpers';
 
-  .project-process {
+  .process {
     margin: 0 auto;
 
-    .info-box {
-      h2 {
-        margin: 0;
-        display: inline-block;
-      }
-      dl, .controls {
-        flex-basis: 20%;
-        max-width: 20%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
-      }
-      .controls {
-        margin-bottom: 0;
-        align-items: flex-end;
-        justify-content: center;
-        .el-button {
-          font-weight: bold;
-          i {
-            font-weight: bold;
-            margin-left: 10px;
-          }
-        }
-        .el-button + .el-button {
-          margin-left: 5px;
-        }
-      }
-    }
-
-    .process-steps {
+    &-steps {
       .el-card__header h3 {
         text-align: center;
         margin: 0;
@@ -393,7 +393,7 @@
       }
     }
 
-    .process-forms-table {
+    &-forms-table {
       .el-table__row {
         cursor: pointer;
       }
@@ -410,6 +410,38 @@
         }
         i {
           @include size(20px);
+        }
+      }
+    }
+
+    .information-sheets-table {
+      .el-table__row {
+        cursor: default;
+      }
+    }
+
+    .info-box {
+      h2 {
+        margin: 0;
+        display: inline-block;
+      }
+      dl, .controls {
+        flex-basis: 20%;
+        max-width: 20%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
+      }
+      .controls {
+        margin-bottom: 0;
+        align-items: flex-end;
+        justify-content: center;
+        .el-button {
+          font-weight: bold;
+          i {
+            font-weight: bold;
+            margin-left: 10px;
+          }
+        }
+        .el-button + .el-button {
+          margin-left: 5px;
         }
       }
     }

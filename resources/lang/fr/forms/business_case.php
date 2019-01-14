@@ -57,9 +57,9 @@ return [
     ],
     'is_required_training' => [
         'label'       => 'Formation obligatoire / Fait partie des exigences d’une attestation',
-        'instruction' => 'Veuillez indiquer si les produits d’apprentissage inclus dans le projet sont considérés comme étant une « formation obligatoire » et /ou « faisant partie des exigences d’une attestation ».',
-        'description' => 'Les produits d’apprentissage inclus dans le projet sont considérés comme étant une formation « obligatoire » ou « faisant partie des exigences d’une attestation ».',
-        'help'        => 'La définition de « formation obligatoire » se retrouve dans la politique du Conseil du trésor en matière d’apprentissage, de formation et de perfectionnement.',
+        'instruction' => 'Veuillez indiquer si les produits d’apprentissage inclus dans le projet sont considérés comme étant une «&nbsp;formation obligatoire&nbsp;» et /ou «&nbsp;faisant partie des exigences d’une attestation&nbsp;».',
+        'description' => 'Les produits d’apprentissage inclus dans le projet sont considérés comme étant une «&nbsp;formation obligatoire&nbsp;» ou «&nbsp;faisant partie des exigences d’une attestation&nbsp;».',
+        'help'        => 'La définition de «&nbsp;formation obligatoire&nbsp;» se retrouve dans la politique du Conseil du trésor en matière d’apprentissage, de formation et de perfectionnement.',
     ],
     'expected_annual_participant_number' => [
         'label'       => 'Nombre prévu de participants (par année)',
@@ -111,7 +111,7 @@ return [
     ],
     'other_operational_considerations' => [
         'label'       => 'Autres considérations opérationnelles',
-        'instruction' => 'Is there an additional impact on costs or resources?',
+        'instruction' => 'Y a-t-il un/des impacts additionnels sur les coûts et les ressources?',
         'description' => 'Tout autre considération opérationnelle pertinente concernant les coûts ou les ressources.',
     ],
     'risks' => [

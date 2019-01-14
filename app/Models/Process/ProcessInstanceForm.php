@@ -16,6 +16,8 @@ class ProcessInstanceForm extends BaseModel
     use UsesUserAudit;
 
     protected $fillable = [
+        'entity_type',
+        'entity_id',
         'process_form_id',
         'process_instance_step_id',
         'state_id',
@@ -24,6 +26,15 @@ class ProcessInstanceForm extends BaseModel
         'engine_task_id',
         'created_by',
         'updated_by',
+    ];
+
+    protected $with = [
+        'createdBy',
+        'currentEditor',
+        'definition',
+        'organizationalUnit',
+        'state',
+        'updatedBy',
     ];
 
     public function definition()
@@ -53,10 +64,7 @@ class ProcessInstanceForm extends BaseModel
 
     public function formData()
     {
-        // Dynamically resolve and load form data class based on form definition.
-        // (i.e. BusinessCase, PlannedProductList, GateOneApproval etc.)
-        $entity = entity($this->definition->name_key);
-        return $this->hasOne(get_class($entity))->with($entity->relationships);
+        return $this->morphTo('formData', 'entity_type', 'entity_id');
     }
 
     /**

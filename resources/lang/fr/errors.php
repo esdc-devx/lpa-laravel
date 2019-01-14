@@ -16,5 +16,6 @@ return [
         'invalid_state'               => 'Le formulaire ne peut pas être modifié étant donné son état actuel.',
         'invalid_organizational_unit' => 'Le formulaire ne peut être modifié que par un membre de l\'unité organisationnelle assignée.',
         'invalid_process_state'       => 'Le formulaire ne peut pas être modifié car le processus n\'est plus en cours.',
+        'unclaim'                     => 'Vous n\'êtes plus l\'éditeur de ce formulaire.',
     ],
 ];

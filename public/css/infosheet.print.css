@@ -1,0 +1,10 @@
+@page {
+    size: auto;
+    margin-top: 15mm;
+}
+.el-card__header .toggle {
+    display: none;
+}
+.el-card.hide {
+    display: none;
+}

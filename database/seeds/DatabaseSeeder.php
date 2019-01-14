@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
             UserTableSeeder::class,
             OrganizationalUnitTableSeeder::class,
             StatesTableSeeder::class,
-            ProcessProjectApprovalSeeder::class,
             RequestOriginTableSeeder::class,
             SchoolPriorityTableSeeder::class,
             CommunitiesTableSeeder::class,
@@ -28,6 +27,8 @@ class DatabaseSeeder extends Seeder
             RiskTypeTableSeeder::class,
             ProcessFormDecisionTableSeeder::class,
             LearningProductTypeTableSeeder::class,
+            InformationSheetDefinitionSeeder::class,
+            ProcessProjectApprovalSeeder::class,
         ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

@@ -26,8 +26,6 @@
 <script>
   import { mapActions } from 'vuex';
 
-  const namespace = 'users';
-
   export default {
     name: 'user-search',
 
@@ -75,7 +73,7 @@
     },
 
     methods: {
-      ...mapActions(`${namespace}`, [
+      ...mapActions('users', [
         'search'
       ]),
 

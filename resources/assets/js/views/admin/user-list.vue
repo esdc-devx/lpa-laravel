@@ -4,8 +4,7 @@
       <el-button @click="goToPage('admin-user-create')">{{ trans('pages.user_list.create_user') }}</el-button>
     </div>
     <entity-data-table
-      entityType="user"
-      :data="users"
+      :data="all"
       :attributes="dataTableAttributes.users"
       @rowClick="onUserRowClick"
     />
@@ -13,12 +12,10 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
+  import { mapState } from 'vuex';
 
   import Page from '@components/page';
   import EntityDataTable from '@components/entity-data-table.vue';
-
-  const namespace = 'users';
 
   const loadData = async () => {
     // we need to access the store directly
@@ -27,7 +24,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadUsers`)
+      store.dispatch('users/loadAll')
     );
 
     // Exception handled by interceptor
@@ -48,9 +45,9 @@
     components: { EntityDataTable },
 
     computed: {
-      ...mapGetters(`${namespace}`, {
-        users: 'all'
-      }),
+      ...mapState('users', [
+        'all'
+      ]),
 
       dataTableAttributes: {
         get() {
@@ -64,7 +61,7 @@
                 minWidth: 20
               },
               email: {
-                label: this.trans('entities.user.email'),
+                label: this.trans('entities.general.email'),
                 minWidth: 20
               },
               organizational_units: {

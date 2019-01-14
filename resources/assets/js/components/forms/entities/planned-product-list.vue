@@ -20,25 +20,17 @@
       </span>
       <h2>{{ trans('forms.planned_product_list.tabs.comments') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.planned_product_list.comments.label')"
-        prop="comments">
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.planned_product_list.comments.description')"
-            :help="trans('forms.planned_product_list.comments.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.planned_product_list.comments.instruction') }}
-          </span>
-        </span>
+        prop="comments"
+        contextPath="forms.planned_product_list.comments"
+      >
         <input-wrap
           v-model="form.comments"
           name="comments"
           v-validate="''"
           :data-vv-as="trans('forms.planned_product_list.comments.label')"
           maxlength="2500"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -69,8 +61,12 @@
     inject: ['$validator'],
 
     props: {
-      formData: Object,
-      errorTabs: Array
+      formData: {
+        type: Object
+      },
+      errorTabs: {
+        type: Array
+      }
     },
 
     computed: {

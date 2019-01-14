@@ -42,7 +42,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
@@ -52,17 +52,17 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  const namespace = 'projects';
+  import Project from '@/store/models/Project';
 
   const loadData = async function ({ to } = {}) {
-    const { projectId } = to ? to.params : this;
+    const { entityId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadProjectEditInfo`, projectId)
+      store.dispatch('entities/projects/loadEditInfo', entityId)
     );
 
     // Exception handled by interceptor
@@ -86,11 +86,21 @@
 
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 
+    props: {
+      entityId: {
+        type: String,
+        required: true
+      }
+    },
+
     computed: {
-      ...mapGetters({
-        viewingProject: `${namespace}/viewing`,
-        organizationalUnits: `${namespace}/organizationalUnits`
-      })
+      ...mapState('entities/projects', [
+        'organizationalUnits'
+      ]),
+
+      viewing() {
+        return Project.find(this.entityId);
+      }
     },
 
     data() {
@@ -102,19 +112,18 @@
     },
 
     methods: {
-      ...mapActions({
-        updateProject: `${namespace}/update`,
-        loadProjectEditInfo: `${namespace}/loadProjectEditInfo`
-      }),
+      ...mapActions('entities/projects', [
+        '$$update'
+      ]),
 
       onSubmit() {
-        this.submit(this.update);
+        this.submit(this.handleUpdate);
       },
 
-      async update() {
+      async handleUpdate() {
         // @note: no try-catch required here
         // since we already do it in the form utils
-        await this.updateProject({
+        await this.$$update({
           id: this.form.project.id,
           name: this.form.project.name,
           organizational_unit: this.form.project.organizational_unit
@@ -136,8 +145,8 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('projects/loadCanEdit', to.params.projectId);
-      if (store.state.projects.permissions.canEdit) {
+      await store.dispatch('authorizations/projects/loadCanEdit', to.params.entityId);
+      if (Project.find(to.params.entityId).permissions.canEdit) {
         await loadData({ to });
         next();
       } else {
@@ -147,8 +156,8 @@
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
-      await this.$store.dispatch('projects/loadCanEdit', to.params.projectId);
-      if (this.$store.state.projects.permissions.canEdit) {
+      await this.$store.dispatch('authorizations/projects/loadCanEdit', to.params.entityId);
+      if (Project.find(to.params.entityId).permissions.canEdit) {
         await this.onLanguageUpdate();
         next();
       } else {
@@ -157,12 +166,10 @@
     },
 
      created() {
-      // store the reference to the current form id
-      this.projectId = this.$route.params.projectId;
-      this.form.project = _.cloneDeep(this.viewingProject);
+      this.form.project = _.cloneDeep(this.viewing);
       // replace our internal organizational_units with only the ids
       // since ElementUI only need ids to populate the selected options
-      this.form.project.organizational_unit = this.viewingProject.organizational_unit.id;
+      this.form.project.organizational_unit = this.viewing.organizational_unit.id;
     }
   };
 </script>

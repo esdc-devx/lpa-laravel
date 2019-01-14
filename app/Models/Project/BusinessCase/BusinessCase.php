@@ -21,8 +21,7 @@ class BusinessCase extends ProcessInstanceFormDataModel
         'comments',
     ];
 
-    // These relationships will be loaded when retrieving the model.
-    public $relationships = [
+    protected $with = [
         // Multiple choice lists.
         'requestOrigins',
         'schoolPriorities',

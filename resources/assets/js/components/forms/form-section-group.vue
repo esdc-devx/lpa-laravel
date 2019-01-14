@@ -4,10 +4,10 @@
       {{ $tc(`forms.${entityFormKey}.form_section_groups.${entitySectionKey}`, 2) }}
       <div class="header-controls">
         <el-button type="text" size="mini" @click="expandAll = true">
-          {{ trans('entities.general.expand_all') }}
+          {{ trans('base.actions.expand_all') }}
         </el-button>
         <el-button type="text" size="mini" @click="expandAll = false">
-          {{ trans('entities.general.collapse_all') }}
+          {{ trans('base.actions.collapse_all') }}
         </el-button>
       </div>
     </h2>

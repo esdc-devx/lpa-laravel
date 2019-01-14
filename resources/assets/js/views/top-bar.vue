@@ -1,7 +1,16 @@
 <template>
   <el-row class="top-bar" type="flex">
     <el-col :span="8" class="app-title-col">
-      <div><h1><router-link :to="'/' + language">{{ trans('base.navigation.app_name') }}</router-link></h1></div>
+      <div>
+        <h1>
+          <router-link
+            :to="'/' + language"
+            :class="{ 'disabled': isMainLoading }"
+          >
+            {{ trans('base.navigation.app_name') }}
+          </router-link>
+        </h1>
+      </div>
     </el-col>
     <el-col :span="16" class="nav-col">
       <nav>
@@ -13,19 +22,52 @@
           active-text-color="#fff"
           class="top-menu"
           mode="horizontal"
-          router>
-          <el-submenu index="user-menu" popper-class="sub-menu">
+          router
+        >
+          <el-submenu
+            index="user-menu"
+            popper-class="sub-menu"
+            :class="{ 'disabled': isMainLoading }"
+          >
             <template slot="title">{{ user.name }}</template>
-            <el-menu-item index="" @click="onLogout()">{{ trans('base.navigation.logout') }}</el-menu-item>
+            <el-menu-item index="" @click="onLogout()">
+              {{ trans('base.navigation.logout') }}
+            </el-menu-item>
           </el-submenu>
-          <el-submenu index="help-menu" popper-class="sub-menu">
+          <el-submenu
+            index="help-menu"
+            popper-class="sub-menu"
+            :class="{ 'disabled': isMainLoading }"
+          >
             <template slot="title">{{ trans('base.navigation.help') }}</template>
-            <el-menu-item index=""><a :href="trans('base.navigation.help_support_centre_url')" target="_blank">{{ trans('base.navigation.help_support_centre') }}</a></el-menu-item>
-            <el-menu-item index=""><a :href="trans('base.navigation.help_getting_started_url')" target="_blank">{{ trans('base.navigation.help_getting_started') }}</a></el-menu-item>
-            <el-menu-item index=""><a :href="trans('base.navigation.help_projects_url')" target="_blank">{{ trans('base.navigation.help_projects') }}</a></el-menu-item>
-            <el-menu-item index=""><a :href="trans('base.navigation.help_learning_products_url')" target="_blank">{{ trans('base.navigation.help_learning_products') }}</a></el-menu-item>
+            <el-menu-item index="">
+              <a :href="trans('base.navigation.help_support_centre_url')" target="_blank">
+                {{ trans('base.navigation.help_support_centre') }}
+              </a>
+            </el-menu-item>
+            <el-menu-item index="">
+              <a :href="trans('base.navigation.help_getting_started_url')" target="_blank">
+                {{ trans('base.navigation.help_getting_started') }}
+              </a>
+            </el-menu-item>
+            <el-menu-item index="">
+              <a :href="trans('base.navigation.help_projects_url')" target="_blank">
+                {{ trans('base.navigation.help_projects') }}
+              </a>
+            </el-menu-item>
+            <el-menu-item index="">
+              <a :href="trans('base.navigation.help_learning_products_url')" target="_blank">
+                {{ trans('base.navigation.help_learning_products') }}
+              </a>
+            </el-menu-item>
           </el-submenu>
-          <el-menu-item index="" @click="setLanguage" :class="{ 'disabled': isMainLoading }">{{ trans('base.navigation.language_toggle') }}</el-menu-item>
+          <el-menu-item
+            index=""
+            @click="setLanguage"
+            :class="{ 'disabled': isMainLoading }"
+          >
+            {{ trans('base.navigation.language_toggle') }}
+          </el-menu-item>
         </el-menu>
       </nav>
     </el-col>
@@ -33,7 +75,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions, mapState } from 'vuex';
+  import { mapState, mapActions, mapMutations } from 'vuex';
 
   import EventBus from '@/event-bus';
   import Config from '@/config.js';
@@ -48,29 +90,17 @@
 
     computed: {
       ...mapState([
+        'language',
+        'isMainLoading',
         'shouldConfirmBeforeLeaving',
         'filteredDataTableList'
       ]),
-      ...mapGetters({
-        isMainLoading: 'isMainLoading',
-        language: 'language',
-        user: 'users/current'
+      ...mapState('users', {
+        user: 'current'
       })
     },
 
-    data() {
-      let currentLang = this.$store.getters.language;
-      let toggledLang = this.getSwitchedLang(currentLang);
-      return {
-        currentLang,
-        toggledLang
-      }
-    },
-
     watch: {
-      // cannot use arrow functions here
-      // as Vuejs will think that 'this' refers to the function
-      // instead of Vuejs instance
       $route: function (to) {
         // since this is a 3rd party library,
         // we do not know when it will update itself
@@ -79,19 +109,22 @@
           let menu = this.$refs.topMenu;
           this.setActiveIndex(to, menu);
         });
-      },
-
-      currentLang: function (lang) {
-        this.toggledLang = this.getSwitchedLang(lang);
       }
     },
 
     methods: {
       ...mapActions({
-        showAppLoading: 'showAppLoading',
         logout: 'users/logout'
       }),
+      ...mapMutations([
+        'showAppLoading'
+      ]),
 
+      // @fixme: this function should't check for a confirmation
+      // as each component should handle this
+      // and the beforeLogout hook should be fired all the time
+      // wrapped async in some way
+      // so that we can do stuff before actually loging out
       onLogout() {
         if (this.shouldConfirmBeforeLeaving) {
           EventBus.$emit('TopBar:beforeLogout', this.doLogout);
@@ -149,15 +182,12 @@
         // @todo: we probably should hide the app entirely
         // to avoid seeing bouncing texts
         this.$helpers.debounceAction(() => {
-          let oldLang = this.$store.getters.language;
+          let oldLang = this.language;
           let newLang = this.getSwitchedLang(oldLang);
           let route = Object.assign({}, this.$route);
 
           // change the locale of the translation plugin
           this.$i18n.locale = newLang;
-          // change the language
-          // that will be used to determine the dislayed lang
-          this.currentLang = newLang;
 
           // apply lang to route
           // so that we can 'refresh' the current route
@@ -165,14 +195,15 @@
           route.params.lang = newLang;
 
           /*
-           * Also set the params['0'] for cases where the variable
-           * "path" as defined by the router for the matching route
-           * does not contain a language parameter.
+           * Also we need to set the fullPath to be able to forward to routes that have wildcards
+           * See: https://github.com/vuejs/vue-router/issues/1994
+           * And make sure that the params are reflecting the new language
            * We also need to decode the URI before assigning it
            * to avoid double encoding. Ex: "%20" -> "%2520".
-           * BTW: route.params['0'] is a hack to access "route.params.0" which is an illegal notation.
            */
-          route.params['0'] = decodeURIComponent(route.path).replace(new RegExp(`^\/${oldLang}\/`), `/${newLang}/`);
+          let newPath = decodeURIComponent(route.path).replace(new RegExp(`^\/${oldLang}\/`), `/${newLang}/`);
+          route.params.fullPath = newPath;
+          route.params.lang = newLang;
           this.$router.push(route);
         });
       }

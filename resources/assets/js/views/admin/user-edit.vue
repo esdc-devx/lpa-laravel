@@ -2,30 +2,10 @@
   <div class="user-edit content">
     <el-card shadow="never">
       <span slot="header">
-        <h2>{{ trans('base.navigation.admin_user_edit') }}</h2>
+        <h2><i class="el-icon-lpa-edit"></i>{{ trans('base.navigation.admin_user_edit') }}</h2>
       </span>
 
       <el-form label-position="top" :disabled="isFormDisabled">
-        <el-form-item :label="trans('entities.user.username')" for="username">
-          <el-input name="username" v-model="form.user.username" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item :label="trans('entities.general.full_name')" for="name">
-          <el-input name="name" v-model="form.user.name" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item :label="trans('entities.user.email')" for="email">
-          <el-input name="email" v-model="form.user.email" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item :label="trans('entities.general.created')" for="created_at">
-          <el-input name="created_at" v-model="form.user.created_at" disabled></el-input>
-        </el-form-item>
-
-        <el-form-item :label="trans('entities.general.updated')" for="updated_at">
-          <el-input name="updated_at" v-model="form.user.updated_at" disabled></el-input>
-        </el-form-item>
-
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
           <el-select-wrap
             v-model="form.user.organizational_units"
@@ -59,14 +39,12 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import ElSelectWrap from '@components/forms/el-select-wrap';
 
   import FormUtils from '@mixins/form/utils.js';
-
-  const namespace = 'users';
 
   export default {
     name: 'user-edit',
@@ -80,16 +58,22 @@
     components: { ElSelectWrap },
 
     computed: {
-      ...mapGetters(`${namespace}`, {
-        viewingUser: 'viewing',
-        organizationalUnits: 'organizationalUnits',
-        roles: 'roles'
-      })
+      ...mapState('users', [
+        'viewing',
+        'organizationalUnits',
+        'roles'
+      ])
+    },
+
+    props: {
+      userId: {
+        type: String,
+        required: true
+      }
     },
 
     data() {
       return {
-        userId: null,
         form: {
           user: {}
         }
@@ -97,10 +81,10 @@
     },
 
     methods: {
-      ...mapActions(`${namespace}`, {
-        updateUser: 'update',
-        loadUserEditInfo: 'loadUserEditInfo'
-      }),
+      ...mapActions('users', [
+        'update',
+        'loadEditInfo'
+      ]),
 
       search(name) {
         return this.searchUser(name);
@@ -108,11 +92,11 @@
 
       // Form handlers
       onSubmit() {
-        this.submit(this.update);
+        this.submit(this.handleUpdate);
       },
 
-      async update() {
-        await this.updateUser({
+      async handleUpdate() {
+        await this.update({
           id: this.form.user.id,
           organizational_units: this.form.user.organizational_units,
           roles: this.form.user.roles
@@ -130,12 +114,12 @@
         // the messages are in the correct language
         this.resetErrors();
         // only reload the dropdowns, not the user
-        await this.loadUserEditInfo(this.userId);
+        await this.loadEditInfo(this.userId);
       }
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('users/loadUserEditInfo', to.params.userId)
+      await store.dispatch('users/loadEditInfo', to.params.userId)
       next();
     },
 
@@ -146,12 +130,11 @@
     },
 
     created() {
-      this.userId = this.$route.params.userId;
-      this.form.user = Object.assign({}, this.viewingUser);
+      this.form.user = _.cloneDeep(this.viewing);
       // replace our internal organizational_units with only the ids
       // since ElementUI only need ids to populate the selected options
-      this.form.user.organizational_units = _.map(this.viewingUser.organizational_units, 'id');
-      this.form.user.roles = _.map(this.viewingUser.roles, 'id');
+      this.form.user.organizational_units = _.map(this.viewing.organizational_units, 'id');
+      this.form.user.roles = _.map(this.viewing.roles, 'id');
     }
   };
 </script>
@@ -162,8 +145,17 @@
   .user-edit {
     margin: 0 auto;
     h2 {
+      position: relative;
       margin: 0;
+      padding-left: 34px;
       display: inline-block;
+      i {
+        width: 24px;
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
 
     .el-form {

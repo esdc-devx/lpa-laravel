@@ -3,15 +3,21 @@
 namespace App\Models;
 
 use App\Models\ListableModel;
+use App\Models\Traits\UsesUserAudit;
 use App\Models\User\User;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
 class OrganizationalUnit extends ListableModel
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes, UsesUserAudit;
 
     protected $casts = [
         'owner' => 'boolean',
+    ];
+
+    protected $dates = [
+        'deleted_at',
     ];
 
     protected $fillable = [
@@ -23,9 +29,20 @@ class OrganizationalUnit extends ListableModel
         'owner',
         'email',
         'director',
+        'created_by',
+        'updated_by',
+    ];
+
+    protected $touches = [
+        'users',
     ];
 
     public $timestamps = true;
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
 
     public function director()
     {

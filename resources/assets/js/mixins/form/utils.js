@@ -116,8 +116,7 @@ export default {
         } else {
           throw e;
         }
-      }
-      finally {
+      } finally {
         this.isSubmitting = false;
       }
     },

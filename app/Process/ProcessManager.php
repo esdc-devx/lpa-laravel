@@ -104,6 +104,7 @@ class ProcessManager {
                 // Create process instance form entries from process definition.
                 foreach ($step['forms'] as $form) {
                     $processInstanceForm = ProcessInstanceForm::create([
+                        'entity_type'              => $form->name_key,
                         'process_form_id'          => $form->id,
                         'process_instance_step_id' => $processInstanceStep->id,
                         'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
@@ -118,6 +119,9 @@ class ProcessManager {
                         $formData = entity($form->name_key)::create([
                             'process_instance_form_id' => $processInstanceForm->id,
                         ]);
+
+                        // Update form data reference on process instance form once created.
+                        $processInstanceForm->update(['entity_id' => $formData->id]);
 
                         // If process instance form has some form assessments, create them.
                         if (! empty($form['assessments'])) {
@@ -151,7 +155,8 @@ class ProcessManager {
         }
 
         DB::commit();
-        return $this;
+
+        return $this->fireEvent('Started');
     }
 
     /**
@@ -300,7 +305,7 @@ class ProcessManager {
 
     /**
      * Fire a process event. Event class is formed from
-     * process definition name and event type (i.e. ProcessProjectApprovalCompleted).
+     * process definition name and event type (i.e. ProjectApprovalCompleted).
      *
      * @param  string $eventType
      * @return $this
@@ -308,7 +313,7 @@ class ProcessManager {
     protected function fireEvent($eventType)
     {
         $processName = studly_case($this->processInstance->definition->name_key);
-        $eventClass = "App\Events\Process{$processName}{$eventType}";
+        $eventClass = "App\Events\Process\\{$processName}{$eventType}";
         if (class_exists($eventClass)) {
             event(new $eventClass($this->processInstance));
         }

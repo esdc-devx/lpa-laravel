@@ -6,15 +6,20 @@ if (typeof Promise === 'undefined') {
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import VuexORM from '@vuex-orm/core';
+import database from './database.js';
+
 // Root Scope of Vuex
 import { state, getters, actions, mutations } from './root';
 
 // Imports all of the modules used in the application to build the data store.
-import projects from './modules/projects.js';
-import processes from './modules/processes.js';
-import users from './modules/users.js';
-import learningProducts from './modules/learning-products.js';
-import lists from './modules/lists.js';
+import projectsAuth from './modules/authorizations/projects';
+import processesAuth from './modules/authorizations/processes';
+import processInstanceFormsAuth from './modules/authorizations/process-instance-forms';
+
+import users from './modules/users';
+import learningProducts from './modules/learning-products';
+import lists from './modules/lists';
 
 Vue.use(Vuex);
 
@@ -24,12 +29,19 @@ window.store = new Vuex.Store({
   actions,
   mutations,
   modules: {
-    projects,
-    processes,
+    authorizations: {
+      namespaced: true,
+      modules: {
+        projects: projectsAuth,
+        processes: processesAuth,
+        forms: processInstanceFormsAuth
+      }
+    },
     users,
     learningProducts,
     lists
   },
+  plugins: [VuexORM.install(database)],
   // https://vuex.vuejs.org/en/strict.html
   strict: process.env.NODE_ENV !== 'production'
 });

@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Models\LearningProduct\LearningProduct;
+use App\Models\OrganizationalUnit;
 use App\Models\Process\ProcessInstance;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Project\Project;
 use App\Models\User\User;
 use App\Policies\LearningProductPolicy;
+use App\Policies\OrganizationalUnitPolicy;
 use App\Policies\ProcessInstanceFormPolicy;
 use App\Policies\ProcessInstancePolicy;
 use App\Policies\ProjectPolicy;
@@ -23,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         LearningProduct::class      => LearningProductPolicy::class,
+        OrganizationalUnit::class   => OrganizationalUnitPolicy::class,
         ProcessInstanceForm::class  => ProcessInstanceFormPolicy::class,
         ProcessInstance::class      => ProcessInstancePolicy::class,
         Project::class              => ProjectPolicy::class,

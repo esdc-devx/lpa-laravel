@@ -13,6 +13,10 @@ class Risk extends BaseModel
         'rationale',
     ];
 
+    protected $with = [
+        'riskType',
+    ];
+
     public $timestamps = false;
 
     public function riskType()

@@ -14,4 +14,5 @@ return [
         'instruction' => 'Veuillez fournir une explication si le projet est annulé.',
         'description' => 'La justification de l\'annulation du projet.',
     ],
+    'project_cancelled' => 'Projet annulé',
 ];

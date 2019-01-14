@@ -18,6 +18,9 @@ class CreateOrganizationalUnitsTable extends Migration
             $table->boolean('owner');
             $table->string('email');
             $table->unsignedInteger('director')->nullable();
+            // Audit and timestamps.
+            $table->auditable();
+            $table->softDeletes();
             $table->timestamps();
 
             $table->referenceOn('director', 'users')->onDelete('set null');

@@ -5,14 +5,14 @@
         <h2><i class="el-icon-lpa-projects"></i>{{ project.name }}</h2>
         <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
           <el-button-wrap
-            :disabled="!permissions.canEdit"
+            :disabled="!canEdit"
             @click.native="edit()"
             :tooltip="trans('components.tooltip.edit_project')"
             size="mini"
             icon="el-icon-lpa-edit"
             plain />
           <el-button-wrap
-            :disabled="!permissions.canDelete"
+            :disabled="!canDelete"
             @click.native="deleteProjectConfirm()"
             :tooltip="trans('components.tooltip.delete_project')"
             type="danger"
@@ -42,18 +42,16 @@
         <dd>{{ project.organizational_unit.name }}</dd>
       </dl>
       <dl>
-        <dt>{{ trans('entities.general.director') }}</dt>
+        <dt>{{ trans('entities.organizational_unit.director') }}</dt>
         <dd>{{ project.organizational_unit.director.name }}</dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.created') }}</dt>
-        <dd>{{ project.created_by.name }}</dd>
-        <dd>{{ project.created_at }}</dd>
+        <dd v-audit:created="project"></dd>
       </dl>
       <dl>
         <dt>{{ trans('entities.general.updated') }}</dt>
-        <dd>{{ project.updated_by.name }}</dd>
-        <dd>{{ project.updated_at }}</dd>
+        <dd v-audit:updated="project"></dd>
       </dl>
     </info-box>
   </div>
@@ -64,8 +62,6 @@
 
   import InfoBox from '@components/info-box.vue';
   import ElButtonWrap from '@components/el-button-wrap.vue';
-
-  const namespace = 'projects';
 
   export default {
     name: 'project-info',
@@ -80,20 +76,20 @@
     },
 
     computed: {
-      ...mapState(`${namespace}`, [
-        'permissions'
-      ]),
       ...mapGetters({
-        language: 'language',
         hasRole: 'users/hasRole'
-      })
+      }),
+
+      canEdit() {
+        return this.project.permissions.canEdit;
+      },
+
+      canDelete() {
+        return this.project.permissions.canDelete;
+      }
     },
 
     methods: {
-      ...mapActions({
-        deleteProject: `${namespace}/delete`
-      }),
-
       edit() {
         this.$router.push(`${this.project.id}/edit`);
       },
@@ -104,11 +100,7 @@
           message: this.trans('components.notice.message.delete_project')
         }).then(async () => {
           try {
-            await this.deleteProject(this.project.id);
-            this.notifySuccess({
-              message: this.trans('components.notice.message.project_deleted')
-            });
-            this.$emit('onAfterDelete');
+            this.$emit('delete');
           } catch (e) {
             // Exception handled by interceptor
             if (!e.response) {

@@ -16,6 +16,7 @@
         :name="name"
         :maxlength="charsLimit"
         @input="currentTextValue = $event.target.value"
+        @blur="onBlur($event.target.value)"
         v-autosize>
       </component>
       <div v-else class="el-input-number">
@@ -87,7 +88,9 @@
     inject: ['$validator', 'elForm'],
 
     props: {
-      maxlength: String,
+      maxlength: {
+        type: String
+      },
       name: {
         type: String,
         required: true
@@ -112,7 +115,9 @@
         type: Number,
         default: -Infinity
       },
-      value: String | Number,
+      value: {
+        type: String | Number
+      },
       precision: {
         type: Number,
         validator(val) {
@@ -220,6 +225,11 @@
 
       onInput(val) {
         this.updateValue(val);
+      },
+
+      onBlur(val) {
+        this.innerTextValue = val;
+        this.$emit('input', val);
       },
 
       // Input Number methods

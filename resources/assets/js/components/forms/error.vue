@@ -15,7 +15,9 @@
     inject: ['$validator'],
 
     props: {
-      name: String
+      name: {
+        type: String
+      }
     }
   };
 </script>

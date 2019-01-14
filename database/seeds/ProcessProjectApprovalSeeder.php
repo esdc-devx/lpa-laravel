@@ -1,11 +1,12 @@
 <?php
 
-use Illuminate\Database\Seeder;
+use App\Models\InformationSheet\InformationSheetDefinition;
 use App\Models\Process\ProcessDefinition;
-use App\Models\Process\ProcessStep;
 use App\Models\Process\ProcessForm;
 use App\Models\Process\ProcessFormAssessment;
 use App\Models\Process\ProcessNotification;
+use App\Models\Process\ProcessStep;
+use Illuminate\Database\Seeder;
 
 class ProcessProjectApprovalSeeder extends Seeder
 {
@@ -68,6 +69,13 @@ class ProcessProjectApprovalSeeder extends Seeder
                     'name_key'   => 'project-approved',
                     'name_en'    => 'Project Approved',
                     'name_fr'    => 'Projet approuvé',
+                ],
+            ],
+            'information_sheets' => [
+                [
+                    'name_key'    => 'gate-one-project-approval',
+                    'name_en'     => 'Gate 1 – Project Approval',
+                    'name_fr'     => 'Jalon 1 – Approbation de projet',
                 ],
             ],
         ];
@@ -134,6 +142,16 @@ class ProcessProjectApprovalSeeder extends Seeder
                 'subject_fr'            => $notification['subject_fr'] ?? $notification['name_fr'],
                 'body_en'               => $notification['body_en'] ?? $faker->paragraph,
                 'body_fr'               => $notification['body_fr'] ?? $faker->paragraph,
+            ]);
+        }
+
+        // Generate process information sheet definitions.
+        foreach ($data['information_sheets'] as $infosheet) {
+            InformationSheetDefinition::create([
+                'entity_type' => 'process-instance',
+                'name_key'    => "{$data['name_key']}.{$infosheet['name_key']}",
+                'name_en'     => $infosheet['name_en'],
+                'name_fr'     => $infosheet['name_fr'],
             ]);
         }
     }

@@ -15,8 +15,8 @@ class CreateProcessFormAssessmentsTable extends Migration
     {
         Schema::create('process_form_assessments', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('process_form_id');
             $table->string('assessed_process_form');
+            $table->unsignedInteger('process_form_id');
 
             // Foreign keys.
             $table->referenceOn('process_form_id');

@@ -13,7 +13,7 @@ export default {
   getters: {
     list(state) {
       return function (name) {
-        let language = store.getters.language;
+        let language = store.state.language;
         return state.lists[language][name] ? state.lists[language][name] : [];
       };
     }
@@ -21,7 +21,7 @@ export default {
 
   actions: {
     async loadList({ commit, state }, listName) {
-      let language = store.getters.language;
+      let language = store.state.language;
       // do not reload the same list twice
       let listNameDiff = _.difference([listName], _.keys(state.lists[language]));
       if (listNameDiff.length) {
@@ -34,7 +34,7 @@ export default {
     },
 
     async loadLists({ commit, state }, listNames) {
-      let language = store.getters.language;
+      let language = store.state.language;
       // do not reload the same list twice
       let listNamesDiff = _.difference(listNames, _.keys(state.lists[language]));
       if (listNamesDiff.length) {
@@ -46,11 +46,11 @@ export default {
 
   mutations: {
     setList(state, { name, list }) {
-      let language = store.getters.language;
+      let language = store.state.language;
       state.lists[language] = {...state.lists[language], [name]: list};
     },
     setLists(state, lists) {
-      let language = store.getters.language;
+      let language = store.state.language;
       state.lists[language] = {...state.lists[language], ...lists};
     }
   }

@@ -43,7 +43,7 @@
 </template>
 
 <script>
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import FormError from '@components/forms/error.vue';
@@ -53,7 +53,7 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
-  let namespace = 'projects';
+  import Project from '@/store/models/Project';
 
   const loadData = async function () {
     // we need to access the store directly
@@ -62,7 +62,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`${namespace}/loadProjectCreateInfo`)
+      store.dispatch('entities/projects/loadCreateInfo')
     );
 
     // Exception handled by interceptor
@@ -87,10 +87,9 @@
     components: { ElFormItemWrap, ElSelectWrap, InputWrap, FormError },
 
     computed: {
-      ...mapGetters({
-        viewingProject: `${namespace}/viewing`,
-        organizationalUnits: `${namespace}/organizationalUnits`
-      })
+      ...mapState('entities/projects', [
+        'organizationalUnits'
+      ])
     },
 
     data() {
@@ -103,24 +102,24 @@
     },
 
     methods: {
-      ...mapActions({
-        createProject: `${namespace}/create`
-      }),
+      ...mapActions('entities/projects', [
+        '$$create'
+      ]),
 
       // Form handlers
       async onSubmit() {
-        this.submit(this.create);
+        this.submit(this.handleCreate);
       },
 
-      async create() {
+      async handleCreate() {
         // @note: no try-catch required here
         // since we already do it in the form utils
-        await this.createProject(this.form);
+        let project = await this.$$create(this.form);
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.project_created')
         });
-        this.$router.push(`/${this.language}/projects/${this.viewingProject.id}`);
+        this.$router.push(`/${this.language}/projects/${project.id}`);
       },
 
       async onLanguageUpdate() {
@@ -134,8 +133,8 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('projects/loadCanCreate');
-      if (store.state.projects.permissions.canCreate) {
+      await store.dispatch('authorizations/projects/loadCanCreate');
+      if (store.state.authorizations.projects.permissions.canCreate) {
         await loadData();
         next();
       } else {
@@ -145,8 +144,8 @@
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
-      await this.$store.dispatch('projects/loadCanCreate');
-      if (this.$store.state.projects.permissions.canCreate) {
+      await this.$store.dispatch('authorizations/projects/loadCanCreate');
+      if (this.$store.state.authorizations.projects.permissions.canCreate) {
         await this.onLanguageUpdate();
         next();
       } else {

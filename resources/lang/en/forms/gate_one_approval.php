@@ -15,4 +15,5 @@ return [
         'instruction' => 'Please provide an explanation if the project is cancelled.',
         'description' => 'The rationale for the project cancellation.',
     ],
+    'project_cancelled' => 'Project Cancelled',
 ];

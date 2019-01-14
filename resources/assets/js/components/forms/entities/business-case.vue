@@ -6,19 +6,11 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.project_objective') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.request_origins.label')"
         prop="request_origins"
         :classes="['has-other']"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.request_origins.description')"
-            :help="trans('forms.business_case.request_origins.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.request_origins.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.request_origins"
+        required
+      >
         <el-select-other-wrap
           :modelSelect.sync="form.request_origins"
           nameSelect="request_origins"
@@ -37,26 +29,18 @@
         />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.business_issue.label')"
         prop="business_issue"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.business_issue.description')"
-            :help="trans('forms.business_case.business_issue.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.business_issue.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.business_issue"
+        required
+      >
         <input-wrap
           v-model="form.business_issue"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.business_issue.label')"
           name="business_issue"
           maxlength="1250"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -66,70 +50,46 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.proposed_solution') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.short_term_learning_response.label')"
         prop="short_term_learning_response"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.short_term_learning_response.description')"
-            :help="trans('forms.business_case.short_term_learning_response.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.short_term_learning_response.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.short_term_learning_response"
+        required
+      >
         <input-wrap
           v-model="form.short_term_learning_response"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.short_term_learning_response.label')"
           name="short_term_learning_response"
           maxlength="1250"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.medium_term_learning_response.label')"
         prop="medium_term_learning_response"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.medium_term_learning_response.description')"
-            :help="trans('forms.business_case.medium_term_learning_response.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.medium_term_learning_response.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.medium_term_learning_response"
+        required
+      >
         <input-wrap
           v-model="form.medium_term_learning_response"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.medium_term_learning_response.label')"
           name="medium_term_learning_response"
           maxlength="1250"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.long_term_learning_response.label')"
         prop="long_term_learning_response"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.long_term_learning_response.description')"
-            :help="trans('forms.business_case.long_term_learning_response.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.long_term_learning_response.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.long_term_learning_response"
+        required
+      >
         <input-wrap
           v-model="form.long_term_learning_response"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.long_term_learning_response.label')"
           name="long_term_learning_response"
           maxlength="1250"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -139,17 +99,10 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.school_priorities') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.school_priorities.label')"
         prop="school_priorities"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.school_priorities.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.school_priorities.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.school_priorities"
+        required
+      >
         <el-select-wrap
           v-model="form.school_priorities"
           name="school_priorities"
@@ -161,27 +114,19 @@
         />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.is_required_training.label')"
         prop="is_required_training"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.is_required_training.description')"
-            :help="trans('forms.business_case.is_required_training.help')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.is_required_training.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.is_required_training"
+        required
+      >
         <el-radio-group
           v-model="form.is_required_training"
           :data-vv-as="trans('forms.business_case.is_required_training.label')"
           name="is_required_training"
           v-validate="'required'">
-            <el-radio-button :label="0">{{ trans('base.actions.yes') }}</el-radio-button>
-            <el-radio-button :label="1">{{ trans('base.actions.no') }}</el-radio-button>
+            <el-radio-button :label="1">{{ trans('base.actions.yes') }}</el-radio-button>
+            <el-radio-button :label="0">{{ trans('base.actions.no') }}</el-radio-button>
         </el-radio-group>
-        <form-error name="is_required_training"></form-error>
+        <form-error name="is_required_training"/>
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -191,14 +136,10 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.target_audience') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.expected_annual_participant_number.label')"
         prop="expected_annual_participant_number"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.expected_annual_participant_number.description')">
-          </el-popover-wrap>
-        </span>
+        contextPath="forms.business_case.expected_annual_participant_number"
+        required
+      >
         <input-wrap
           v-model="form.expected_annual_participant_number"
           name="expected_annual_participant_number"
@@ -207,21 +148,14 @@
           v-mask="'######'"
           :min="1"
           :max="500000"
-          type="number">
-        </input-wrap>
+          type="number"
+        />
       </el-form-item-wrap>
       <el-form-item-wrap
-        :label="trans('forms.business_case.communities.label')"
         prop="communities"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.communities.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.communities.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.communities"
+        required
+      >
         <el-tree-wrap
           name="communities"
           v-model="form.communities"
@@ -229,8 +163,8 @@
           :data-vv-as="trans('forms.business_case.communities.label')"
           :data="communityList"
           labelKey="name"
-          sorted>
-        </el-tree-wrap>
+          sorted
+        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -240,25 +174,18 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.departmental_results_framework') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.departmental_results_framework_indicators.label')"
         prop="departmental_results_framework_indicators"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.departmental_results_framework_indicators.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.departmental_results_framework_indicators.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.departmental_results_framework_indicators"
+        required
+      >
         <el-tree-wrap
           name="departmental_results_framework_indicators"
           v-model="form.departmental_results_framework_indicators"
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.departmental_results_framework_indicators.label')"
           :data="departmentalResultsFrameworkIndicatorList"
-          labelKey="name">
-        </el-tree-wrap>
+          labelKey="name"
+        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -268,25 +195,18 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.costs') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.cost_centre.label')"
         prop="cost_centre"
-        required>
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.cost_centre.description')">
-          </el-popover-wrap>
-          <span class="instruction">
-            {{ trans('forms.business_case.cost_centre.instruction') }}
-          </span>
-        </span>
+        contextPath="forms.business_case.cost_centre"
+        required
+      >
         <input-wrap
           v-model="form.cost_centre"
           v-validate="{ required: true, regex: /[A-Z][0-9]{5,5}/ }"
           :data-vv-as="trans('forms.business_case.cost_centre.label')"
           name="cost_centre"
           :placeholder="trans('forms.business_case.cost_centre.hint')"
-          v-mask="'A#####'">
-        </input-wrap>
+          v-mask="'A#####'"
+        />
       </el-form-item-wrap>
       <form-section-group
         v-model="form.spendings"
@@ -296,23 +216,20 @@
         :data="{
           internalResourceList,
           recurrenceList
-        }" />
+        }"
+      />
       <el-form-item-wrap
-        :label="trans('forms.business_case.other_operational_considerations.label')"
-        prop="other_operational_considerations">
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.other_operational_considerations.description')">
-          </el-popover-wrap>
-        </span>
+        prop="other_operational_considerations"
+        contextPath="forms.business_case.other_operational_considerations"
+      >
         <input-wrap
           v-model="form.other_operational_considerations"
           v-validate="''"
           :data-vv-as="trans('forms.business_case.other_operational_considerations.label')"
           name="other_operational_considerations"
           maxlength="1250"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -336,21 +253,17 @@
       </span>
       <h2>{{ trans('forms.business_case.tabs.comments') }}</h2>
       <el-form-item-wrap
-        :label="trans('forms.business_case.comments.label')"
-        prop="comments">
-        <span slot="label-addons">
-          <el-popover-wrap
-            :description="trans('forms.business_case.comments.description')">
-          </el-popover-wrap>
-        </span>
+        prop="comments"
+        contextPath="forms.business_case.comments"
+      >
         <input-wrap
           v-model="form.comments"
           v-validate="''"
           :data-vv-as="trans('forms.business_case.comments.label')"
           name="comments"
           maxlength="2500"
-          type="textarea">
-        </input-wrap>
+          type="textarea"
+        />
       </el-form-item-wrap>
     </el-tab-pane>
   </el-tabs>
@@ -368,7 +281,6 @@
   import InputWrap from '../input-wrap';
   import FormSectionGroup from '../form-section-group';
   import ElTreeWrap from '../el-tree-wrap';
-  import ElPopoverWrap from '../../el-popover-wrap';
 
   const loadData = async () => {
     await store.dispatch('lists/loadLists', [
@@ -385,15 +297,19 @@
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, InputWrap, FormSectionGroup, ElTreeWrap, ElPopoverWrap },
+    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, InputWrap, FormSectionGroup, ElTreeWrap },
 
     // Gives us the ability to inject validation in child components
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
     inject: ['$validator'],
 
     props: {
-      formData: Object,
-      errorTabs: Array
+      formData: {
+        type: Object
+      },
+      errorTabs: {
+        type: Array
+      }
     },
 
     data() {

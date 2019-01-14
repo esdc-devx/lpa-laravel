@@ -56,7 +56,7 @@ return [
         'label'       => 'Other Origins of the Request',
     ],
     'is_required_training' => [
-        'label'       => 'Required Training / Part of Certification',
+        'label'       => 'Required Training / Part of a Certification',
         'instruction' => 'Please indicate whether the Learning Products included in this project are considered "required training" and/or "part of a certification"?',
         'description' => 'The learning products included in the project are considered as "required training" or "part of a certification".',
         'help'        => 'The definition of "required training" can be found in the Treasury Board Policy on Learning, Training, and Development.',

@@ -14,12 +14,12 @@ class GateOneApproval extends ProcessInstanceFormDataModel
         'assessment_date',
     ];
 
-    public $relationships = [
-        'assessments',
-    ];
-
     protected $casts = [
         'is_entity_cancelled' => 'boolean'
+    ];
+
+    protected $with = [
+        'assessments',
     ];
 
     public function assessments()

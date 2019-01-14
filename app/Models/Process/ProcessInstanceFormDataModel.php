@@ -7,7 +7,6 @@ use App\Models\BaseModel;
 class ProcessInstanceFormDataModel extends BaseModel
 {
     public $timestamps = false;
-    public $relationships = [];
 
     public function processInstanceForm()
     {
@@ -22,6 +21,6 @@ class ProcessInstanceFormDataModel extends BaseModel
 
         // Return model with all of its updated relationships
         // and format list output to only return ids.
-        return $this->load($this->relationships)->formatListsOutput();
+        return $this->load($this->with)->formatListsOutput();
     }
 }

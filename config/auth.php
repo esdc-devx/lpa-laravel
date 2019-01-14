@@ -66,8 +66,8 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'adldap',
-            'model' => App\Models\User\User::class,
+            'driver' => env('AUTH_PROVIDER_DRIVER', 'adldap'),
+            'model'  => App\Models\User\User::class,
         ],
 
         // 'users' => [

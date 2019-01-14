@@ -1,18 +1,11 @@
 <template>
   <div class="risk">
     <el-form-item-wrap
-      :label="trans('forms.business_case.risks.risk_type.label')"
       :prop="`${fieldNamePrefix}.risk_type_id`"
       :classes="['has-other']"
-      required>
-      <span slot="label-addons">
-        <el-popover-wrap
-          :description="trans('forms.business_case.risks.risk_type.description')">
-        </el-popover-wrap>
-        <span class="instruction">
-          {{ trans('forms.business_case.risks.risk_type.instruction') }}
-        </span>
-      </span>
+      contextPath="forms.business_case.risks.risk_type"
+      required
+    >
       <el-select-other-wrap
         :modelSelect.sync="form.risk_type_id"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
@@ -30,26 +23,18 @@
       />
     </el-form-item-wrap>
     <el-form-item-wrap
-      :label="trans('forms.business_case.risks.risk_rationale.label')"
       :prop="`${fieldNamePrefix}.rationale`"
-      required>
-      <span slot="label-addons">
-        <el-popover-wrap
-          :description="trans('forms.business_case.risks.risk_rationale.description')"
-          :help="trans('forms.business_case.risks.risk_rationale.help')">
-        </el-popover-wrap>
-        <span class="instruction">
-          {{ trans('forms.business_case.risks.risk_rationale.instruction') }}
-        </span>
-      </span>
+      contextPath="forms.business_case.risks.risk_rationale"
+      required
+    >
       <input-wrap
         v-model="form.rationale"
         v-validate="'required'"
         :data-vv-as="trans('forms.business_case.risks.risk_rationale.label')"
         :name="`${fieldNamePrefix}.rationale`"
         maxlength="1250"
-        type="textarea">
-      </input-wrap>
+        type="textarea"
+      />
     </el-form-item-wrap>
   </div>
 </template>
@@ -83,7 +68,9 @@
         type: Number,
         required: true
       },
-      value: Object
+      value: {
+        type: Object
+      }
     },
 
     computed: {

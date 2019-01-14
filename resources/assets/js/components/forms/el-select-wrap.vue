@@ -57,7 +57,9 @@
         type: Boolean,
         default: false
       },
-      value: Array | Number
+      value: {
+        type: Array | Number
+      }
     },
 
     computed: {

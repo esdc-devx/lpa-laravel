@@ -15,6 +15,8 @@ class CreateProcessInstanceFormsTable extends Migration
     {
         Schema::create('process_instance_forms', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('entity_type');
+            $table->unsignedInteger('entity_id')->nullable();
             $table->unsignedInteger('process_form_id')->nullable();
             $table->unsignedInteger('process_instance_step_id');
             $table->unsignedInteger('state_id')->nullable();

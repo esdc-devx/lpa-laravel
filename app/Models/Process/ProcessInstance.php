@@ -4,12 +4,13 @@ namespace App\Models\Process;
 
 use App\Models\BaseModel;
 use App\Models\State;
+use App\Models\Traits\HasInformationSheets;
 use App\Models\Traits\UsesUserAudit;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProcessInstance extends BaseModel
 {
-    use SoftDeletes, UsesUserAudit;
+    use SoftDeletes, UsesUserAudit, HasInformationSheets;
 
     protected $fillable = [
         'process_definition_id',
@@ -48,13 +49,16 @@ class ProcessInstance extends BaseModel
         return $this->hasMany(ProcessInstanceStep::class);
     }
 
+    public function forms()
+    {
+        return $this->hasManyThrough(ProcessInstanceForm::class, ProcessInstanceStep::class);
+    }
+
     public function scopeWithProcessDetails()
     {
         return $this->with([
             'definition', 'state', 'createdBy', 'updatedBy',
-            'steps', 'steps.definition', 'steps.state',
-            'steps.forms.definition', 'steps.forms.state', 'steps.forms.organizationalUnit',
-            'steps.forms.currentEditor', 'steps.forms.createdBy', 'steps.forms.updatedBy',
+            'steps', 'steps.definition', 'steps.state', 'steps.forms',
         ]);
     }
 }

@@ -2,7 +2,7 @@
   <div class="entity content">
     <el-row :gutter="20" class="equal-height">
       <el-col :span="canBeVisible ? 18 : 24">
-        <learning-product-info :learningProduct="viewingLearningProduct" @onAfterDelete="onAfterDelete"/>
+        <learning-product-info :learningProduct="viewing" @onAfterDelete="onAfterDelete"/>
       </el-col>
     </el-row>
   </div>
@@ -10,15 +10,13 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
+  import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
   import LearningProductInfo from '@components/learning-product-info.vue';
 
-  const namespace = 'learningProducts';
-
   const loadData = async function ({ to } = {}) {
-    const { learningProductId } = to ? to.params : this;
+    const { entityId } = to ? to.params : this;
     // we need to access the store directly
     // because at this point we may have entered the beforeRouteEnter hook
     // in which we don't have access to the this context yet
@@ -26,9 +24,9 @@
     let requests = [];
 
     requests.push(
-      store.dispatch(`${namespace}/loadLearningProduct`, learningProductId),
-      store.dispatch(`${namespace}/loadCanEdit`, learningProductId),
-      store.dispatch(`${namespace}/loadCanDelete`, learningProductId)
+      store.dispatch('learningProducts/load', entityId),
+      store.dispatch('learningProducts/loadCanEdit', entityId),
+      store.dispatch('learningProducts/loadCanDelete', entityId)
     );
 
     // Exception handled by interceptor
@@ -48,10 +46,17 @@
 
     components: { LearningProductInfo },
 
+    props: {
+      entityId: {
+        type: String,
+        required: true
+      }
+    },
+
     computed: {
-      ...mapGetters({
-        viewingLearningProduct: `${namespace}/viewing`
-      }),
+      ...mapState('learningProducts', [
+        'viewing'
+      ]),
 
       canBeVisible() {
         return this.hasRole('owner') || this.hasRole('admin');
@@ -59,10 +64,6 @@
     },
 
     methods: {
-      ...mapActions({
-        loadLearningProduct: `${namespace}/loadLearningProduct`
-      }),
-
       viewProcess(process) {
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
@@ -81,10 +82,6 @@
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
       next();
-    },
-
-    created() {
-      this.learningProductId = this.$route.params.learningProductId;
     }
   };
 </script>

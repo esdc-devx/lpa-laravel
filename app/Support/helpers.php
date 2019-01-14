@@ -65,3 +65,29 @@ if (! function_exists('str_placeholders')) {
         );
     }
 }
+
+if (! function_exists('str_forward_slash')) {
+    /**
+     * Helper function that replaces backslashes with forward slashes.
+     *
+     * @param  string $string
+     * @return string
+     */
+    function str_forward_slash($string)
+    {
+        return str_replace('\\', '/', $string);
+    }
+}
+
+if (! function_exists('str_backslash')) {
+    /**
+     * Helper function that replaces forward slashes with backslashes.
+     *
+     * @param  string $string
+     * @return string
+     */
+    function str_backslash($string)
+    {
+        return str_replace('/', '\\', $string);
+    }
+}

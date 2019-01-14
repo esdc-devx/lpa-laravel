@@ -18,30 +18,6 @@ export default {
   },
 
   getters: {
-    currentUserLoadStatus(state) {
-      return state.currentUserLoadStatus;
-    },
-
-    current(state) {
-      return state.current;
-    },
-
-    viewing(state) {
-      return state.viewing;
-    },
-
-    all(state) {
-      return state.all;
-    },
-
-    organizationalUnits(state) {
-      return state.organizationalUnits;
-    },
-
-    roles(state) {
-      return state.roles;
-    },
-
     hasRole(state) {
       return function (role) {
         return !!_.find(state.current.roles, ['name_key', role]);
@@ -56,16 +32,23 @@ export default {
   },
 
   actions: {
-    async logout({ commit }) {
-      await UserAPI.logout();
+    async create({ commit }, user) {
+      await UserAPI.create(user);
     },
 
-    async loadUsers({ commit }) {
-      let response = await UserAPI.getUsers();
-      commit('setUsers', response.data);
+    async search({ commit }, name) {
+      return await UserAPI.search(name);
     },
 
-    async loadCurrentUser({ commit }) {
+    async update({ commit }, user) {
+      await UserAPI.update(user);
+    },
+
+    async delete({ commit }, id) {
+      await UserAPI.delete(id);
+    },
+
+    async load({ commit }) {
       commit('setCurrentUserLoadStatus', LoadStatus.LOADING_STARTED);
       try {
         let response = await UserAPI.getUser();
@@ -77,39 +60,26 @@ export default {
       }
     },
 
-    async loadViewingUser({ commit }, id) {
-      let response = await UserAPI.getUser(id);
-      commit('setViewing', response.data);
+    async loadAll({ commit }) {
+      let response = await UserAPI.getUsers();
+      commit('setUsers', response.data);
     },
 
-    async loadUserCreateInfo({ commit }) {
+    async loadCreateInfo({ commit }) {
       let response = await UserAPI.getUserCreateInfo();
       commit('setOrganizationalUnits', response.data.organizational_units);
       commit('setRoles', response.data.roles);
     },
 
-    async loadUserEditInfo({ commit }, id) {
+    async loadEditInfo({ commit }, id) {
       let response = await UserAPI.getUserEditInfo(id);
       commit('setViewing', response.data.user);
       commit('setOrganizationalUnits', response.data.organizational_units);
       commit('setRoles', response.data.roles);
     },
 
-    // CRUD methods
-    create({ commit }, user) {
-      UserAPI.create(user);
-    },
-
-    search({ commit }, name) {
-      return UserAPI.search(name);
-    },
-
-    update({ commit }, user) {
-      UserAPI.update(user);
-    },
-
-    delete({ commit }, id) {
-      UserAPI.delete(id);
+    async logout({ commit }) {
+      await UserAPI.logout();
     }
   },
 

@@ -22,7 +22,7 @@
   // @note: when extending in Vuejs, every objects passed in will be overriden
   // but not vuejs hooks (e.g.: created, mounted)
 
-  import { mapGetters, mapActions, mapState } from 'vuex';
+  import { mapState, mapGetters, mapMutations } from 'vuex';
 
   import EventBus from '@/event-bus.js';
 
@@ -44,20 +44,20 @@
 
     computed: {
       ...mapState([
-        'shouldConfirmBeforeLeaving'
+        'shouldConfirmBeforeLeaving',
+        'language',
+        'isMainLoading'
       ]),
 
       ...mapGetters({
-        language: 'language',
-        isMainLoading: 'isMainLoading',
         hasRole: 'users/hasRole',
         isCurrentUser: 'users/isCurrentUser'
       })
     },
 
     methods: {
-      ...mapActions([
-        'confirmBeforeLeaving'
+      ...mapMutations([
+        'setShouldConfirmBeforeLeaving'
       ]),
 
       // @todo: reconsider the utility of having this here
@@ -101,11 +101,24 @@
 
       goToPage(routeName) {
         this.$helpers.debounceAction(() => {
-          let currentParams = this.$router.currentRoute.params;
-          this.$router.push({
-            name: routeName,
-            params: currentParams
-          });
+          let currentRoute = this.$router.currentRoute
+          let currentParams = currentRoute.params;
+
+          // if current params belong to a 404 or 403 route
+          // then just redirect to home page
+          if (['forbidden', 'not-found'].some(s => currentRoute.name.includes(s))) {
+            this.$router.push({
+              name: routeName,
+              params: {
+                lang: this.language
+              }
+            });
+          } else {
+            this.$router.push({
+              name: routeName,
+              params: currentParams
+            });
+          }
         });
       },
 

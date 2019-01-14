@@ -7,7 +7,7 @@ Vue.use(VueI18n);
 
 /**
  * Used as an interpretor for
- * Laravel named formatting locale messages
+ * Laravel named formatting locale messages that understands :attribute in strings
  * @param  {String} string - The Laravel locale string to interprete
  * @param  {Object} args - Contains the values to map in the string
  * @return {String}        Return the formatted string
@@ -28,7 +28,7 @@ Vue.prototype.trans = (string, args) => {
 
 export async function setLanguage() {
   try {
-    return await store.dispatch('setLanguage');
+    return await store.commit('setLanguage');
   } catch (e) {
     throw e;
   }

@@ -1,26 +1,33 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Home                    from '@/views/home.vue';
-import ProjectList             from '@/views/project/project-list.vue';
-import ProjectView             from '@/views/project/project.vue';
-import ProjectEdit             from '@/views/project/project-edit.vue';
-import ProjectCreate           from '@/views/project/project-create.vue';
-import ProjectProcess          from '@/views/project/project-process.vue';
-import ProjectProcessForm      from '@/views/project/project-process-form.vue';
-import LearningProductList     from '@/views/learning-product/learning-product-list.vue';
-import LearningProductView     from '@/views/learning-product/learning-product.vue';
-import LearningProductCreate   from '@/views/learning-product/learning-product-create.vue';
-import LearningProductEdit     from '@/views/learning-product/learning-product-edit.vue';
-import Administration          from '@/views/admin/administration.vue';
-import UserList                from '@/views/admin/user-list.vue';
-import UserCreate              from '@/views/admin/user-create.vue';
-import UserEdit                from '@/views/admin/user-edit.vue';
-import NotFound                from '@/views/errors/404.vue';
-import Forbidden               from '@/views/errors/403.vue';
+import Home                     from '@/views/home.vue';
+import ProjectList              from '@/views/project/project-list.vue';
+import ProjectView              from '@/views/project/project.vue';
+import ProjectEdit              from '@/views/project/project-edit.vue';
+import ProjectCreate            from '@/views/project/project-create.vue';
+import ProcessForm              from '@/views/process/process-form.vue';
+import Process                  from '@/views/process/process.vue';
+import LearningProductList      from '@/views/learning-product/learning-product-list.vue';
+import LearningProductView      from '@/views/learning-product/learning-product.vue';
+import LearningProductCreate    from '@/views/learning-product/learning-product-create.vue';
+import LearningProductEdit      from '@/views/learning-product/learning-product-edit.vue';
+import Administration           from '@/views/admin/administration.vue';
+import UserList                 from '@/views/admin/user-list.vue';
+import UserCreate               from '@/views/admin/user-create.vue';
+import UserEdit                 from '@/views/admin/user-edit.vue';
+import OrganizationalUnitList   from '@/views/admin/organizational-unit-list.vue';
+import OrganizationalUnitEdit   from '@/views/admin/organizational-unit-edit.vue';
+import NotFound                 from '@/views/errors/404.vue';
+import Forbidden                from '@/views/errors/403.vue';
 
-import LoadStatus              from '@/store/load-status-constants';
-import store                   from '@/store/';
+import ProjectModel             from '@/store/models/Project';
+import ProcessModel             from '@/store/models/Process';
+import ProcessInstanceFormModel from '@/store/models/Process-Instance-Form';
+import OrganizationalUnitModel  from '@/store/models/Organizational-Unit';
+
+import LoadStatus               from '@/store/load-status-constants';
+import store                    from '@/store/';
 
 Vue.use(Router);
 
@@ -47,8 +54,8 @@ async function beforeProceed(to, from, next) {
 // This will check to see if the user is authenticated or not.
 async function isAuthenticated(to, from, next) {
   try {
-    await store.dispatch('users/loadCurrentUser');
-    if (store.getters['users/currentUserLoadStatus'] === LoadStatus.LOADING_SUCCESS) {
+    await store.dispatch('users/load');
+    if (store.state.users.currentUserLoadStatus === LoadStatus.LOADING_SUCCESS) {
       return true;
     }
   } catch (e) {
@@ -96,14 +103,14 @@ function proceed(to, from, next) {
 
 function setLanguage(to) {
   let lang = to.params.lang;
-  if (lang && lang !== store.getters.language) {
-    store.dispatch('setLanguage', lang);
+  if (lang && lang !== store.state.language) {
+    store.commit('setLanguage', lang);
   }
 }
 
 function prefixRoute(newPath) {
   if (!newPath.match(/\/en|fr/)) {
-    newPath = '/' + store.getters.language + newPath;
+    newPath = `/${store.state.language}newPath`;
     isPathDirty = true;
   }
   return newPath;
@@ -130,7 +137,7 @@ function isPathForbidden(newPath) {
 //            'routeName/someOtherRouteName/currentRouteName'
 //        And for the title, it can only be either a value or a a translatable property
 //            'base.navigation.admin_user_edit' or
-//            `${store.getters['users/viewing'].name}`
+//            `${store.state.users.viewing.name}`
 const routes = [
   {
     path: '/:lang(en|fr)',
@@ -165,16 +172,20 @@ const routes = [
     }
   },
   {
-    path: '/:lang/projects/:projectId(\\d+)',
+    path: '/:lang/projects/:entityId(\\d+)',
     name: 'project',
     component: ProjectView,
     meta: {
-      title: () => `${store.getters['projects/viewing'].name}`,
+      title() {
+        let project = ProjectModel.find(this.$route.params.entityId);
+        return project ? project.name : '';
+      },
       breadcrumbs: () => 'projects/project'
-    }
+    },
+    props: true
   },
   {
-    path: '/:lang/projects/:projectId(\\d+)/edit',
+    path: '/:lang/projects/:entityId(\\d+)/edit',
     name: 'project-edit',
     component: ProjectEdit,
     meta: {
@@ -182,25 +193,34 @@ const routes = [
         return this.trans('base.navigation.edit');
       },
       breadcrumbs: () => 'projects/project/project-edit'
-    }
+    },
+    props: true
   },
   {
-    path: '/:lang/projects/:projectId(\\d+)/process/:processId(\\d+)',
+    path: '/:lang/:entityName(projects)/:entityId(\\d+)/process/:processId(\\d+)',
     name: 'project-process',
-    component: ProjectProcess,
+    component: Process,
     meta: {
-      title: () => `${store.getters['processes/viewing'].definition.name}`,
+      title() {
+        let process = ProcessModel.find(this.$route.params.processId);
+        return process ? process.definition.name : '';
+      },
       breadcrumbs: () => 'projects/project/project-process'
-    }
+    },
+    props: true
   },
   {
-    path: '/:lang/projects/:projectId(\\d+)/process/:processId(\\d+)/form/:formId(\\d+)',
+    path: '/:lang/:entityName(projects)/:entityId(\\d+)/process/:processId(\\d+)/form/:formId(\\d+)',
     name: 'project-process-form',
-    component: ProjectProcessForm,
+    component: ProcessForm,
     meta: {
-      title: () => `${store.getters['processes/viewingFormInfo'].definition.name}`,
+      title() {
+        let form = ProcessInstanceFormModel.find(this.$route.params.formId);
+        return form ? form.definition.name : '';
+      },
       breadcrumbs: () => 'projects/project/project-process/project-process-form'
-    }
+    },
+    props: true
   },
   {
     path: '/:lang/learning-products',
@@ -214,13 +234,14 @@ const routes = [
     }
   },
   {
-    path: '/:lang/learning-products/:learningProductId(\\d+)',
+    path: '/:lang/learning-products/:entityId(\\d+)',
     name: 'learning-product',
     component: LearningProductView,
     meta: {
-      title: () => `${store.getters['learningProducts/viewing'].name}`,
+      title: () => `${store.state.learningProducts.viewing.name}`,
       breadcrumbs: () => 'learning-products/learning-product'
-    }
+    },
+    props: true
   },
   {
     path: '/:lang/learning-products/create',
@@ -234,7 +255,7 @@ const routes = [
     }
   },
   {
-    path: '/:lang/learning-products/:learningProductId(\\d+)/edit',
+    path: '/:lang/learning-products/:entityId(\\d+)/edit',
     name: 'learning-product-edit',
     component: LearningProductEdit,
     meta: {
@@ -242,7 +263,8 @@ const routes = [
         return this.trans('base.navigation.edit');
       },
       breadcrumbs: () => 'learning-products/learning-product/learning-product-edit'
-    }
+    },
+    props: true
   },
   {
     path: '/:lang/admin',
@@ -282,9 +304,34 @@ const routes = [
     name: 'admin-user-edit',
     component: UserEdit,
     meta: {
-      title: () => `${store.getters['users/viewing'].name}`,
+      title: () => `${store.state.users.viewing.name}`,
       breadcrumbs: () => 'administration/admin-user-list/admin-user-edit'
+    },
+    props: true
+  },
+  {
+    path: '/:lang/admin/organizational-units',
+    name: 'admin-organizational-unit-list',
+    component: OrganizationalUnitList,
+    meta: {
+      title() {
+        return this.trans('base.navigation.admin_organizational_unit_list');
+      },
+      breadcrumbs: () => 'administration/admin-organizational-unit-list'
     }
+  },
+  {
+    path: '/:lang/admin/organizational-units/:entityId(\\d+)/edit',
+    name: 'admin-organizational-unit-edit',
+    component: OrganizationalUnitEdit,
+    meta: {
+      title() {
+        let organizationalUnit = OrganizationalUnitModel.find(this.$route.params.entityId);
+        return organizationalUnit ? organizationalUnit.name : '';
+      },
+      breadcrumbs: () => 'administration/admin-organizational-unit-list/admin-organizational-unit-edit'
+    },
+    props: true
   },
   {
     path: '/:lang/logout'

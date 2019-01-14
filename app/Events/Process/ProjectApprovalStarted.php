@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Process;
 
 use App\Models\Process\ProcessInstance;
 use Illuminate\Queue\SerializesModels;
 
-class ProcessProjectApprovalCompleted
+class ProjectApprovalStarted
 {
     use SerializesModels;
 

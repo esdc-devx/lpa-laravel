@@ -43,9 +43,15 @@
         type: String,
         required: true
       },
-      sorted: Boolean,
-      labelKey: String,
-      value: Array
+      sorted: {
+        type: Boolean
+      },
+      labelKey: {
+        type: String
+      },
+      value: {
+        type: Array
+      }
     },
 
     computed: {

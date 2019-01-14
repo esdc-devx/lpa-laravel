@@ -1,3 +1,5 @@
+import Vue from 'vue';
+
 import LearningProductAPI from '@api/learning-products';
 import { helpers } from '@/helpers.js';
 
@@ -20,26 +22,15 @@ export default {
     projectLearningProducts: []
   },
 
-  getters: {
-    all(state) {
-      return state.all;
-    },
-
-    viewing(state) {
-      return state.viewing;
-    },
-
-    organizationalUnits(state) {
-      return state.organizationalUnits;
-    },
-
-    projectLearningProducts(state) {
-      return state.projectLearningProducts;
-    }
-  },
+  getters: {},
 
   actions: {
-    async loadLearningProducts({ commit, dispatch }) {
+    async load({ commit }, id) {
+      let response = await LearningProductAPI.getLearningProduct(id);
+      commit('setViewing', response.data.learning_product);
+    },
+
+    async loadAll({ commit, dispatch }) {
       let response = await LearningProductAPI.getLearningProducts();
       commit('setLearningProducts', response.data.learning_products);
     },
@@ -49,18 +40,13 @@ export default {
       commit('setProjectLearningProducts', response.data.learning_products);
     },
 
-    async loadLearningProduct({ commit }, id) {
-      let response = await LearningProductAPI.getLearningProduct(id);
-      commit('setViewing', response.data.learning_product);
-    },
-
-    async loadLearningProductCreateInfo({ commit }) {
+    async loadCreateInfo({ commit }) {
       let response = await LearningProductAPI.getCreateInfo();
       commit('setProjects', response.data.projects);
       commit('setOrganizationalUnits', response.data.organizational_units);
     },
 
-    async loadLearningProductEditInfo({ commit }, id) {
+    async loadEditInfo({ commit }, id) {
       let response = await LearningProductAPI.getEditInfo(id);
       commit('setViewing', response.data.learning_product);
       commit('setOrganizationalUnits', response.data.organizational_units);
@@ -118,7 +104,7 @@ export default {
     },
 
     setPermission(state, { name, isAllowed }) {
-      state.permissions[name] = isAllowed;
+      Vue.set(state.permissions, name, isAllowed);
     },
 
     setOrganizationalUnits(state, organizationalUnits) {

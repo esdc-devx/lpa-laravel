@@ -11,7 +11,7 @@ class PlannedProductList extends ProcessInstanceFormDataModel
         'comments',
     ];
 
-    public $relationships = [
+    protected $with = [
         'plannedProducts',
     ];
 

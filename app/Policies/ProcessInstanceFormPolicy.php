@@ -72,7 +72,7 @@ class ProcessInstanceFormPolicy
             return true;
         }
 
-        throw new OperationDeniedException();
+        throw new OperationDeniedException(trans('errors.process_instance_form.unclaim'));
     }
 
     /**

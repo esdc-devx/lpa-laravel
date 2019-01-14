@@ -20,7 +20,7 @@ class ProcessEventSubscriber
     }
 
     /**
-     * Handle ProcessProjectApprovalCompleted events.
+     * Handle ProjectApprovalCompleted events.
      * These events are fired whenever a Project Approval process
      * is considered completed in Camunda.
      */
@@ -44,7 +44,7 @@ class ProcessEventSubscriber
         );
 
         $events->listen(
-            'App\Events\ProcessProjectApprovalCompleted',
+            'App\Events\Process\ProjectApprovalCompleted',
             'App\Listeners\ProcessEventSubscriber@onProcessProjectApprovalCompleted'
         );
     }

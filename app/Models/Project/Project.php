@@ -2,7 +2,6 @@
 
 namespace App\Models\Project;
 
-use App\Events\ProcessEntityDeleted;
 use App\Models\BaseModel;
 use App\Models\LearningProduct\LearningProduct;
 use App\Models\OrganizationalUnit;
@@ -10,13 +9,14 @@ use App\Models\Project\BusinessCase\BusinessCase;
 use App\Models\Project\GateOneApproval\GateOneApproval;
 use App\Models\Project\PlannedProductList\PlannedProductList;
 use App\Models\State;
+use App\Models\Traits\HasInformationSheets;
 use App\Models\Traits\HasProcesses;
 use App\Models\Traits\UsesUserAudit;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends BaseModel
 {
-    use SoftDeletes, UsesUserAudit, HasProcesses;
+    use SoftDeletes, UsesUserAudit, HasProcesses, HasInformationSheets;
 
     protected $fillable = [
         'name',

@@ -16,11 +16,21 @@ class ProcessInstanceFormAssessment extends BaseModel
         'comments',
     ];
 
+    protected $with = [
+        'assessedProcessFormDefinition',
+        'decision',
+    ];
+
     public $timestamps = false;
 
     public function entity()
     {
         return $this->morphTo();
+    }
+
+    public function assessedProcessFormDefinition()
+    {
+        return $this->belongsTo(ProcessForm::class, 'assessed_process_form', 'name_key');
     }
 
     public function decision()

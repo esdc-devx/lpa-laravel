@@ -1,15 +1,10 @@
 <template>
   <div class="planned-product">
     <el-form-item-wrap
-      :label="trans('forms.planned_product_list.type.label')"
       :prop="`${fieldNamePrefix}.type_id`"
-      required>
-      <span slot="label-addons">
-        <el-popover-wrap
-          :description="trans('forms.planned_product_list.type.description')"
-          :help="trans('forms.planned_product_list.type.help')">
-        </el-popover-wrap>
-      </span>
+      contextPath="forms.planned_product_list.type"
+      required
+    >
       <el-cascader
         v-model="typeModel"
         :name="`${fieldNamePrefix}.type_id`"
@@ -17,19 +12,15 @@
         v-validate="'required'"
         :data-vv-as="trans('forms.planned_product_list.type.label')"
         :options="data.typeList"
-        :props="typeOptions">
-      </el-cascader>
+        :props="typeOptions"
+      />
       <form-error :name="`${fieldNamePrefix}.type_id`"></form-error>
     </el-form-item-wrap>
     <el-form-item-wrap
-      :label="trans('forms.planned_product_list.quantity.label')"
       :prop="`${fieldNamePrefix}.quantity`"
-      required>
-      <span slot="label-addons">
-        <el-popover-wrap
-          :description="trans('forms.planned_product_list.quantity.description')">
-        </el-popover-wrap>
-      </span>
+      contextPath="forms.planned_product_list.quantity"
+      required
+    >
       <input-wrap
         v-model="form.quantity"
         :name="`${fieldNamePrefix}.quantity`"
@@ -38,8 +29,8 @@
         v-mask="'###'"
         :min="1"
         :max="100"
-        type="number">
-      </input-wrap>
+        type="number"
+      />
     </el-form-item-wrap>
   </div>
 </template>
