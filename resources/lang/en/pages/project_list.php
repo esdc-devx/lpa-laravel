@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'create_project' => 'Create a project',
+    'create_project' => 'Create a Project',
 ];

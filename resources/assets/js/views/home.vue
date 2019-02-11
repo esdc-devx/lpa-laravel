@@ -1,5 +1,5 @@
 <template>
-  <div class="home content">
+  <div>
     <el-row type="flex" justify="center" :gutter="18">
       <el-col :span="18">
         <h2 v-if="isAdminOrOwner" v-html="trans('pages.home.title_owner')"></h2>
@@ -19,23 +19,56 @@
       </el-col>
     </el-row>
     <!-- Actions -->
-    <el-row v-if="isAdminOrOwner" type="flex" class="actions" justify="center" :gutter="15" align="top">
-      <el-col :span="7" >
-        <el-button class="action" @click="$router.push(`${language}/projects/create`)" icon="el-icon-lpa-projects">
-          <span class="action-instruction" v-html="trans('pages.project_list.create_project')"></span>
-          <span class="action-description" v-html="trans('pages.home.description_project')"></span>
+    <el-row
+      v-if="isAdminOrOwner"
+      type="flex"
+      class="actions"
+      justify="center"
+      :gutter="15"
+      align="top"
+    >
+      <el-col :span="7">
+        <el-button
+          class="action"
+          @click="$router.push(`${language}/projects/create`)"
+          icon="el-icon-lpa-projects"
+        >
+          <span v-html="trans('pages.project_list.create_project')"></span>
         </el-button>
+        <el-alert
+          type="info"
+          :title="trans('pages.home.description_project')"
+          show-icon
+          :closable="false"
+        />
       </el-col>
       <el-col :span="7" :offset="1">
-        <el-button class="action" @click="$router.push(`${language}/learning-products/create`)" icon="el-icon-lpa-learning-product">
-          <span class="action-instruction" v-html="trans('pages.learning_product_list.create_learning_product')"></span>
-          <span class="action-description" v-html="trans('pages.home.description_learning_product')"></span>
+        <el-button
+          class="action"
+          @click="$router.push(`${language}/learning-products/create`)"
+          icon="el-icon-lpa-learning-product"
+        >
+          <span v-html="trans('pages.learning_product_list.create_learning_product')"></span>
         </el-button>
+        <el-alert
+          type="info"
+          :title="trans('pages.home.description_learning_product')"
+          show-icon
+          :closable="false"
+        />
       </el-col>
     </el-row>
-    <el-row v-if="isAdminOrOwner" type="flex" justify="center" :gutter="12">
+    <el-row
+      v-if="isAdminOrOwner"
+      type="flex"
+      class="note"
+      justify="center"
+      :gutter="12"
+    >
       <el-col :span="12">
-        <p v-html="trans('pages.home.tip_owner')"></p>
+        <div>
+          <i class="el-icon-warning"></i><span v-html="trans('pages.home.tip_owner')"></span>
+        </div>
       </el-col>
     </el-row>
   </div>
@@ -62,13 +95,6 @@
   @import '~@sass/abstracts/mixins/helpers';
 
   .home {
-    // since there is no breadcrumbs bar on the home page,
-    // make sure the content is at the top
-    top: 0;
-    left: 0;
-    width: 100%;
-    box-sizing: border-box;
-    
     .el-row {
       margin-top: 0px;
     }
@@ -78,42 +104,59 @@
     }
 
     h2 {
+      display: block;
       font-size: 2.5rem;
+      // reset to browser default
+      margin-block-start: 0.83em;
+      margin-inline-start: 0px;
+      margin-inline-end: 0px;
       margin-bottom: 0;
     }
 
     .actions {
       align-items: stretch;
-      .action {
-        text-align: center;
-        white-space: normal;
-        width: 100%;
-        height: 100%;
+      .el-col {
         display: flex;
         flex-direction: column;
         align-items: center;
-        &:hover {
-          border-color: $--button-default-border;
-        }
-        i {
-          @include size($svg-icons-size-medium);
-          &.el-icon-lpa-projects {
-            @include svg(projects, $--color-primary);
+        justify-content: center;
+        .action {
+          @include size(100%, 100px);
+          text-align: center;
+          white-space: normal;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          &:hover {
+            border-color: $--button-default-border;
           }
-          &.el-icon-lpa-learning-product {
-            @include svg(learning-product, $--color-primary);
+          i {
+            @include size($svg-icons-size-medium);
+            &.el-icon-lpa-projects {
+              @include svg(projects, $--color-primary);
+            }
+            &.el-icon-lpa-learning-product {
+              @include svg(learning-product, $--color-primary);
+            }
           }
-        }
-        span {
-          display: block;
-          margin-top: 1em;
-          line-height: 1.5em;
-          width: 100%;
-          &.action-instruction {
+          span {
             text-decoration: underline;
             font-weight: bold;
           }
         }
+
+        .action + .el-alert {
+          height: calc(100% - 100px);
+        }
+      }
+    }
+
+    .note {
+      margin-top: 2em;
+      text-align: center;
+      i {
+        color: #e6a23c;
+        margin-right: 5px;
       }
     }
   }

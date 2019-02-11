@@ -63,6 +63,20 @@ class CamundaEventSubscriber
     }
 
     /**
+     * Handle process deployed event.
+     */
+    public function onProcessDeployed($event)
+    {
+        // Whenever a process gets deployed, also deploy its definition in Camunda.
+        $processDefinition = $event->processDefinition;
+        $deploymentFile = kebab_case($processDefinition->name_en) . '.bpmn';
+        $this->camunda->processes()->deploy([
+            'name' => $processDefinition->name_en,
+            'file' => $deploymentFile,
+        ]);
+    }
+
+    /**
      * Handle process instance form claim event.
      */
     public function onProcessInstanceFormClaim($event)
@@ -98,6 +112,43 @@ class CamundaEventSubscriber
 
         // Update process instance variables and tasks.
         \Process::load($event->processInstanceForm->step->processInstance)->updateProcessInstance();
+    }
+
+    /**
+     * Handle ProcessEntityUpdated events.
+     * These events are fired whenever an entity that could have
+     * process instances is being updated. (i.e. Project, LearningProduct, etc.).
+     */
+    public function onProcessEntityUpdated($event)
+    {
+        // If the entity has a running process and that its organizational unit was changed,
+        // reflect that change in Camunda.
+        $entity = $event->entity;
+        if ($entity->isDirty('organizational_unit_id') && $entity->currentProcess) {
+            // Update owner process variable in Camunda.
+            $this->camunda->processes()->updateVariables($entity->currentProcess->engine_process_instance_id, [
+                'owner' => ['value' => $entity->organizationalUnit->name_key]
+            ]);
+
+            // Update candidate group for all active tasks that were previously assigned to the organizational unit.
+            $entity->currentProcess->forms->each(function($processInstanceForm) use ($entity) {
+                if ($processInstanceForm->organizationalUnit && $processInstanceForm->organizationalUnit->owner && $processInstanceForm->engine_task_id) {
+                    // Remove all candidate groups for the task.
+                    collect($this->camunda->tasks()->getCandidates($processInstanceForm->engine_task_id))
+                        ->whereNotIn('groupId', [null])
+                        ->each(function($group) use ($processInstanceForm) {
+                            $this->camunda->tasks()->removeCandidate($processInstanceForm->engine_task_id, [
+                                'groupId' => $group->groupId,
+                            ]);
+                        });
+
+                    // Add a candidate group for the new organizational unit.
+                    $this->camunda->tasks()->addCandidate($processInstanceForm->engine_task_id, [
+                        'groupId' => $entity->organizationalUnit->name_key,
+                    ]);
+                }
+            });
+        }
     }
 
     /**
@@ -181,6 +232,11 @@ class CamundaEventSubscriber
         );
 
         $events->listen(
+            'App\Events\ProcessDeployed',
+            'App\Listeners\CamundaEventSubscriber@onProcessDeployed'
+        );
+
+        $events->listen(
             'App\Events\ProcessInstanceFormClaimed',
             'App\Listeners\CamundaEventSubscriber@onProcessInstanceFormClaim'
         );
@@ -193,6 +249,11 @@ class CamundaEventSubscriber
         $events->listen(
             'App\Events\ProcessInstanceFormSubmitted',
             'App\Listeners\CamundaEventSubscriber@onProcessInstanceFormSubmit'
+        );
+
+        $events->listen(
+            'App\Events\ProcessEntityUpdated',
+            'App\Listeners\CamundaEventSubscriber@onProcessEntityUpdated'
         );
     }
 

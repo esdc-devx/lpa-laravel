@@ -13,7 +13,8 @@ class ProcessFactory
 
     /**
      * Start a process instance for an entity.
-     * If none is provided, it will create one from its factory.
+     * If none is provided, it will create one from its factory 
+     * when only one entity type is mapped to the process definition.
      *
      * @param  mixed $processDefinition
      * @param  App\Models\BaseModel $entity
@@ -28,7 +29,13 @@ class ProcessFactory
 
         // When no entity is passed as argument, create one from factory.
         if (is_null($entity)) {
-            $entity = factory(entity_class($processDefinition->entity_type))->create();
+            $supported = $processDefinition->entityTypes->pluck('entity_type');
+            if ($supported->count() > 1) {
+                throw new Exception("Process definition [ $processDefinition->name_key ] supports more than one entity type, none was provided.");
+            }
+            // If only one entity type is supported, use it be default.
+            $entityType = $supported->first();
+            $entity = factory(entity_class($entityType))->create();
         }
 
         // Start process and retrieve process instance.

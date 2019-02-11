@@ -4,7 +4,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('assessment') }">
         {{ trans('forms.form_assessment.tabs.overall_assessment') }}
       </span>
-      <h2>{{ trans('forms.form_assessment.tabs.overall_assessment') }}</h2>
+      <h3>{{ trans('forms.form_assessment.tabs.overall_assessment') }}</h3>
       <el-form-item-wrap
         prop="assessment_date"
         contextPath="forms.form_assessment.assessment_date"
@@ -66,7 +66,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes(item.assessed_process_form.replace(/-/g, '_')) }">
         {{ trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) }}
       </span>
-      <h2>{{ trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) }}</h2>
+      <h3>{{ trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) }}</h3>
       <el-form-item-wrap
         prop="process_form_decision_id"
         :description="trans('forms.form_assessment.process_form_decision_id.description', { assessed_form_title: trans(`forms.${item.assessed_process_form.replace(/-/g, '_')}.title`) })"
@@ -193,6 +193,7 @@
     },
 
     mounted() {
+      this.$emit('mounted');
       EventBus.$on('Store:languageUpdate', loadData);
     }
   };

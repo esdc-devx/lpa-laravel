@@ -11,7 +11,8 @@ class ProjectRepository extends BaseEloquentRepository
     protected $relationships = [
         'organizationalUnit', 'organizationalUnit.director',
         'currentProcess.definition', 'currentProcess.state',
-        'createdBy', 'updatedBy', 'state'
+        'createdBy', 'updatedBy', 'state',
+        'informationSheets'
     ];
 
     /**
@@ -24,7 +25,7 @@ class ProjectRepository extends BaseEloquentRepository
     {
         $project = $this->model->create([
             'name'                   => $data['name'],
-            'organizational_unit_id' => $data['organizational_unit'],
+            'organizational_unit_id' => $data['organizational_unit_id'],
             'state_id'               => State::getByKey('project.new')->first()->id,
             'created_by'             => auth()->user()->id,
             'updated_by'             => auth()->user()->id,
@@ -49,8 +50,8 @@ class ProjectRepository extends BaseEloquentRepository
         }
 
         // Update organizational unit.
-        if (isset($data['organizational_unit'])) {
-            $project->organizational_unit_id = $data['organizational_unit'];
+        if (isset($data['organizational_unit_id'])) {
+            $project->organizational_unit_id = $data['organizational_unit_id'];
         }
 
         $project->updated_by = auth()->user()->id;

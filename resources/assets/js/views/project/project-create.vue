@@ -1,5 +1,5 @@
 <template>
-  <div class="project-create content">
+  <div>
     <el-card shadow="never">
       <span slot="header">
         <h2><i class="el-icon-lpa-projects"></i>{{ trans('pages.project_create.title') }}</h2>
@@ -22,11 +22,11 @@
         </el-form-item-wrap>
         <el-form-item-wrap
           :label="$tc('entities.general.organizational_units')"
-          prop="organizational_unit"
+          prop="organizational_unit_id"
           required>
           <el-select-wrap
-            v-model="form.organizational_unit"
-            name="organizational_unit"
+            v-model="form.organizational_unit_id"
+            name="organizational_unit_id"
             :data-vv-as="$tc('entities.general.organizational_units')"
             v-validate="'required'"
             :options="organizationalUnits"
@@ -52,8 +52,6 @@
   import InputWrap from '@components/forms/input-wrap';
 
   import FormUtils from '@mixins/form/utils.js';
-
-  import Project from '@/store/models/Project';
 
   const loadData = async function () {
     // we need to access the store directly
@@ -96,7 +94,7 @@
       return {
         form: {
           name: '',
-          organizational_unit: null
+          organizational_unit_id: null
         }
       }
     },
@@ -164,52 +162,8 @@
   @import '~@sass/abstracts/mixins/helpers';
 
   .project-create {
-    margin: 0 auto;
-    h2 {
-      position: relative;
-      margin: 0;
-      padding-left: 34px;
-      display: inline-block;
-      i {
-        @include svg(projects, $--color-primary);
-        width: 24px;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    .el-form {
-      .el-form-item:last-of-type {
-        float: right;
-      }
-      label {
-        padding: 0;
-        font-weight: bold;
-        color: $--color-primary;
-      }
-      .el-select {
-        width: 100%;
-      }
-    }
-  }
-  .el-autocomplete-suggestion.name-autocomplete {
-    li {
-      line-height: 20px;
-      padding: 7px 10px;
-
-      .autocomplete-popper-inner-wrap {
-        overflow: hidden;
-        .value {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        .link {
-          font-size: 12px;
-          color: #b4b4b4;
-        }
-      }
+    h2 i {
+      @include svg(projects, $--color-primary);
     }
   }
 </style>

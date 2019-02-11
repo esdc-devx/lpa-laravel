@@ -1,7 +1,31 @@
-// ElementUI override so that we can have multiple errors shown as a list
-.el-form-item__error, .error-list-item {
-  position: relative;
+.el-form {
   display: flex;
+  flex-direction: column;
+  .el-autocomplete,
+  .el-select {
+    width: 100%;
+  }
+  .el-cascader {
+    width: 35%;
+  }
+  .el-autocomplete-suggestion.name-autocomplete {
+    li {
+      line-height: 20px;
+      padding: 7px 10px;
+
+      .autocomplete-popper-inner-wrap {
+        overflow: hidden;
+        .value {
+          text-overflow: ellipsis;
+          overflow: hidden;
+        }
+        .link {
+          font-size: 12px;
+          color: #b4b4b4;
+        }
+      }
+    }
+  }
 }
 
 // this fixes a color contrast issue when the radio buttons are disabled ans selected

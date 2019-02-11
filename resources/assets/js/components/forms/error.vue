@@ -27,5 +27,7 @@
     display: flex;
     flex-direction: column;
     flex: 1;
+    // make room for the char-count
+    margin-right: 100px;
   }
 </style>

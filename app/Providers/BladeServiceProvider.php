@@ -28,6 +28,7 @@ class BladeServiceProvider extends ServiceProvider
         Blade::component('information_sheets.components.base.field', 'field');
         Blade::component('information_sheets.components.base.field_audit', 'field_audit');
         Blade::component('information_sheets.components.base.field_boolean', 'field_boolean');
+        Blade::component('information_sheets.components.base.field_date', 'field_date');
         Blade::component('information_sheets.components.base.field_list', 'field_list');
         Blade::component('information_sheets.components.base.field_lpa_number', 'field_lpa_number');
 
@@ -36,12 +37,13 @@ class BladeServiceProvider extends ServiceProvider
         Blade::component('information_sheets.components.project.business_case', 'business_case');
         Blade::component('information_sheets.components.project.planned_product_list', 'planned_product_list');
         Blade::component('information_sheets.components.project.gate_one_approval', 'gate_one_approval');
+        Blade::component('information_sheets.components.project.learning_products', 'learning_products');
 
         /*
          * Register blade directives.
          */
 
-         // Add logger for debugging.
+        // Add logger for debugging.
         Blade::directive('logger', function ($expression) {
             return "<?php logger($expression) ?>";
         });

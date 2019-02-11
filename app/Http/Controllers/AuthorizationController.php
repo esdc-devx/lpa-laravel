@@ -60,6 +60,18 @@ class AuthorizationController extends APIController
     }
 
     /**
+     * Authorize learning product process initiation.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function startLearningProductProcess(LearningProduct $learningProduct, ProcessDefinition $processDefinition)
+    {
+        return $this->respond([
+            'allowed' => auth()->user()->can('start-process', [$learningProduct, $processDefinition])
+        ]);
+    }
+
+    /**
      * Authorize process instance cancel action.
      *
      * @return \Illuminate\Http\JsonResponse

@@ -1,8 +1,8 @@
 <template>
-  <div class="user-create content">
+  <div>
     <el-card shadow="never">
       <span slot="header">
-        <h2>{{ trans('base.navigation.admin_user_create') }}</h2>
+        <h2><i class="el-icon-lpa-user"></i>{{ trans('base.navigation.admin_user_create') }}</h2>
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
@@ -61,7 +61,7 @@
   import FormUtils from '@mixins/form/utils.js';
 
   export default {
-    name: 'admin-user-create',
+    name: 'user-create',
 
     extends: Page,
 
@@ -72,7 +72,7 @@
     components: { FormError, ElSelectWrap, ElFormItemWrap, UserSearch },
 
     computed: {
-      ...mapState('users', [
+      ...mapState('entities/users', [
         'organizationalUnits',
         'roles'
       ])
@@ -89,8 +89,8 @@
     },
 
     methods: {
-      ...mapActions('users', [
-        'create',
+      ...mapActions('entities/users', [
+        '$$create',
         'loadCreateInfo'
       ]),
 
@@ -102,7 +102,7 @@
       async handleCreate() {
         let formData = Object.assign({}, this.form);
         formData.username = this.form.user.username;
-        await this.create(formData);
+        await this.$$create(formData);
 
         this.isSubmitting = false;
         this.notifySuccess({
@@ -122,7 +122,7 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('users/loadCreateInfo');
+      await store.dispatch('entities/users/loadCreateInfo');
       next();
     },
 
@@ -133,33 +133,11 @@
     },
 
     mounted() {
-      this.autofocus('name');
+      this.autofocus('username');
     }
   };
 </script>
 
 <style lang="scss">
-  @import '~@sass/abstracts/vars';
 
-  .user-create {
-    margin: 0 auto;
-    h2 {
-      margin: 0;
-      display: inline-block;
-    }
-
-    .el-form {
-      .el-form-item:last-of-type {
-        float: right;
-      }
-      label {
-        padding: 0;
-        font-weight: bold;
-        color: $--color-primary;
-      }
-      .el-autocomplete, .el-select {
-        width: 100%;
-      }
-    }
-  }
 </style>

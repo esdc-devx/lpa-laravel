@@ -58,10 +58,6 @@ class Configure extends BaseCommand
             $this->configureAuthorizations();
         }
 
-        if ($this->option('force') || $this->confirm('Deploy processes?')) {
-            $this->deployProcesses();
-        }
-
         $this->success('Camunda configuration completed successfully.');
     }
 
@@ -160,26 +156,6 @@ class Configure extends BaseCommand
         }
         // Catch and output any possible exceptions.
         catch (\Exception $e) {
-            $this->error($e->getMessage());
-        }
-    }
-
-    /**
-     * Deploy default processes.
-     *
-     * @return void
-     */
-    protected function deployProcesses()
-    {
-        try {
-            $this->camunda->processes()->deploy([
-                'name' => 'Project Approval',
-                'file' => 'project-approval-v2.bpmn',
-            ]);
-            $this->info('Processes were deployed successfully.');
-        }
-        // Catch and output any possible exceptions.
-        catch (\Exceptions $e) {
             $this->error($e->getMessage());
         }
     }

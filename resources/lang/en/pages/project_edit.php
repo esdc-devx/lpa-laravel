@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Edit Project',
+    'title' => 'Edit the Project',
 ];

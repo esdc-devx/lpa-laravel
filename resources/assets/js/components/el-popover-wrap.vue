@@ -38,8 +38,6 @@
 </script>
 
 <style lang="scss">
-  @import '~@sass/abstracts/vars';
-
   .el-popover-wrap {
     text-align: left;
     &.el-popover {

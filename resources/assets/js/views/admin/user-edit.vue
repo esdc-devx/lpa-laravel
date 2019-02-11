@@ -1,5 +1,5 @@
 <template>
-  <div class="user-edit content">
+  <div>
     <el-card shadow="never">
       <span slot="header">
         <h2><i class="el-icon-lpa-edit"></i>{{ trans('base.navigation.admin_user_edit') }}</h2>
@@ -8,7 +8,7 @@
       <el-form label-position="top" :disabled="isFormDisabled">
         <el-form-item :label="$tc('entities.general.organizational_units', 2)" for="organizationalUnits">
           <el-select-wrap
-            v-model="form.user.organizational_units"
+            v-model="form.organizational_units"
             name="organizational_units"
             :data-vv-as="$tc('entities.general.organizational_units', 2)"
             v-validate="''"
@@ -19,7 +19,7 @@
 
         <el-form-item :label="trans('entities.user.roles')" for="roles">
           <el-select-wrap
-            v-model="form.user.roles"
+            v-model="form.roles"
             name="roles"
             :data-vv-as="trans('entities.user.roles')"
             v-validate="''"
@@ -29,7 +29,7 @@
           />
         </el-form-item>
 
-        <el-form-item>
+        <el-form-item class="form-footer">
           <el-button :disabled="isFormDisabled" @click="goToParentPage()">{{ trans('base.actions.cancel') }}</el-button>
           <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         </el-form-item>
@@ -46,6 +46,8 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
+  import User from '@/store/models/User';
+
   export default {
     name: 'user-edit',
 
@@ -58,11 +60,14 @@
     components: { ElSelectWrap },
 
     computed: {
-      ...mapState('users', [
-        'viewing',
+      ...mapState('entities/users', [
         'organizationalUnits',
         'roles'
-      ])
+      ]),
+
+      viewing() {
+        return User.find(this.userId);
+      },
     },
 
     props: {
@@ -75,14 +80,15 @@
     data() {
       return {
         form: {
-          user: {}
+          organizational_units: [],
+          roles: []
         }
       }
     },
 
     methods: {
-      ...mapActions('users', [
-        'update',
+      ...mapActions('entities/users', [
+        '$$update',
         'loadEditInfo'
       ]),
 
@@ -96,11 +102,7 @@
       },
 
       async handleUpdate() {
-        await this.update({
-          id: this.form.user.id,
-          organizational_units: this.form.user.organizational_units,
-          roles: this.form.user.roles
-        });
+        await this.$$update(this.form);
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.user_updated')
@@ -119,7 +121,7 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('users/loadEditInfo', to.params.userId)
+      await store.dispatch('entities/users/loadEditInfo', to.params.userId)
       next();
     },
 
@@ -130,64 +132,15 @@
     },
 
     created() {
-      this.form.user = _.cloneDeep(this.viewing);
+      this.form.id = this.viewing.id;
       // replace our internal organizational_units with only the ids
       // since ElementUI only need ids to populate the selected options
-      this.form.user.organizational_units = _.map(this.viewing.organizational_units, 'id');
-      this.form.user.roles = _.map(this.viewing.roles, 'id');
+      this.form.organizational_units = _.map(this.viewing.organizational_units, 'id');
+      this.form.roles = _.map(this.viewing.roles, 'id');
     }
   };
 </script>
 
 <style lang="scss">
-  @import '~@sass/abstracts/vars';
 
-  .user-edit {
-    margin: 0 auto;
-    h2 {
-      position: relative;
-      margin: 0;
-      padding-left: 34px;
-      display: inline-block;
-      i {
-        width: 24px;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    .el-form {
-      .el-form-item:last-of-type {
-        float: right;
-      }
-      label {
-        padding: 0;
-        font-weight: bold;
-        color: $--color-primary;
-      }
-      .el-autocomplete, .el-select {
-        width: 100%;
-      }
-    }
-  }
-
-  .el-autocomplete-suggestion.userAutocomplete {
-    .autocomplete-popper-inner-wrap {
-      li {
-        line-height: 20px;
-        padding: 7px 10px;
-
-        .value {
-          text-overflow: ellipsis;
-          overflow: hidden;
-        }
-        .link {
-          font-size: 12px;
-          color: #b4b4b4;
-        }
-      }
-    }
-  }
 </style>

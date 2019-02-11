@@ -111,6 +111,32 @@ class CamundaTasks extends CamundaBaseAPI
     }
 
     /**
+     * Add a candidate user or group for a given task.
+     *
+     * @param  string $id
+     * @param  array $candidate
+     * @return void
+     */
+    public function addCandidate(string $id, array $candidate)
+    {
+        $candidate['type'] = $candidate['type'] ?? 'candidate';
+        return $this->client->post("task/$id/identity-links", $candidate);
+    }
+
+    /**
+     * Remove a candidate user or group for a given task.
+     *
+     * @param  string $id
+     * @param  array $candidate
+     * @return void
+     */
+    public function removeCandidate(string $id, array $candidate)
+    {
+        $candidate['type'] = $candidate['type'] ?? 'candidate';
+        return $this->client->post("task/$id/identity-links/delete", $candidate);
+    }
+
+    /**
      * Complete task.
      *
      * @param  string $id

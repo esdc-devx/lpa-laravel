@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'create_user' => 'Create a user',
+    'create_user' => 'Create a User',
 ];

@@ -70,15 +70,18 @@
     overflow: hidden;
   }
 
-  .body-wrap > .el-aside {
-    position: relative;
-    // this allows to make the content shift to the left and take the sidebar's space when collapsed
-    width: auto !important;
-    overflow: visible;
-    z-index: $--index-top;
-  }
-  .content-wrap {
-    background-color: #eaf0f8;
+  .body-wrap {
+    > .el-aside {
+      position: relative;
+      // this allows to make the content shift to the left
+      // and take the sidebar's space when collapsed
+      width: auto !important;
+      overflow: visible;
+      z-index: $--index-top;
+    }
+    .content-wrap {
+      background-color: #eaf0f8;
+    }
   }
 
   .el-main {
@@ -104,11 +107,5 @@
     .el-aside, .el-menu.el-menu--collapse {
       min-width: 64px !important;
     }
-  }
-
-  hr {
-    border-color: #e6e6e6;
-    border-style: solid;
-    margin-bottom: 20px;
   }
 </style>

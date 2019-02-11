@@ -5,6 +5,7 @@ use App\Models\User\Role;
 use App\Repositories\UserRepository;
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class UserTableSeeder extends Seeder
 {
@@ -21,7 +22,8 @@ class UserTableSeeder extends Seeder
     {
         $this->users->create([
             'username' => $username,
-            'roles' => [$this->adminRoleId]
+            'password' => $username == config('auth.admin.username') ? bcrypt(config('auth.admin.password')) : null,
+            'roles'    => [$this->adminRoleId]
         ]);
     }
 
@@ -37,14 +39,15 @@ class UserTableSeeder extends Seeder
         // Enforce eloquent guard attributes to ensure data integrity.
         Model::reguard();
 
-        // Create admin account to boot the application and admin users.
-        $adminUsers = collect(array_merge(
-            [config('auth.admin.username')],
-            config('auth.admin_users')
-        ));
-
-        $adminUsers->each(function($username) {
+        // Create admin accounts to boot the application.
+        collect(array_merge(
+            [config('auth.admin.username')], config('auth.admin_users')
+        ))
+        ->each(function($username) {
             $this->createAdminUser($username);
         });
+
+        // Once admin accounts are created, authenticate as admin.
+        Auth::login(User::whereUsername(config('auth.admin.username'))->first());
     }
 }

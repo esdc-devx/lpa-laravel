@@ -7,6 +7,31 @@ use App\Models\Process\ProcessInstance;
 class ProcessEventSubscriber
 {
     /**
+     * Handle ProcessEntityUpdated events.
+     * These events are fired whenever an entity that could have
+     * process instances is being updated. (i.e. Project, LearningProduct, etc.).
+     */
+    public function onProcessEntityUpdated($event)
+    {
+        // Check if entity has a running process and its organizational unit was changed.
+        $entity = $event->entity;
+        if ($entity->isDirty('organizational_unit_id') && $entity->currentProcess) {
+            $entity->currentProcess->forms->each(function($processInstanceForm) use ($entity) {
+                if ($processInstanceForm->organizationalUnit && $processInstanceForm->organizationalUnit->owner) {
+                    // Re-assign process instance form to its new organizational unit.
+                    $processInstanceForm->organizationalUnit()->associate($entity->organizationalUnit);
+                    $processInstanceForm->save();
+
+                    // Remove any editor that can no longer edit the form.
+                    if ($processInstanceForm->currentEditor && $processInstanceForm->currentEditor->cant('edit', $processInstanceForm)) {
+                        $processInstanceForm->unclaim();
+                    }
+                }
+            });
+        }
+    }
+
+    /**
      * Handle ProcessEntityDeleted events.
      * These events are fired whenever an entity that could have
      * process instances is being deleted. (i.e. Project, LearningProduct, etc.).
@@ -38,6 +63,11 @@ class ProcessEventSubscriber
      */
     public function subscribe($events)
     {
+        $events->listen(
+            'App\Events\ProcessEntityUpdated',
+            'App\Listeners\ProcessEventSubscriber@onProcessEntityUpdated'
+        );
+
         $events->listen(
             'App\Events\ProcessEntityDeleted',
             'App\Listeners\ProcessEventSubscriber@onProcessEntityDeleted'

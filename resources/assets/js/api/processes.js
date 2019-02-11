@@ -2,8 +2,8 @@ import _ from 'lodash';
 import axios from '@axios/interceptor';
 
 export default {
-  start(nameKey, entityId) {
-    return axios.post(`process-definitions/${nameKey}?entity_id=${entityId}`);
+  start(nameKey, entityId, entityType) {
+    return axios.post(`process-definitions/${nameKey}?entity_id=${entityId}&entity_type=${entityType}`);
   },
 
   getDefinitions(entityType) {

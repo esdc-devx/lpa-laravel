@@ -56,7 +56,7 @@ class ProjectController extends APIController
         // Retrieve only the necessary attributes from the request.
         $data = $request->only([
             'name',
-            'organizational_unit'
+            'organizational_unit_id'
         ]);
 
         return $this->respond(
@@ -85,7 +85,7 @@ class ProjectController extends APIController
      */
     public function edit($id)
     {
-        $project = $this->projects->with('organizationalUnit')->getById($id);
+        $project = $this->projects->getById($id);
         $this->authorize('update', $project);
 
         return $this->respond([
@@ -106,7 +106,7 @@ class ProjectController extends APIController
         // Ensure that user cannot update any other attributes.
         $data = $request->only([
             'name',
-            'organizational_unit',
+            'organizational_unit_id',
         ]);
 
         return $this->respond(

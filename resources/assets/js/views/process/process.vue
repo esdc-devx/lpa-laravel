@@ -1,45 +1,17 @@
 <template>
-  <div class="process content">
+  <div class="process">
     <el-row>
       <el-col>
-        <info-box>
-          <dl>
-            <dt>{{ trans('entities.general.status') }}</dt>
-            <dd><span :class="'state ' + viewing.state.name_key">{{ viewing.state.name }}</span></dd>
-          </dl>
-          <dl>
-            <dt>{{ trans('entities.process.started') }}</dt>
-            <dd v-audit:created="viewing"></dd>
-          </dl>
-          <dl>
-            <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd v-audit:updated="viewing"></dd>
-          </dl>
-          <dl>
-            <dt>{{ trans('entities.process.id') }}</dt>
-            <dd>{{ viewing.engine_process_instance_id }}</dd>
-          </dl>
-          <div class="controls">
-            <el-button
-              size="small"
-              type="danger"
-              v-if="hasRole('admin')"
-              :disabled="!canCancel"
-              @click="onCancel"
-              plain>
-              {{ trans('components.notice.title.cancel_process') }} <i class="el-icon-close"></i>
-            </el-button>
-          </div>
-        </info-box>
+        <infobox-process
+          :process="viewing"
+          @cancel="onCancel"
+        />
       </el-col>
     </el-row>
 
     <el-row>
       <el-col>
         <el-card shadow="never" class="process-steps">
-          <div slot="header">
-            <h3>{{ viewing.definition.name }}</h3>
-          </div>
           <el-steps :active="activeStep" finish-status="finish" align-center>
             <el-step
               v-for="(step, index) in steps"
@@ -71,7 +43,7 @@
             :row-class-name="getFormRowClassName"
             @row-click="viewForm"
             stripe>
-            <el-table-column width="50px">
+            <el-table-column width="50px" class-name="icon">
               <template slot-scope="scope">
                 <i :class="'el-icon-lpa-' + scope.row.state.name_key"></i>
               </template>
@@ -122,7 +94,7 @@
               :label="trans('entities.general.name')"
             >
               <template slot-scope="scope">
-                <a :href="'/' + language + '/information-sheets/' + scope.row.id" target="_blank">{{ scope.row.definition.name }}</a>
+                <a :href="`/${language}/information-sheets/${scope.row.id}`" target="_blank">{{ scope.row.definition.name }}</a>
               </template>
             </el-table-column>
           </el-table>
@@ -134,12 +106,12 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions, mapMutations } from 'vuex';
+  import { mapActions } from 'vuex';
 
   import HttpStatusCodes from '@axios/http-status-codes';
 
   import Page from '@components/page';
-  import InfoBox from '@components/info-box.vue';
+  import InfoboxProcess from '@components/infoboxes/infobox-process';
 
   import Process from '@/store/models/Process';
   import InformationSheet from '@/store/models/Information-Sheet';
@@ -152,7 +124,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`entities/${entityName}/load`, entityId),
+      store.dispatch(`entities/${_.camelCase(entityName)}/load`, entityId),
       store.dispatch('entities/processes/loadInstance', processId),
       store.dispatch('entities/informationSheets/loadAll', { entityType: 'process-instance', entityId: processId }),
       store.dispatch('authorizations/processes/loadCanCancel', processId)
@@ -173,7 +145,7 @@
 
     extends: Page,
 
-    components: { InfoBox },
+    components: { InfoboxProcess },
 
     props: {
       entityName: {
@@ -190,11 +162,13 @@
       }
     },
 
-    computed: {
-      ...mapGetters('entities/processes', {
-        activeStepStore: 'activeStep'
-      }),
+    data() {
+      return {
+        activeStep: null
+      };
+    },
 
+    computed: {
       viewing() {
         return Process.find(this.processId);
       },
@@ -211,15 +185,6 @@
         return _.sortBy(this.viewing.steps[this.activeStep].forms, 'definition.display_sequence');
       },
 
-      activeStep: {
-        get() {
-          return this.activeStepStore(this.processId);
-        },
-        set(val) {
-          this.setActiveStep(val);
-        }
-      },
-
       informationSheets() {
         return InformationSheet.query()
           .where('entity_id', _.parseInt(this.processId))
@@ -233,9 +198,20 @@
         'cancelInstance'
       ]),
 
-      ...mapMutations('entities/processes', [
-        'setActiveStep'
-      ]),
+      getActiveStep(id) {
+        if (this.viewing.state.name_key === 'completed') {
+          return this.viewing.steps.length - 1;
+        }
+
+        let active = 0;
+        // grab the last step that is not locked
+        _.forEach(this.viewing.steps, (step, i) => {
+          if (step.state.name_key !== 'locked') {
+            active = i;
+          }
+        });
+        return active;
+      },
 
       viewForm(form) {
         this.$router.push(`${this.processId}/form/${form.id}`);
@@ -249,23 +225,21 @@
         this.activeStep = index;
       },
 
-      onCancel() {
-        this.confirmCancelProcess().then(async () => {
-          try {
-            await this.cancelInstance(this.processId);
-            this.notifySuccess({
-              message: this.trans('components.notice.message.process_cancelled')
-            });
+      async onCancel() {
+        try {
+          await this.cancelInstance(this.processId);
+          this.notifySuccess({
+            message: this.trans('components.notice.message.process_cancelled')
+          });
+          await loadData.apply(this);
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          } else if (e.response.status === HttpStatusCodes.FORBIDDEN) {
             await loadData.apply(this);
-          } catch (e) {
-            // Exception handled by interceptor
-            if (!e.response) {
-              throw e;
-            } else if (e.response.status === HttpStatusCodes.FORBIDDEN) {
-              await loadData.apply(this);
-            }
           }
-        }).catch(() => false);
+        }
       }
     },
 
@@ -280,6 +254,10 @@
     async beforeRouteUpdate(to, from, next) {
       await loadData.apply(this);
       next();
+    },
+
+    created() {
+      this.activeStep = this.getActiveStep(this.processId);
     }
   };
 </script>
@@ -287,12 +265,10 @@
 <style lang="scss">
   @import '~@sass/abstracts/vars';
   @import '~@sass/abstracts/mixins/helpers';
-  @import '~@sass/base/helpers';
 
   .process {
-    margin: 0 auto;
-
     &-steps {
+      padding-top: 12px;
       .el-card__header h3 {
         text-align: center;
         margin: 0;
@@ -350,6 +326,11 @@
           }
         }
 
+        .el-step__head .el-step__line {
+          color: $--color-text-placeholder;
+          border-color: $--color-text-placeholder;
+        }
+
         // Unlocked
         .el-step__title.is-process, .el-step__description.is-process {
           color: map-get($color-states, unlocked) !important;
@@ -402,6 +383,11 @@
         line-height: 18px;
       }
 
+      .icon .cell {
+        // fixes a bug in IE11 where elipsis would appear underneath icons
+        text-overflow: clip;
+      }
+
       .status .cell {
         display: flex;
         align-items: center;
@@ -417,32 +403,6 @@
     .information-sheets-table {
       .el-table__row {
         cursor: default;
-      }
-    }
-
-    .info-box {
-      h2 {
-        margin: 0;
-        display: inline-block;
-      }
-      dl, .controls {
-        flex-basis: 20%;
-        max-width: 20%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
-      }
-      .controls {
-        margin-bottom: 0;
-        align-items: flex-end;
-        justify-content: center;
-        .el-button {
-          font-weight: bold;
-          i {
-            font-weight: bold;
-            margin-left: 10px;
-          }
-        }
-        .el-button + .el-button {
-          margin-left: 5px;
-        }
       }
     }
   }

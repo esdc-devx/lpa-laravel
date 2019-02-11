@@ -4,7 +4,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('project_objective') }">
         {{ trans('forms.business_case.tabs.project_objective') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.project_objective') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.project_objective') }}</h3>
       <el-form-item-wrap
         prop="request_origins"
         :classes="['has-other']"
@@ -48,7 +48,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('proposed_solution') }">
         {{ trans('forms.business_case.tabs.proposed_solution') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.proposed_solution') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.proposed_solution') }}</h3>
       <el-form-item-wrap
         prop="short_term_learning_response"
         contextPath="forms.business_case.short_term_learning_response"
@@ -97,7 +97,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('school_priorities') }">
         {{ trans('forms.business_case.tabs.school_priorities') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.school_priorities') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.school_priorities') }}</h3>
       <el-form-item-wrap
         prop="school_priorities"
         contextPath="forms.business_case.school_priorities"
@@ -134,7 +134,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('target_audience') }">
         {{ trans('forms.business_case.tabs.target_audience') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.target_audience') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.target_audience') }}</h3>
       <el-form-item-wrap
         prop="expected_annual_participant_number"
         contextPath="forms.business_case.expected_annual_participant_number"
@@ -172,7 +172,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('departmental_results_framework') }">
         {{ trans('forms.business_case.tabs.departmental_results_framework') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.departmental_results_framework') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.departmental_results_framework') }}</h3>
       <el-form-item-wrap
         prop="departmental_results_framework_indicators"
         contextPath="forms.business_case.departmental_results_framework_indicators"
@@ -193,7 +193,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('costs') }">
         {{ trans('forms.business_case.tabs.costs') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.costs') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.costs') }}</h3>
       <el-form-item-wrap
         prop="cost_centre"
         contextPath="forms.business_case.cost_centre"
@@ -251,7 +251,7 @@
       <span slot="label" :class="{'is-error': errorTabs.includes('comments') }">
         {{ trans('forms.business_case.tabs.comments') }}
       </span>
-      <h2>{{ trans('forms.business_case.tabs.comments') }}</h2>
+      <h3>{{ trans('forms.business_case.tabs.comments') }}</h3>
       <el-form-item-wrap
         prop="comments"
         contextPath="forms.business_case.comments"
@@ -388,6 +388,7 @@
     },
 
     mounted() {
+      this.$emit('mounted');
       EventBus.$on('Store:languageUpdate', loadData);
       EventBus.$on('FormEntity:discardChanges', this.bindCheckboxes);
     }
@@ -395,4 +396,5 @@
 </script>
 
 <style lang="scss">
+
 </style>

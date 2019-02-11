@@ -4,10 +4,12 @@ namespace App\Models\Process;
 
 use App\Models\LocalizableModel;
 use App\Models\Traits\UsesKeyNameField;
+use App\Models\Traits\UsesUserAudit;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProcessNotification extends LocalizableModel
 {
-    use UsesKeyNameField;
+    use SoftDeletes, UsesKeyNameField, UsesUserAudit;
 
     protected $fillable = [
         'process_definition_id',
@@ -18,6 +20,8 @@ class ProcessNotification extends LocalizableModel
         'subject_fr',
         'body_en',
         'body_fr',
+        'created_by',
+        'updated_by',
     ];
 
     protected $localizable = [
@@ -26,7 +30,9 @@ class ProcessNotification extends LocalizableModel
         'body',
     ];
 
-    public $timestamps = false;
+    protected $dates = [
+        'deleted_at',
+    ];
 
     public function processDefinition()
     {

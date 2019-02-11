@@ -13,6 +13,7 @@ use App\Models\State;
 use App\Models\User\User;
 use App\Notifications\ProcessNotification;
 use DB;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class ProcessManager {
@@ -40,7 +41,7 @@ class ProcessManager {
     {
         // Make sure no process are currently running.
         if ($entity->currentProcess) {
-            throw new \Exception('Cannot start process. Entity already has a process running.');
+            throw new AuthorizationException('Cannot start process. Entity already has a process running.');
         }
 
         // Load process definition from its key.
@@ -57,12 +58,12 @@ class ProcessManager {
         $engineProcessInstanceId = $this->camunda->processes()->start([
             'key'          => $processDefinition->name_key,
             'business_key' => "$entityType:{$entity->id}",
-            'variables'    => [
+            'variables'    => array_merge([
                 'applicationUrl' => ['type' => 'String', 'value' => config('camunda.app.url')],
                 'authToken'      => ['type' => 'String', 'value' => $authToken],
                 'owner'          => ['type' => 'String', 'value' => $entity->organizationalUnit->name_key],
                 'stateEntity'    => ['type' => 'String', 'value' => $entity->state->name_key],
-            ]
+            ], $processDefinition->getProcessVariablesFor($entity)),
         ])->id;
 
         // Wrap the creation process within a database transaction

@@ -111,6 +111,7 @@
     },
 
     mounted() {
+      this.$emit('mounted');
       EventBus.$on('Store:languageUpdate', loadData);
     }
   };

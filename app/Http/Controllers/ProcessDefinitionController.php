@@ -15,8 +15,10 @@ class ProcessDefinitionController extends APIController
      */
     public function show($entityClass)
     {
+        $processDefinitions = ProcessDefinition::getFor($entityClass);
+
         return $this->respond([
-            'process_definitions' => ProcessDefinition::where('entity_type', $entityClass::getEntityType())->get()
+            'process_definitions' => $processDefinitions,
         ]);
     }
 
@@ -28,10 +30,12 @@ class ProcessDefinitionController extends APIController
      */
     public function startProcess(ProcessDefinition $processDefinition)
     {
-        $entity = entity($processDefinition->entity_type, request()->get('entity_id'));
+        $entity = entity(request()->get('entity_type'), request()->get('entity_id'));
         $this->authorize('start-process', [$entity, $processDefinition]);
+        $processInstance = Process::startProcess($processDefinition, $entity)->getProcessInstance();
+
         return $this->respond([
-            'process_instance' => Process::startProcess($processDefinition, $entity)->getProcessInstance()
+            'process_instance' => $processInstance
         ]);
     }
 }

@@ -1,13 +1,13 @@
 import axios from '@axios/interceptor';
 
 export default {
-
   update(organizationalUnit) {
+    const { name_en, name_fr, email, director } = organizationalUnit;
     return axios.put(`organizational-units/${organizationalUnit.id}`, {
-      name_en: organizationalUnit.name_en,
-      name_fr: organizationalUnit.name_fr,
-      email: organizationalUnit.email,
-      director: organizationalUnit.director.username
+      name_en,
+      name_fr,
+      email,
+      director: director.username
     });
   },
 

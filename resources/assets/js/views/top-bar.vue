@@ -95,7 +95,7 @@
         'shouldConfirmBeforeLeaving',
         'filteredDataTableList'
       ]),
-      ...mapState('users', {
+      ...mapState('entities/users', {
         user: 'current'
       })
     },
@@ -114,23 +114,14 @@
 
     methods: {
       ...mapActions({
-        logout: 'users/logout'
+        logout: 'entities/users/logout'
       }),
       ...mapMutations([
         'showAppLoading'
       ]),
 
-      // @fixme: this function should't check for a confirmation
-      // as each component should handle this
-      // and the beforeLogout hook should be fired all the time
-      // wrapped async in some way
-      // so that we can do stuff before actually loging out
       onLogout() {
-        if (this.shouldConfirmBeforeLeaving) {
-          EventBus.$emit('TopBar:beforeLogout', this.doLogout);
-        } else {
-          this.doLogout();
-        }
+        EventBus.$emit('TopBar:beforeLogout', this.doLogout);
       },
 
       async doLogout() {
@@ -298,19 +289,18 @@
         background-color: #322f43 !important;
       }
     }
-  }
-
-  .sub-menu .el-menu-item a {
-    display: block;
-    width: 100%;
-    padding: 0 10px;
-    margin: 0 -10px;
-    color: $--color-black !important;
-    background-color: transparent !important;
-    text-decoration: none;
-    font-weight: normal;
-    &:hover {
-      color: $--color-white !important;
+    @at-root .sub-menu .el-menu-item a {
+      display: block;
+      width: 100%;
+      padding: 0 10px;
+      margin: 0 -10px;
+      color: $--color-black !important;
+      background-color: transparent !important;
+      text-decoration: none;
+      font-weight: normal;
+      &:hover {
+        color: $--color-white !important;
+      }
     }
   }
 </style>

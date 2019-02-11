@@ -4,7 +4,9 @@ import EventBus from '@/event-bus.js';
 
 import HttpStatusCodes from '@axios/http-status-codes';
 
-const swipeTransitionDuration = 500;
+// transition is 500ms but add a 250ms buffer
+// so that we can be sure that the transition is really completed
+const swipeTransitionDuration = 750;
 let errorNotif;
 
 export default {

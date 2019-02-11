@@ -14,11 +14,10 @@ import { state, getters, actions, mutations } from './root';
 
 // Imports all of the modules used in the application to build the data store.
 import projectsAuth from './modules/authorizations/projects';
+import learningProductsAuth from './modules/authorizations/learning-products';
 import processesAuth from './modules/authorizations/processes';
 import processInstanceFormsAuth from './modules/authorizations/process-instance-forms';
 
-import users from './modules/users';
-import learningProducts from './modules/learning-products';
 import lists from './modules/lists';
 
 Vue.use(Vuex);
@@ -33,12 +32,11 @@ window.store = new Vuex.Store({
       namespaced: true,
       modules: {
         projects: projectsAuth,
+        learningProducts: learningProductsAuth,
         processes: processesAuth,
         forms: processInstanceFormsAuth
       }
     },
-    users,
-    learningProducts,
     lists
   },
   plugins: [VuexORM.install(database)],

@@ -6,7 +6,7 @@
     @form_section(['title' => trans_choice('forms/planned_product_list.tabs.planned_product', 2)])
         <h4>{{ trans_choice('forms/planned_product_list.form_section_groups.planned_product', 2) }}</h4>
         @forelse($formData['planned_products'] as $product)
-            @field_group(['title' => 'planned_product_list.form_section_groups.planned_product', 'index' => $loop->iteration])
+            @field_group(['field' => 'planned_product_list.form_section_groups.planned_product', 'index' => $loop->iteration])
                 <dl>
                     @php $type = isset($product['type']['name']) ? $product['type']['name'] . ' / ' . $product['sub_type']['name'] : null @endphp
                     @field(['data' => $type, 'field' => 'planned_product_list.type']) @endfield

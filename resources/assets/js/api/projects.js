@@ -7,10 +7,7 @@ export default {
   },
 
   update(project) {
-    return axios.put(`projects/${project.id}`, {
-      name: project.name,
-      organizational_unit: project.organizational_unit
-    });
+    return axios.put(`projects/${project.id}`, project);
   },
 
   delete(id) {
@@ -47,9 +44,5 @@ export default {
 
   canStartProcess(projectId, processDefinitionNameKey) {
     return axios.get(`authorization/project/${projectId}/start-process/${processDefinitionNameKey}`);
-  },
-
-  getProcess(projectId, processId) {
-    return axios.get(`projects/${projectId}/process/${processId}`);
   }
 };

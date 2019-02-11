@@ -1,5 +1,5 @@
 <template>
-  <div class="content not-found">
+  <div>
     <el-row type="flex" justify="center" :gutter="18">
       <el-col :span="18">
         <h2 v-html="trans('errors.not_found')"></h2>

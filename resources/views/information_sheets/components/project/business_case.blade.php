@@ -51,7 +51,7 @@
         {{-- Cost Breakdown --}}
         <h4>{{ trans_choice('forms/business_case.form_section_groups.spending', 2) }}</h4>
         @forelse($formData['spendings'] as $spending)
-            @field_group(['title' => 'business_case.form_section_groups.spending', 'index' => $loop->iteration])
+            @field_group(['field' => 'business_case.form_section_groups.spending', 'index' => $loop->iteration])
                 <dl>
                     @field(['data' => $spending['internal_resource']['name'], 'field' => 'business_case.spendings.internal_resource']) @endfield
                     @field(['data' => $spending['cost_description'], 'field' => 'business_case.spendings.cost_description']) @endfield
@@ -72,7 +72,7 @@
     @form_section(['title' => trans('forms/business_case.tabs.risk')])
         <h4>{{ trans_choice('forms/business_case.tabs.risk', 2) }}</h4>
         @forelse($formData['risks'] as $risk)
-            @field_group(['title' => 'business_case.form_section_groups.risk', 'index' => $loop->iteration])
+            @field_group(['field' => 'business_case.form_section_groups.risk', 'index' => $loop->iteration])
                 <dl>
                     @field(['data' => $risk['risk_type']['name'], 'field' => 'business_case.risks.risk_type']) @endfield
                     @field(['data' => $risk['risk_type_other'], 'field' => 'business_case.risks.risk_type_other']) @endfield

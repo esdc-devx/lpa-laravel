@@ -228,8 +228,10 @@
       },
 
       onBlur(val) {
-        this.innerTextValue = val;
-        this.$emit('input', val);
+        if (val !== this.innerTextValue && val !== '') {
+          this.innerTextValue = val;
+          this.$emit('input', val);
+        }
       },
 
       // Input Number methods
@@ -307,18 +309,16 @@
       // fixes IE11 display underneath for errors
       display: flex;
     }
-    .char-count {
-      position: absolute;
-      right: 0;
-      color: $--color-text-secondary;
-    }
-    .el-form-item__error {
-      position: relative;
-      top: 0;
-    }
     .input-infos {
+      position: relative;
       display: flex;
       justify-content: flex-end;
+      .char-count {
+        position: absolute;
+        top: 0;
+        right: 0;
+        color: $--color-text-secondary;
+      }
     }
 
     // avoid being able to squish the textarea when resizing

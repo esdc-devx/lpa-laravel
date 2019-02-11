@@ -28,7 +28,6 @@ class DatabaseSeeder extends Seeder
             ProcessFormDecisionTableSeeder::class,
             LearningProductTypeTableSeeder::class,
             InformationSheetDefinitionSeeder::class,
-            ProcessProjectApprovalSeeder::class,
         ]);
 
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');

@@ -13,6 +13,10 @@ class ProcessServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton('process.publisher', function ($app) {
+            return new ProcessPublisher();
+        });
+
         $this->app->singleton('process.manager', function ($app) {
             return new ProcessManager($app->make('App\Camunda\Camunda'));
         });

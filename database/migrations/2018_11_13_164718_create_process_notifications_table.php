@@ -23,6 +23,10 @@ class CreateProcessNotificationsTable extends Migration
             $table->string('subject_fr');
             $table->text('body_en');
             $table->text('body_fr');
+            // Audit and timestamps.
+            $table->auditable();
+            $table->softDeletes();
+            $table->timestamps();
 
             // Foreign Keys.
             $table->referenceOn('process_definition_id');

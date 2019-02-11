@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'header'                  => 'Identification',
+    'header'                  => 'Connexion',
     'remember'                => 'Se souvenir de moi',
-    'login'                   => 'S\'identifier',
-    'machine_credentials_msg' => 'Vos informations d\'identification sont les mêmes que ceux de votre ordinateur.',
+    'login'                   => 'Connexion',
+    'machine_credentials_msg' => 'Veuillez utiliser votre nom d’utilisateur et mot de passe du réseau de l’EFPC.',
 ];

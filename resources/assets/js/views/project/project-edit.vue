@@ -1,5 +1,5 @@
 <template>
-  <div class="project-edit content">
+  <div>
     <el-card shadow="never">
       <span slot="header">
         <h2><i class="el-icon-lpa-edit"></i>{{ trans('pages.project_edit.title') }}</h2>
@@ -13,7 +13,7 @@
           <input-wrap
             name="name"
             :data-vv-as="trans('entities.general.name')"
-            v-model="form.project.name"
+            v-model="form.name"
             maxlength="175"
             v-validate="'required'">
           </input-wrap>
@@ -21,18 +21,18 @@
 
         <el-form-item-wrap
           :label="$tc('entities.general.organizational_units')"
-          prop="organizational_unit"
+          prop="organizational_unit_id"
           required>
           <el-select-wrap
-            v-model="form.project.organizational_unit"
-            name="organizational_unit"
+            v-model="form.organizational_unit_id"
+            name="organizational_unit_id"
             :data-vv-as="$tc('entities.general.organizational_units')"
             v-validate="'required'"
             :options="organizationalUnits"
           />
         </el-form-item-wrap>
 
-        <el-form-item>
+        <el-form-item class="form-footer">
           <el-button :disabled="isFormDisabled" @click="goToParentPage()">{{ trans('base.actions.cancel') }}</el-button>
           <el-button :disabled="!isFormDirty || isFormDisabled" :loading="isSubmitting" type="primary" @click="onSubmit()">{{ trans('base.actions.save') }}</el-button>
         </el-form-item>
@@ -106,7 +106,8 @@
     data() {
       return {
         form: {
-          project: {}
+          name: '',
+          organizational_unit_id: ''
         }
       };
     },
@@ -123,11 +124,7 @@
       async handleUpdate() {
         // @note: no try-catch required here
         // since we already do it in the form utils
-        await this.$$update({
-          id: this.form.project.id,
-          name: this.form.project.name,
-          organizational_unit: this.form.project.organizational_unit
-        });
+        await this.$$update(this.form);
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.project_updated')
@@ -165,46 +162,12 @@
       }
     },
 
-     created() {
-      this.form.project = _.cloneDeep(this.viewing);
-      // replace our internal organizational_units with only the ids
-      // since ElementUI only need ids to populate the selected options
-      this.form.project.organizational_unit = this.viewing.organizational_unit.id;
+    created() {
+      this.form = _.cloneDeep(this.viewing);
     }
   };
 </script>
 
 <style lang="scss">
-  @import '~@sass/abstracts/vars';
 
-  .project-edit {
-    margin: 0 auto;
-    h2 {
-      position: relative;
-      margin: 0;
-      padding-left: 34px;
-      display: inline-block;
-      i {
-        width: 24px;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    .el-form {
-      .el-form-item:last-of-type {
-        float: right;
-      }
-      label {
-        padding: 0;
-        font-weight: bold;
-        color: $--color-primary;
-      }
-      .el-select {
-        width: 100%;
-      }
-    }
-  }
 </style>

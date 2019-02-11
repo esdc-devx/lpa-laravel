@@ -73,7 +73,7 @@
     },
 
     methods: {
-      ...mapActions('users', [
+      ...mapActions('entities/users', [
         'search'
       ]),
 

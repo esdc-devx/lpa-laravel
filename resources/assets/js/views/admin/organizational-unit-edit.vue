@@ -1,5 +1,5 @@
 <template>
-  <div class="organizational-unit-edit content">
+  <div>
     <el-card shadow="never">
       <span slot="header">
         <h2><i class="el-icon-lpa-edit"></i>{{ trans('base.navigation.admin_organizational_unit_edit') }}</h2>
@@ -61,7 +61,7 @@
           <form-error name="director" />
         </el-form-item-wrap>
 
-        <el-form-item>
+        <el-form-item class="form-footer">
           <el-button
             :disabled="isFormDisabled"
             @click="goToParentPage()"
@@ -84,12 +84,16 @@
 
 <script>
   import { mapState, mapActions } from 'vuex';
+
   import Page from '@components/page';
+
   import ElFormItemWrap from '@components/forms/el-form-item-wrap';
   import InputWrap from '@components/forms/input-wrap';
   import UserSearch from '@components/forms/user-search';
   import FormError from '@components/forms/error.vue';
+
   import FormUtils from '@mixins/form/utils.js';
+
   import OrganizationalUnit from '@/store/models/Organizational-Unit';
 
   const loadData = async function ({ to } = {}) {
@@ -191,36 +195,5 @@
 </script>
 
 <style lang="scss">
-  @import '~@sass/abstracts/vars';
 
-  .organizational-unit-edit {
-    margin: 0 auto;
-    h2 {
-      position: relative;
-      margin: 0;
-      padding-left: 34px;
-      display: inline-block;
-      i {
-        width: 24px;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    .el-form {
-      .el-form-item:last-of-type {
-        float: right;
-      }
-      label {
-        padding: 0;
-        font-weight: bold;
-        color: $--color-primary;
-      }
-      .el-autocomplete, .el-select {
-        width: 100%;
-      }
-    }
-  }
 </style>

@@ -6,7 +6,7 @@
     {{-- Overall Assessment --}}
     @form_section(['title' => trans('forms/form_assessment.tabs.overall_assessment')])
         <dl>
-            @field(['data' => $formData['assessment_date'], 'field' => 'form_assessment.assessment_date']) @endfield
+            @field_date(['data' => $formData['assessment_date'], 'field' => 'form_assessment.assessment_date']) @endfield_date
             @field(['data' => trans("forms/gate_one_approval.is_entity_cancelled.options.{$entityCancelled}"), 'field' => trans('gate_one_approval.is_entity_cancelled')]) @endfield
             @field(['data' => $formData['entity_cancellation_rationale'], 'field' => 'gate_one_approval.entity_cancellation_rationale']) @endfield
         </dl>

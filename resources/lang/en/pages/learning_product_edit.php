@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'title' => 'Edit Learning Product',
+    'title' => 'Edit the Learning Product',
 ];

@@ -56,12 +56,9 @@ class LearningProduct extends BaseModel
         'updated_by',
     ];
 
-    protected $hidden = [
-        'type_id',
-        'sub_type_id',
-        'organizational_unit_id',
-        'state_id',
-        'process_instance_id',
+    protected $with = [
+        'type',
+        'subType',
     ];
 
     protected $dates = [

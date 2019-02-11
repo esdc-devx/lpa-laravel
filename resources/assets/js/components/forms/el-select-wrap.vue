@@ -15,6 +15,7 @@
         :key="item.id"
         :label="item.name"
         :value="item.id">
+          <slot :item="item" name="option-text"></slot>
       </el-option>
     </el-select>
     <form-error :name="name"></form-error>

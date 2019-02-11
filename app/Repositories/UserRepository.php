@@ -27,7 +27,7 @@ class UserRepository extends BaseEloquentRepository
     public function searchLdap($search, $limit = self::LDAP_SEARCH_LIMIT)
     {
         return Adldap::search()
-            ->setDn('OU=CSPS,DC=csps-efpc,DC=com')
+            ->setDn('DC=csps-efpc,DC=com')
             ->whereHas('samaccountname')
             ->whereHas('mail')
             ->whereHas('givenname')
@@ -93,17 +93,14 @@ class UserRepository extends BaseEloquentRepository
         DB::beginTransaction();
 
         // Fetch user information from active directory.
-        $ldapUserInfo = (new UserLdap($this->getUserFromLdap($data['username'])))
-            ->toArray();
+        $ldapUserInfo = (new UserLdap($this->getUserFromLdap($data['username'])))->toArray();
 
         // Since we authenticate users using LDAP, we can just store a random password.
-        $password = bcrypt(str_random(16));
+        $ldapUserInfo['password'] = $data['password'] ?? bcrypt(str_random(16));
 
         try {
             // Create user with its relationships.
-            $user = $this->model->create(
-                array_merge($ldapUserInfo, ['password' => $password])
-            );
+            $user = $this->model->create($ldapUserInfo);
             if (isset($data['organizational_units'])) {
                 $user->organizationalUnits()->attach($data['organizational_units']);
             }

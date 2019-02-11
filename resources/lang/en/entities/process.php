@@ -1,13 +1,18 @@
 <?php
 
 return [
-    'id'           => 'Process ID',
     'actions'      => 'Process Actions',
+    'body_en'      => 'English Body',
+    'body_fr'      => 'French Body',
+    'current'      => 'Current Process',
+    'history'      => 'Process History',
+    'id'           => 'Process ID',
+    'label'        => 'Process',
     'start'        => 'Start a Process',
     'started'      => 'Started',
-    'current'      => 'Current Process',
-    'view'         => 'View Process',
     'step'         => 'Step :num',
-    'history'      => 'Process History',
+    'subject_en'   => 'English Subject',
+    'subject_fr'   => 'French Subject',
+    'view'         => 'View Process',
     'view_current' => 'View Current Process',
 ];

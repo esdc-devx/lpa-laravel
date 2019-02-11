@@ -62,7 +62,7 @@ header .print i {
 .el-card dd {
     margin: 0 0 12px 0;
 }
-.el-card .form-group {
+.el-card .field-group {
     border-top: 1px solid #eaeaea;
     border-bottom: 1px solid #eaeaea;
     border-left: 6px solid #eaeaea;
@@ -70,9 +70,9 @@ header .print i {
     padding-left: 14px;
     margin: 14px 0;
 }
-.el-card .form-group h5 {
+.el-card .field-group h5 {
     text-transform: uppercase;
 }
-.el-card .form-group dl {
+.el-card .field-group dl {
     margin: 14px;
 }

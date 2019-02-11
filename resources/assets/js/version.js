@@ -1,5 +1,5 @@
 export default {
-    date: '2019-01-14 15:14:01',
-    version: 'v0.9.0',
-    build: '2be83fc'
+    date: '2019-02-11 13:01:33',
+    version: 'v0.10.0',
+    build: '1caff3a'
 };

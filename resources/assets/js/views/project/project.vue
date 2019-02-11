@@ -1,42 +1,23 @@
 <template>
-  <div class="project content">
+  <div>
     <el-row :gutter="20" class="equal-height">
-      <el-col :span="canActionsBeVisible ? 18 : 24">
-        <project-info
+      <el-col>
+        <infobox-project
           :project="viewing"
           @delete="onDelete"
         />
       </el-col>
-      <el-col :span="6" v-if="canActionsBeVisible">
-        <el-card shadow="never" class="project-actions">
-          <div slot="header">
-            <h3>{{ trans('entities.process.actions') }}</h3>
-          </div>
-          <ul class="project-actions-list">
-            <template v-if="viewing.current_process">
-              <li>
-                <el-button type="primary" @click="continueToProcess(viewing.current_process.id)">
-                  {{ trans('entities.process.view_current') }}
-                </el-button>
-              </li>
-            </template>
-            <template v-else>
-              <li v-for="(process, index) in processDefinitions" :key="index">
-                <el-button
-                  type="primary"
-                  :disabled="!processPermissions[process.name_key]"
-                  @click="triggerStartProcess(process.name, process.name_key)">
-                    {{ process.name }}
-                </el-button>
-              </li>
-            </template>
-          </ul>
-        </el-card>
-      </el-col>
+      <process-actions-col
+        :entity="viewing"
+        entityType="project"
+        :processPermissions="processPermissions"
+        @error="onError"
+      />
     </el-row>
     <el-row>
       <el-col>
         <el-tabs type="border-card">
+          <!-- Learning products -->
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
             <entity-data-table
@@ -46,6 +27,7 @@
               @formatData="onFormatData"
             />
           </el-tab-pane>
+          <!-- Process history -->
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
             <entity-data-table
@@ -53,6 +35,21 @@
               :attributes="dataTableAttributes.processHistory"
               @rowClick="onProcessRowClick"
             />
+          </el-tab-pane>
+          <!-- Information sheets -->
+          <el-tab-pane>
+            <span slot="label"><i class="el-icon-lpa-info-sheet"></i> <b>{{ $tc('entities.general.information_sheet', 2) }}</b></span>
+            <el-table
+              class="information-sheets-table"
+              :data="informationSheets"
+              stripe
+            >
+              <el-table-column :label="trans('entities.general.name')">
+                <template slot-scope="scope">
+                  <a :href="`/${language}/information-sheets/${scope.row.id}`" target="_blank">{{ scope.row.definition.name }}</a>
+                </template>
+              </el-table-column>
+            </el-table>
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -65,11 +62,13 @@
   import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import ProjectInfo from '@components/project-info.vue';
-  import EntityDataTable from '@components/entity-data-table.vue';
+  import InfoboxProject from '@components/infoboxes/infobox-project';
+  import EntityDataTable from '@components/entity-data-table';
+  import ProcessActionsCol from '@components/process-actions-col';
 
   import HttpStatusCodes from '@axios/http-status-codes';
 
+  import InformationSheet from '@/store/models/Information-Sheet';
   import Project from '@/store/models/Project';
 
   const loadData = async function ({ to } = {}) {
@@ -82,11 +81,9 @@
     requests.push(
       store.dispatch('entities/projects/load', entityId),
       store.dispatch('entities/processes/loadDefinitions', 'project'),
-      store.dispatch('entities/processes/loadHistory', {
-        entityType: 'project',
-        entityId
-      }),
-      store.dispatch('learningProducts/loadProjectLearningProducts', entityId),
+      store.dispatch('entities/processes/loadHistory', { entityType: 'project', entityId }),
+      store.dispatch('entities/informationSheets/loadAll', { entityType: 'project', entityId }),
+      store.dispatch('entities/learningProducts/loadProjectLearningProducts', entityId),
       store.dispatch('authorizations/projects/loadCanEdit', entityId),
       store.dispatch('authorizations/projects/loadCanDelete', entityId)
     );
@@ -121,7 +118,7 @@
 
     extends: Page,
 
-    components: { ProjectInfo, EntityDataTable },
+    components: { InfoboxProject, EntityDataTable, ProcessActionsCol },
 
     props: {
       entityId: {
@@ -142,10 +139,9 @@
         'processPermissions'
       ]),
       ...mapState('entities/processes', {
-        viewingHistory: 'viewingHistory',
-        processDefinitions: 'definitions'
+        viewingHistory: 'viewingHistory'
       }),
-      ...mapState('learningProducts', [
+      ...mapState('entities/learningProducts', [
         'projectLearningProducts'
       ]),
 
@@ -232,22 +228,21 @@
         }
       },
 
-      canActionsBeVisible() {
-        return this.hasRole('owner') || this.hasRole('admin');
+      informationSheets() {
+        return InformationSheet.query()
+          .where('entity_id', _.parseInt(this.entityId))
+          .where('entity_type', 'project')
+          .get();
       }
     },
 
     methods: {
-      ...mapActions({
-        startProcess: 'entities/processes/start'
-      }),
-
       ...mapActions('entities/projects', [
         '$$delete'
       ]),
 
       onFormatData(normEntity) {
-        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
+        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity);
       },
 
       onLearningProductRowClick(learningProduct) {
@@ -260,45 +255,29 @@
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
-      triggerStartProcess(processName, processNameKey) {
-        // confirm the intention to start a process first
-        this.confirmStart({
-          title: this.trans('entities.process.start'),
-          message: this.trans('components.notice.message.start_process', {
-            process_name: processName
-          })
-        }).then(async () => {
-          try {
-            let process = await this.startProcess({ nameKey: processNameKey, entityId: this.viewing.id });
-            this.notifySuccess({
-              message: this.trans('components.notice.message.process_started')
-            });
-            this.$router.push(`${this.entityId}/process/${process.id}`);
-          } catch (e) {
-            if (!e.response) {
-              throw e;
-            } else if (e.response.status === HttpStatusCodes.FORBIDDEN) {
-              // on error, re-fetch the info just to be in-sync
-              loadData.apply(this);
-            }
-          }
-        }).catch(() => false);
-      },
-
-      continueToProcess(processId) {
-        this.$router.push(`${this.entityId}/process/${processId}`);
-      },
-
       async onDelete() {
-        // store a local version of the project to be deleted
-        // so that when we reload the list in the store while transitioning to the project-list
-        // that we still have acces to the info
-        this.localViewing = {...this.viewing};
-        await this.$$delete(this.viewing.id);
-        this.notifySuccess({
-          message: this.trans('components.notice.message.project_deleted')
-        });
-        this.goToParentPage();
+        try {
+          // By deleting the project, we are affecting the viewing project
+          // and so after deleting it, the info on the page will react and be empty.
+          // To avoid that, we store a local version of the project to be deleted
+          // so that when we reload the list in the store while transitioning to the project-list
+          // that we still have acces to the info
+          this.localViewing = {...this.viewing};
+          await this.$$delete(this.viewing.id);
+          this.notifySuccess({
+            message: this.trans('components.notice.message.project_deleted')
+          });
+          this.goToParentPage();
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
+        }
+      },
+
+      onError() {
+        loadData.apply(this);
       }
     },
 
@@ -323,46 +302,9 @@
   .project {
     margin: 0 auto;
 
-    .project-actions {
-      user-select: none;
-      .el-card__header {
-        background-color: #f5f7fa;
-        h3 {
-          margin: 0;
-          padding: 3px 0px;
-          text-align: center;
-          display: block;
-          color: #524f74;
-        }
-      }
-      &-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        li {
-          text-align: center;
-          &:first-child button {
-            // reset all before applying to specific
-            border-radius: 0;
-            border-top-left-radius: $--border-radius-base;
-            border-top-right-radius: $--border-radius-base;
-          }
-          &:last-child button {
-            // reset all before applying to specific
-            border-radius: 0;
-            border-bottom-left-radius: $--border-radius-base;
-            border-bottom-right-radius: $--border-radius-base;
-          }
-          button {
-            width: 100%;
-            border-radius: 0;
-          }
-          @include quantity-query(to 1) {
-            button {
-              border-radius: $--border-radius-base;
-            }
-          }
-        }
+    .information-sheets-table {
+      .el-table__row {
+        cursor: default;
       }
     }
   }

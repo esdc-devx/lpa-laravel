@@ -6,6 +6,6 @@ Vue.filter('LPANumFilter', function (id) {
   return _.padStart(id, Constants.LPA_NUM_PAD, 0);
 });
 
-Vue.filter('learningProductTypeSubTypeFilter', function (type, subType) {
-  return `${type} / ${subType}`;
+Vue.filter('learningProductTypeSubTypeFilter', function (learningProduct) {
+  return learningProduct.type.name + (learningProduct.sub_type ? ' / ' + learningProduct.sub_type.name : '');
 });

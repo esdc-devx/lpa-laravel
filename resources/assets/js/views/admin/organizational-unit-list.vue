@@ -1,11 +1,24 @@
 <template>
-  <div class="content organizational-list">
-    <entity-data-table
-      :data="all"
-      :attributes="dataTableAttributes.organizationalUnits"
-      @rowClick="onRowClick"
-      @formatData="onFormatData"
-    />
+  <div>
+    <el-row>
+      <el-col>
+        <el-card-wrap
+          icon="el-icon-lpa-organizational-unit"
+          :headerTitle="trans('base.navigation.admin_organizational_unit_list')"
+        >
+        </el-card-wrap>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col>
+        <entity-data-table
+          :data="all"
+          :attributes="dataTableAttributes.organizationalUnits"
+          @rowClick="onRowClick"
+          @formatData="onFormatData"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -14,6 +27,7 @@
 
   import Page from '@components/page';
   import EntityDataTable from '@components/entity-data-table.vue';
+  import ElCardWrap from '@components/el-card-wrap';
 
   import OrganizationalUnit from '@/store/models/Organizational-Unit';
 
@@ -38,11 +52,11 @@
   };
 
   export default {
-    name: 'admin-organizational-unit-list',
+    name: 'organizational-unit-list',
 
     extends: Page,
 
-    components: { EntityDataTable },
+    components: { EntityDataTable, ElCardWrap },
 
     computed: {
       all() {
@@ -97,7 +111,6 @@
       },
 
       onFormatData(normEntity) {
-        console.log(normEntity);
         normEntity.owner = normEntity.owner ? this.trans('base.actions.yes') : this.trans('base.actions.no');
       }
     },
@@ -116,24 +129,5 @@
 </script>
 
 <style lang="scss">
-  // @refactor: Move to its own file.
-  .organizational-list {
-    h2 {
-      text-align: center;
-    }
-    table {
-      width: 100%;
-    }
-    .el-table__row {
-      cursor: pointer;
-    }
 
-    .el-tag {
-      height: auto;
-      white-space: normal;
-      margin-right: 4px;
-      margin-top: 2px;
-      margin-bottom: 2px;
-    }
-  }
 </style>

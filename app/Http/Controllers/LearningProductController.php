@@ -107,7 +107,7 @@ class LearningProductController extends APIController
         $this->authorize('update', $learningProduct);
 
         // Load all the required relationship for edition.
-        $learningProduct->load(['organizationalUnit', 'manager', 'primaryContact']);
+        $learningProduct->load(['manager', 'primaryContact']);
 
         // Get learning product owners organizational unit for user.
         $organizationalUnits = OrganizationalUnit::getLearningProductOwnersFor(auth()->user());

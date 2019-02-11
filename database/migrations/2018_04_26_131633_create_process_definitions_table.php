@@ -15,8 +15,7 @@ class CreateProcessDefinitionsTable extends Migration
     {
         Schema::create('process_definitions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('entity_type');
-            $table->string('name_key');
+            $table->string('name_key')->unique();
             $table->string('name_en');
             $table->string('name_fr');
         });

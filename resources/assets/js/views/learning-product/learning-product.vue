@@ -1,9 +1,18 @@
 <template>
-  <div class="entity content">
+  <div>
     <el-row :gutter="20" class="equal-height">
-      <el-col :span="canBeVisible ? 18 : 24">
-        <learning-product-info :learningProduct="viewing" @onAfterDelete="onAfterDelete"/>
+      <el-col>
+        <infobox-learning-product
+          :learningProduct="viewing"
+          @delete="onDelete"
+        />
       </el-col>
+      <process-actions-col
+        :entity="viewing"
+        :entityType="viewing.type.name_key"
+        :processPermissions="processPermissions"
+        @error="onError"
+      />
     </el-row>
   </div>
 </template>
@@ -13,7 +22,10 @@
   import { mapState, mapActions } from 'vuex';
 
   import Page from '@components/page';
-  import LearningProductInfo from '@components/learning-product-info.vue';
+  import InfoboxLearningProduct from '@components/infoboxes/infobox-learning-product';
+  import ProcessActionsCol from '@components/process-actions-col';
+
+  import LearningProduct from '@/store/models/Learning-Product';
 
   const loadData = async function ({ to } = {}) {
     const { entityId } = to ? to.params : this;
@@ -24,14 +36,31 @@
     let requests = [];
 
     requests.push(
-      store.dispatch('learningProducts/load', entityId),
-      store.dispatch('learningProducts/loadCanEdit', entityId),
-      store.dispatch('learningProducts/loadCanDelete', entityId)
+      store.dispatch('entities/learningProducts/load', entityId),
+      store.dispatch('authorizations/learningProducts/loadCanEdit', entityId),
+      store.dispatch('authorizations/learningProducts/loadCanDelete', entityId)
     );
 
     // Exception handled by interceptor
     try {
-      await axios.all(requests);
+      await axios.all(requests).then(async () => {
+        // load all the permissions in the store
+        // so that we can access them afterwards
+        try {
+          const learningProduct = LearningProduct.find(entityId);
+          await store.dispatch('entities/processes/loadDefinitions', learningProduct.type.name_key);
+          await axios.all(store.state.entities.processes.definitions.map(
+            ({name_key}) => store.dispatch('authorizations/learningProducts/loadCanStartProcess', {
+              learningProductId: entityId,
+              processDefinitionNameKey: name_key
+            })
+          ));
+        } catch (e) {
+          if (!e.response) {
+            throw e;
+          }
+        }
+      });
     } catch (e) {
       if (!e.response) {
         throw e;
@@ -44,7 +73,7 @@
 
     extends: Page,
 
-    components: { LearningProductInfo },
+    components: { InfoboxLearningProduct, ProcessActionsCol },
 
     props: {
       entityId: {
@@ -53,23 +82,54 @@
       }
     },
 
+    data() {
+      return {
+        localViewing: null
+      };
+    },
+
     computed: {
-      ...mapState('learningProducts', [
-        'viewing'
+      ...mapState('authorizations/learningProducts', [
+        'processPermissions'
       ]),
 
-      canBeVisible() {
-        return this.hasRole('owner') || this.hasRole('admin');
+      viewing() {
+        return this.localViewing || LearningProduct.find(this.entityId);
       }
     },
 
     methods: {
+      ...mapActions('entities/learningProducts', [
+        '$$delete'
+      ]),
+
       viewProcess(process) {
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
-      onAfterDelete() {
-        this.goToParentPage();
+      async onDelete() {
+        try {
+          // By deleting the learning-product, we are affecting the viewing learning-product
+          // and so after deleting it, the info on the page will react and be empty.
+          // To avoid that, we store a local version of the learning-product to be deleted
+          // so that when we reload the list in the store while transitioning to the learning-product-list
+          // that we still have acces to the info
+          this.localViewing = {...this.viewing};
+          await this.$$delete(this.viewing.id);
+          this.notifySuccess({
+            message: this.trans('components.notice.message.learning_product_deleted')
+          });
+          this.goToParentPage();
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
+          }
+        }
+      },
+
+      onError() {
+        loadData.apply(this);
       }
     },
 
@@ -87,10 +147,5 @@
 </script>
 
 <style lang="scss">
-  @import '~@sass/abstracts/vars';
-  @import '~@sass/abstracts/mixins/helpers';
 
-  .entity {
-    margin: 0 auto;
-  }
 </style>

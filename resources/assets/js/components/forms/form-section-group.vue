@@ -1,6 +1,6 @@
 <template>
   <div class="form-section-group">
-    <h2>
+    <h3>
       {{ $tc(`forms.${entityFormKey}.form_section_groups.${entitySectionKey}`, 2) }}
       <div class="header-controls">
         <el-button type="text" size="mini" @click="expandAll = true">
@@ -10,7 +10,7 @@
           {{ trans('base.actions.collapse_all') }}
         </el-button>
       </div>
-    </h2>
+    </h3>
     <el-collapse :value="activePanels">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
@@ -20,9 +20,24 @@
             if the min value is not specified (0) always show it
             else show it only when there are more groups than the min value
           -->
-          <el-button v-if="min ? groups.length > min : true" class="remove-group" type="danger" icon="el-icon-delete" size="mini" @click.stop="removeGroup(index, item)"></el-button>
+          <el-button
+            v-if="min ? groups.length > min : true"
+            class="remove-group"
+            type="danger"
+            icon="el-icon-lpa-delete"
+            size="mini"
+            @click.stop="removeGroup(index, item)"
+            plain
+          />
         </template>
-        <component ref="component" :is="entitySection" :data="data" class="form-item-group" :index="index" :value="item"></component>
+        <component
+          ref="component"
+          :is="entitySection"
+          :data="data"
+          class="form-item-group"
+          :index="index"
+          :value="item"
+        />
       </el-collapse-item>
     </el-collapse>
     <el-button class="add-group" type="primary" icon="el-icon-plus" @click="addGroup()"></el-button>
@@ -161,7 +176,7 @@
       }
     }
 
-    h2 {
+    h3 {
       display: flex;
       .header-controls {
         display: flex;
@@ -173,27 +188,30 @@
       }
     }
 
-    // make sure that the el-collapse following a h2
-    // goes on top of the h2's margin-bottom
-    h2 + .el-collapse {
+    // make sure that the el-collapse following a h3
+    // goes on top of the h3's margin-bottom
+    h3 + .el-collapse {
       margin-top: -1.1em;
+      border-top: 0;
+      border-bottom: 0;
       // and remove its border-top
       .el-collapse {
         border-top: none;
       }
     }
 
+    $tab-height: 34px;
     .el-collapse-item__header {
       padding-left: 10px;
-      line-height: 30px;
-      height: 30px;
+      line-height: $tab-height;
+      height: $tab-height;
       background-color: $--background-color-base;
       transition: $bg-color-transition-base;
       &:hover {
         background-color: mix($--color-primary, $--background-color-base, 5%);
       }
       i.el-collapse-item__arrow {
-        line-height: 30px;
+        line-height: $tab-height;
       }
       button.remove-group {
         height: 100%;

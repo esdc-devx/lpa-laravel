@@ -1,5 +1,5 @@
 <template>
-  <div class="content forbidden">
+  <div>
     <el-row type="flex" justify="center" :gutter="18">
       <el-col :span="18">
         <h2 v-html="trans('pages.403.title')"></h2>

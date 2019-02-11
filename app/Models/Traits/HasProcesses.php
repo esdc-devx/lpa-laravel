@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use App\Events\ProcessEntityDeleted;
+use App\Events\ProcessEntityUpdated;
 use App\Models\OrganizationalUnit;
 use App\Models\Process\ProcessInstance;
 use App\Models\State;
@@ -14,6 +15,11 @@ trait HasProcesses
 {
     public static function bootHasProcesses()
     {
+        // Fire an event when model gets updated.
+        static::updating(function ($model) {
+            event(new ProcessEntityUpdated($model));
+        });
+
         // Fire an event when model gets deleted.
         static::deleting(function ($model) {
             event(new ProcessEntityDeleted($model));

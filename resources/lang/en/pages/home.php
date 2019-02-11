@@ -8,5 +8,5 @@ return [
     'instruction_everyone'         => 'First time user? Visit our «&nbsp;Getting Started&nbsp;» section available from the Help menu above.',
     'description_project'          => 'A project is a grouping of one or more Learning Products.',
     'description_learning_product' => 'A Learning Product has a learning objective. This includes the courses, events, videos and job aids.',
-    'tip_owner'                    => '<b>Note:</b> Before creating a Learning Product, a Project must first be created.',
+    'tip_owner'                    => 'Before creating a Learning Product, a Project must first be created.',
 ];

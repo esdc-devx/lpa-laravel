@@ -11,12 +11,12 @@ export default {
 
   actions: {
     async loadInstanceForm({ commit }, id) {
-      let response = await ProcessInstanceFormAPI.getInstanceForm(id);
+      const response = await ProcessInstanceFormAPI.getInstanceForm(id);
       ProcessInstanceForm.insertOrUpdate({ data: response.data });
     },
 
     async claimForm({ commit }, id) {
-      let response = await ProcessInstanceFormAPI.claimForm(id);
+      const response = await ProcessInstanceFormAPI.claimForm(id);
       ProcessInstanceForm.update({
         where: id,
         data: response.data
@@ -24,7 +24,7 @@ export default {
     },
 
     async unclaimForm({ commit }, id) {
-      let response = await ProcessInstanceFormAPI.unclaimForm(id);
+      const response = await ProcessInstanceFormAPI.unclaimForm(id);
       ProcessInstanceForm.update({
         where: id,
         data: response.data
@@ -32,7 +32,7 @@ export default {
     },
 
     async saveForm({ commit }, { id, form }) {
-      let response = await ProcessInstanceFormAPI.saveForm(id, form);
+      const response = await ProcessInstanceFormAPI.saveForm(id, form);
       ProcessInstanceForm.update({
         where: id,
         data: response.data
@@ -40,7 +40,7 @@ export default {
     },
 
     async submitForm({ commit }, { id, form }) {
-      let response = await ProcessInstanceFormAPI.submitForm(id, form);
+      const response = await ProcessInstanceFormAPI.submitForm(id, form);
       ProcessInstanceForm.update({
         where: id,
         data: response.data

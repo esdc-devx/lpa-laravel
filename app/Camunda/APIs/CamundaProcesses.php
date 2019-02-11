@@ -146,4 +146,18 @@ class CamundaProcesses extends CamundaBaseAPI
     {
         return (array) $this->client->get('history/variable-instance', ['processInstanceId' => $id]);
     }
+
+    /**
+     * Update process instance variables.
+     *
+     * @param  string $id
+     * @param  array $variables
+     * @return void
+     */
+    public function updateVariables(string $id, array $variables)
+    {
+        return $this->client->post("process-instance/{$id}/variables", [
+            'modifications' => $variables
+        ]);
+    }
 }

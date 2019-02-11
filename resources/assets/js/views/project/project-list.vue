@@ -1,13 +1,32 @@
 <template>
-  <div class="project-list content">
-    <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-      <el-button @click="goToPage('project-create')">{{ trans('pages.project_list.create_project') }}</el-button>
-    </div>
-    <entity-data-table
-      :data="all"
-      :attributes="dataTableAttributes.projects"
-      @rowClick="onProjectRowClick"
-    />
+  <div>
+    <el-row>
+      <el-col>
+        <el-card-wrap
+          icon="el-icon-lpa-projects"
+          :headerTitle="trans('base.navigation.projects')"
+        >
+          <template slot="controls" v-if="hasRole('owner') || hasRole('admin')">
+            <el-control-wrap
+              componentName="el-button"
+              :tooltip="trans('pages.project_list.create_project')"
+              size="mini"
+              icon="el-icon-lpa-add"
+              @click.native="goToPage('project-create')"
+            />
+          </template>
+        </el-card-wrap>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col>
+        <entity-data-table
+          :data="all"
+          :attributes="dataTableAttributes.projects"
+          @rowClick="onProjectRowClick"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -17,6 +36,8 @@
 
   import Page from '@components/page';
   import EntityDataTable from '@components/entity-data-table.vue';
+  import ElCardWrap from '@components/el-card-wrap';
+  import ElControlWrap from '@components/el-control-wrap';
 
   import Project from '@/store/models/Project';
 
@@ -45,7 +66,7 @@
 
     extends: Page,
 
-    components: { EntityDataTable },
+    components: { EntityDataTable, ElCardWrap, ElControlWrap },
 
     computed: {
       all() {
@@ -111,16 +132,11 @@
 
 <style lang="scss">
   @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/mixins/helpers';
+
   .project-list {
-    .el-tag {
-      height: auto;
-      white-space: normal;
-      margin-right: 4px;
-      margin-top: 2px;
-      margin-bottom: 2px;
-    }
-    .controls {
-      margin-bottom: 0;
+    i.el-icon-lpa-projects {
+      @include svg(projects, $--color-primary);
     }
   }
 </style>

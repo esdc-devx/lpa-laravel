@@ -1,11 +1,9 @@
 <template>
-  <transition name="fade" mode="in-out">
-    <div class="breadcrumb">
-      <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item v-for="(crumb, index) in getBreadcrumbs()" :to="{ path: '/' + language + '/' + crumb.path }" :key="index">{{ crumb.name }}</el-breadcrumb-item>
-      </el-breadcrumb>
-    </div>
-  </transition>
+  <div class="breadcrumb">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item v-for="(crumb, index) in getBreadcrumbs()" :to="{ path: '/' + language + '/' + crumb.path }" :key="index">{{ crumb.name }}</el-breadcrumb-item>
+    </el-breadcrumb>
+  </div>
 </template>
 
 <script>
@@ -17,7 +15,6 @@
 
     data() {
       return {
-        isLoading: true,
         breadcrumbs: this.getBreadcrumbs()
       }
     },

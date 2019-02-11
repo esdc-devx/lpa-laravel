@@ -1,5 +1,5 @@
 <template>
-  <div class="learning-product-create content">
+  <div>
     <el-card shadow="never">
       <span slot="header">
         <h2><i class="el-icon-lpa-learning-products"></i>{{ trans('pages.learning_product_create.title') }}</h2>
@@ -45,8 +45,10 @@
             name="project_id"
             :data-vv-as="trans('entities.learning_product.parent_project')"
             v-validate="'required'"
-            :options="projects"
-          />
+            :options="innerProjects"
+          >
+
+          </el-select-wrap>
         </el-form-item-wrap>
 
         <el-form-item-wrap
@@ -74,7 +76,7 @@
           <user-search
             name="manager"
             :label="trans('entities.learning_product.manager')"
-            v-bind:user.sync="form.manager">
+            :user.sync="form.manager">
           </user-search>
           <form-error name="manager"></form-error>
         </el-form-item-wrap>
@@ -86,7 +88,7 @@
           <user-search
             name="primary_contact"
             :label="trans('entities.learning_product.primary_contact')"
-            v-bind:user.sync="form.primary_contact">
+            :user.sync="form.primary_contact">
           </user-search>
           <form-error name="primary_contact"></form-error>
         </el-form-item-wrap>
@@ -119,7 +121,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch('learningProducts/loadCreateInfo'),
+      store.dispatch('entities/learningProducts/loadCreateInfo'),
       store.dispatch('lists/loadList', 'learning-product-type')
     );
 
@@ -206,10 +208,9 @@
     },
 
     computed: {
-      ...mapState('learningProducts', [
+      ...mapState('entities/learningProducts', [
         'projects',
-        'organizationalUnits',
-        'viewing'
+        'organizationalUnits'
       ]),
 
       ...mapGetters({
@@ -229,7 +230,8 @@
       },
 
       innerProjects() {
-        let projects = _.cloneDeep(this.projects);
+        let projects = _.cloneDeep(this.projects)
+                        .sort((a, b) => this.$helpers.localeSort(a, b, 'name'));
         // Add LPA number to each project name.
         _.forEach(projects, project => {
           project.name = this.$options.filters.LPANumFilter(project.id) + ' - ' + project.name;
@@ -239,8 +241,8 @@
     },
 
     methods: {
-      ...mapActions('learningProducts',[
-        'create'
+      ...mapActions('entities/learningProducts', [
+        '$$create'
       ]),
 
       ...mapMutations({
@@ -257,14 +259,12 @@
         let formData = Object.assign({}, this.form);
         formData.manager = this.form.manager.username;
         formData.primary_contact = this.form.primary_contact.username;
-        await this.create(formData);
-
+        let learningProduct = await this.$$create(formData);
         this.isSubmitting = false;
         this.notifySuccess({
           message: this.trans('components.notice.message.learning_product_created')
         });
-
-        this.$router.push(`/${this.language}/learning-products/${this.viewing.id}`);
+        this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
       },
 
       // Remove children attribute when empty and disable all terms by default.
@@ -291,8 +291,8 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
-      if (store.state.learningProducts.permissions.canCreate) {
+      await store.dispatch('authorizations/learningProducts/loadCanCreate');
+      if (store.state.authorizations.learningProducts.permissions.canCreate) {
         await loadData();
         next();
       } else {
@@ -302,8 +302,8 @@
 
     // called when url params change, e.g: language
     async beforeRouteUpdate(to, from, next) {
-      await this.$store.dispatch('learningProducts/loadCanCreate', to.params.learningProductId);
-      if (this.$store.state.learningProducts.permissions.canCreate) {
+      await this.$store.dispatch('authorizations/learningProducts/loadCanCreate');
+      if (this.$store.state.authorizations.learningProducts.permissions.canCreate) {
         await this.onLanguageUpdate();
         next();
       } else {
@@ -322,37 +322,8 @@
   @import '~@sass/abstracts/mixins/helpers';
 
   .learning-product-create {
-    margin: 0 auto;
-    h2 {
-      position: relative;
-      margin: 0;
-      padding-left: 34px;
-      display: inline-block;
-      i {
-        @include svg(learning-product, $--color-primary);
-        width: 24px;
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-      }
-    }
-
-    .el-form {
-      .el-form-item:last-of-type {
-        float: right;
-      }
-      label {
-        padding: 0;
-        font-weight: bold;
-        color: $--color-primary;
-      }
-      .el-select {
-        width: 100%;
-      }
-    }
-    .el-cascader {
-      width: 35%;
+    h2 i {
+      @include svg(learning-product, $--color-primary);
     }
   }
 </style>

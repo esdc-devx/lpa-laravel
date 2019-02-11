@@ -51,6 +51,11 @@ Route::middleware('auth:api')->group(function () {
     Route::put('process-instance-forms/{processInstanceFormData}/edit', 'ProcessInstanceFormController@edit')->name('process-instance-forms.edit');
     Route::put('process-instance-forms/{processInstanceFormData}/submit', 'ProcessInstanceFormController@submit')->name('process-instance-forms.submit');
 
+    // Process notification routes.
+    Route::get('process-notifications', 'ProcessNotificationController@index')->name('process-notifications.index');
+    Route::get('process-notifications/{processNotification}/edit', 'ProcessNotificationController@edit')->name('process-notifications.edit');
+    Route::put('process-notifications/{processNotification}', 'ProcessNotificationController@update')->name('process-notifications.update');
+
     // List entities routes.
     Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
     Route::get('lists', 'ListController@showMultiple')->name('lists.show-multiple');
@@ -73,6 +78,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('authorization/learning-product/create', 'AuthorizationController@createLearningProduct')->name('authorization.learning-product.create');
     Route::get('authorization/learning-product/delete/{learningProduct}', 'AuthorizationController@deleteLearningProduct')->name('authorization.learning-product.delete');
     Route::get('authorization/learning-product/edit/{learningProduct}', 'AuthorizationController@editLearningProduct')->name('authorization.learning-product.edit');
+    Route::get('authorization/learning-product/{learningProduct}/start-process/{processDefinition}', 'AuthorizationController@startLearningProductProcess')->name('authorization.learning-product.start-process');
 
     // Process instance authorization routes.
     Route::get('authorization/process-instance/cancel/{processInstance}', 'AuthorizationController@cancelProcessInstance')->name('authorization.process-instance.cancel');

@@ -36,7 +36,9 @@
     },
 
     // events to bind
-    events: {},
+    events: {
+      'TopBar:beforeLogout': 'beforeLogout'
+    },
 
     data() {
       return {};
@@ -50,8 +52,8 @@
       ]),
 
       ...mapGetters({
-        hasRole: 'users/hasRole',
-        isCurrentUser: 'users/isCurrentUser'
+        hasRole: 'entities/users/hasRole',
+        isCurrentUser: 'entities/users/isCurrentUser'
       })
     },
 
@@ -59,10 +61,6 @@
       ...mapMutations([
         'setShouldConfirmBeforeLeaving'
       ]),
-
-      // @todo: reconsider the utility of having this here
-      // when lpa-6133 is done
-      async loadPermissions() {},
 
       async onLanguageUpdate() {},
 
@@ -104,6 +102,7 @@
           let currentRoute = this.$router.currentRoute
           let currentParams = currentRoute.params;
 
+          this.scrollToTop();
           // if current params belong to a 404 or 403 route
           // then just redirect to home page
           if (['forbidden', 'not-found'].some(s => currentRoute.name.includes(s))) {
@@ -141,6 +140,10 @@
         }
 
         this.goToPage(routeName);
+      },
+
+      beforeLogout(next) {
+        next();
       }
     },
 

@@ -13,7 +13,8 @@
       ref="menu"
       :default-active="$route.fullPath"
       :collapse="isCollapsed"
-      router>
+      router
+    >
       <el-menu-item v-for="(item, index) in menu" :index="`/${language}${item.index}`" :class="[item.classes, {'disabled': isMainLoading}]" :key="index">
         <i :class="item.icon" />
         <span slot="title">{{ item.text }}</span>
@@ -48,7 +49,7 @@
         'isMainLoading'
       ]),
       ...mapGetters({
-        hasRole: 'users/hasRole'
+        hasRole: 'entities/users/hasRole'
       }),
 
       menu() {
@@ -118,6 +119,7 @@
 
 <style lang="scss">
   @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/mixins/helpers';
 
   $side-bar-width: 300px;
   $side-bar-collapsed-width: 64px;
@@ -139,13 +141,12 @@
         background-color: #322f43;
       }
       &-inner {
+        @include size($svg-icons-size-medium);
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         z-index: $--index-top;
-        width: 18px;
-        height: 14px;
         span {
           position: absolute;
           left: 0;
@@ -154,7 +155,7 @@
           background-color: $--color-white;
           border-radius: 4px;
           &:nth-of-type(1) {
-            top: 0;
+            top: 4px;
           }
           &:nth-of-type(2) {
             top: 50%;
@@ -163,7 +164,7 @@
             transform: translateY(-50%);
           }
           &:nth-of-type(3) {
-            bottom: 0;
+            bottom: 4px;
           }
         }
         &.collapsed span:nth-of-type(2) {
@@ -178,67 +179,65 @@
         box-sizing: border-box;
       }
     }
-  }
 
-  .menu {
-    user-select: none;
-    height: 100%;
-    border: none;
-    background-color: $side-bar-fill;
-    &:not(.el-menu--collapse) {
-      width: $side-bar-width;
-    }
-    span {
-      text-decoration: none;
+    .menu {
+      user-select: none;
       height: 100%;
-      display: inline-block;
-    }
-    span, i {
-      transition: $--all-transition;
-      vertical-align: middle !important;
-      color: $--color-white;
-      opacity: 0.8;
-    }
-    i {
-      width: $svg-icons-size-small !important;
-    }
-    .el-menu-item {
-      transition: $--all-transition;
-      &:hover, &:focus {
+      border: none;
+      background-color: $side-bar-fill;
+      &:not(.el-menu--collapse) {
+        width: $side-bar-width;
+      }
+      span {
+        text-decoration: none;
+        height: 100%;
+        display: inline-block;
+      }
+      span, i {
         transition: $--all-transition;
-        background-color: mix($--color-black, $side-bar-fill, 25%);
-        span, i {
+        vertical-align: middle !important;
+        color: $--color-white;
+        opacity: 0.8;
+      }
+      .el-menu-item {
+        transition: $--all-transition;
+        &:hover, &:focus {
           transition: $--all-transition;
-          color: $--color-white;
-          opacity: 1;
+          background-color: mix($--color-black, $side-bar-fill, 25%);
+          span, i {
+            transition: $--all-transition;
+            color: $--color-white;
+            opacity: 1;
+          }
+        }
+        &.is-active {
+          background-color: mix($--color-black, $side-bar-fill, 25%) !important;
+          &:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: $side-bar-active-item-border !important;
+            transition: $--all-transition;
+          }
+          span, i {
+            color: $--color-white;
+            opacity: 1;
+          }
         }
       }
-      &.is-active {
-        background-color: mix($--color-black, $side-bar-fill, 25%) !important;
-        &:after {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 4px;
-          height: 100%;
-          background-color: $side-bar-active-item-border !important;
-          transition: $--all-transition;
-        }
-        span, i {
-          color: $--color-white;
-          opacity: 1;
-        }
-      }
+    }
+
+    .build-info {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: #7d7990;
+      cursor: default;
     }
   }
 
-  .build-info {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    text-align: center;
-    color: #7d7990;
-    cursor: default;
-  }
 </style>

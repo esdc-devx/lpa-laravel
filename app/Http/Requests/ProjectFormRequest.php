@@ -37,8 +37,8 @@ class ProjectFormRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'                => "required|max:175|unique:projects,name,{$this->project},id,deleted_at,NULL",
-            'organizational_unit' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
+            'name'                   => "required|max:175|unique:projects,name,{$this->project},id,deleted_at,NULL",
+            'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
         ];
     }
 }

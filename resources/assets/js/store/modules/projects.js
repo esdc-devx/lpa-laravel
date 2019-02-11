@@ -1,6 +1,6 @@
 import ProjectsAPI from '@api/projects';
 
-import Project from '../models/Project';
+import Project from '@/store/models/Project';
 
 import { helpers } from '@/helpers.js';
 
@@ -13,35 +13,38 @@ export default {
 
   actions: {
     async $$create({ commit }, project) {
-      let response = await ProjectsAPI.create(project);
+      const response = await ProjectsAPI.create(project);
+      Project.create({ data: response.data });
       return response.data;
     },
 
     async $$update({ commit }, project) {
-      await ProjectsAPI.update(project);
+      const response = await ProjectsAPI.update(project);
+      Project.insertOrUpdate({ data: response.data });
     },
 
     async $$delete({ commit }, id) {
       await ProjectsAPI.delete(id);
+      Project.delete(id);
     },
 
     async load({ commit }, id) {
-      let response = await ProjectsAPI.get(id);
+      const response = await ProjectsAPI.get(id);
       Project.insertOrUpdate({ data: response.data.project });
     },
 
     async loadAll({ commit }) {
-      let response = await ProjectsAPI.getAll();
+      const response = await ProjectsAPI.getAll();
       Project.create({ data: response.data.projects });
     },
 
     async loadCreateInfo({ commit }) {
-      let response = await ProjectsAPI.getCreateInfo();
+      const response = await ProjectsAPI.getCreateInfo();
       commit('setOrganizationalUnits', response.data.organizational_units);
     },
 
     async loadEditInfo({ commit }, id) {
-      let response = await ProjectsAPI.getEditInfo(id);
+      const response = await ProjectsAPI.getEditInfo(id);
       Project.insertOrUpdate({ data: response.data.project });
       commit('setOrganizationalUnits', response.data.organizational_units);
     }

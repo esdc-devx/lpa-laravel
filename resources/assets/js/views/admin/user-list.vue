@@ -1,13 +1,32 @@
 <template>
-  <div class="content user-list">
-    <div class="controls">
-      <el-button @click="goToPage('admin-user-create')">{{ trans('pages.user_list.create_user') }}</el-button>
-    </div>
-    <entity-data-table
-      :data="all"
-      :attributes="dataTableAttributes.users"
-      @rowClick="onUserRowClick"
-    />
+  <div>
+    <el-row>
+      <el-col>
+        <el-card-wrap
+          icon="el-icon-lpa-user"
+          :headerTitle="trans('base.navigation.admin_user_list')"
+        >
+          <template slot="controls" v-if="hasRole('owner') || hasRole('admin')">
+            <el-control-wrap
+              componentName="el-button"
+              :tooltip="trans('pages.user_list.create_user')"
+              size="mini"
+              icon="el-icon-lpa-add"
+              @click.native="goToPage('user-create')"
+            />
+          </template>
+        </el-card-wrap>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col>
+        <entity-data-table
+          :data="all"
+          :attributes="dataTableAttributes.users"
+          @rowClick="onUserRowClick"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -16,6 +35,10 @@
 
   import Page from '@components/page';
   import EntityDataTable from '@components/entity-data-table.vue';
+  import ElCardWrap from '@components/el-card-wrap';
+  import ElControlWrap from '@components/el-control-wrap';
+
+  import User from '@/store/models/User';
 
   const loadData = async () => {
     // we need to access the store directly
@@ -24,7 +47,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch('users/loadAll')
+      store.dispatch('entities/users/loadAll')
     );
 
     // Exception handled by interceptor
@@ -38,16 +61,16 @@
   };
 
   export default {
-    name: 'admin-user-list',
+    name: 'user-list',
 
     extends: Page,
 
-    components: { EntityDataTable },
+    components: { EntityDataTable, ElCardWrap, ElControlWrap },
 
     computed: {
-      ...mapState('users', [
-        'all'
-      ]),
+      all() {
+        return User.all();
+      },
 
       dataTableAttributes: {
         get() {
@@ -110,23 +133,12 @@
 </script>
 
 <style lang="scss">
-  .user-list {
-    h2 {
-      text-align: center;
-    }
-    table {
-      width: 100%;
-    }
-    .el-table__row {
-      cursor: pointer;
-    }
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/mixins/helpers';
 
-    .el-tag {
-      height: auto;
-      white-space: normal;
-      margin-right: 4px;
-      margin-top: 2px;
-      margin-bottom: 2px;
+  .user-list {
+    h2 i {
+      @include svg(user, $--color-primary);
     }
   }
 </style>

@@ -1,69 +1,17 @@
 <template>
-  <div class="process-form content">
+  <div class="process-form">
     <el-row>
       <el-col>
-        <info-box>
-          <dl>
-            <dt>{{ trans('entities.general.status') }}</dt>
-            <dd><span :class="'state ' + viewingFormInfo.state.name_key">{{ viewingFormInfo.state.name }}</span></dd>
-          </dl>
-          <dl>
-            <dt>{{ $tc('entities.form.assigned_organizational_units') }}</dt>
-            <dd>{{ viewingFormInfo.organizational_unit ? viewingFormInfo.organizational_unit.name : trans('entities.general.none') }}</dd>
-          </dl>
-          <dl>
-            <dt>{{ trans('entities.form.current_editor') }}</dt>
-            <dd>
-              {{
-                viewingFormInfo.current_editor ?
-                viewingFormInfo.current_editor.name :
-                trans('entities.general.none')
-              }}
-              <el-button-wrap
-                v-if="viewingFormInfo.current_editor && hasRole('admin')"
-                :disabled="!canReleaseForm"
-                @click.native="onReleaseForm"
-                :tooltip="trans('components.tooltip.release_form')"
-                class="release-form"
-                type="danger"
-                size="mini"
-                icon="el-icon-close"
-                circle />
-            </dd>
-          </dl>
-          <dl>
-            <dt>{{ trans('entities.general.updated') }}</dt>
-            <dd v-audit:updated="viewingFormInfo"></dd>
-          </dl>
-        </info-box>
+        <infobox-process-form
+          :form="viewingFormInfo"
+          :isClaimed.sync="isClaimed"
+          @releaseForm="onReleaseForm"
+        />
       </el-col>
     </el-row>
     <el-row class="form-row">
       <el-col>
         <el-container class="form-wrap" direction="vertical">
-          <div class="form-header">
-            <el-header>
-              <!--
-                Switch disabled based on rights or if we are loading,
-                to prevent spam while there is already a request sent
-              -->
-              <el-switch
-                v-if="hasRole('process-contributor') || hasRole('admin')"
-                class="claim"
-                active-color="#b3b0cc"
-                inactive-color="#75bfff"
-                v-model="isClaimed"
-                :inactive-text="trans('entities.form.claim')"
-                >
-              </el-switch>
-            </el-header>
-            <el-header class="form-header-details">
-              <div class="form-name">
-                <i class="el-icon-lpa-form"></i>
-                {{ viewingFormInfo.definition.name }}
-              </div>
-            </el-header>
-          </div>
           <el-main>
             <el-form label-position="top" @submit.native.prevent :disabled="!isClaimed" :class="{'is-disabled': !isClaimed}">
               <component
@@ -73,14 +21,15 @@
                 tabPosition="left"
                 :value.sync="activeIndex"
                 :formData="formData"
-                :errorTabs="errorTabs">
-              </component>
+                :errorTabs="errorTabs"
+                @mounted="onFormMounted"
+              />
             </el-form>
           </el-main>
-          <div class="form-footer">
+          <div class="process-form-footer">
             <el-footer height="50px"></el-footer>
             <el-footer height="50px">
-              <div class="form-footer-nav">
+              <div class="process-form-footer-nav">
                 <el-button
                   size="mini"
                   icon="el-icon-arrow-left"
@@ -95,7 +44,7 @@
                     {{ trans('base.pagination.next') }}<i class="el-icon-arrow-right el-icon-right"></i>
                 </el-button>
               </div>
-              <div class="form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
+              <div class="process-form-footer-actions" v-if="hasRole('process-contributor') || hasRole('admin')">
                 <el-button :disabled="!isFormDirty" @click="onCancel" :loading="isCancelling" size="mini">{{ trans('base.actions.cancel') }}</el-button>
                 <el-button :disabled="!isFormDirty" :loading="isSaving" @click="onSave" size="mini">{{ trans('base.actions.save') }}</el-button>
                 <el-button :disabled="!canSubmitForm || (isFormEmpty || !isClaimed)" :loading="isSubmitting" @click="onSubmit" size="mini">{{ trans('base.actions.submit') }}</el-button>
@@ -116,12 +65,7 @@
   import HttpStatusCodes from '@axios/http-status-codes';
 
   import Page from '@components/page';
-  import InfoBox from '@components/info-box.vue';
-  import ElButtonWrap from '@components/el-button-wrap.vue';
-  // Forms
-  import BusinessCase from '@components/forms/entities/business-case';
-  import PlannedProductList from '@components/forms/entities/planned-product-list';
-  import GateOneApproval from '@components/forms/entities/gate-one-approval';
+  import InfoboxProcessForm from '@components/infoboxes/infobox-process-form';
 
   import FormUtils from '@mixins/form/utils';
 
@@ -136,7 +80,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch(`entities/${entityName}/load`, entityId),
+      store.dispatch(`entities/${_.camelCase(entityName)}/load`, entityId),
       store.dispatch('entities/processes/loadInstance', processId),
       store.dispatch('authorizations/forms/loadCanEditForm', formId),
       store.dispatch('authorizations/forms/loadCanClaimForm', formId),
@@ -163,13 +107,9 @@
 
     extends: Page,
 
-    components: { InfoBox, ElButtonWrap, BusinessCase, PlannedProductList, GateOneApproval },
+    components: { InfoboxProcessForm },
 
     mixins: [ FormUtils ],
-
-    events: {
-      'TopBar:beforeLogout': 'beforeLogout'
-    },
 
     props: {
       entityName: {
@@ -199,22 +139,24 @@
         activeIndex: '0',
         formWasDirty: false,
         tabsLength: 0,
-        formComponent: '',
         isCancelling: false
       }
     },
 
     computed: {
+      formComponent() {
+        return () => import(
+          /* webpackMode: "eager" */
+          `@components/forms/entities/${this.viewingFormInfo.definition.name_key}.vue`
+        );
+      },
+
       viewingFormInfo() {
         return ProcessInstanceForm.find(this.formId);
       },
 
       canSubmitForm() {
         return ProcessInstanceForm.find(this.formId).permissions.canSubmitForm;
-      },
-
-      canReleaseForm() {
-        return ProcessInstanceForm.find(this.formId).permissions.canReleaseForm;
       },
 
       isClaimed: {
@@ -359,25 +301,23 @@
         return !_.isEmpty(this.viewingFormInfo.current_editor) ? this.viewingFormInfo.current_editor.username : null;
       },
 
-      onReleaseForm() {
-        this.confirmReleaseForm().then(async () => {
-          try {
-            await this.releaseForm({
-              id: this.formId,
-              username: this.getCurrentEditorUsername()
-            });
-            this.notifySuccess({
-              message: this.trans('components.notice.message.form_released')
-            });
-          } catch (e) {
-            // Exception handled by interceptor
-            if (!e.response) {
-              throw e;
-            }
-          } finally {
-            this.reloadData();
+      async onReleaseForm() {
+        try {
+          await this.releaseForm({
+            id: this.formId,
+            username: this.getCurrentEditorUsername()
+          });
+          this.notifySuccess({
+            message: this.trans('components.notice.message.form_released')
+          });
+        } catch (e) {
+          // Exception handled by interceptor
+          if (!e.response) {
+            throw e;
           }
-        }).catch(() => false);
+        } finally {
+          this.reloadData();
+        }
       },
 
       async onSave() {
@@ -460,6 +400,12 @@
           }
           if (!isNavigating && this.isFormDirty) {
             this.refreshForm();
+          } else if (this.isFormDirty) {
+            // this make sure to reset the flag "shouldConfirmBeforeLeaving"
+            this.$nextTick(() => {
+              this.resetFieldsState();
+              this.resetErrors();
+            });
           }
         } catch (e) {
           // Exception handled by interceptor
@@ -484,12 +430,21 @@
         });
       },
 
-      beforeLogout(callback) {
-        this.confirmLoseChanges().then(async () => {
-          // load only the form info so that we know if we have to unclaim the form or not
+      onFormMounted() {
+        this.setupTabPanes();
+      },
+
+      async beforeLogout(next) {
+        if (this.shouldConfirmBeforeLeaving) {
+          this.confirmLoseChanges().then(async () => {
+            // load only the form info so that we know if we have to unclaim the form or not
+            await this.handleUnclaim(true);
+            next();
+          }).catch(() => false);
+        } else {
           await this.handleUnclaim(true);
-          callback();
-        }).catch(() => false);
+          next();
+        }
       }
     },
 
@@ -524,8 +479,6 @@
     created() {
       // deep copy so that we don't alter the store's data
       this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
-      this.formComponent = this.viewingFormInfo.definition.name_key;
-      this.setupTabPanes();
     }
   };
 </script>
@@ -533,25 +486,13 @@
 <style lang="scss">
   @import '~@sass/abstracts/vars';
   @import '~@sass/abstracts/mixins/helpers';
-  @import '~@sass/base/helpers';
 
   .process-form {
     height: calc(100% - 20px);
     display: flex;
     flex-direction: column;
-
-    button.release-form {
-      padding: 0;
-      margin-left: 10px;
-    }
-
-    .info-box {
-      dl {
-        flex-basis: 25%;
-        max-width: 25%; // Patch for IE11. See https://github.com/philipwalton/flexbugs/issues/3#issuecomment-69036362
-      }
-    }
-
+    // override: no space at the very end of the page
+    padding-bottom: 0;
     .el-tabs {
       position: absolute;
       // fixes the height of the tab list when there are less tabs than content
@@ -563,36 +504,34 @@
         flex: 1;
       }
       .el-tabs__item.is-left {
-        padding-left: 30px;
         text-align: left;
-        &:hover span:after {
+        padding: 0;
+        &:hover span:before {
           background-color: $--color-primary-light-4;
         }
-        &.is-active span:after {
+        &.is-active span:before {
           background-color: $--color-primary;
         }
         &.is-active span.is-error, &.is-active span.is-error:hover {
           color: $--color-danger;
-          &:after {
+          &:before {
             background-color: $--color-danger;
           }
         }
         span {
           transition: $--all-transition;
-          display: block;
-        }
-        span:after {
-          content: '';
-          position: absolute;
-          left: 10px;
-          top: 50%;
-          transition: $--all-transition;
-          transform: translateY(-50%);
-          width: 12px;
-          height: 12px;
-          background-color: #ccc;
-          border-radius: 50%;
-          display: inline-block;
+          display: flex;
+          align-items: center;
+          &:before {
+            @include size($svg-icons-size-x-small);
+            content: '';
+            // Fixes IE11 not showing the before element
+            display: inline-block;
+            margin: 0 10px;
+            transition: $--all-transition;
+            background-color: #ccc;
+            border-radius: 50%;
+          }
         }
         span.is-error {
           color: mix($--color-white, $--color-danger, 40%);
@@ -610,7 +549,7 @@
     }
 
     header, footer {
-      background: #737680;
+      background: #656273;
       color: #fff;
       display: flex;
       align-items: center;
@@ -632,29 +571,15 @@
       }
       header {
         height: 40px !important;
-        box-shadow: $box-shadow-base-bottom;
         .el-switch__label {
           color: $--color-white;
         }
-        &.form-header-details {
-          justify-content: flex-start;
-          font-size: 16px;
-          font-weight: 500;
-          i {
-            margin-right: 5px;
-            @include svg(form, $--color-white);
-          }
-          .form-name {
-            flex: 1;
-          }
-        }
-      }
-      footer {
-        box-shadow: $box-shadow-base-top;
       }
       .el-main {
         overflow: hidden;
         background-color: $--color-white;
+        border-right: $--border-base;
+        border-radius: $--border-radius-base;
         // make sure that when the content is loading, that we display a fake form index so that layout is consistant
         &:before {
           content: '';
@@ -663,7 +588,7 @@
           top: 0;
           height: 100%;
           background-color: $--background-color-base;
-          border: 1px solid $--border-color-base;
+          border: $--border-base;
         }
         .has-other .el-form-item__content {
           display: flex;
@@ -676,42 +601,13 @@
             }
           }
         }
-
-        label {
-          color: $--color-primary;
-          font-weight: 500;
-          line-height: 10px;
-        }
-        .instruction {
-          font-style: italic;
-          display: block;
-          line-height: normal;
-          color: $--color-text-regular;
-        }
-        .is-required .instruction {
-          // align under label, make room under asterisk
-          margin-left: 14px;
-        }
-
-        .el-tab-pane h2 {
+        .el-tab-pane h3 {
           border-bottom: 1px solid;
           margin-top: 0;
           text-transform: uppercase;
-          font-size: 1.3em;
         }
       }
-      .form-header, .form-footer {
-        z-index: $--index-top;
-        display: flex;
-      }
-      .form-footer {
-        margin-top: 0;
-      }
-      .form-header header:first-of-type, .form-footer footer:first-of-type {
-        padding: 0 30px;
-        border-right: 1px solid;
-      }
-      .form-header header:first-of-type, .form-footer footer:first-of-type,
+      .process-form-footer footer:first-of-type,
       .el-tabs__header,
       .el-main:before {
         width: 20%;
@@ -719,7 +615,10 @@
         box-sizing: border-box;
       }
 
-      .form-footer {
+      .process-form-footer {
+        z-index: $--index-top;
+        display: flex;
+        margin-top: 0;
         &-nav {
           flex: 1;
           text-align: center;
@@ -746,6 +645,10 @@
               margin-left: 20px;
             }
           }
+        }
+        footer:first-of-type {
+          padding: 0 30px;
+          border-right: 1px solid;
         }
       }
     }

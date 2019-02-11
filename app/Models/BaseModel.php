@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\ListableModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class BaseModel extends Model
 {
@@ -53,20 +55,20 @@ class BaseModel extends Model
             if (isset($data[$key])) {
                 $ids = [];
                 $attribute = $data[$key];
-                $relationClass = class_basename($this->{$relationship}());
+                $relationshipClass = get_class($this->{$relationship}());
                 $relatedModelClass = get_class($this->{$relationship}()->getRelated());
                 // Create or update all related models and store their ids to
                 // synchronize them (if necessary).
                 foreach ($attribute as $item) {
                     // Add foreign key field used for one to many relationships.
-                    if ($relationClass === 'HasMany') {
+                    if ($relationshipClass === HasMany::class) {
                         $item[$this->{$relationship}()->getForeignKeyName()] = $this->id;
                     }
                     $ids[] = $relatedModelClass::updateOrCreate(['id' => $item['id'] ?? null], $item)->id;
                 }
 
                 // If relation is many to many, we also need to synchronize relationships.
-                if ($relationClass === 'BelongsToMany') {
+                if ($relationshipClass === BelongsToMany::class) {
                     $this->{$relationship}()->sync($ids);
                 }
 
@@ -79,9 +81,9 @@ class BaseModel extends Model
     }
 
     /**
-     * Once called, model will render its lists as an array of ids.
-     * These lists must extend the ListableModel class and
-     * be defined inside a $relationships property on the model.
+     * Once called, model will render its multiple choice lists as an array of ids.
+     * These lists must extend the ListableModel class and be defined as a many to many relationship.
+     * The relationships must also be defined in the $with model property.
      *
      * @return $this
      */
@@ -97,8 +99,8 @@ class BaseModel extends Model
                 // If relationship is an instance of the BaseModel class and was also loaded,
                 // call formatListsOutput() method recursively.
                 if (get_parent_class($relatedModelClass) === BaseModel::class && $this->relationLoaded($relationship)) {
-                    $this->{$relationship}->each(function ($instance) {
-                        $instance->formatListsOutput();
+                    $this->{$relationship}->each(function ($relatedModel) {
+                        $relatedModel->formatListsOutput();
                     });
                 }
             }
@@ -120,10 +122,11 @@ class BaseModel extends Model
         // Check if lists should be re-formatted to return only ids.
         if ($this->formatListsOutput && ! empty($this->with)) {
             foreach ($this->with as $relationship) {
+                $relationshipClass = get_class($this->{$relationship}());
                 $relatedModelClass = $this->{$relationship}()->getRelated();
 
-                // If relationship extends ListableModel, only return an array of ids.
-                if (get_parent_class($relatedModelClass) === ListableModel::class) {
+                // If relationship extends ListableModel and is multiple choice, return an array of ids.
+                if (get_parent_class($relatedModelClass) === ListableModel::class && $relationshipClass === BelongsToMany::class) {
                     if ($attribute = &$output[snake_case($relationship)]) {
                         $attribute = collect($attribute)->pluck('id');
                     }

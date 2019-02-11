@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Exceptions\InsufficientPrivilegesException;
 use App\Exceptions\OperationDeniedException;
 use App\Models\LearningProduct\LearningProduct;
+use App\Models\Process\ProcessDefinition;
 use App\Models\User\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -84,6 +85,34 @@ class LearningProductPolicy
 
         // Ensure that learning product is still new.
         if (! $learningProduct->state->name_key === 'new') {
+            throw new OperationDeniedException();
+        }
+
+        return true;
+    }
+
+    /**
+     * Determine whether the user can start a learning product process.
+     *
+     * @param  User $user
+     * @param  LearningProduct $learningProduct
+     * @param  ProcessDefinition $processDefinition
+     * @return bool
+     */
+    public function startProcess(User $user, LearningProduct $learningProduct, ProcessDefinition $processDefinition)
+    {
+        // Ensure that user is part of the learning product's organizational unit.
+        if (! $user->isAdmin() && ! $user->belongsToOrganizationalUnit($learningProduct->organizationalUnit)) {
+            throw new InsufficientPrivilegesException();
+        }
+
+        // Ensure that learning product has no running processes.
+        if ($learningProduct->currentProcess) {
+            throw new OperationDeniedException();
+        }
+
+        // Defer to process definition authorization rules.
+        if (! $processDefinition->authorize($learningProduct)) {
             throw new OperationDeniedException();
         }
 

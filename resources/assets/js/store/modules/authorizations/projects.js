@@ -17,6 +17,8 @@ export default {
   actions: {
     async loadCanCreate({ commit }) {
       let response = await ProjectsAPI.canCreate();
+      // set this one locally
+      // since it does not refer directly to a project model
       commit('setPermission', {
         name: 'canCreate',
         isAllowed: response.data.allowed

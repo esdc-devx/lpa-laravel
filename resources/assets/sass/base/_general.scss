@@ -3,6 +3,8 @@ html, body {
   height: 100%;
 }
 body {
+  // Fix IE11 having a x-axis scrollbar
+  overflow-x: hidden;
   font-family: $font-family-sans-serif;
   font-size: $font-size-base;
   line-height: $line-height-base;
@@ -23,22 +25,11 @@ input, textarea {
   font-family: $font-family-sans-serif;
 }
 
-.content {
-  $el-main-padding: 30px;
-  position: absolute;
-  // allocate space under breadcrumb
-  top: 20px;
-  // remove padding-left and right
-  width: calc(100% - (#{$el-main-padding} * 2));
-  // allow transition between contents
-  // to keep their position while transitioning
-  padding: 0 30px;
-}
-
 .controls {
   margin-bottom: 20px;
   // add space between buttons
-  .el-button + .el-button {
+  .el-button + .el-button,
+  .el-checkbox-button + .el-button {
     margin-left: 5px;
   }
 }

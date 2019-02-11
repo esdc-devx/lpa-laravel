@@ -1,0 +1,30 @@
+button.is-plain {
+  &:hover, &:focus {
+    &.el-button--danger {
+      i.el-icon-lpa-delete {
+        @include svg(delete, $--color-white);
+      }
+      i.el-icon-lpa-release {
+        @include svg(release, $--color-white);
+      }
+    }
+  }
+  &:disabled,
+  &:disabled:hover,
+  &:disabled:focus,
+  &:disabled:active {
+    &.el-button--danger {
+      background-color: $--color-danger-lighter;
+      border-color: $--color-danger-light;
+      i.el-icon-lpa-delete {
+        @include svg(delete, mix($--color-white, $--color-danger, 40%));
+      }
+      i.el-icon-lpa-release {
+        @include svg(release, mix($--color-white, $--color-danger, 40%));
+      }
+    }
+    i.el-icon-lpa-edit {
+      @include svg(edit, $--color-text-placeholder);
+    }
+  }
+}

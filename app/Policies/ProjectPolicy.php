@@ -112,13 +112,9 @@ class ProjectPolicy
             throw new OperationDeniedException();
         }
 
-        // Handle any business logic for each process.
-        switch ($processDefinition->name_key) {
-            case 'project-approval':
-                // Ensure project is new.
-                if ($project->state->name_key !== 'new') {
-                    throw new OperationDeniedException();
-                }
+        // Defer to process definition authorization rules.
+        if (! $processDefinition->authorize($project)) {
+            throw new OperationDeniedException();
         }
 
         return true;

@@ -18,15 +18,19 @@ import UserCreate               from '@/views/admin/user-create.vue';
 import UserEdit                 from '@/views/admin/user-edit.vue';
 import OrganizationalUnitList   from '@/views/admin/organizational-unit-list.vue';
 import OrganizationalUnitEdit   from '@/views/admin/organizational-unit-edit.vue';
+import ProcessNotificationList  from '@/views/admin/process-notification-list.vue';
+import ProcessNotificationEdit  from '@/views/admin/process-notification-edit.vue';
 import NotFound                 from '@/views/errors/404.vue';
 import Forbidden                from '@/views/errors/403.vue';
 
 import ProjectModel             from '@/store/models/Project';
+import LearningProductModel     from '@/store/models/Learning-Product';
 import ProcessModel             from '@/store/models/Process';
 import ProcessInstanceFormModel from '@/store/models/Process-Instance-Form';
 import OrganizationalUnitModel  from '@/store/models/Organizational-Unit';
+import ProcessNotificationModel from '@/store/models/Process-Notification';
+import UserModel                from '@/store/models/User';
 
-import LoadStatus               from '@/store/load-status-constants';
 import store                    from '@/store/';
 
 Vue.use(Router);
@@ -54,10 +58,8 @@ async function beforeProceed(to, from, next) {
 // This will check to see if the user is authenticated or not.
 async function isAuthenticated(to, from, next) {
   try {
-    await store.dispatch('users/load');
-    if (store.state.users.currentUserLoadStatus === LoadStatus.LOADING_SUCCESS) {
-      return true;
-    }
+    await store.dispatch('entities/users/load');
+    return true;
   } catch (e) {
     Vue.$log.error(`[router][isAuthenticated] ${e}`);
     return false;
@@ -110,7 +112,7 @@ function setLanguage(to) {
 
 function prefixRoute(newPath) {
   if (!newPath.match(/\/en|fr/)) {
-    newPath = `/${store.state.language}newPath`;
+    newPath = `/${store.state.language}${newPath}`;
     isPathDirty = true;
   }
   return newPath;
@@ -126,7 +128,7 @@ function trimTraillingSlashes(newPath) {
 
 function isPathForbidden(newPath) {
   if (!!newPath.match(/\/admin/)) {
-    return !store.getters['users/hasRole']('admin');
+    return !store.getters['entities/users/hasRole']('admin');
   }
   return false;
 }
@@ -137,7 +139,7 @@ function isPathForbidden(newPath) {
 //            'routeName/someOtherRouteName/currentRouteName'
 //        And for the title, it can only be either a value or a a translatable property
 //            'base.navigation.admin_user_edit' or
-//            `${store.state.users.viewing.name}`
+//            `${some.path.to.name}`
 const routes = [
   {
     path: '/:lang(en|fr)',
@@ -151,13 +153,13 @@ const routes = [
   },
   {
     path: '/:lang/projects',
-    name: 'projects',
+    name: 'project-list',
     component: ProjectList,
     meta: {
       title() {
         return this.trans('base.navigation.projects');
       },
-      breadcrumbs: () => 'projects'
+      breadcrumbs: () => 'project-list'
     }
   },
   {
@@ -168,7 +170,7 @@ const routes = [
       title() {
         return this.trans('base.navigation.create');
       },
-      breadcrumbs: () => 'projects/project-create'
+      breadcrumbs: () => 'project-list/project-create'
     }
   },
   {
@@ -177,10 +179,10 @@ const routes = [
     component: ProjectView,
     meta: {
       title() {
-        let project = ProjectModel.find(this.$route.params.entityId);
+        const project = ProjectModel.find(this.$route.params.entityId);
         return project ? project.name : '';
       },
-      breadcrumbs: () => 'projects/project'
+      breadcrumbs: () => 'project-list/project'
     },
     props: true
   },
@@ -192,7 +194,7 @@ const routes = [
       title() {
         return this.trans('base.navigation.edit');
       },
-      breadcrumbs: () => 'projects/project/project-edit'
+      breadcrumbs: () => 'project-list/project/project-edit'
     },
     props: true
   },
@@ -202,10 +204,10 @@ const routes = [
     component: Process,
     meta: {
       title() {
-        let process = ProcessModel.find(this.$route.params.processId);
+        const process = ProcessModel.find(this.$route.params.processId);
         return process ? process.definition.name : '';
       },
-      breadcrumbs: () => 'projects/project/project-process'
+      breadcrumbs: () => 'project-list/project/project-process'
     },
     props: true
   },
@@ -215,22 +217,22 @@ const routes = [
     component: ProcessForm,
     meta: {
       title() {
-        let form = ProcessInstanceFormModel.find(this.$route.params.formId);
+        const form = ProcessInstanceFormModel.find(this.$route.params.formId);
         return form ? form.definition.name : '';
       },
-      breadcrumbs: () => 'projects/project/project-process/project-process-form'
+      breadcrumbs: () => 'project-list/project/project-process/project-process-form'
     },
     props: true
   },
   {
     path: '/:lang/learning-products',
-    name: 'learning-products',
+    name: 'learning-product-list',
     component: LearningProductList,
     meta: {
       title() {
         return this.trans('base.navigation.learning_products');
       },
-      breadcrumbs: () => 'learning-products'
+      breadcrumbs: () => 'learning-product-list'
     }
   },
   {
@@ -238,8 +240,11 @@ const routes = [
     name: 'learning-product',
     component: LearningProductView,
     meta: {
-      title: () => `${store.state.learningProducts.viewing.name}`,
-      breadcrumbs: () => 'learning-products/learning-product'
+      title() {
+        const learningProduct = LearningProductModel.find(this.$route.params.entityId);
+        return learningProduct ? learningProduct.name : '';
+      },
+      breadcrumbs: () => 'learning-product-list/learning-product'
     },
     props: true
   },
@@ -251,7 +256,7 @@ const routes = [
       title() {
         return this.trans('base.navigation.create');
       },
-      breadcrumbs: () => 'learning-products/learning-product-create'
+      breadcrumbs: () => 'learning-product-list/learning-product-create'
     }
   },
   {
@@ -262,7 +267,33 @@ const routes = [
       title() {
         return this.trans('base.navigation.edit');
       },
-      breadcrumbs: () => 'learning-products/learning-product/learning-product-edit'
+      breadcrumbs: () => 'learning-product-list/learning-product/learning-product-edit'
+    },
+    props: true
+  },
+  {
+    path: '/:lang/:entityName(learning-products)/:entityId(\\d+)/process/:processId(\\d+)',
+    name: 'learning-product-process',
+    component: Process,
+    meta: {
+      title() {
+        const process = ProcessModel.find(this.$route.params.processId);
+        return process ? process.definition.name : '';
+      },
+      breadcrumbs: () => 'learning-product-list/learning-product/learning-product-process'
+    },
+    props: true
+  },
+  {
+    path: '/:lang/:entityName(learning-products)/:entityId(\\d+)/process/:processId(\\d+)/form/:formId(\\d+)',
+    name: 'learning-product-process-form',
+    component: ProcessForm,
+    meta: {
+      title() {
+        const form = ProcessInstanceFormModel.find(this.$route.params.formId);
+        return form ? form.definition.name : '';
+      },
+      breadcrumbs: () => 'learning-product-list/learning-product/learning-product-process/learning-product-process-form'
     },
     props: true
   },
@@ -279,57 +310,84 @@ const routes = [
   },
   {
     path: '/:lang/admin/users',
-    name: 'admin-user-list',
+    name: 'user-list',
     component: UserList,
     meta: {
       title() {
         return this.trans('base.navigation.admin_user_list');
       },
-      breadcrumbs: () => 'administration/admin-user-list'
+      breadcrumbs: () => 'administration/user-list'
     }
   },
   {
     path: '/:lang/admin/users/create',
-    name: 'admin-user-create',
+    name: 'user-create',
     component: UserCreate,
     meta: {
       title() {
-        return this.trans('base.navigation.admin_user_create');
+        return this.trans('base.navigation.create');
       },
-      breadcrumbs: () => 'administration/admin-user-list/admin-user-create'
+      breadcrumbs: () => 'administration/user-list/user-create'
     }
   },
   {
     path: '/:lang/admin/users/:userId(\\d+)/edit',
-    name: 'admin-user-edit',
+    name: 'user-edit',
     component: UserEdit,
     meta: {
-      title: () => `${store.state.users.viewing.name}`,
-      breadcrumbs: () => 'administration/admin-user-list/admin-user-edit'
+      title() {
+        const user = UserModel.find(this.$route.params.userId);
+        return user ? user.name : '';
+      },
+      breadcrumbs: () => 'administration/user-list/user-edit'
     },
     props: true
   },
   {
     path: '/:lang/admin/organizational-units',
-    name: 'admin-organizational-unit-list',
+    name: 'organizational-unit-list',
     component: OrganizationalUnitList,
     meta: {
       title() {
         return this.trans('base.navigation.admin_organizational_unit_list');
       },
-      breadcrumbs: () => 'administration/admin-organizational-unit-list'
+      breadcrumbs: () => 'administration/organizational-unit-list'
     }
   },
   {
     path: '/:lang/admin/organizational-units/:entityId(\\d+)/edit',
-    name: 'admin-organizational-unit-edit',
+    name: 'organizational-unit-edit',
     component: OrganizationalUnitEdit,
     meta: {
       title() {
-        let organizationalUnit = OrganizationalUnitModel.find(this.$route.params.entityId);
+        const organizationalUnit = OrganizationalUnitModel.find(this.$route.params.entityId);
         return organizationalUnit ? organizationalUnit.name : '';
       },
-      breadcrumbs: () => 'administration/admin-organizational-unit-list/admin-organizational-unit-edit'
+      breadcrumbs: () => 'administration/organizational-unit-list/organizational-unit-edit'
+    },
+    props: true
+  },
+  {
+    path: '/:lang/admin/process-notifications',
+    name: 'process-notification-list',
+    component: ProcessNotificationList,
+    meta: {
+      title() {
+        return this.trans('base.navigation.admin_process_notification_list');
+      },
+      breadcrumbs: () => 'administration/process-notification-list'
+    }
+  },
+  {
+    path: '/:lang/admin/process-notifications/:entityId(\\d+)/edit',
+    name: 'process-notification-edit',
+    component: ProcessNotificationEdit,
+    meta: {
+      title() {
+        const processNotification = ProcessNotificationModel.find(this.$route.params.entityId);
+        return processNotification ? processNotification.name : '';
+      },
+      breadcrumbs: () => 'administration/process-notification-list/process-notification-edit'
     },
     props: true
   },
@@ -365,7 +423,9 @@ const routes = [
 window.router = new Router({
   routes,
   mode: 'history',
-  saveScrollPosition: 'true'
+  scrollBehavior (to, from, savedPosition) {
+    return { x: 0, y: 0 }
+  }
 });
 
 // Router Guards

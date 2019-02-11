@@ -1,14 +1,33 @@
 <template>
-  <div class="learning-product-list content">
-    <div class="controls" v-if="hasRole('owner') || hasRole('admin')">
-      <el-button @click="goToPage('learning-product-create')">{{ trans('pages.learning_product_list.create_learning_product') }}</el-button>
-    </div>
-    <entity-data-table
-      :data="all"
-      :attributes="dataTableAttributes.learningProducts"
-      @rowClick="onLearningProductRowClick"
-      @formatData="onFormatData"
-    />
+  <div>
+    <el-row>
+      <el-col>
+        <el-card-wrap
+          icon="el-icon-lpa-learning-product"
+          :headerTitle="trans('base.navigation.learning_products')"
+        >
+          <template slot="controls" v-if="hasRole('owner') || hasRole('admin')">
+            <el-control-wrap
+              componentName="el-button"
+              :tooltip="trans('pages.learning_product_list.create_learning_product')"
+              size="mini"
+              icon="el-icon-lpa-add"
+              @click.native="goToPage('learning-product-create')"
+            />
+          </template>
+        </el-card-wrap>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col>
+        <entity-data-table
+          :data="all"
+          :attributes="dataTableAttributes.learningProducts"
+          @rowClick="onLearningProductRowClick"
+          @formatData="onFormatData"
+        />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -18,6 +37,10 @@
 
   import Page from '@components/page';
   import EntityDataTable from '@components/entity-data-table.vue';
+  import ElCardWrap from '@components/el-card-wrap';
+  import ElControlWrap from '@components/el-control-wrap';
+
+  import LearningProduct from '@/store/models/Learning-Product';
 
   const loadData = async () => {
     // we need to access the store directly
@@ -26,7 +49,7 @@
 
     let requests = [];
     requests.push(
-      store.dispatch('learningProducts/loadAll')
+      store.dispatch('entities/learningProducts/loadAll')
     );
 
     // Exception handled by interceptor
@@ -44,12 +67,12 @@
 
     extends: Page,
 
-    components: { EntityDataTable },
+    components: { EntityDataTable, ElCardWrap, ElControlWrap },
 
     computed: {
-      ...mapState('learningProducts', [
-        'all'
-      ]),
+      all() {
+        return LearningProduct.all();
+      },
 
       dataTableAttributes: {
         get() {
@@ -109,7 +132,7 @@
       },
 
       onFormatData(normEntity) {
-        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity.type.name, normEntity.sub_type.name);
+        normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity);
       }
     },
 
@@ -127,10 +150,12 @@
 </script>
 
 <style lang="scss">
-  .learning-product-list {
+  @import '~@sass/abstracts/vars';
+  @import '~@sass/abstracts/mixins/helpers';
 
-    .controls {
-      margin-bottom: 0;
+  .learning-product-list {
+    i.el-icon-lpa-learning-product {
+      @include svg(learning-product, $--color-primary);
     }
   }
 </style>

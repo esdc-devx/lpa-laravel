@@ -17,14 +17,16 @@ class CreateLearningProductsTable extends Migration
             $table->increments('id');
             $table->string('entity_type');
             $table->string('name');
-            $table->unsignedInteger('type_id')->nullable();
+            $table->unsignedInteger('type_id');
             $table->unsignedInteger('sub_type_id')->nullable();
-            $table->unsignedInteger('organizational_unit_id')->nullable();
-            $table->unsignedInteger('project_id')->nullable();
-            $table->unsignedInteger('state_id')->nullable();
+            $table->unsignedInteger('organizational_unit_id');
+            $table->unsignedInteger('project_id');
+            $table->unsignedInteger('state_id');
             $table->unsignedInteger('process_instance_id')->unique()->nullable();
-            $table->unsignedInteger('primary_contact')->nullable();
-            $table->unsignedInteger('manager')->nullable();
+            $table->unsignedInteger('primary_contact');
+            $table->unsignedInteger('manager');
+            // Form data entities.
+            $table->unsignedInteger('design_id')->unique()->nullable();
 
             // Audit and timestamps.
             $table->auditable();
@@ -40,6 +42,7 @@ class CreateLearningProductsTable extends Migration
             $table->referenceOn('sub_type_id', 'learning_product_types');
             $table->referenceOn('primary_contact', 'users');
             $table->referenceOn('manager', 'users');
+            $table->referenceOn('design_id');
         });
     }
 

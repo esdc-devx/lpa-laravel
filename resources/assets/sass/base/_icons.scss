@@ -17,7 +17,7 @@
   text-align: center;
   &:before, &:after {
     content: '';
-    width: calc(50% - #{($svg-icons-size-x-large / 2) + 25} );
+    width: calc(50% - #{$svg-icons-size-mascot / 2} );
     height: 1px;
     background-color: $--color-primary;
     @include vertical-center(absolute);
@@ -29,6 +29,6 @@
     right: 0;
   }
   i.el-icon {
-    @include size($svg-icons-size-x-large);
+    @include size($svg-icons-size-mascot);
   }
 }
