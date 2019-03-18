@@ -17,4 +17,7 @@ return [
     'organizational_units' => 'Organizational Unit|Organizational Units',
     'status'               => 'Status',
     'updated'              => 'Modified',
+    'hours'                => 'Hour(s)',
+    'minutes'              => 'Minute(s)',
+    'seconds'              => 'Second(s)',
 ];

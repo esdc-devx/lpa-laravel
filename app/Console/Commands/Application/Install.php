@@ -45,6 +45,7 @@ class Install extends BaseCommand
 
             $this->newline('Deploying processes...');
             $this->call('process:deploy', array_merge($bypass, ['definition' => 'project-approval']));
+            $this->newline('');
             $this->call('process:deploy', array_merge($bypass, ['definition' => 'course-development']));
 
             // If populate option is passed, generate fake data.

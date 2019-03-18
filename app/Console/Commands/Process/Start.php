@@ -4,17 +4,20 @@ namespace App\Console\Commands\Process;
 
 use App\Console\BaseCommand;
 use App\Models\Process\ProcessDefinition;
-use App\Models\Process\ProcessForm;
-use ProcessFactory;
 
 class Start extends BaseCommand
 {
-
-    protected $signature = 'process:start {definition} {--entity=} {--form=}';
+    protected $signature = 'process:start {definition} {--entity=} {--form=} {--state=*}';
     protected $description = 'Start a process for a given definition and populate forms with fake data.';
+
+    // Process definition key (i.e. project-approval, course-development, etc.).
     protected $definition;
+    // (Optional) Entity to start process for using format [$entityType]:[$entityId] (i.e. project:32, course:3, etc.).
     protected $entity;
+    // (Optional) Complete process up to this form key (i.e. business-case, design-assessment, etc.).
     protected $formKey;
+    // (Optional) Pass the state argument to the process factory when creating a new entity.
+    protected $states;
 
     /**
      * Execute the console command.
@@ -23,19 +26,24 @@ class Start extends BaseCommand
      */
     public function handle()
     {
-        // Resolve process definition.
+        // Resolve process definition argument.
         $this->definition = $this->resolveProcessDefinition();
 
-        // Resolve entity if provided as an argument.
+        // Resolve entity if provided as an option.
         $this->entity = $this->resolveEntity();
 
-        // Resolve form key if provided as an argument.
+        // Resolve form key if provided as an option.
         $this->formKey = $this->resolveFormKey();
 
+        // Resolve factory states if provided as option.
+        $this->states = $this->resolveStates();
+
         // Start process using Process Factory class.
-        $this->info("Start {$this->definition->name} process...");
-        ProcessFactory::startProcess($this->definition, $this->entity)->complete($this->formKey);
-        $this->success('Process started successfully.');
+        resolve('process.factory')
+            ->startProcess($this->definition, $this->entity, $this->states)
+            ->complete($this->formKey);
+
+        $this->success('Process completed successfully.');
     }
 
     /**
@@ -56,16 +64,12 @@ class Start extends BaseCommand
     /**
      * Resolve entity from option parameter, return null othwerise.
      *
-     * @return mixed
+     * @return mixed | App\Models\BaseModel or null
      */
     protected function resolveEntity()
     {
         if ($entity = $this->option('entity')) {
-            // Ensure entity type matches process definition.
             $entity = explode(':', $entity);
-            if ($entity[0] !== $this->definition->entity_type) {
-                return $this->error('Unsupported entity type: ' . $entity[0]);
-            }
             $entity = entity($entity[0], $entity[1]);
         }
 
@@ -75,21 +79,20 @@ class Start extends BaseCommand
     /**
      * Resolve form key from option parameter, return null othwerise.
      *
-     * @return mixed
+     * @return mixed | string or null
      */
     protected function resolveFormKey()
     {
-        if ($formKey = $this->option('form')) {
-            // Ensure form exists and is part of process definition.
-            if (! ($processForm = ProcessForm::getByKey($formKey)->first())) {
-                return $this->error('Unsupported form: ' . $this->option('form'));
-            }
-            if (! $processForm->step->definition->is($this->definition)) {
-                return $this->error('Unsupported form: ' . $this->option('form'));
-            }
-        }
-
-        return $formKey;
+        return $this->option('form') ?? null;
     }
 
+    /**
+     * Resolve factory states from option parameter, return null otherwise.
+     *
+     * @return mixed | string or null
+     */
+    protected function resolveStates()
+    {
+        return $this->option('state') ?? [];
+    }
 }

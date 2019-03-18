@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Plan d’affaire',
+    'form_title' => 'Plan d’affaire',
     'tabs' => [
         'project_objective'              => 'Objectif du projet',
         'proposed_solution'              => 'Solution proposée',

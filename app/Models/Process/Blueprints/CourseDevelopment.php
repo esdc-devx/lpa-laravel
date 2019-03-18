@@ -82,8 +82,9 @@ class CourseDevelopment extends ProcessDefinitionBlueprint
                 'name_fr' => 'Conception prête pour l\'évaluation',
             ],
             [
-                'name_en' => 'Cancelled',
-                'name_fr' => 'Annulé',
+                'name_key' => 'entity-cancelled',
+                'name_en'  => 'Cancelled',
+                'name_fr'  => 'Annulé',
             ],
             [
                 'name_key' => 'design-rejected',
@@ -95,7 +96,7 @@ class CourseDevelopment extends ProcessDefinitionBlueprint
                 'name_fr' => 'Détails opérationnels requis',
             ],
             [
-                'name_en' => 'Solution Required',
+                'name_en' => 'Solution Development Required',
                 'name_fr' => 'Développement de la solution requis',
             ],
             [
@@ -107,32 +108,34 @@ class CourseDevelopment extends ProcessDefinitionBlueprint
                 'name_fr' => 'Développement prêt pour l\'évaluation',
             ],
             [
-                'name_key' => 'course-operational-details-rejected',
+                'name_key' => 'operational-details-rejected',
                 'name_en'  => 'Operational Details Requires Adjustments',
                 'name_fr'  => 'Détails opérationnels nécessitent des ajustements',
             ],
             [
-                'name_key' => 'course-solution-effort-rejected',
+                'name_key' => 'solution-development-rejected',
                 'name_en'  => 'Solution Requires Adjustments',
                 'name_fr'  => 'Développement de la solution nécessitent des ajustements',
             ],
             [
-                'name_key' => 'course-offering-and-enrolment-estimates-rejected',
+                'name_key' => 'offering-and-enrolment-estimates-rejected',
                 'name_en'  => 'Offering and Enrolment Estimates Requires Adjustments',
                 'name_fr'  => 'Estimations de l\'offre et des inscriptions nécessitent des ajustements',
             ],
             [
-                'name_en' => 'Communication Material Required',
-                'name_fr' => 'Matériel de communication requis',
+                'name_key' => 'communications-material-required',
+                'name_en'  => 'Communication Material Required',
+                'name_fr'  => 'Matériel de communication requis',
             ],
             [
-                'name_en' => 'Communication Material Ready for Assessment',
-                'name_fr' => 'Le matériel de communication est prêt pour l\'évaluation',
+                'name_key' => 'communications-material-ready-for-assessment',
+                'name_en'  => 'Communications Material Ready for Assessment',
+                'name_fr'  => 'Matériel de communication prêt pour l\'évaluation',
             ],
             [
-                'name_key' => 'course-communication-material-rejected',
+                'name_key' => 'communications-material-rejected',
                 'name_en'  => 'Communication Material Requires Adjustments',
-                'name_fr'  => 'Le matériel de communication nécessite des ajustements',
+                'name_fr'  => 'Matériel de communication nécessite des ajustements',
             ],
             [
                 'name_en' => 'Ready for Publishing',

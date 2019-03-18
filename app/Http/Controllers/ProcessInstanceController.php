@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProcessInstanceResource;
 use App\Models\Process\ProcessInstance;
 
 class ProcessInstanceController extends APIController
@@ -37,9 +38,11 @@ class ProcessInstanceController extends APIController
      */
     public function show($processInstanceId)
     {
-        return $this->respond([
-            'process_instance' => ProcessInstance::withProcessDetails()->findOrFail($processInstanceId)
-        ]);
+        $processInstance = ProcessInstance::withProcessDetails()->findOrFail($processInstanceId);
+
+        return $this->respond(
+            new ProcessInstanceResource($processInstance)
+        );
     }
 
     /**

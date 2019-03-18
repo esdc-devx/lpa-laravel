@@ -5,21 +5,49 @@
         due to the fact that v-model and :value are equivalents,
         we need to specify that value here will be a .prop on the element itself
       -->
-      <component
-        ref="input"
+      <div
         v-if="!typeIsNumber"
-        v-bind="$attrs"
-        :is="type"
-        :class="[`el-${type}__inner`, { 'is-error': verrors.has(name) }]"
-        :value.prop="currentTextValue"
-        :disabled="isInputDisabled"
-        :name="name"
-        :maxlength="charsLimit"
-        @input="currentTextValue = $event.target.value"
-        @blur="onBlur($event.target.value)"
-        v-autosize>
-      </component>
-      <div v-else class="el-input-number">
+        :class="[
+          'el-input', {
+            'el-input-group': $slots.prepend || maxlength,
+            'el-input-group--prepend': $slots.prepend,
+            'el-input-group--append': maxlength,
+          }
+        ]"
+      >
+        <div v-if="$slots.prepend" class="el-input-group__prepend"><slot name="prepend"></slot></div>
+        <component
+          ref="input"
+          v-bind="$attrs"
+          :is="type"
+          :class="[
+            `el-${type}__inner`,
+            {
+              'is-error': verrors.has(name)
+            }
+          ]"
+          :value.prop="currentTextValue"
+          :disabled="isInputDisabled"
+          :name="name"
+          :maxlength="charsLimit"
+          @input="currentTextValue = $event.target.value"
+          @blur="onBlur($event.target.value)"
+          v-autosize
+        >
+        </component>
+        <div v-if="maxlength" class="el-input-group__append">
+          {{ charCount }} / {{ charsLimit }}
+        </div>
+      </div>
+      <div
+        v-else
+        :class="[
+          'el-input-number', {
+            'is-controls-right el-input-group el-input-group--prepend': $slots.prepend
+          }
+        ]"
+      >
+        <div v-if="$slots.prepend" class="el-input-group__prepend"><slot name="prepend"></slot></div>
         <span
           role="button"
           :class="['el-input-number__decrease', {'is-disabled': isMinDisabled}]"
@@ -47,15 +75,13 @@
             :disabled="isInputDisabled"
             @keydown.up="increase"
             @keydown.down="decrease"
-            @input="handleInputChange">
+            @input="handleInputChange"
+          />
         </div>
       </div>
     </div>
     <div class="input-infos">
-      <form-error :name="name"></form-error>
-      <span v-if="maxlength" class="char-count">
-        {{ charCount }} / {{ charsLimit }}
-      </span>
+      <form-error v-if="!hideErrors" :name="name"></form-error>
     </div>
   </div>
 </template>
@@ -68,8 +94,6 @@
   // which was slightly modified to allow editing a value
   // without always sending the updated value to the parent
   // which causes major lag on big forms.
-
-  import EventBus from '@/event-bus.js';
 
   import FormError from './error.vue';
 
@@ -98,9 +122,9 @@
       type: {
         type: String,
         default: 'input',
-        validator: function (value) {
+        validator(val) {
           // The value must match one of these strings
-          return ['input', 'textarea', 'number'].indexOf(value) !== -1
+          return ['input', 'textarea', 'number'].indexOf(val) !== -1
         }
       },
       step: {
@@ -118,6 +142,10 @@
       value: {
         type: String | Number
       },
+      hideErrors: {
+        type: Boolean,
+        default: false
+      },
       precision: {
         type: Number,
         validator(val) {
@@ -130,8 +158,9 @@
       return {
         // this allows us to keep the count internally
         // without relying on the parent to get it
-        currentNumberValue: this.value,
-        innerTextValue: this.value
+        currentNumberValue: null,
+        innerTextValue: null,
+        shouldResetFlag: false
       };
     },
 
@@ -295,6 +324,14 @@
         this.$refs.inputNumber.value = this.currentNumberValue;
         this.updateValue(newVal);
       }
+    },
+
+    created() {
+      if (this.type === 'number') {
+        this.currentNumberValue = this.value;
+      } else {
+        this.innerTextValue =  this.value;
+      }
     }
   };
 </script>
@@ -309,6 +346,32 @@
       // fixes IE11 display underneath for errors
       display: flex;
     }
+    .el-input .el-input-group__prepend,
+    .el-input .el-input-group__append {
+      // fixes a width of 1px ElementUI puts by default
+      // which makes the text too close from the sides
+      // when it is more than a few characters
+      width: auto;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+    .el-input-group__prepend {
+      & + input,
+      & + textarea {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+    .el-input-group--append .el-textarea__inner {
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    & + .input-wrap {
+      margin-top: 20px;
+    }
+
     .input-infos {
       position: relative;
       display: flex;

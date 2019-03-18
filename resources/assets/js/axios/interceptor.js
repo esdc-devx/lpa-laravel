@@ -1,18 +1,23 @@
+import '@babel/polyfill';
+
 import Vue from 'vue';
 import axios from 'axios';
-
 import axiosDefaults from './defaults';
 import HttpStatusCodes from './http-status-codes';
 import router from '@/router';
-import store from '@/store/';
 import Config from '@/config';
-import EventBus from '@/event-bus';
 import Notify from '@mixins/notify';
 
 let onLanguageChange = lang => {
   axios.defaults.baseURL = '/' + lang + '/api';
   axios.defaults.headers.common['Accept-Language'] = lang;
 };
+
+import('@/store/').then(store => {
+  store.default.watch((state, getters) => state.language, lang => {
+    onLanguageChange(lang);
+  });
+});
 
 // affect the language on init
 onLanguageChange(Config.DEFAULT_LANG);
@@ -22,13 +27,15 @@ Object.assign(axios.defaults, axiosDefaults);
 axios.interceptors.request.use(
   config => {
     if (config.showMainLoading) {
-      store.commit('showMainLoading'); // Show Main loading animation before sending any request.
+      // Show Main loading animation before sending any request.
+      store.commit('showMainLoading');
     }
     return config;
   },
   error => {
     if (error.request.config.showMainLoading) {
-      store.dispatch('hideMainLoading'); // Hide Main loading animation upon request processing error.
+      // Hide Main loading animation upon request processing error.
+      store.dispatch('hideMainLoading');
     }
     Vue.$log.debug(error);
     return Promise.reject(error);
@@ -39,7 +46,8 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     if (response.config.showMainLoading) {
-      store.dispatch('hideMainLoading'); // Hide Main loading animation after receiving a response.
+      // Hide Main loading animation after receiving a response.
+      store.dispatch('hideMainLoading');
     }
     return response.data;
   },
@@ -48,7 +56,8 @@ axios.interceptors.response.use(
     let response = error.response;
 
     if (!response || (response && response.config.showMainLoading)) {
-      store.dispatch('hideMainLoading'); // Hide Main loading animation upon response processing error.
+      // Hide Main loading animation upon response processing error.
+      store.dispatch('hideMainLoading');
     }
 
     // if the response is undefined, we likely got a timeout
@@ -103,9 +112,8 @@ axios.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  });
-
-EventBus.$on('Store:languageUpdate', onLanguageChange);
+  }
+);
 
 window.axios = axios;
 

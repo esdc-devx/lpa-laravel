@@ -17,6 +17,11 @@
     <el-row>
       <el-col>
         <el-tabs type="border-card">
+          <!-- Project outline -->
+          <el-tab-pane>
+            <span slot="label"><i class="el-icon el-icon-lpa-outline tab-icon"></i> {{ trans('entities.project.outline.label') }}</span>
+            <div class="outline" v-html="viewing.outline"></div>
+          </el-tab-pane>
           <!-- Learning products -->
           <el-tab-pane>
             <span slot="label"><i class="el-icon el-icon-lpa-learning-product tab-icon"></i> {{ trans('base.navigation.learning_products') }}</span>
@@ -241,6 +246,8 @@
         '$$delete'
       ]),
 
+      loadData,
+
       onFormatData(normEntity) {
         normEntity.type = this.$options.filters.learningProductTypeSubTypeFilter(normEntity);
       },
@@ -285,12 +292,6 @@
       // Exception handled by interceptor
       await loadData({ to });
       next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
-      await loadData.apply(this);
-      next();
     }
   };
 </script>
@@ -306,6 +307,12 @@
       .el-table__row {
         cursor: default;
       }
+    }
+
+    .outline {
+      border: 1px solid #ccc;
+      padding: 12px;
+      white-space: pre-line;
     }
   }
 

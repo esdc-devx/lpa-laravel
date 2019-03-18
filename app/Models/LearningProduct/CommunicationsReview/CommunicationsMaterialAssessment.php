@@ -2,33 +2,12 @@
 
 namespace App\Models\LearningProduct\CommunicationsReview;
 
-use App\Models\Process\ProcessInstanceFormAssessment;
-use App\Models\Process\ProcessInstanceFormDataModel;
+use App\Models\Process\ProcessInstanceFormAssessmentDataModel;
 
-class CommunicationsMaterialAssessment extends ProcessInstanceFormDataModel
+class CommunicationsMaterialAssessment extends ProcessInstanceFormAssessmentDataModel
 {
-    protected $fillable = [
-        'process_instance_form_id',
-        'is_entity_cancelled',
-        'entity_cancellation_rationale',
-        'assessment_date',
-    ];
-
-    protected $with = [
-        'assessments',
-    ];
-
-    public function assessments()
+    public function getAllowEntityCancellationAttribute()
     {
-        return $this->morphMany(ProcessInstanceFormAssessment::class, 'entity');
-    }
-
-    public function saveFormData(array $data)
-    {
-        $this->syncRelatedModels($data, [
-            'assessments',
-        ]);
-
-        parent::saveFormData($data);
+        return false;
     }
 }

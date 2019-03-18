@@ -14,11 +14,21 @@ class CreateCommunicationsMaterialsTable extends Migration
     public function up()
     {
         Schema::create('communications_materials', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('process_instance_form_id');
+            $table->processFormData();
 
-            // Foreign keys.
-            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
+            $table->string('title_en')->nullable();
+            $table->string('title_fr')->nullable();
+            $table->text('description_en')->nullable();
+            $table->text('description_fr')->nullable();
+            $table->text('keywords_en')->nullable();
+            $table->text('keywords_fr')->nullable();
+            $table->text('note_en')->nullable();
+            $table->text('note_fr')->nullable();
+            $table->text('disclaimer_en')->nullable();
+            $table->text('disclaimer_fr')->nullable();
+            $table->text('summary_en')->nullable();
+            $table->text('summary_fr')->nullable();
+            $table->text('comments')->nullable();
         });
     }
 

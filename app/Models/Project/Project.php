@@ -12,6 +12,7 @@ use App\Models\State;
 use App\Models\Traits\HasInformationSheets;
 use App\Models\Traits\HasProcesses;
 use App\Models\Traits\UsesUserAudit;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Project extends BaseModel
@@ -20,6 +21,7 @@ class Project extends BaseModel
 
     protected $fillable = [
         'name',
+        'outline',
         'organizational_unit_id',
         'state_id',
         'process_instance_id',
@@ -61,13 +63,23 @@ class Project extends BaseModel
      */
     public static function availableForLearningProductCreation()
     {
-        return static::whereState(['approved', 'active'])
-            ->with('plannedProductList.plannedProducts', 'learningProducts')
-            ->where('process_instance_id', null)
-            ->whereIn('organizational_unit_id', OrganizationalUnit::getLearningProductOwnersFor(auth()->user())->pluck('id'))
-            ->get()->filter(function ($project)  {
-                return $project->available_learning_product_types->isNotEmpty();
-            })->values();
+        // Get active or approved projects with their planned products and their current products.
+        $projects = static::whereState(['approved', 'active'])
+            ->with('plannedProductList.plannedProducts', 'learningProducts');
+
+        // Exclude projects with a current process.
+        $projects->where('process_instance_id', null);
+
+        // If user is authenticad, filter projects against his available organizational units.
+        if (auth()->user()) {
+            $organizationalUnits = OrganizationalUnit::getLearningProductOwnersFor(auth()->user());
+            $projects->whereIn('organizational_unit_id', $organizationalUnits->pluck('id'));
+        }
+
+        // Return all projects available for learning product creation.
+        return $projects->get()->filter(function ($project)  {
+            return $project->available_learning_product_types->isNotEmpty();
+        })->values();
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Project\BusinessCase\Recurrence;
+use App\Models\Lists\Recurrence;
 use Illuminate\Database\Seeder;
 
 class RecurrenceTableSeeder extends Seeder
@@ -29,12 +29,6 @@ class RecurrenceTableSeeder extends Seeder
         // Truncate previous tables.
         DB::table('recurrences')->truncate();
 
-        foreach ($this->data() as $term) {
-            Recurrence::create([
-                'name_key' => str_slug($term['name_en'], '-'),
-                'name_en'  => $term['name_en'],
-                'name_fr'  => $term['name_fr'],
-            ]);
-        }
+        Recurrence::createFrom($this->data());
     }
 }

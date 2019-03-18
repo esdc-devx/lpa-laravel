@@ -31,9 +31,6 @@ class ProcessFormDecisionTableSeeder extends Seeder
         // Truncate previous tables.
         DB::table('process_form_decisions')->truncate();
 
-        // Generate roles.
-        foreach ($this->data() as $item) {
-            ProcessFormDecision::create($item);
-        }
+        ProcessFormDecision::createFrom($this->data());
     }
 }

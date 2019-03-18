@@ -6,7 +6,17 @@ use App\Models\BaseModel;
 
 class ProcessInstanceFormDataModel extends BaseModel
 {
+    protected $fillable = [
+        'process_instance_form_id',
+        'process_instance_id',
+    ];
+
     public $timestamps = false;
+
+    public function processInstance()
+    {
+        return $this->belongsTo(ProcessInstance::class);
+    }
 
     public function processInstanceForm()
     {

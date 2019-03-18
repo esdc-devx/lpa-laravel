@@ -198,6 +198,8 @@
         'cancelInstance'
       ]),
 
+      loadData,
+
       getActiveStep(id) {
         if (this.viewing.state.name_key === 'completed') {
           return this.viewing.steps.length - 1;
@@ -247,12 +249,6 @@
     // so that when the page is rendered, the correct step is selected.
     async beforeRouteEnter(to, from, next) {
       await loadData({ to });
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
-      await loadData.apply(this);
       next();
     },
 

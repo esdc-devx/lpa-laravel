@@ -18,6 +18,14 @@ class LearningProductEventSubscriber
     }
 
     /**
+     * Handle LearningProductUpdated events.
+     */
+    public function onLearningProductUpdated($event)
+    {
+        $this->updateProjectState($event);
+    }
+
+    /**
      * Handle LearningProductDeleted events.
      */
     public function onLearningProductDeleted($event)
@@ -33,7 +41,12 @@ class LearningProductEventSubscriber
      */
     protected function updateProjectState($event)
     {
-        $this->project = Project::with('state')->find($event->learningProduct->project_id);
+        // Course is not currently attached to any project.
+        if (! $projectId = $event->learningProduct->project_id ?? null) {
+            return;
+        }
+
+        $this->project = Project::with('state')->find($projectId);
 
         // Don't update parent project state when learning product was deleted
         // and that current project state is not active or active full.
@@ -82,6 +95,11 @@ class LearningProductEventSubscriber
         $events->listen(
             'App\Events\LearningProductCreated',
             'App\Listeners\LearningProductEventSubscriber@onLearningProductCreated'
+        );
+
+        $events->listen(
+            'App\Events\LearningProductUpdated',
+            'App\Listeners\LearningProductEventSubscriber@onLearningProductUpdated'
         );
 
         $events->listen(

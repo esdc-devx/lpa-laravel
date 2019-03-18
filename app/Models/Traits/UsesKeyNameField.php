@@ -31,6 +31,6 @@ trait UsesKeyNameField
      */
     public static function getIdFromKey($key)
     {
-        return static::getByKey($key)->first()->id;
+        return static::getByKey($key)->firstOrFail()->id;
     }
 }

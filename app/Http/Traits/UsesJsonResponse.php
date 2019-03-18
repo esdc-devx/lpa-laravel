@@ -2,6 +2,7 @@
 
 namespace App\Http\Traits;
 
+use App\Http\Resources\BaseResource;
 use Illuminate\Http\Response;
 
 trait UsesJsonResponse
@@ -18,12 +19,19 @@ trait UsesJsonResponse
     /**
      * Return API response with default format.
      *
-     * @param array $data
+     * @param mixed $data | array or BaseResource
      * @param array $meta
      * @return Illuminate\Http\Response
      */
-    protected function respond($data = [], $meta = [])
+    protected function respond($data, $meta = [])
     {
+        // If data is of type BaseResource, defer to its response format.
+        // @note: Consider using resources for all api response eventually?
+        if ($data instanceof BaseResource) {
+            return $data->response()->setStatusCode($this->statusCode);
+        }
+
+        // Default json format response.
         return response()->json([
             'data' => $data,
             'meta' => $meta

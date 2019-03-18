@@ -16,8 +16,8 @@ use DB;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class ProcessManager {
-
+class ProcessManager
+{
     use UsesProcessInstance;
 
     protected $camunda;
@@ -96,28 +96,46 @@ class ProcessManager {
 
             // Create process instance steps entries from process definition.
             foreach ($processDefinition['steps'] as $step) {
+                $stepState = $this->processStates["step-{$step->name_key}"];
+
+                // Ignore step if not applicable.
+                if ($stepState->name_key == 'not-applicable') {
+                    continue;
+                }
+
                 $processInstanceStep = ProcessInstanceStep::create([
                     'process_step_id'     => $step->id,
                     'process_instance_id' => $this->processInstance->id,
-                    'state_id'            => $this->processStates["step-{$step->name_key}"]->id,
+                    'state_id'            => $stepState->id,
                 ]);
 
                 // Create process instance form entries from process definition.
                 foreach ($step['forms'] as $form) {
+                    $formState = $this->processStates["form-{$form->name_key}"];
+                    $formTask = $this->processTasks[$form->name_key] ?? null;
+
+                    // Ignore form if not applicable.
+                    if ($formState->name_key == 'not-applicable') {
+                        continue;
+                    }
+
                     $processInstanceForm = ProcessInstanceForm::create([
                         'entity_type'              => $form->name_key,
                         'process_form_id'          => $form->id,
                         'process_instance_step_id' => $processInstanceStep->id,
-                        'state_id'                 => $this->processStates["form-{$form->name_key}"]->id,
-                        'organizational_unit_id'   => isset($this->processTasks[$form->name_key]) ? $this->processTasks[$form->name_key]->organizationalUnit->id : null,
-                        'engine_task_id'           => isset($this->processTasks[$form->name_key]) ? $this->processTasks[$form->name_key]->id : null,
+                        'state_id'                 => $formState->id,
+                        'organizational_unit_id'   => isset($formTask) ? $formTask->organizationalUnit->id : null,
+                        'engine_task_id'           => isset($formTask) ? $formTask->id : null,
                         'created_by'               => $user->id,
                         'updated_at'               => null,
                     ]);
 
-                    // Create an empty form data class model mapped to the process instance form (i.e. BusinessCase, PlannedProductList, etc.).
+                    // Create an empty form data class model mapped to the process instance form.
+                    // Form data class is resolved using form name key.
+                    // i.e. business-case => App\Models\Project\BusinessCase\BusinessCase.
                     try {
                         $formData = entity($form->name_key)::create([
+                            'process_instance_id'      => $this->processInstance->id,
                             'process_instance_form_id' => $processInstanceForm->id,
                         ]);
 
@@ -126,13 +144,18 @@ class ProcessManager {
 
                         // If process instance form has some form assessments, create them.
                         if (! empty($form['assessments'])) {
-                            $formAssessmentIds = [];
                             foreach ($form['assessments'] as $assessment) {
-                                $formAssessmentIds[] = ProcessInstanceFormAssessment::create([
+                                $assessedForm = $assessment->assessed_process_form;
+                                // Dont't create an assessment for a form that is not applicable.
+                                if ($this->processStates["form-{$assessedForm}"]->name_key == 'not-applicable') {
+                                    continue;
+                                }
+
+                                ProcessInstanceFormAssessment::create([
                                     'process_instance_form_id' => $processInstanceForm->id,
                                     'entity_type'              => $form->name_key,
                                     'entity_id'                => $formData->id,
-                                    'assessed_process_form'    => $assessment->assessed_process_form,
+                                    'assessed_process_form'    => $assessedForm,
                                 ])->id;
                             }
                         }
@@ -293,7 +316,7 @@ class ProcessManager {
      * Handle logic to send a process notification to the appropriate organizational units.
      * Process notifications are triggered from the process engine.
      *
-     * @param  App\Models\Process\ProcessNotificationModel $model
+     * @param  \App\Models\Process\ProcessNotification $model
      * @param  ProcessInstance $processInstance
      * @param  array $addressees
      * @return void

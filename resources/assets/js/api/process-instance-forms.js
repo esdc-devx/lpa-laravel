@@ -2,7 +2,7 @@ import axios from '@axios/interceptor';
 
 export default {
   getInstanceForm(id) {
-    return axios.get(`process-instance-forms/${id}`);
+    return axios.get(`process-instance-forms/${id}?context=true`);
   },
 
   claimForm(id) {

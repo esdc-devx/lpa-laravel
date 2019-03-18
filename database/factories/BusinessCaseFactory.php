@@ -1,11 +1,11 @@
 <?php
 
+use App\Models\Lists\DepartmentalResultsFrameworkIndicator;
+use App\Models\Lists\InternalResource;
+use App\Models\Lists\Recurrence;
+use App\Models\Lists\RequestOrigin;
+use App\Models\Lists\SchoolPriority;
 use App\Models\Project\BusinessCase\BusinessCase;
-use App\Models\Project\BusinessCase\DepartmentalResultsFrameworkIndicator;
-use App\Models\Project\BusinessCase\InternalResource;
-use App\Models\Project\BusinessCase\Recurrence;
-use App\Models\Project\BusinessCase\RequestOrigin;
-use App\Models\Project\BusinessCase\SchoolPriority;
 use Faker\Generator as Faker;
 
 $factory->define(BusinessCase::class, function (Faker $faker) {

@@ -2,14 +2,15 @@
   <div>
     <el-card shadow="never">
       <span slot="header">
-        <h2><i class="el-icon-lpa-projects"></i>{{ trans('pages.project_create.title') }}</h2>
+        <h2><i class="el-icon-lpa-pr"></i>{{ trans('pages.project_create.title') }}</h2>
       </span>
 
       <el-form ref="form" :model="form" label-position="top" @submit.native.prevent :disabled="isFormDisabled">
         <el-form-item-wrap
           :label="trans('entities.general.name')"
           prop="name"
-          required>
+          required
+        >
           <input-wrap
             id="name"
             name="name"
@@ -17,19 +18,34 @@
             v-model="form.name"
             maxlength="175"
             v-validate="'required'"
-            auto-complete="off">
-          </input-wrap>
+            auto-complete="off"
+          />
         </el-form-item-wrap>
         <el-form-item-wrap
           :label="$tc('entities.general.organizational_units')"
           prop="organizational_unit_id"
-          required>
+          required
+        >
           <el-select-wrap
             v-model="form.organizational_unit_id"
             name="organizational_unit_id"
             :data-vv-as="$tc('entities.general.organizational_units')"
             v-validate="'required'"
             :options="organizationalUnits"
+          />
+        </el-form-item-wrap>
+        <el-form-item-wrap
+          prop="outline"
+          contextPath="entities.project.outline"
+          required
+        >
+          <input-wrap
+            v-model="form.outline"
+            v-validate="'required'"
+            :data-vv-as="trans('entities.project.outline.label')"
+            name="outline"
+            maxlength="1250"
+            type="textarea"
           />
         </el-form-item-wrap>
 
@@ -104,6 +120,8 @@
         '$$create'
       ]),
 
+      loadData,
+
       // Form handlers
       async onSubmit() {
         this.submit(this.handleCreate);
@@ -118,15 +136,6 @@
           message: this.trans('components.notice.message.project_created')
         });
         this.$router.push(`/${this.language}/projects/${project.id}`);
-      },
-
-      async onLanguageUpdate() {
-        // since on submit the backend returns already translated error messages,
-        // we need to reset the validator messages so that on next submit
-        // the messages are in the correct language
-        this.resetErrors();
-
-        await loadData();
       }
     },
 
@@ -144,7 +153,6 @@
     async beforeRouteUpdate(to, from, next) {
       await this.$store.dispatch('authorizations/projects/loadCanCreate');
       if (this.$store.state.authorizations.projects.permissions.canCreate) {
-        await this.onLanguageUpdate();
         next();
       } else {
         this.$router.replace({ name: 'forbidden', params: { '0': to.path } });

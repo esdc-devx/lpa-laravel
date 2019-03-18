@@ -14,12 +14,9 @@ class CreatePlannedProductListsTable extends Migration
     public function up()
     {
         Schema::create('planned_product_lists', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('process_instance_form_id');
-            $table->text('comments')->nullable();
+            $table->processFormData();
 
-            // Foreign keys.
-            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
+            $table->text('comments')->nullable();
         });
     }
 

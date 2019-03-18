@@ -24,8 +24,6 @@
 
   import { mapState, mapGetters, mapMutations } from 'vuex';
 
-  import EventBus from '@/event-bus.js';
-
   export default {
     name: 'page',
 
@@ -33,11 +31,6 @@
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
     $_veeValidate: {
       validator: 'new'
-    },
-
-    // events to bind
-    events: {
-      'TopBar:beforeLogout': 'beforeLogout'
     },
 
     data() {
@@ -48,7 +41,8 @@
       ...mapState([
         'shouldConfirmBeforeLeaving',
         'language',
-        'isMainLoading'
+        'isMainLoading',
+        'waitForLogout'
       ]),
 
       ...mapGetters({
@@ -57,36 +51,35 @@
       })
     },
 
-    methods: {
-      ...mapMutations([
-        'setShouldConfirmBeforeLeaving'
-      ]),
-
-      async onLanguageUpdate() {},
-
-      bindEvents() {
-        // loop through listeners of the current page,
-        // and turn them on
-        if (!_.isEmpty(this.$options.events)) {
-          for (const eventName in this.$options.events) {
-            const eventListener = this.$options.events[eventName];
-            EventBus.$on(eventName, this[eventListener]);
-          }
-        }
+    watch: {
+      '$store.state.language': function (to, from) {
+        this.onLanguageUpdate();
       },
 
-      /**
-       * Destroy any events we might be listening
-       * so that they do not get called while being on another page
-       */
-      destroyEvents() {
-        // loop through listeners of the current page,
-        // and turn them off
-        if (!_.isEmpty(this.$options.events)) {
-          for (const eventName in this.$options.events) {
-            const eventListener = this.$options.events[eventName];
-            EventBus.$off(eventName, this[eventListener]);
-          }
+      waitForLogout: function (val) {
+        if (val) {
+          this.beforeLogout();
+        }
+      }
+    },
+
+    methods: {
+      ...mapMutations([
+        'setShouldConfirmBeforeLeaving',
+        'setWaitForLogout'
+      ]),
+
+      async loadData() {},
+
+      onLanguageUpdate() {
+        if (this.resetErrors) {
+          // since on submit the backend returns already translated error messages,
+          // we need to reset the validator messages so that on next submit
+          // the messages are in the correct language
+          this.resetErrors();
+        }
+        if (this.loadData) {
+          this.loadData.apply(this);
         }
       },
 
@@ -142,15 +135,14 @@
         this.goToPage(routeName);
       },
 
-      beforeLogout(next) {
-        next();
+      beforeLogout() {
+        this.setWaitForLogout(false);
       }
     },
 
 
     mounted() {
-      EventBus.$emit('App:ready');
-      this.bindEvents();
+      this.$emit('app:ready');
     }
   };
 </script>

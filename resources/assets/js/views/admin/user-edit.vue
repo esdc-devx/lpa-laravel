@@ -48,6 +48,27 @@
 
   import User from '@/store/models/User';
 
+  const loadData = async ({ to }) => {
+    const { userId } = to ? to.params : this;
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch('entities/users/loadEditInfo', userId)
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'user-edit',
 
@@ -88,9 +109,10 @@
 
     methods: {
       ...mapActions('entities/users', [
-        '$$update',
-        'loadEditInfo'
+        '$$update'
       ]),
+
+      loadData,
 
       search(name) {
         return this.searchUser(name);
@@ -108,26 +130,11 @@
           message: this.trans('components.notice.message.user_updated')
         });
         this.goToParentPage();
-      },
-
-      async onLanguageUpdate() {
-        // since on submit the backend returns already translated error messages,
-        // we need to reset the validator messages so that on next submit
-        // the messages are in the correct language
-        this.resetErrors();
-        // only reload the dropdowns, not the user
-        await this.loadEditInfo(this.userId);
       }
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('entities/users/loadEditInfo', to.params.userId)
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
-      await this.onLanguageUpdate();
+      await loadData({ to });
       next();
     },
 

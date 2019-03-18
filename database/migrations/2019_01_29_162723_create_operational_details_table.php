@@ -14,11 +14,20 @@ class CreateOperationalDetailsTable extends Migration
     public function up()
     {
         Schema::create('operational_details', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('process_instance_form_id');
+            $table->processFormData();
 
-            // Foreign keys.
-            $table->referenceOn('process_instance_form_id')->onDelete('cascade');
+            $table->unsignedInteger('number_of_virtual_producers_per_offering')->nullable();
+            $table->unsignedInteger('minimum_number_of_participant_per_offering')->nullable();
+            $table->unsignedInteger('maximum_number_of_participant_per_offering')->nullable();
+            $table->unsignedInteger('optimal_number_of_participant_per_offering')->nullable();
+            $table->unsignedInteger('waiting_list_maximum_size')->nullable();
+            $table->string('session_template')->nullable();
+            $table->boolean('external_delivery')->nullable();
+            $table->boolean('should_be_published')->nullable();
+            $table->text('note_content')->nullable();
+            $table->text('disclaimer_content')->nullable();
+            $table->text('summary_content')->nullable();
+            $table->text('comments')->nullable();
         });
     }
 

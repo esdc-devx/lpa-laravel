@@ -29,9 +29,7 @@
         <bpmn:flowNodeRef>message-design-ready-for-assessment</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>assess-design</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>is-entity-cancelled</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>message-entity-cancelled</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>is-design-approved</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_0k7kgbv</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>ExclusiveGateway_1rwliof</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>message-development-ready-for-assessment</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>assess-development</bpmn:flowNodeRef>
@@ -40,6 +38,9 @@
         <bpmn:flowNodeRef>is-develpment-approved</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>IntermediateThrowEvent_01obfcx</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>message-communications-material-required</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>ExclusiveGateway_19zo6ba</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>message-entity-cancelled</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_0k7kgbv</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0c80dnc" name="National Operations Planning">
         <bpmn:flowNodeRef>message-offering-and-enrolment-estimates-required</bpmn:flowNodeRef>
@@ -77,15 +78,15 @@ execution.setVariable("STATE_STEP_UNLOCKED", "unlocked");
 execution.setVariable("STATE_STEP_COMPLETED", "completed");
 
 execution.setVariable("STATE_FORM_NOT_APPLICABLE", "not-applicable");
-execution.setVariable("STATE_FORM_LOCKED", "locked");  
-execution.setVariable("STATE_FORM_UNLOCKED", "unlocked");  
-execution.setVariable("STATE_FORM_SUBMITTED", "submitted");  
-execution.setVariable("STATE_FORM_REJECTED", "rejected");  
-execution.setVariable("STATE_FORM_COMPLETED", "completed");  
+execution.setVariable("STATE_FORM_LOCKED", "locked");
+execution.setVariable("STATE_FORM_UNLOCKED", "unlocked");
+execution.setVariable("STATE_FORM_SUBMITTED", "submitted");
+execution.setVariable("STATE_FORM_REJECTED", "rejected");
+execution.setVariable("STATE_FORM_COMPLETED", "completed");
 
 // Form Decisions
-execution.setVariable("DECISION_FORM_APPROVED", "approved");  
-execution.setVariable("DECISION_FORM_REJECTED", "rejected");  
+execution.setVariable("DECISION_FORM_APPROVED", "approved");
+execution.setVariable("DECISION_FORM_REJECTED", "rejected");
 execution.setVariable("DECISION_FORM_NONE", "none");
 
 // Process Definition Key
@@ -110,6 +111,10 @@ execution.setVariable("MESSAGE_KEY_READY_FOR_PUBLISHING", "ready-for-publishing"
 // Process Notification Path
 execution.setVariable("PROCESS_NOTIFICATION_PATH", execution.getVariable("applicationUrl") + "/notifications/" + execution.getVariable("PROCESS_DEFINITION_KEY"));
 
+// Course Types
+execution.setVariable("COURSE_TYPE_INSTRUCTOR_LED", "instructor-led");
+execution.setVariable("COURSE_TYPE_DISTANCE_LEARNING", "distance-learning");
+execution.setVariable("COURSE_TYPE_ONLINE_SELF_PACED", "online-self-paced");
 
 // Variables
 
@@ -126,7 +131,7 @@ execution.setVariable("stateFormDesign", STATE_FORM_UNLOCKED);
 execution.setVariable("stateFormDesignAssessment", STATE_FORM_LOCKED);
 execution.setVariable("stateFormOperationalDetails", STATE_FORM_LOCKED);
 execution.setVariable("stateFormSolutionDevelopment", STATE_FORM_LOCKED);
-if (execution.getVariable("courseType") == "self-pace") {
+if (execution.getVariable("courseType") == execution.getVariable("COURSE_TYPE_ONLINE_SELF_PACED")) {
    execution.setVariable("stateFormOfferingAndEnrolmentEstimates", STATE_FORM_NOT_APPLICABLE);
 }
 else {
@@ -162,7 +167,7 @@ task.execution.setVariable("stateFormDesignAssessment", STATE_FORM_UNLOCKED);
       <bpmn:outgoing>SequenceFlow_05dj318</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_05dj318" sourceRef="prepare-design" targetRef="message-design-ready-for-assessment" />
-    <bpmn:intermediateThrowEvent id="message-design-ready-for-assessment" name="Design Ready for Assessment ">
+    <bpmn:intermediateThrowEvent id="message-design-ready-for-assessment" name="Design Ready for Assessment">
       <bpmn:extensionElements />
       <bpmn:incoming>SequenceFlow_05dj318</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_147xss2</bpmn:outgoing>
@@ -197,10 +202,10 @@ var al = '["curriculum-management"]';
     </bpmn:intermediateThrowEvent>
     <bpmn:sequenceFlow id="SequenceFlow_147xss2" sourceRef="message-design-ready-for-assessment" targetRef="assess-design" />
     <bpmn:sequenceFlow id="SequenceFlow_0si5ffn" sourceRef="assess-design" targetRef="is-entity-cancelled" />
-    <bpmn:sequenceFlow id="is-entity-cancelled-yes" name="Yes" sourceRef="is-entity-cancelled" targetRef="message-entity-cancelled">
+    <bpmn:sequenceFlow id="is-entity-cancelled-1-yes" name="Yes" sourceRef="is-entity-cancelled" targetRef="message-entity-cancelled">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="is-entity-cancelled-no" name="No" sourceRef="is-entity-cancelled" targetRef="is-design-approved">
+    <bpmn:sequenceFlow id="is-entity-cancelled-1-no" name="No" sourceRef="is-entity-cancelled" targetRef="is-design-approved">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:userTask id="assess-design" name="Assess &#10;Design &#10;(a.k.a. Gate 2 Approval)" camunda:formKey="design-assessment" camunda:candidateGroups="curriculum-management">
@@ -211,6 +216,7 @@ var al = '["curriculum-management"]';
    task.execution.setVariable("stateEntity", STATE_ENTITY_CANCELLED);
    task.execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_COMPLETED);
    task.execution.setVariable("stateStepDesign", STATE_STEP_COMPLETED);
+   task.execution.setVariable("stateFormDesign", STATE_FORM_COMPLETED);
    task.execution.setVariable("stateFormDesignAssessment", STATE_FORM_COMPLETED);
 
 } else {
@@ -263,52 +269,15 @@ var al = '["curriculum-management"]';
     </bpmn:userTask>
     <bpmn:exclusiveGateway id="is-entity-cancelled" name="Is Entity Cancelled?">
       <bpmn:incoming>SequenceFlow_0si5ffn</bpmn:incoming>
-      <bpmn:outgoing>is-entity-cancelled-yes</bpmn:outgoing>
-      <bpmn:outgoing>is-entity-cancelled-no</bpmn:outgoing>
+      <bpmn:outgoing>is-entity-cancelled-1-yes</bpmn:outgoing>
+      <bpmn:outgoing>is-entity-cancelled-1-no</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_1hifihv" sourceRef="message-entity-cancelled" targetRef="EndEvent_0k7kgbv" />
-    <bpmn:intermediateThrowEvent id="message-entity-cancelled" name="Entity Cancelled">
-      <bpmn:extensionElements />
-      <bpmn:incoming>is-entity-cancelled-yes</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1hifihv</bpmn:outgoing>
-      <bpmn:messageEventDefinition>
-        <bpmn:extensionElements>
-          <camunda:connector>
-            <camunda:inputOutput>
-              <camunda:inputParameter name="url">
-                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
-var mk = execution.getVariable("MESSAGE_KEY_ENTITY_CANCELLED");
-var pid = execution.getProcessInstanceId();
-
-pnp + '/' + mk + '/' + pid]]></camunda:script>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="method">POST</camunda:inputParameter>
-              <camunda:inputParameter name="headers">
-                <camunda:map>
-                  <camunda:entry key="content-type">application/json</camunda:entry>
-                </camunda:map>
-              </camunda:inputParameter>
-              <camunda:inputParameter name="payload">
-                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
-var al = '["' + execution.getVariable("owner") + '"]';
-
-'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
-              </camunda:inputParameter>
-            </camunda:inputOutput>
-            <camunda:connectorId>http-connector</camunda:connectorId>
-          </camunda:connector>
-        </bpmn:extensionElements>
-      </bpmn:messageEventDefinition>
-    </bpmn:intermediateThrowEvent>
     <bpmn:exclusiveGateway id="is-design-approved" name="Is Design Approved?">
-      <bpmn:incoming>is-entity-cancelled-no</bpmn:incoming>
+      <bpmn:incoming>is-entity-cancelled-1-no</bpmn:incoming>
       <bpmn:outgoing>is-design-approved-no</bpmn:outgoing>
       <bpmn:outgoing>is-design-approved-yes</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:endEvent id="EndEvent_0k7kgbv" name="Cancelled">
-      <bpmn:incoming>SequenceFlow_1hifihv</bpmn:incoming>
-      <bpmn:terminateEventDefinition />
-    </bpmn:endEvent>
     <bpmn:sequenceFlow id="is-design-approved-no" name="No" sourceRef="is-design-approved" targetRef="message-design-requires-adjustments">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stateStepDesign != STATE_STEP_COMPLETED}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -350,7 +319,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
     <bpmn:sequenceFlow id="SequenceFlow_0skcqqc" sourceRef="ExclusiveGateway_0eawrha" targetRef="ExclusiveGateway_0vre996" />
     <bpmn:intermediateThrowEvent id="message-offering-and-enrolment-estimates-required" name="Offering and Enrolment Estimates Required">
       <bpmn:extensionElements />
-      <bpmn:incoming>is-self-pace-no</bpmn:incoming>
+      <bpmn:incoming>is-online-self-paced-no</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_01h36gv</bpmn:outgoing>
       <bpmn:messageEventDefinition>
         <bpmn:extensionElements>
@@ -381,14 +350,14 @@ var al = '["nop"]';
         </bpmn:extensionElements>
       </bpmn:messageEventDefinition>
     </bpmn:intermediateThrowEvent>
-    <bpmn:sequenceFlow id="is-self-pace-no" name="" sourceRef="ExclusiveGateway_0vre996" targetRef="message-offering-and-enrolment-estimates-required" />
+    <bpmn:sequenceFlow id="is-online-self-paced-no" name="" sourceRef="ExclusiveGateway_0vre996" targetRef="message-offering-and-enrolment-estimates-required" />
     <bpmn:sequenceFlow id="is-design-approved-yes" name="Yes" sourceRef="is-design-approved" targetRef="IntermediateThrowEvent_01dv9hg">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stateStepDesign == STATE_STEP_COMPLETED}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0vre996" name="Course Type?" default="is-self-pace-no">
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0vre996" name="Course Type?" default="is-online-self-paced-no">
       <bpmn:incoming>SequenceFlow_0skcqqc</bpmn:incoming>
-      <bpmn:outgoing>is-self-pace-no</bpmn:outgoing>
-      <bpmn:outgoing>is-self-pace-yes</bpmn:outgoing>
+      <bpmn:outgoing>is-online-self-paced-no</bpmn:outgoing>
+      <bpmn:outgoing>is-online-self-paced-yes</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:userTask id="prepare-offering-and-enrolment-estimates" name="Prepare &#10;Offering and Enrolment Estimates" camunda:formKey="offering-and-enrolment-estimates" camunda:candidateGroups="nop">
       <bpmn:extensionElements>
@@ -396,7 +365,7 @@ var al = '["nop"]';
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
 task.execution.setVariable("stateFormOfferingAndEnrolmentEstimates", STATE_FORM_SUBMITTED);
 
-if ((stateFormOperationalDetails == STATE_FORM_SUBMITTED) && 
+if ((stateFormOperationalDetails == STATE_FORM_SUBMITTED) &&
     (stateFormSolutionDevelopment == STATE_FORM_SUBMITTED)) {
    task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_UNLOCKED);
 }]]></camunda:script>
@@ -411,12 +380,12 @@ if ((stateFormOperationalDetails == STATE_FORM_SUBMITTED) &&
       </bpmn:dataInputAssociation>
     </bpmn:userTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_1puvg4i">
-      <bpmn:incoming>is-self-pace-yes</bpmn:incoming>
+      <bpmn:incoming>is-online-self-paced-yes</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_015ub6b</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1kqxrso</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="is-self-pace-yes" name="Self-Pace" sourceRef="ExclusiveGateway_0vre996" targetRef="ExclusiveGateway_1puvg4i">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stateFormOfferingAndEnrolmentEstimates == STATE_FORM_NOT_APPLICABLE}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="is-online-self-paced-yes" name="Online Self-Paced" sourceRef="ExclusiveGateway_0vre996" targetRef="ExclusiveGateway_1puvg4i">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${courseType == COURSE_TYPE_ONLINE_SELF_PACED}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_01h36gv" sourceRef="message-offering-and-enrolment-estimates-required" targetRef="prepare-offering-and-enrolment-estimates" />
     <bpmn:sequenceFlow id="SequenceFlow_015ub6b" sourceRef="prepare-offering-and-enrolment-estimates" targetRef="ExclusiveGateway_1puvg4i" />
@@ -424,7 +393,7 @@ if ((stateFormOperationalDetails == STATE_FORM_SUBMITTED) &&
     <bpmn:sequenceFlow id="SequenceFlow_02aw45z" sourceRef="prepare-operational-details" targetRef="ExclusiveGateway_13cb9ms" />
     <bpmn:sequenceFlow id="SequenceFlow_1g9gr3j" sourceRef="ExclusiveGateway_13cb9ms" targetRef="message-development-ready-for-assessment" />
     <bpmn:sequenceFlow id="SequenceFlow_04d2old" sourceRef="message-development-ready-for-assessment" targetRef="assess-development" />
-    <bpmn:sequenceFlow id="SequenceFlow_04bp6i9" sourceRef="assess-development" targetRef="is-develpment-approved" />
+    <bpmn:sequenceFlow id="SequenceFlow_04bp6i9" sourceRef="assess-development" targetRef="ExclusiveGateway_19zo6ba" />
     <bpmn:sequenceFlow id="is-development-approved-no" name="No" sourceRef="is-develpment-approved" targetRef="ExclusiveGateway_0c7hwxm">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stateStepDevelopment != STATE_STEP_COMPLETED}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -492,8 +461,12 @@ var al = '["curriculum-management"]';
    task.execution.setVariable("stateEntity", STATE_ENTITY_CANCELLED);
    task.execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_COMPLETED);
    task.execution.setVariable("stateStepDevelopment", STATE_STEP_COMPLETED);
-   task.execution.setVariable("stateFormDesignAssessment", STATE_FORM_COMPLETED);
-
+   task.execution.setVariable("stateFormOperationalDetails", STATE_FORM_COMPLETED);
+   task.execution.setVariable("stateFormSolutionDevelopment", STATE_FORM_COMPLETED);
+   if (stateFormOfferingAndEnrolmentEstimates !== STATE_FORM_NOT_APPLICABLE) {
+    task.execution.setVariable("stateFormOfferingAndEnrolmentEstimates", STATE_FORM_COMPLETED);
+   }
+   task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_COMPLETED);
 } else {
 
    switch (decisionFormOperationalDetails) {
@@ -572,7 +545,7 @@ var al = '["curriculum-management"]';
       <bpmn:outgoing>SequenceFlow_1f5t6l2</bpmn:outgoing>
     </bpmn:intermediateThrowEvent>
     <bpmn:exclusiveGateway id="is-develpment-approved" name="Is Development Approved?">
-      <bpmn:incoming>SequenceFlow_04bp6i9</bpmn:incoming>
+      <bpmn:incoming>is-entity-cancelled-2-no</bpmn:incoming>
       <bpmn:outgoing>is-development-approved-no</bpmn:outgoing>
       <bpmn:outgoing>is-development-approved-yes</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -589,7 +562,7 @@ var al = '["curriculum-management"]';
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
 task.execution.setVariable("stateFormOfferingAndEnrolmentEstimates", STATE_FORM_SUBMITTED);
 
-if ((stateFormOperationalDetails == STATE_FORM_NOT_APPLICABLE || stateFormOperationalDetails == STATE_FORM_COMPLETED || stateFormOperationalDetails == STATE_FORM_SUBMITTED) && 
+if ((stateFormOperationalDetails == STATE_FORM_NOT_APPLICABLE || stateFormOperationalDetails == STATE_FORM_COMPLETED || stateFormOperationalDetails == STATE_FORM_SUBMITTED) &&
     (stateFormSolutionDevelopment == STATE_FORM_NOT_APPLICABLE || stateFormSolutionDevelopment == STATE_FORM_COMPLETED || stateFormSolutionDevelopment == STATE_FORM_SUBMITTED)) {
    task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_UNLOCKED);
 }]]></camunda:script>
@@ -758,7 +731,7 @@ task.execution.setVariable("stateFormCommunicationsMaterialAssessment", STATE_FO
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_01zaipr" sourceRef="assess-communications-material" targetRef="is-communications-material-approved" />
     <bpmn:sequenceFlow id="is-communications-material-approved-no" name="No" sourceRef="is-communications-material-approved" targetRef="message-communications-material-rejected">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stateStepCommunicationMaterial != STATE_STEP_COMPLETED}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${stateStepCommunicationsReview != STATE_STEP_COMPLETED}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:intermediateThrowEvent id="message-communications-material-ready-for-assessment" name="Communications Material ready for Assessment">
       <bpmn:extensionElements />
@@ -840,7 +813,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
 task.execution.setVariable("stateFormOperationalDetails", STATE_FORM_SUBMITTED);
 
-if ((stateFormSolutionDevelopment == STATE_FORM_NOT_APPLICABLE || stateFormSolutionDevelopment == STATE_FORM_COMPLETED || stateFormSolutionDevelopment == STATE_FORM_SUBMITTED) && 
+if ((stateFormSolutionDevelopment == STATE_FORM_NOT_APPLICABLE || stateFormSolutionDevelopment == STATE_FORM_COMPLETED || stateFormSolutionDevelopment == STATE_FORM_SUBMITTED) &&
     (stateFormOfferingAndEnrolmentEstimates == STATE_FORM_NOT_APPLICABLE || stateFormOfferingAndEnrolmentEstimates == STATE_FORM_COMPLETED || stateFormOfferingAndEnrolmentEstimates == STATE_FORM_SUBMITTED)) {
    task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_UNLOCKED);
 }]]></camunda:script>
@@ -855,7 +828,7 @@ if ((stateFormSolutionDevelopment == STATE_FORM_NOT_APPLICABLE || stateFormSolut
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
 task.execution.setVariable("stateFormSolutionDevelopment", STATE_FORM_SUBMITTED);
 
-if ((stateFormOperationalDetails == STATE_FORM_NOT_APPLICABLE || stateFormOperationalDetails == STATE_FORM_COMPLETED || stateFormOperationalDetails == STATE_FORM_SUBMITTED) && 
+if ((stateFormOperationalDetails == STATE_FORM_NOT_APPLICABLE || stateFormOperationalDetails == STATE_FORM_COMPLETED || stateFormOperationalDetails == STATE_FORM_SUBMITTED) &&
     (stateFormOfferingAndEnrolmentEstimates == STATE_FORM_NOT_APPLICABLE || stateFormOfferingAndEnrolmentEstimates == STATE_FORM_COMPLETED || stateFormOfferingAndEnrolmentEstimates == STATE_FORM_SUBMITTED)) {
    task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_UNLOCKED);
 }]]></camunda:script>
@@ -905,16 +878,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
     <bpmn:userTask id="assess-communications-material" name="Assess &#10;Communications Material" camunda:formKey="communications-material-assessment" camunda:candidateGroups="comms">
       <bpmn:extensionElements>
         <camunda:taskListener event="complete">
-          <camunda:script scriptFormat="javascript"><![CDATA[if (isEntityCancelled) {
-
-   task.execution.setVariable("stateEntity", STATE_ENTITY_CANCELLED);
-   task.execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_COMPLETED);
-   task.execution.setVariable("stateStepCommunicationsReview", STATE_STEP_COMPLETED);
-   task.execution.setVariable("stateFormCommunicationsMaterialAssessment", STATE_FORM_COMPLETED);
-
-} else {
-
-   switch (decisionFormCommunicationsMaterial) {
+          <camunda:script scriptFormat="javascript"><![CDATA[switch (decisionFormCommunicationsMaterial) {
       case DECISION_FORM_APPROVED:
          task.execution.setVariable("stateFormCommunicationsMaterial", STATE_FORM_COMPLETED);
          break;
@@ -936,8 +900,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
 
       task.execution.setVariable("stateFormCommunicationsMaterialAssessment", STATE_FORM_LOCKED);
 
-   }
-}]]></camunda:script>
+   }]]></camunda:script>
         </camunda:taskListener>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_0jrep0w</bpmn:incoming>
@@ -968,7 +931,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
 task.execution.setVariable("stateFormSolutionDevelopment", STATE_FORM_SUBMITTED);
 
-if ((stateFormOperationalDetails == STATE_FORM_SUBMITTED) && 
+if ((stateFormOperationalDetails == STATE_FORM_SUBMITTED) &&
     (stateFormOfferingAndEnrolmentEstimates == STATE_FORM_NOT_APPLICABLE || stateFormOfferingAndEnrolmentEstimates == STATE_FORM_SUBMITTED)) {
    task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_UNLOCKED);
 }
@@ -1034,7 +997,7 @@ var al = '["lsd"]';
           <camunda:script scriptFormat="javascript"><![CDATA[// Form States
 task.execution.setVariable("stateFormOperationalDetails", STATE_FORM_SUBMITTED);
 
-if ((stateFormSolutionDevelopment == STATE_FORM_SUBMITTED) && 
+if ((stateFormSolutionDevelopment == STATE_FORM_SUBMITTED) &&
     (stateFormOfferingAndEnrolmentEstimates == STATE_FORM_NOT_APPLICABLE || stateFormOfferingAndEnrolmentEstimates == STATE_FORM_SUBMITTED)) {
    task.execution.setVariable("stateFormDevelopmentAssessment", STATE_FORM_UNLOCKED);
 }]]></camunda:script>
@@ -1084,6 +1047,55 @@ var al = '["' + execution.getVariable("owner") + '"]';
     <bpmn:sequenceFlow id="SequenceFlow_1obhdya" sourceRef="message-operational-details-required" targetRef="prepare-operational-details" />
     <bpmn:dataObjectReference id="DataObjectReference_0pej6dh" name="Design Info-sheet" dataObjectRef="DataObject_0qjrak7" />
     <bpmn:dataObject id="DataObject_0qjrak7" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_19zo6ba" name="Is Entity Cancelled?">
+      <bpmn:incoming>SequenceFlow_04bp6i9</bpmn:incoming>
+      <bpmn:outgoing>is-entity-cancelled-2-no</bpmn:outgoing>
+      <bpmn:outgoing>is-entity-cancelled-2-yes</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="is-entity-cancelled-2-no" name="No" sourceRef="ExclusiveGateway_19zo6ba" targetRef="is-develpment-approved">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="is-entity-cancelled-2-yes" name="Yes" sourceRef="ExclusiveGateway_19zo6ba" targetRef="message-entity-cancelled">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isEntityCancelled == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:intermediateThrowEvent id="message-entity-cancelled" name="Entity Cancelled">
+      <bpmn:extensionElements />
+      <bpmn:incoming>is-entity-cancelled-1-yes</bpmn:incoming>
+      <bpmn:incoming>is-entity-cancelled-2-yes</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1hifihv</bpmn:outgoing>
+      <bpmn:messageEventDefinition>
+        <bpmn:extensionElements>
+          <camunda:connector>
+            <camunda:inputOutput>
+              <camunda:inputParameter name="url">
+                <camunda:script scriptFormat="javascript"><![CDATA[var pnp = execution.getVariable("PROCESS_NOTIFICATION_PATH");
+var mk = execution.getVariable("MESSAGE_KEY_ENTITY_CANCELLED");
+var pid = execution.getProcessInstanceId();
+
+pnp + '/' + mk + '/' + pid]]></camunda:script>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="method">POST</camunda:inputParameter>
+              <camunda:inputParameter name="headers">
+                <camunda:map>
+                  <camunda:entry key="content-type">application/json</camunda:entry>
+                </camunda:map>
+              </camunda:inputParameter>
+              <camunda:inputParameter name="payload">
+                <camunda:script scriptFormat="javascript"><![CDATA[var at = execution.getVariable("authToken");
+var al = '["' + execution.getVariable("owner") + '"]';
+
+'{"authToken":"'+at+'","addresseeList":'+al+'}';]]></camunda:script>
+              </camunda:inputParameter>
+            </camunda:inputOutput>
+            <camunda:connectorId>http-connector</camunda:connectorId>
+          </camunda:connector>
+        </bpmn:extensionElements>
+      </bpmn:messageEventDefinition>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="EndEvent_0k7kgbv" name="Cancelled">
+      <bpmn:incoming>SequenceFlow_1hifihv</bpmn:incoming>
+      <bpmn:terminateEventDefinition />
+    </bpmn:endEvent>
     <bpmn:association id="Association_0k7vktr" sourceRef="message-design-ready-for-assessment" targetRef="TextAnnotation_1p1zyx0" />
     <bpmn:association id="Association_1r6g3gf" sourceRef="message-entity-cancelled" targetRef="TextAnnotation_087091n" />
     <bpmn:association id="Association_17lu0s9" sourceRef="message-operational-details-required" targetRef="TextAnnotation_16f23cq" />
@@ -1091,8 +1103,6 @@ var al = '["' + execution.getVariable("owner") + '"]';
     <bpmn:textAnnotation id="TextAnnotation_1p1zyx0">    <bpmn:text>To Curriculum Management</bpmn:text>
 </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_055cjkg">    <bpmn:text>To Owner</bpmn:text>
-</bpmn:textAnnotation>
-    <bpmn:textAnnotation id="TextAnnotation_087091n">    <bpmn:text>To Owner</bpmn:text>
 </bpmn:textAnnotation>
     <bpmn:textAnnotation id="TextAnnotation_16f23cq">    <bpmn:text>To Owner</bpmn:text>
 </bpmn:textAnnotation>
@@ -1126,6 +1136,8 @@ var al = '["' + execution.getVariable("owner") + '"]';
     <bpmn:textAnnotation id="TextAnnotation_0wy8mbv">    <bpmn:text>To Learning Solution Design</bpmn:text>
 </bpmn:textAnnotation>
     <bpmn:association id="Association_0od2a8l" sourceRef="message-solution-development-required" targetRef="TextAnnotation_0wy8mbv" />
+    <bpmn:textAnnotation id="TextAnnotation_087091n">    <bpmn:text>To Owner</bpmn:text>
+</bpmn:textAnnotation>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0sxov3p">
@@ -1203,17 +1215,18 @@ var al = '["' + execution.getVariable("owner") + '"]';
           <dc:Bounds x="522.5" y="-82" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_05ay7cj_di" bpmnElement="is-entity-cancelled-yes">
+      <bpmndi:BPMNEdge id="SequenceFlow_05ay7cj_di" bpmnElement="is-entity-cancelled-1-yes">
         <di:waypoint xsi:type="dc:Point" x="587" y="-86" />
-        <di:waypoint xsi:type="dc:Point" x="587" y="-127" />
+        <di:waypoint xsi:type="dc:Point" x="587" y="-145" />
+        <di:waypoint xsi:type="dc:Point" x="1795" y="-145" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="562" y="-103" width="19" height="12" />
+          <dc:Bounds x="556.4024390243902" y="-100.5" width="19" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1mw58g6_di" bpmnElement="EndEvent_0k7kgbv">
-        <dc:Bounds x="715" y="-207" width="36" height="36" />
+        <dc:Bounds x="2528" y="-163" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="707" y="-168" width="51" height="12" />
+          <dc:Bounds x="2520" y="-124" width="51" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_19qagio_di" bpmnElement="is-design-approved" isMarkerVisible="true">
@@ -1222,7 +1235,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
           <dc:Bounds x="689" y="-113" width="88" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_01s3xnn_di" bpmnElement="is-entity-cancelled-no">
+      <bpmndi:BPMNEdge id="SequenceFlow_01s3xnn_di" bpmnElement="is-entity-cancelled-1-no">
         <di:waypoint xsi:type="dc:Point" x="611" y="-61" />
         <di:waypoint xsi:type="dc:Point" x="708" y="-60" />
         <bpmndi:BPMNLabel>
@@ -1247,25 +1260,25 @@ var al = '["' + execution.getVariable("owner") + '"]';
         <di:waypoint xsi:type="dc:Point" x="1038" y="111" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1hifihv_di" bpmnElement="SequenceFlow_1hifihv">
-        <di:waypoint xsi:type="dc:Point" x="587" y="-163" />
-        <di:waypoint xsi:type="dc:Point" x="587" y="-189" />
-        <di:waypoint xsi:type="dc:Point" x="715" y="-189" />
+        <di:waypoint xsi:type="dc:Point" x="1831" y="-145" />
+        <di:waypoint xsi:type="dc:Point" x="2528" y="-145" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="602" y="-182" width="0" height="12" />
+          <dc:Bounds x="2134.5" y="-166" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_1wiau4g_di" bpmnElement="message-entity-cancelled">
-        <dc:Bounds x="569" y="-163" width="36" height="36" />
+        <dc:Bounds x="1795" y="-163" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="471" y="-151" width="82" height="12" />
+          <dc:Bounds x="1772" y="-121" width="82" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_087091n_di" bpmnElement="TextAnnotation_087091n">
-        <dc:Bounds x="626" y="-160" width="64.98579545454545" height="29.995266235235967" />
+        <dc:Bounds x="1853" y="-210" width="62" height="30" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_1r6g3gf_di" bpmnElement="Association_1r6g3gf">
-        <di:waypoint xsi:type="dc:Point" x="605" y="-145" />
-        <di:waypoint xsi:type="dc:Point" x="626" y="-145" />
+        <di:waypoint xsi:type="dc:Point" x="1819" y="-161" />
+        <di:waypoint xsi:type="dc:Point" x="1833" y="-195" />
+        <di:waypoint xsi:type="dc:Point" x="1853" y="-195" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1v5meo3_di" bpmnElement="is-design-approved-no">
         <di:waypoint xsi:type="dc:Point" x="733" y="-35" />
@@ -1343,7 +1356,7 @@ var al = '["' + execution.getVariable("owner") + '"]';
           <dc:Bounds x="964" y="527" width="81" height="48" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_03graal_di" bpmnElement="is-self-pace-no">
+      <bpmndi:BPMNEdge id="SequenceFlow_03graal_di" bpmnElement="is-online-self-paced-no">
         <di:waypoint xsi:type="dc:Point" x="927" y="505" />
         <di:waypoint xsi:type="dc:Point" x="986" y="505" />
         <bpmndi:BPMNLabel>
@@ -1382,13 +1395,13 @@ var al = '["' + execution.getVariable("owner") + '"]';
           <dc:Bounds x="1362.7972103004292" y="534" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_06z8z4d_di" bpmnElement="is-self-pace-yes">
+      <bpmndi:BPMNEdge id="SequenceFlow_06z8z4d_di" bpmnElement="is-online-self-paced-yes">
         <di:waypoint xsi:type="dc:Point" x="902" y="530" />
         <di:waypoint xsi:type="dc:Point" x="902" y="611" />
         <di:waypoint xsi:type="dc:Point" x="1363" y="611" />
         <di:waypoint xsi:type="dc:Point" x="1363" y="530" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="911" y="593" width="49" height="12" />
+          <dc:Bounds x="906" y="582" width="60" height="24" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_01h36gv_di" bpmnElement="SequenceFlow_01h36gv">
@@ -1495,9 +1508,9 @@ var al = '["' + execution.getVariable("owner") + '"]';
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_04bp6i9_di" bpmnElement="SequenceFlow_04bp6i9">
         <di:waypoint xsi:type="dc:Point" x="1479" y="-60" />
-        <di:waypoint xsi:type="dc:Point" x="1956" y="-60" />
+        <di:waypoint xsi:type="dc:Point" x="1710" y="-60" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1717.5" y="-81" width="0" height="12" />
+          <dc:Bounds x="1549.5" y="-81" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="InclusiveGateway_1c485aq_di" bpmnElement="ExclusiveGateway_1rwliof">
@@ -1888,6 +1901,27 @@ var al = '["' + execution.getVariable("owner") + '"]';
       <bpmndi:BPMNEdge id="DataInputAssociation_15fclk8_di" bpmnElement="DataInputAssociation_15fclk8">
         <di:waypoint xsi:type="dc:Point" x="1137" y="195" />
         <di:waypoint xsi:type="dc:Point" x="1181" y="176" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_19zo6ba_di" bpmnElement="ExclusiveGateway_19zo6ba" isMarkerVisible="true">
+        <dc:Bounds x="1710" y="-85" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1707" y="-31" width="57" height="24" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_11jeys2_di" bpmnElement="is-entity-cancelled-2-no">
+        <di:waypoint xsi:type="dc:Point" x="1760" y="-60" />
+        <di:waypoint xsi:type="dc:Point" x="1956" y="-60" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1762" y="-80" width="15" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ltt4jz_di" bpmnElement="is-entity-cancelled-2-yes">
+        <di:waypoint xsi:type="dc:Point" x="1735" y="-85" />
+        <di:waypoint xsi:type="dc:Point" x="1735" y="-145" />
+        <di:waypoint xsi:type="dc:Point" x="1795" y="-145" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1707.357142857143" y="-107.3809523809523" width="19" height="12" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

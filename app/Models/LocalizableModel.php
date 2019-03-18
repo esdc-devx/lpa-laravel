@@ -85,4 +85,9 @@ class LocalizableModel extends BaseModel
 
         return parent::__call($method, $arguments);
     }
+
+    public function getLocalizableAttributes()
+    {
+        return $this->localizable;
+    }
 }

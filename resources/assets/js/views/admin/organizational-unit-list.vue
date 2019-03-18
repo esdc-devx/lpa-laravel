@@ -105,6 +105,8 @@
     },
 
     methods: {
+      loadData,
+
       onRowClick(organizationalUnit) {
         this.scrollToTop();
         this.$router.push(`/${this.language}/admin/organizational-units/${organizationalUnit.id}/edit`);
@@ -116,12 +118,6 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await loadData();
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
       await loadData();
       next();
     }

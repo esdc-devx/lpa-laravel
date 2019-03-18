@@ -51,7 +51,6 @@
   import { mapActions, mapMutations } from 'vuex';
 
   import Constants from '@/constants.js';
-  import EventBus from '@/event-bus.js';
 
   export default {
     name: 'entity-data-table',
@@ -79,6 +78,12 @@
           pageSizes: Constants.PAGE_SIZES,
           currentPage: 1
         }
+      }
+    },
+
+    watch: {
+      '$store.state.language': function (to, from) {
+        this.resetFilters();
       }
     },
 
@@ -315,11 +320,9 @@
     mounted() {
       // fix pagination styling since vue-data-tables doesn't support  passing 'background as property
       this.$refs.table.$el.querySelector('.el-pagination').classList.add('is-background');
-      EventBus.$on('TopBar:ResetDataTableFilters', this.resetFilters);
     },
 
     beforeDestroy() {
-      EventBus.$off('TopBar:ResetDataTableFilters', this.resetFilters);
       this.deleteFilteredDataTable(this.$options.name);
     }
   }

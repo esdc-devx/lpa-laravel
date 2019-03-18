@@ -9,15 +9,11 @@ class ProjectTableSeeder extends Seeder
      * Run the database seeds.
      *
      * @return void
-     */
+    */
     public function run()
     {
         Project::truncate();
 
-        factory(Project::class, 50)->create()
-            ->take(10)->each(function($project) {
-                // Complete Project Approval process for the first 10 projects.
-                ProcessFactory::startProcess('project-approval', $project)->complete();
-            });
+        factory(Project::class, 50)->create();
     }
 }

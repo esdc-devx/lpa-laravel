@@ -39,6 +39,7 @@ class ProjectFormRequest extends FormRequest
         return [
             'name'                   => "required|max:175|unique:projects,name,{$this->project},id,deleted_at,NULL",
             'organizational_unit_id' => ['required', new UserBelongsToOrganizationalUnit, new OrganizationalUnitIsLearningProductOwner],
+            'outline'                => 'required|max:1250',
         ];
     }
 }

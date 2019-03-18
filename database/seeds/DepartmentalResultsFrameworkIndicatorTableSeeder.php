@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Project\BusinessCase\DepartmentalResultsFrameworkIndicator;
+use App\Models\Lists\DepartmentalResultsFrameworkIndicator;
 use Illuminate\Database\Seeder;
 
 class DepartmentalResultsFrameworkIndicatorTableSeeder extends Seeder
@@ -67,12 +67,6 @@ class DepartmentalResultsFrameworkIndicatorTableSeeder extends Seeder
         DB::table('business_case_departmental_results_framework_indicator')->truncate();
         DB::table('departmental_results_framework_indicators')->truncate();
 
-        foreach ($this->data() as $term) {
-            DepartmentalResultsFrameworkIndicator::create([
-                'name_key' => $term['name_key'],
-                'name_en'  => $term['name_en'],
-                'name_fr'  => $term['name_fr'],
-            ]);
-        }
+        DepartmentalResultsFrameworkIndicator::createFrom($this->data());
     }
 }

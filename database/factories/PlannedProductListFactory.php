@@ -17,12 +17,11 @@ $factory->define(PlannedProductList::class, function (Faker $faker) {
 
     // Get a random number of product types as planned products.
     $plannedProducts = [];
-    $learningProductTypes->random(rand(1, $learningProductTypes->count()))
-    ->each(function ($product) use (&$plannedProducts) {
+    $learningProductTypes->each(function ($product) use (&$plannedProducts) {
         $plannedProducts[] = [
             'type_id'     => $product->parent_id,
             'sub_type_id' => $product->id,
-            'quantity'    => rand(1, 3),
+            'quantity'    => 1,
         ];
     });
 

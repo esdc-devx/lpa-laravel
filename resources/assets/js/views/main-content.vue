@@ -1,7 +1,7 @@
 <template>
   <keep-alive>
     <transition :name="transitionName">
-      <router-view :class="['content', $route.name]"/>
+      <router-view :class="['content', $route.name]" @app:ready.once="onAppReady"/>
     </transition>
   </keep-alive>
 </template>
@@ -71,6 +71,10 @@
           return false;
         }
         return false;
+      },
+
+      onAppReady() {
+        this.$emit('app:ready');
       }
     }
   };

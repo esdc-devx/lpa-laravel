@@ -25,7 +25,6 @@
     "axios": "0.18.0",
     "element-theme-chalk": "2.4.6",
     "element-ui": "2.4.6",
-    "es6-promise": "4.2.4",
     "lodash": "4.17.10",
     "qs": "6.5.2",
     "vee-validate": "2.0.9",

@@ -21,6 +21,8 @@ class ProcessNotification extends Notification
     /**
      * Create a new notification instance.
      *
+     * @param  ProcessNotification $model
+     * @param  ProcessInstance $processInstance
      * @return void
      */
     public function __construct(ProcessNotificationModel $model, ProcessInstance $processInstance)

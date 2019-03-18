@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Project\BusinessCase\RiskType;
+use App\Models\Lists\RiskType;
 use Illuminate\Database\Seeder;
 
 class RiskTypeTableSeeder extends Seeder
@@ -41,12 +41,6 @@ class RiskTypeTableSeeder extends Seeder
         // Truncate previous tables.
         DB::table('risk_types')->truncate();
 
-        foreach ($this->data() as $term) {
-            RiskType::create([
-                'name_key' => str_slug($term['name_en'], '-'),
-                'name_en'  => $term['name_en'],
-                'name_fr'  => $term['name_fr'],
-            ]);
-        }
+        RiskType::createFrom($this->data());
     }
 }

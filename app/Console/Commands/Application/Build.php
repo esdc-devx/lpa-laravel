@@ -182,7 +182,7 @@ class Build extends BaseCommand
         $archive = new ZipArchive();
 
         if ($archive->open($archiveFile, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
-            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath), RecursiveIteratorIterator::LEAVES_ONLY);
+            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($rootPath, RecursiveIteratorIterator::LEAVES_ONLY));
             foreach ($files as $name => $file) {
                 $filePath = $file->getRealPath();
                 // Format file name by removing root path

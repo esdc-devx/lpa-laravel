@@ -1,7 +1,4 @@
-// Adds the promise polyfill for IE 11
-if (typeof Promise === 'undefined') {
-  require('es6-promise/auto');
-}
+import '@babel/polyfill';
 
 import Vue from 'vue';
 import axios from 'axios';

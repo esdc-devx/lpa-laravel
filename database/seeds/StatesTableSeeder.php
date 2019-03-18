@@ -130,6 +130,11 @@ class StatesTableSeeder extends Seeder
                     'name_en'  => 'Completed',
                     'name_fr'  => 'Complété',
                 ],
+                [
+                    'name_key' => 'not-applicable',
+                    'name_en'  => 'Not Applicable',
+                    'name_fr'  => 'Sans objet',
+                ],
             ],
             'process-form' => [
                 [
@@ -156,6 +161,11 @@ class StatesTableSeeder extends Seeder
                     'name_key' => 'completed',
                     'name_en'  => 'Completed',
                     'name_fr'  => 'Complété',
+                ],
+                [
+                    'name_key' => 'not-applicable',
+                    'name_en'  => 'Not Applicable',
+                    'name_fr'  => 'Sans objet',
                 ],
             ],
         ];

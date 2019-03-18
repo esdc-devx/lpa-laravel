@@ -50,8 +50,16 @@ class CustomFaker extends Base
         return array_random($list->pluck('id')->toArray());
     }
 
-    public function randomMultipleList($list)
+    public function randomMultipleList($list, $min = 1, $max = null)
     {
-        return array_random($list->pluck('id')->toArray(), rand(1, $list->count()));
+        return array_random($list->pluck('id')->toArray(), rand($min, $max ?? $list->count()));
+    }
+
+    public function internalOrder()
+    {
+        $letter = chr(64 + rand(1, 26));
+        $digits = 6;
+        $number = str_pad(rand(0, pow(10, $digits) - 1), $digits, '0', STR_PAD_LEFT);
+        return "{$letter}{$number}";
     }
 }

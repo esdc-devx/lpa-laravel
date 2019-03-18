@@ -52,7 +52,7 @@ class UserController extends APIController
      */
     public function index()
     {
-        $users = User::with(['organizationalUnits', 'roles'])
+        $users = User::with(['organizationalUnits', 'roles', 'createdBy', 'updatedBy'])
             ->where('username', '!=', config('auth.admin.username'))
             ->get();
 
@@ -117,7 +117,7 @@ class UserController extends APIController
      */
     public function edit($id)
     {
-        $user = $this->users->with(['organizationalUnits', 'roles'])->getById($id);
+        $user = User::with(['organizationalUnits', 'roles', 'createdBy', 'updatedBy'])->findOrFail($id);
         $this->authorize('update', $user);
 
         // Return user edit form data.

@@ -111,6 +111,8 @@
     },
 
     methods: {
+      loadData,
+
       onProjectRowClick(project) {
         this.scrollToTop();
         this.$router.push(`/${this.language}/projects/${project.id}`);
@@ -118,12 +120,6 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await loadData();
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
       await loadData();
       next();
     }

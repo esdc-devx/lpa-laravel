@@ -182,6 +182,8 @@
         '$$update'
       ]),
 
+      loadData,
+
       // Form handlers
       onSubmit() {
         this.submit(this.handleUpdate);
@@ -196,25 +198,11 @@
           message: this.trans('components.notice.message.process_notification_updated')
         });
         this.goToParentPage();
-      },
-
-      async onLanguageUpdate() {
-        // since on submit the backend returns already translated error messages,
-        // we need to reset the validator messages so that on next submit
-        // the messages are in the correct language
-        this.resetErrors();
-        await loadData.apply(this);
       }
     },
 
     async beforeRouteEnter(to, from, next) {
       await loadData({ to });
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
-      await this.onLanguageUpdate();
       next();
     },
 

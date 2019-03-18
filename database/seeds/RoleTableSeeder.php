@@ -37,9 +37,6 @@ class RoleTableSeeder extends Seeder
         DB::table('role_user')->truncate();
         DB::table('roles')->truncate();
 
-        // Generate roles.
-        foreach ($this->data() as $role) {
-            Role::create($role);
-        }
+        Role::createFrom($this->data());
     }
 }

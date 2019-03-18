@@ -56,7 +56,8 @@ class ProjectController extends APIController
         // Retrieve only the necessary attributes from the request.
         $data = $request->only([
             'name',
-            'organizational_unit_id'
+            'organizational_unit_id',
+            'outline',
         ]);
 
         return $this->respond(
@@ -107,6 +108,7 @@ class ProjectController extends APIController
         $data = $request->only([
             'name',
             'organizational_unit_id',
+            'outline',
         ]);
 
         return $this->respond(

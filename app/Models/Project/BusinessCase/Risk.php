@@ -3,6 +3,7 @@
 namespace App\Models\Project\BusinessCase;
 
 use App\Models\BaseModel;
+use App\Models\Lists\RiskType;
 
 class Risk extends BaseModel
 {

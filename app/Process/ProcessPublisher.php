@@ -10,11 +10,16 @@ use App\Models\Process\ProcessForm;
 use App\Models\Process\ProcessFormAssessment;
 use App\Models\Process\ProcessNotification;
 use App\Models\Process\ProcessStep;
+use App\Support\ConsoleOutput;
 
 class ProcessPublisher
 {
     protected $blueprint;
     protected $processDefinition;
+
+    public function __construct(ConsoleOutput $output) {
+        $this->output = $output;
+    }
 
     /**
      * Load process definition blueprint class from key.
@@ -41,6 +46,9 @@ class ProcessPublisher
             throw new \Exception('You must first load a process definition.');
         }
 
+        $definitionKey = $this->getDefinition()['name_key'];
+        $this->output->info("Deploying [{$definitionKey}] process...");
+
         // Create process definition.
         $this->createDefinition();
 
@@ -56,7 +64,21 @@ class ProcessPublisher
         // Fire a ProcessDeployed event to let CamundaEventSubscriber deploy its process.
         event(new ProcessDeployed($this->processDefinition));
 
+        $this->output->success('Process deployed successfully.');
+
         return $this;
+    }
+
+    /**
+     * Get process definition data from blueprint.
+     *
+     * @return array
+     */
+    protected function getDefinition()
+    {
+        $definition = $this->blueprint->getDefinition();
+        $definition['name_key'] = $definition['name_key'] ?? kebab_case($definition['name_en']);
+        return $definition;
     }
 
     /**
@@ -67,8 +89,7 @@ class ProcessPublisher
     protected function createDefinition()
     {
         // Create process definition.
-        $definition = $this->blueprint->getDefinition();
-        $definition['name_key'] = $definition['name_key'] ?? kebab_case($definition['name_en']);
+        $definition = $this->getDefinition();
         $this->processDefinition = ProcessDefinition::create($definition);
 
         // Create mapping for all supported entity types.

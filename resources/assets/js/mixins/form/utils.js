@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import EventBus from '@/event-bus.js';
+import { mapState } from 'vuex';
 
 import HttpStatusCodes from '@axios/http-status-codes';
 
@@ -11,10 +11,14 @@ let errorNotif;
 
 export default {
   computed: {
+    ...mapState('entities/forms', [
+      'hasFormSectionGroupsRemoved'
+    ]),
+
     isFormDirty() {
       let formHasDirtyFields = Object.keys(this.vfields).some(key => this.vfields[key].dirty);
 
-      return formHasDirtyFields || this.fieldsAddedOrRemoved;
+      return formHasDirtyFields || this.hasFormSectionGroupsRemoved;
     },
 
     isFormPristine() {
@@ -28,7 +32,6 @@ export default {
       options: {
         hasTabsToValidate: false
       },
-      fieldsAddedOrRemoved: false,
       errorTabs: [],
       isSaving: false,
       isSubmitting: false,
@@ -37,7 +40,11 @@ export default {
   },
 
   watch: {
-    'verrors.items.length': function(val) {
+    '$store.state.language': function (to, from) {
+      this.regenerateErrors();
+    },
+
+    'verrors.items.length': function (val) {
       // this allows to reflect error styling on tabs
       // when the errors are added/removed
       if (this.options.hasTabsToValidate) {
@@ -46,11 +53,6 @@ export default {
         });
       }
     }
-  },
-
-  beforeRouteLeave(to, from, next) {
-    this.isFormDisabled = true;
-    next();
   },
 
   methods: {
@@ -202,11 +204,6 @@ export default {
       });
     },
 
-    resetForm(formName = 'form') {
-      this.$refs[formName].resetFields();
-      this.resetErrors();
-    },
-
     resetErrors() {
       this.$nextTick(() => {
         this.verrors.clear();
@@ -229,23 +226,17 @@ export default {
           field.reset();
         });
       });
-    },
-
-    onFieldAddedRemoved(isAddedRemoved) {
-      this.fieldsAddedOrRemoved = !_.isUndefined(isAddedRemoved) ? isAddedRemoved : true;
     }
+  },
+
+  beforeRouteLeave(to, from, next) {
+    this.isFormDisabled = true;
+    next();
   },
 
   beforeDestroy() {
-    EventBus.$off('Store:languageUpdate', this.regenerateErrors);
-    EventBus.$off('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
     if (errorNotif) {
       errorNotif.close();
     }
-  },
-
-  mounted() {
-    EventBus.$on('Store:languageUpdate', this.regenerateErrors);
-    EventBus.$on('FormUtils:fieldsAddedOrRemoved', this.onFieldAddedRemoved);
   }
 };

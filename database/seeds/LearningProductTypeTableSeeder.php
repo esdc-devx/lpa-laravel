@@ -29,15 +29,6 @@ class LearningProductTypeTableSeeder extends Seeder
         ];
     }
 
-    protected function createTerm($term) {
-        return LearningProductType::create([
-            'parent_id' => $term['parent_id'] ?? 0,
-            'name_key' => str_slug($term['name_en'], '-'),
-            'name_en' => $term['name_en'],
-            'name_fr' => $term['name_fr'],
-        ])->id;
-    }
-
     /**
      * Run the database seeds.
      *
@@ -48,15 +39,6 @@ class LearningProductTypeTableSeeder extends Seeder
         // Truncate previous tables.
         DB::table('learning_product_types')->truncate();
 
-        foreach ($this->data() as $term) {
-            $termId = $this->createTerm($term);
-
-            if (isset($term['children'])) {
-                foreach ($term['children'] as $child) {
-                    $child['parent_id'] = $termId;
-                    $this->createTerm($child);
-                }
-            }
-        }
+        LearningProductType::createFrom($this->data());
     }
 }

@@ -137,6 +137,8 @@ task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_UNLOCKED);
    task.execution.setVariable("stateEntity", STATE_ENTITY_CANCELLED);
    task.execution.setVariable("stateProcessInstance", STATE_PROCESS_INSTANCE_COMPLETED);
    task.execution.setVariable("stateStepGateOneApproval", STATE_STEP_COMPLETED);
+   task.execution.setVariable("stateFormBusinessCase", STATE_FORM_COMPLETED);
+   task.execution.setVariable("stateFormPlannedProductList", STATE_FORM_COMPLETED);
    task.execution.setVariable("stateFormGateOneApproval", STATE_FORM_COMPLETED);
 
 } else {

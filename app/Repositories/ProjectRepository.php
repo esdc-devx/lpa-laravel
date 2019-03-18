@@ -23,13 +23,11 @@ class ProjectRepository extends BaseEloquentRepository
      */
     public function create(array $data)
     {
-        $project = $this->model->create([
-            'name'                   => $data['name'],
-            'organizational_unit_id' => $data['organizational_unit_id'],
-            'state_id'               => State::getByKey('project.new')->first()->id,
-            'created_by'             => auth()->user()->id,
-            'updated_by'             => auth()->user()->id,
-        ]);
+        $project = $this->model->make($data);
+        $project->state_id = State::getIdFromKey('project.new');
+        $project->created_by = auth()->user()->id;
+        $project->updated_by = auth()->user()->id;
+        $project->save();
 
         return $this->getById($project->id);
     }
@@ -43,17 +41,7 @@ class ProjectRepository extends BaseEloquentRepository
     public function update($id, array $data = [])
     {
         $project = $this->getById($id);
-
-        // Update name.
-        if (isset($data['name'])) {
-            $project->name = $data['name'];
-        }
-
-        // Update organizational unit.
-        if (isset($data['organizational_unit_id'])) {
-            $project->organizational_unit_id = $data['organizational_unit_id'];
-        }
-
+        $project->fill($data);
         $project->updated_by = auth()->user()->id;
         $project->save();
 

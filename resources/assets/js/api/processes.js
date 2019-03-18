@@ -15,7 +15,7 @@ export default {
   },
 
   getHistory(entityType, entityId) {
-    return axios.get(`process-instances/?entity_type=${entityType}&entity_id=${entityId}`);
+    return axios.get(`process-instances?entity_type=${entityType}&entity_id=${entityId}`);
   },
 
   cancelInstance(id) {

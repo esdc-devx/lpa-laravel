@@ -1,3 +1,5 @@
+import '@babel/polyfill';
+
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 
@@ -18,7 +20,6 @@ import store from '@/store/';
 
 import Logger from '@/plugins/logger';
 import Helpers from '@/helpers';
-import '@babel/polyfill';
 import '@/filters';
 import '@/directives';
 import Notify from '@mixins/notify';

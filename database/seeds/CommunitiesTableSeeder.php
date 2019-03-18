@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Lists\Community;
 use Illuminate\Database\Seeder;
-use App\Models\Community;
 
 class CommunitiesTableSeeder extends Seeder
 {
@@ -118,15 +118,6 @@ class CommunitiesTableSeeder extends Seeder
         ];
     }
 
-    protected function createTerm($term) {
-        return Community::create([
-            'parent_id' => $term['parent_id'] ?? 0,
-            'name_key'  => $term['name_key'] ?? str_slug($term['name_en'], '-'),
-            'name_en'   => $term['name_en'],
-            'name_fr'   => $term['name_fr'],
-        ])->id;
-    }
-
     /**
      * Run the database seeds.
      *
@@ -135,17 +126,9 @@ class CommunitiesTableSeeder extends Seeder
     public function run()
     {
         // Truncate previous tables.
+        DB::table('business_case_community')->truncate();
         DB::table('communities')->truncate();
 
-        foreach ($this->data() as $term) {
-            $termId = $this->createTerm($term);
-
-            if (isset($term['children'])) {
-                foreach ($term['children'] as $child) {
-                    $child['parent_id'] = $termId;
-                    $this->createTerm($child);
-                }
-            }
-        }
+        Community::createFrom($this->data());
     }
 }

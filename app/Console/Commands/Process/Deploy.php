@@ -22,9 +22,7 @@ class Deploy extends BaseCommand
         if ($this->option('force') || $this->confirm('Do you wish to deploy this process?')) {
             // Resolve process definition.
             $definitionKey = $this->argument('definition');
-            $this->info("Deploying [ {$definitionKey} ] process...");
             ProcessPublisher::load($definitionKey)->deploy();
-            $this->success('Process deployed successfully.');
         }
     }
 }

@@ -1,17 +1,17 @@
 <template>
   <div class="form-section-group">
-    <h3>
+    <h4>
       {{ $tc(`forms.${entityFormKey}.form_section_groups.${entitySectionKey}`, 2) }}
       <div class="header-controls">
-        <el-button type="text" size="mini" @click="expandAll = true">
+        <button :disabled="!groups.length" @click.prevent="expandAll()">
           {{ trans('base.actions.expand_all') }}
-        </el-button>
-        <el-button type="text" size="mini" @click="expandAll = false">
+        </button>
+        <button :disabled="!groups.length" @click.prevent="collapseAll()">
           {{ trans('base.actions.collapse_all') }}
-        </el-button>
+        </button>
       </div>
-    </h3>
-    <el-collapse :value="activePanels">
+    </h4>
+    <el-collapse :value="activePanels" @change="onActivePanelsChange">
       <el-collapse-item v-for="(item, index) in groups" :name="index + 1" :key="index">
         <template slot="title">
           {{ $tc(`forms.${entityFormKey}.form_section_groups.${entitySectionKey}`) }} {{ index + 1 }}
@@ -45,17 +45,41 @@
 </template>
 
 <script>
-  import EventBus from '@/event-bus.js';
+  import { mapMutations } from 'vuex';
 
   // Form sections
   import Spending from './entities/spending';
   import Risk from './entities/risk';
   import PlannedProduct from './entities/planned-product';
+  import ApplicablePolicy from './entities/applicable-policy';
+  import AdditionalCost from './entities/additional-cost';
+  import Instructor from './entities/instructor';
+  import GuestSpeaker from './entities/guest-speaker';
+  import Room from './entities/room';
+  import Material from './entities/material';
+  import Document from './entities/document';
+  import Region from './entities/region';
 
   export default {
     name: 'form-section-group',
 
-    components: { Spending, Risk, PlannedProduct },
+    // Gives us the ability to inject validation in child components
+    // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
+    inject: ['$validator'],
+
+    components: {
+      Spending,
+      Risk,
+      PlannedProduct,
+      ApplicablePolicy,
+      AdditionalCost,
+      Instructor,
+      GuestSpeaker,
+      Room,
+      Material,
+      Document,
+      Region
+    },
 
     props: {
       entityForm: {
@@ -67,8 +91,7 @@
         required: true
       },
       data: {
-        type: Object,
-        required: true
+        type: Object
       },
       min: {
         type: Number,
@@ -79,21 +102,19 @@
       }
     },
 
+    data() {
+      return {
+        activePanels: [ 1 ]
+      };
+    },
+
     computed: {
       entityFormKey() {
         return _.snakeCase(this.entityForm);
       },
+
       entitySectionKey() {
         return _.snakeCase(this.entitySection);
-      },
-
-      activePanels() {
-        let panels = [];
-        let length = this.expandAll ? this.groups.length : 0;
-        for (let i = 0; i < length; i++) {
-          panels.push(i + 1);
-        }
-        return panels;
       },
 
       groups: {
@@ -106,36 +127,57 @@
       }
     },
 
-    data() {
-      return {
-        expandAll: true
-      };
+    watch: {
+      '$store.state.language'(to, from) {
+        this.prepareGroups();
+      },
+      value() {
+        this.prepareGroups();
+      }
     },
 
     methods: {
-      removeGroup(index, item) {
-        this.groups.splice(index, 1);
-        EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
+      ...mapMutations('entities/forms', [
+        'setHasFormSectionGroupsRemoved'
+      ]),
+
+      onActivePanelsChange(activeNames) {
+        this.activePanels = activeNames;
       },
 
-      addGroup(isPreparing) {
+      expandAll() {
+        this.activePanels = _.range(1, this.groups.length + 1);
+      },
+
+      collapseAll() {
+        this.activePanels = [];
+      },
+
+      removeGroup(index, item) {
+        this.groups.splice(index, 1);
+        this.setHasFormSectionGroupsRemoved(true);
+      },
+
+      addGroup(isPreparing = false) {
         // push a new group now so that the component can render it
         // and we can access to its defaults
         this.groups.push({});
         this.$nextTick(() => {
-          let groupsLength = this.groups.length - 1;
-          let defaults = this.$refs.component[groupsLength].defaults;
+          const groupsLength = this.groups.length - 1;
+          const defaults = this.$refs.component[groupsLength].defaults;
+          const fieldNamePrefix = this.$refs.component[groupsLength].fieldNamePrefix;
           if (_.isUndefined(defaults)) {
             this.$log.error(`Entity '${this.entitySection}' should have a 'defaults' attribute in its data.`);
             return;
           }
           for (const key in defaults) {
             this.$set(this.groups[groupsLength], key, defaults[key]);
+            // put the newly added fields dirty when a group is added manually
+            // so that vee-validate recognize that new fields were added
+            this.$validator.flag(`${fieldNamePrefix}.${key}`, { dirty: !isPreparing });
           }
+          this.activePanels.push(this.groups.length);
         });
-        if (!isPreparing) {
-          EventBus.$emit('FormUtils:fieldsAddedOrRemoved');
-        }
       },
 
       prepareGroups() {
@@ -148,16 +190,8 @@
       }
     },
 
-    beforeDestroy() {
-      EventBus.$off('FormEntity:resetFormSectionGroup', this.prepareGroups);
-    },
-
     created() {
       this.prepareGroups();
-    },
-
-    mounted() {
-      EventBus.$on('FormEntity:resetFormSectionGroup', this.prepareGroups);
     }
   };
 </script>
@@ -176,7 +210,8 @@
       }
     }
 
-    h3 {
+    h4 {
+      border-bottom: 1px solid;
       display: flex;
       .header-controls {
         display: flex;
@@ -184,13 +219,26 @@
         justify-content: flex-end;
         button {
           text-decoration: underline;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          &:not(:disabled) {
+            color: $--link-color;
+            cursor: pointer;
+            &:hover {
+              color: $--link-hover-color;
+            }
+          }
+          &:disabled {
+            cursor: not-allowed;
+          }
         }
       }
     }
 
-    // make sure that the el-collapse following a h3
-    // goes on top of the h3's margin-bottom
-    h3 + .el-collapse {
+    // make sure that the el-collapse following a h4
+    // goes on top of the h4's margin-bottom
+    h4 + .el-collapse {
       margin-top: -1.1em;
       border-top: 0;
       border-bottom: 0;

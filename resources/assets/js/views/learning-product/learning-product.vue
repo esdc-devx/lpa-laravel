@@ -14,6 +14,21 @@
         @error="onError"
       />
     </el-row>
+    <el-row>
+      <el-col>
+        <el-tabs type="border-card">
+          <!-- Process history -->
+          <el-tab-pane>
+            <span slot="label"><i class="el-icon el-icon-lpa-history"></i> {{ trans('entities.process.history') }}</span>
+            <entity-data-table
+              :data="viewingHistory"
+              :attributes="dataTableAttributes.processHistory"
+              @rowClick="onProcessRowClick"
+            />
+          </el-tab-pane>
+        </el-tabs>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -23,6 +38,7 @@
 
   import Page from '@components/page';
   import InfoboxLearningProduct from '@components/infoboxes/infobox-learning-product';
+  import EntityDataTable from '@components/entity-data-table';
   import ProcessActionsCol from '@components/process-actions-col';
 
   import LearningProduct from '@/store/models/Learning-Product';
@@ -48,7 +64,10 @@
         // so that we can access them afterwards
         try {
           const learningProduct = LearningProduct.find(entityId);
-          await store.dispatch('entities/processes/loadDefinitions', learningProduct.type.name_key);
+          await axios.all([
+            store.dispatch('entities/processes/loadDefinitions', learningProduct.type.name_key),
+            store.dispatch('entities/processes/loadHistory', { entityType: learningProduct.type.name_key, entityId })
+          ]);
           await axios.all(store.state.entities.processes.definitions.map(
             ({name_key}) => store.dispatch('authorizations/learningProducts/loadCanStartProcess', {
               learningProductId: entityId,
@@ -73,7 +92,7 @@
 
     extends: Page,
 
-    components: { InfoboxLearningProduct, ProcessActionsCol },
+    components: { InfoboxLearningProduct, EntityDataTable, ProcessActionsCol },
 
     props: {
       entityId: {
@@ -92,9 +111,47 @@
       ...mapState('authorizations/learningProducts', [
         'processPermissions'
       ]),
+      ...mapState('entities/processes', {
+        viewingHistory: 'viewingHistory'
+      }),
 
       viewing() {
         return this.localViewing || LearningProduct.find(this.entityId);
+      },
+
+      dataTableAttributes: {
+        get() {
+          return {
+            processHistory: {
+              id: {
+                isColumn: false
+              },
+              entity_id: {
+                isColumn: false
+              },
+              definition: {
+                label: this.trans('entities.general.name')
+              },
+              created_at: {
+                label: this.trans('entities.process.started')
+              },
+              created_by: {
+                isColumn: false
+              },
+              updated_at: {
+                label: this.trans('entities.general.updated')
+              },
+              updated_by: {
+                isColumn: false
+              },
+              state: {
+                label: this.trans('entities.general.status'),
+                areFiltersSorted: true,
+                isFilterable: true
+              }
+            }
+          }
+        }
       }
     },
 
@@ -103,7 +160,14 @@
         '$$delete'
       ]),
 
+      loadData,
+
       viewProcess(process) {
+        this.$router.push(`${process.entity_id}/process/${process.id}`);
+      },
+
+      onProcessRowClick(process) {
+        this.scrollToTop();
         this.$router.push(`${process.entity_id}/process/${process.id}`);
       },
 
@@ -135,12 +199,6 @@
 
     async beforeRouteEnter(to, from, next) {
       await loadData({ to });
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
-      await loadData.apply(this);
       next();
     }
   };

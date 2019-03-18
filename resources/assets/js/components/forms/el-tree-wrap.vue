@@ -47,7 +47,8 @@
         type: Boolean
       },
       labelKey: {
-        type: String
+        type: String,
+        default: 'name'
       },
       value: {
         type: Array
@@ -66,11 +67,11 @@
     watch: {
       // make sure that when the value is changed that we update the checked keys
       // as the value may have changed but the checkboxes won't reflect the new values
-      value: function(newVal) {
+      value: function (newVal) {
         this.$refs.tree.setCheckedKeys(newVal);
       },
 
-      data: function() {
+      data: function () {
         if (this.sorted) {
           this.sortTree(this.innerData);
         }

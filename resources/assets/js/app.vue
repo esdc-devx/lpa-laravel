@@ -17,7 +17,7 @@
             <breadcrumb/>
           </el-header>
           <el-main>
-            <main-content/>
+            <main-content @app:ready.once="onAppReady"/>
           </el-main>
         </el-container>
       </el-container>
@@ -27,7 +27,6 @@
 
 <script>
   import { mapState, mapMutations } from 'vuex';
-  import EventBus from '@/event-bus';
 
   import TopBar from '@views/top-bar.vue';
   import SideBar from '@views/side-bar.vue';
@@ -48,13 +47,11 @@
     methods: {
       ...mapMutations([
         'hideAppLoading'
-      ])
-    },
+      ]),
 
-    beforeCreate() {
-      EventBus.$once('App:ready', () => {
+      onAppReady() {
         this.hideAppLoading();
-      });
+      }
     }
   };
 </script>

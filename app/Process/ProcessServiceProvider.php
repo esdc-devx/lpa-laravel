@@ -3,6 +3,7 @@
 namespace App\Process;
 
 use Illuminate\Support\ServiceProvider;
+use App\Support\ConsoleOutput;
 
 class ProcessServiceProvider extends ServiceProvider
 {
@@ -14,15 +15,17 @@ class ProcessServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('process.publisher', function ($app) {
-            return new ProcessPublisher();
+            $output = new ConsoleOutput();
+            return new ProcessPublisher($output);
         });
 
         $this->app->singleton('process.manager', function ($app) {
             return new ProcessManager($app->make('App\Camunda\Camunda'));
         });
 
-        $this->app->singleton('process.factory', function ($app) {
-            return new ProcessFactory();
+        $this->app->bind('process.factory', function ($app) {
+            $output = new ConsoleOutput();
+            return new ProcessFactory($output);
         });
     }
 

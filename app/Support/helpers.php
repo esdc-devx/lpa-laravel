@@ -43,7 +43,8 @@ if (! function_exists('db_index_name')) {
     {
         return substr(implode(collect(explode('_', $name))
             ->transform(function ($item, $key) {
-                return substr($item, 0, 3);
+                $length = strlen($item) < 5 ? strlen($item) : 5;
+                return substr($item, 0, $length);
             })->toArray(), '_'), 0, 63);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models\LearningProduct;
 
 use App\Events\LearningProductCreated;
 use App\Events\LearningProductDeleted;
+use App\Events\LearningProductUpdated;
 use App\Models\BaseModel;
 use App\Models\Project\Project;
 use App\Models\Traits\HasProcesses;
@@ -67,6 +68,7 @@ class LearningProduct extends BaseModel
 
     protected $dispatchesEvents = [
         'created' => LearningProductCreated::class,
+        'updated' => LearningProductUpdated::class,
         'deleted' => LearningProductDeleted::class,
     ];
 

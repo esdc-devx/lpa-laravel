@@ -9,14 +9,14 @@
       <el-select-other-wrap
         :modelSelect.sync="form.risk_type_id"
         :nameSelect="`${fieldNamePrefix}.risk_type_id`"
-        :dataVVasSelect="trans('forms.business_case.risks.risk_type.label')"
+        :dataVvAsSelect="trans('forms.business_case.risks.risk_type.label')"
         :validateSelect="{ required: !this.isRiskTypeOther }"
         :options="data.riskTypeList"
         sorted
 
         :modelOther.sync="form.risk_type_other"
         :nameOther="`${fieldNamePrefix}.risk_type_other`"
-        :dataVVasOther="trans('forms.business_case.risks.risk_type_other.label')"
+        :dataVvAsOther="trans('forms.business_case.risks.risk_type_other.label')"
         :validateOther="{ required: this.isRiskTypeOther }"
         :isChecked.sync="isRiskTypeOther"
         maxlength="100"
@@ -88,7 +88,7 @@
     },
 
     watch: {
-      form: function() {
+      form: function () {
         // make the checkbox react when the form data changes
         this.isRiskTypeOther = !!this.form.risk_type_other;
       }
@@ -100,6 +100,7 @@
         // so that we know what properties to be aware of when adding a group
         defaults: {
           risk_type_id: null,
+          risk_type_other: null,
           rationale: null
         },
         isRiskTypeOther: false

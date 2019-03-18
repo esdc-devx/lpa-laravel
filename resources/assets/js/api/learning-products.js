@@ -22,7 +22,7 @@ export default {
   },
 
   getProjectLearningProducts(projectId) {
-    return axios.get(`learning-products/?project_id=${projectId}`);
+    return axios.get(`learning-products?project_id=${projectId}`);
   },
 
   getCreateInfo() {
@@ -31,6 +31,17 @@ export default {
 
   getEditInfo(id) {
     return axios.get(`learning-products/${id}/edit`);
+  },
+
+  getCodes(code) {
+    return axios.get(`learning-product-codes`);
+  },
+
+  search(code) {
+    return axios.get('search/learning-product-code', {
+      showMainLoading: false,
+      params: { code: code }
+    });
   },
 
   canCreate() {

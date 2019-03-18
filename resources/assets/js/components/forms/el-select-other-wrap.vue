@@ -5,7 +5,7 @@
       :isLoading="isLoading"
       :name="nameSelect"
       v-validate="validateSelect"
-      :data-vv-as="dataVVasSelect"
+      :data-vv-as="dataVvAsSelect"
       :options="options"
       :disabled="checked && !multiple"
       @input="updateSelectValue($event)"
@@ -16,22 +16,39 @@
       <el-checkbox
         v-model="checked"
         :value="isChecked"
-        @change="onCheckboxChange">
-          <span v-if="multiple">{{ trans('entities.form.others') }}</span>
-          <span v-else>{{ trans('entities.form.other') }}</span>
+        @change="onCheckboxChange"
+      >
+        <span v-if="multiple">{{ trans('entities.form.others') }}</span>
+        <span v-else>{{ trans('entities.form.other') }}</span>
       </el-checkbox>
       <input-wrap
+        v-if="!localizable"
         ref="input"
         :name="nameOther"
         v-validate="validateOther"
-        :data-vv-as="dataVVasOther"
+        :data-vv-as="dataVvAsOther"
         :disabled="!isChecked"
         :value="modelOther"
         :maxlength="maxlength"
-        :type="type"
-        v-on="inputListeners">
-          <slot></slot>
+        :type="innerType"
+        v-on="inputListeners"
+      >
+        <slot></slot>
       </input-wrap>
+      <input-localized
+        v-else
+        ref="input"
+        :nameEn="nameOtherEn"
+        :nameFr="nameOtherFr"
+        :modelEn.sync="innerModelOtherEn"
+        :modelFr.sync="innerModelOtherFr"
+        :validate="validateOther"
+        :dataVvAsEn="dataVvAsOtherEn"
+        :dataVvAsFr="dataVvAsOtherFr"
+        :disabled="!isChecked"
+        :maxlength="maxlength"
+        :type="innerType"
+      />
     </div>
   </div>
 </template>
@@ -41,6 +58,7 @@
 
   import ElSelectWrap from './el-select-wrap';
   import InputWrap from './input-wrap';
+  import InputLocalized from './input-localized';
 
   export default {
     name: 'el-select-other-wrap',
@@ -51,7 +69,7 @@
     // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
     inject: ['$validator'],
 
-    components: { FormError, ElSelectWrap, InputWrap },
+    components: { FormError, ElSelectWrap, InputWrap, InputLocalized },
 
     props: {
       modelSelect: {
@@ -59,29 +77,52 @@
         required: true
       },
       options: {
-        type: Array,
-        required: true
+        type: Array
       },
       modelOther: {
-        type: String | undefined | null,
-        required: true
+        type: String | undefined | null
+      },
+      modelOtherEn: {
+        type: String | undefined | null
+      },
+      modelOtherFr: {
+        type: String | undefined | null
       },
       nameSelect: {
         type: String,
         required: true
       },
       nameOther: {
-        type: String,
-        required: true
+        type: String
       },
-      dataVVasSelect: {
-        type: String,
-        default: this.nameSelect
+      nameOtherEn: {
+        type: String
       },
-      dataVVasOther: {
+      nameOtherFr: {
+        type: String
+      },
+      dataVvAsSelect: {
         type: String,
-        default: function () {
+        default() {
+          return this.nameSelect;
+        }
+      },
+      dataVvAsOther: {
+        type: String,
+        default() {
           return this.trans('entities.form.other');
+        }
+      },
+      dataVvAsOtherEn: {
+        type: String,
+        default() {
+          return this.nameOtherEn;
+        }
+      },
+      dataVvAsOtherFr: {
+        type: String,
+        default() {
+          return this.nameOtherFr;
         }
       },
       validateSelect: {
@@ -119,10 +160,47 @@
       maxlength: {
         type: String,
         default: null
+      },
+      localizable: {
+        type: Boolean,
+        default: false
       }
     },
 
+    data() {
+      return {
+        // arbitrary number considering the facts that:
+        //    - the select is on the same line as the inputs
+        //    - that the inputs may be prepended and appended
+        // this shorten the space for character input,
+        // which results in this safe value
+        maxCharartersThreshold: 50
+      };
+    },
+
     computed: {
+      innerType() {
+        // force a textarea when the threshold is hit
+        return this.maxlength > this.maxCharartersThreshold ? 'textarea' : this.type;
+      },
+      innerModelOtherEn: {
+        get() {
+          return this.modelOtherEn;
+        },
+        set(val) {
+          // affect the computed value so that our field is in sync
+          this.$emit('update:modelOtherEn', val);
+        }
+      },
+      innerModelOtherFr: {
+        get() {
+          return this.modelOtherFr;
+        },
+        set(val) {
+          // affect the computed value so that our field is in sync
+          this.$emit('update:modelOtherFr', val);
+        }
+      },
       checked: {
         get() {
           return this.isChecked;
@@ -184,11 +262,48 @@
           // when the checkbox is unchecked
           this.updateInputValue(null);
         }
+      },
+
+      validatePropsWithDynamicRules() {
+        if (this.localizable) {
+          if (!this.$props.hasOwnProperty('modelOtherEn')) {
+            this.$log.error('Missing required prop: "modelOtherEn"');
+          }
+          if (!this.$props.hasOwnProperty('modelOtherFr')) {
+            this.$log.error('Missing required prop: "modelOtherFr"');
+          }
+          if (!this.$props.hasOwnProperty('nameOtherEn')) {
+            this.$log.error('Missing required prop: "nameOtherEn"');
+          }
+          if (!this.$props.hasOwnProperty('modelOtherEn')) {
+            this.$log.error('Missing required prop: "modelOtherEn"');
+          }
+          if (!this.$props.hasOwnProperty('modelOtherFr')) {
+            this.$log.error('Missing required prop: "modelOtherFr"');
+          }
+        } else {
+          if (!this.$props.hasOwnProperty('modelOther')) {
+            this.$log.error('Missing required prop: "modelOther"');
+          }
+          if (!this.$props.hasOwnProperty('nameOther')) {
+            this.$log.error('Missing required prop: "nameOther"');
+          }
+        }
       }
     },
 
+    created() {
+      // manually validate props
+      // that contains dynamic validation
+      this.validatePropsWithDynamicRules();
+    },
+
     mounted() {
-      this.checked = !!this.modelOther;
+      if (this.localizable) {
+        this.checked = !!this.modelOtherEn || !!this.modelOtherFr;
+      } else {
+        this.checked = !!this.modelOther;
+      }
     }
   };
 </script>
@@ -210,7 +325,7 @@
         // as it needs to be vertically centered with its folowing input
         line-height: 40px !important;
       }
-      .input-wrap {
+      .input-wrap, .input-localized {
         flex: 1;
       }
     }

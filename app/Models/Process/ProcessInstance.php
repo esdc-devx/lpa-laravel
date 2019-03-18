@@ -25,6 +25,10 @@ class ProcessInstance extends BaseModel
         'updated_by',
     ];
 
+    protected $casts = [
+        'send_notifications' => 'boolean',
+    ];
+
     protected $hidden = [
         'engine_auth_token',
     ];

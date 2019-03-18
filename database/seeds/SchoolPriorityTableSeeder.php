@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Project\BusinessCase\SchoolPriority;
+use App\Models\Lists\SchoolPriority;
 use Illuminate\Database\Seeder;
 
 class SchoolPriorityTableSeeder extends Seeder
@@ -78,12 +78,6 @@ class SchoolPriorityTableSeeder extends Seeder
         DB::table('school_priorities')->truncate();
         DB::table('business_case_school_priority')->truncate();
 
-        foreach ($this->data() as $term) {
-            SchoolPriority::create([
-                'name_key' => str_slug($term['name_en'], '-'),
-                'name_en'  => $term['name_en'],
-                'name_fr'  => $term['name_fr'],
-            ]);
-        }
+        SchoolPriority::createFrom($this->data());
     }
 }

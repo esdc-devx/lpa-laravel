@@ -1,5 +1,3 @@
-import EventBus from '@/event-bus';
-
 import { Validator } from 'vee-validate';
 import axios from '@axios/interceptor';
 import Config from '@/config';
@@ -10,6 +8,7 @@ export const state = {
   language: Config.DEFAULT_LANG,
   languages: [],
   filteredDataTableList: [],
+  waitForLogout: false,
   shouldConfirmBeforeLeaving: false,
   isAppLoading: false,
   isMainLoading: false,
@@ -56,7 +55,6 @@ export const mutations = {
     // reflect the language in the lang attribute
     // for accessibility purposes
     document.querySelector('html').lang = lang;
-    EventBus.$emit('Store:languageUpdate', lang);
   },
 
   setLanguages(state, languages) {
@@ -111,6 +109,10 @@ export const mutations = {
 
   setShouldConfirmBeforeLeaving(state, val) {
     state.shouldConfirmBeforeLeaving = val;
+  },
+
+  setWaitForLogout(state, waitForLogout) {
+    state.waitForLogout = waitForLogout;
   },
 
   addFilteredDataTable(state, dataTableName) {

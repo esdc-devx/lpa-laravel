@@ -60,6 +60,13 @@ Route::middleware('auth:api')->group(function () {
     Route::get('lists/{entityType}', 'ListController@show')->name('lists.show');
     Route::get('lists', 'ListController@showMultiple')->name('lists.show-multiple');
 
+    // Learning product codes routes.
+    Route::get('learning-product-codes', 'LearningProductCodeController@index')->name('learning-product-codes.index');
+
+    // Search routes.
+    Route::get('search/ldap', 'SearchController@ldap')->name('search.ldap');
+    Route::get('search/{entityType}', 'SearchController@search')->name('search.default');
+
     // Information sheets routes.
     Route::get('information-sheets/{entityType}/{entityId}', 'InformationSheetController@show')->name('information-sheets.show');
 

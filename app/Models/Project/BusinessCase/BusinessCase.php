@@ -2,34 +2,40 @@
 
 namespace App\Models\Project\BusinessCase;
 
-use App\Models\Community;
+use App\Models\Lists\Community;
+use App\Models\Lists\DepartmentalResultsFrameworkIndicator;
+use App\Models\Lists\RequestOrigin;
+use App\Models\Lists\SchoolPriority;
 use App\Models\Process\ProcessInstanceFormDataModel;
 
 class BusinessCase extends ProcessInstanceFormDataModel
 {
     protected $fillable = [
-        'process_instance_form_id',
-        'request_origins_other',
         'business_issue',
-        'short_term_learning_response',
-        'medium_term_learning_response',
-        'long_term_learning_response',
-        'is_required_training',
-        'expected_annual_participant_number',
-        'cost_centre',
-        'other_operational_considerations',
         'comments',
+        'cost_centre',
+        'expected_annual_participant_number',
+        'is_required_training',
+        'long_term_learning_response',
+        'medium_term_learning_response',
+        'other_operational_considerations',
+        'process_instance_form_id',
+        'process_instance_id',
+        'request_origins_other',
+        'short_term_learning_response',
     ];
 
     protected $with = [
-        // Multiple choice lists.
-        'requestOrigins',
-        'schoolPriorities',
         'communities',
         'departmentalResultsFrameworkIndicators',
-        // Complex data.
-        'spendings',
+        'requestOrigins',
         'risks',
+        'schoolPriorities',
+        'spendings',
+    ];
+
+    protected $casts = [
+        'is_required_training' => 'boolean',
     ];
 
     public function requestOrigins()

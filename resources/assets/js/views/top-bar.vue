@@ -77,7 +77,6 @@
 <script>
   import { mapState, mapActions, mapMutations } from 'vuex';
 
-  import EventBus from '@/event-bus';
   import Config from '@/config.js';
   import MenuUtils from '@mixins/menu/utils.js';
 
@@ -88,11 +87,18 @@
 
     mixins: [ MenuUtils ],
 
+    data() {
+      return {
+        isTryingToLogOut: false
+      };
+    },
+
     computed: {
       ...mapState([
         'language',
         'isMainLoading',
         'shouldConfirmBeforeLeaving',
+        'waitForLogout',
         'filteredDataTableList'
       ]),
       ...mapState('entities/users', {
@@ -109,6 +115,11 @@
           let menu = this.$refs.topMenu;
           this.setActiveIndex(to, menu);
         });
+      },
+      waitForLogout: function (val) {
+        if (!val) {
+          this.doLogout();
+        }
       }
     },
 
@@ -117,11 +128,12 @@
         logout: 'entities/users/logout'
       }),
       ...mapMutations([
-        'showAppLoading'
+        'showAppLoading',
+        'setWaitForLogout'
       ]),
 
       onLogout() {
-        EventBus.$emit('TopBar:beforeLogout', this.doLogout);
+        this.setWaitForLogout(true);
       },
 
       async doLogout() {
@@ -160,7 +172,6 @@
             }
           )
           .then(() => {
-            EventBus.$emit('TopBar:ResetDataTableFilters');
             this.doSetLanguage();
           })
           .catch(() => false);

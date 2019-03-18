@@ -49,5 +49,8 @@ class UserTableSeeder extends Seeder
 
         // Once admin accounts are created, authenticate as admin.
         Auth::login(User::whereUsername(config('auth.admin.username'))->first());
+
+        // Update users audit information now that we are authenticated as admin.
+        User::all()->each->updateAudit();
     }
 }

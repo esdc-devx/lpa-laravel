@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProcessInstanceFormRequest;
+use App\Http\Resources\ProcessInstanceFormResource;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\User\User;
 
@@ -16,7 +17,9 @@ class ProcessInstanceFormController extends APIController
      */
     public function show(ProcessInstanceForm $processInstanceForm)
     {
-        return $this->respond($processInstanceForm);
+        return $this->respond(
+            new ProcessInstanceFormResource($processInstanceForm)
+        );
     }
 
     /**
@@ -57,7 +60,7 @@ class ProcessInstanceFormController extends APIController
      */
     public function release(ProcessInstanceForm $processInstanceForm)
     {
-        $editor = User::where('username', request()->get('editor'))->first();
+        $editor = User::whereUsername(request()->get('editor'))->firstOrFail();
         $this->authorize('release', [$processInstanceForm, $editor]);
 
         return $this->respond(

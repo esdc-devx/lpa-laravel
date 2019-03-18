@@ -249,6 +249,8 @@
         setList: 'lists/setList'
       }),
 
+      loadData,
+
       // Form handlers
       async onSubmit() {
         this.submit(this.handleCreate);
@@ -278,15 +280,6 @@
           });
         });
         return list;
-      },
-
-      async onLanguageUpdate() {
-        // since on submit the backend returns already translated error messages,
-        // we need to reset the validator messages so that on next submit
-        // the messages are in the correct language
-        this.resetErrors();
-
-        await loadData();
       }
     },
 
@@ -304,7 +297,6 @@
     async beforeRouteUpdate(to, from, next) {
       await this.$store.dispatch('authorizations/learningProducts/loadCanCreate');
       if (this.$store.state.authorizations.learningProducts.permissions.canCreate) {
-        await this.onLanguageUpdate();
         next();
       } else {
         this.$router.replace({ name: 'forbidden', params: { '0': to.path } });

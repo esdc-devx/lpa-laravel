@@ -60,6 +60,26 @@
 
   import FormUtils from '@mixins/form/utils.js';
 
+  const loadData = async () => {
+    // we need to access the store directly
+    // because at this point we may have entered the beforeRouteEnter hook
+    // in which we don't have access to the this context yet
+
+    let requests = [];
+    requests.push(
+      store.dispatch('entities/users/loadCreateInfo')
+    );
+
+    // Exception handled by interceptor
+    try {
+      await axios.all(requests);
+    } catch (e) {
+      if (!e.response) {
+        throw e;
+      }
+    }
+  };
+
   export default {
     name: 'user-create',
 
@@ -90,9 +110,10 @@
 
     methods: {
       ...mapActions('entities/users', [
-        '$$create',
-        'loadCreateInfo'
+        '$$create'
       ]),
+
+      loadData,
 
       // Form handlers
       onSubmit() {
@@ -109,26 +130,11 @@
           message: this.trans('components.notice.message.user_created')
         });
         this.goToParentPage();
-      },
-
-      async onLanguageUpdate() {
-        // since on submit the backend returns already translated error messages,
-        // we need to reset the validator messages so that on next submit
-        // the messages are in the correct language
-        this.resetErrors();
-
-        await this.loadCreateInfo();
       }
     },
 
     async beforeRouteEnter(to, from, next) {
-      await store.dispatch('entities/users/loadCreateInfo');
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
-      await this.onLanguageUpdate();
+      await loadData();
       next();
     },
 

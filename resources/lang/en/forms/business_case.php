@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Business Case',
+    'form_title' => 'Business Case',
     'tabs'  => [
         'project_objective'              => 'Project Objective',
         'proposed_solution'              => 'Proposed Solution',

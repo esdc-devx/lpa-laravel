@@ -14,7 +14,7 @@ class UserRepository extends BaseEloquentRepository
     const LDAP_SEARCH_LIMIT = 5;
 
     protected $model = User::class;
-    protected $relationships = ['roles', 'organizationalUnits'];
+    protected $relationships = ['roles', 'organizationalUnits', 'createdBy', 'updatedBy'];
     protected $requiredRelationships = ['organizationalUnits'];
 
     /**
@@ -97,7 +97,9 @@ class UserRepository extends BaseEloquentRepository
 
         // Since we authenticate users using LDAP, we can just store a random password.
         $ldapUserInfo['password'] = $data['password'] ?? bcrypt(str_random(16));
-
+        // When we first install the application, we are not yet authenticated thus we can't populate those values.
+        $ldapUserInfo['created_by'] = auth()->user()->id ?? null;
+        $ldapUserInfo['updated_by'] = auth()->user()->id ?? null;
         try {
             // Create user with its relationships.
             $user = $this->model->create($ldapUserInfo);
@@ -139,6 +141,9 @@ class UserRepository extends BaseEloquentRepository
         if (isset($data['roles'])) {
             $user->roles()->sync($data['roles']);
         }
+
+        // Update user audit information.
+        $user->updateAudit();
 
         // Dispatch UserSaved event and return its updated value.
         $user = $this->with('roles')->getById($id);

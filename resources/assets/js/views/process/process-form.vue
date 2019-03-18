@@ -16,12 +16,12 @@
             <el-form label-position="top" @submit.native.prevent :disabled="!isClaimed" :class="{'is-disabled': !isClaimed}">
               <component
                 :is="formComponent"
-                ref="tabs"
                 type="border-card"
                 tabPosition="left"
                 :value.sync="activeIndex"
                 :formData="formData"
                 :errorTabs="errorTabs"
+                :processEntityType="viewingProcess.entity_type"
                 @mounted="onFormMounted"
               />
             </el-form>
@@ -59,8 +59,7 @@
 
 <script>
   import _ from 'lodash';
-  import { mapGetters, mapActions } from 'vuex';
-  import EventBus from '@/event-bus.js';
+  import { mapGetters, mapActions, mapMutations } from 'vuex';
 
   import HttpStatusCodes from '@axios/http-status-codes';
 
@@ -151,6 +150,10 @@
         );
       },
 
+      viewingProcess() {
+        return Process.find(this.processId);
+      },
+
       viewingFormInfo() {
         return ProcessInstanceForm.find(this.formId);
       },
@@ -203,10 +206,19 @@
        * and checks for the remaining values to be empty
        */
       isFormEmpty() {
-        return !_.chain(this.formData).omit('id').values().compact().flattenDeep().value().filter(item => {
-          // returns true if the props from the item are falsy values
-          return !_.isEmpty(_.compact(_.toArray(item)));
-        }).length;
+        return !_.chain(this.formData)
+                .omit('id', 'process_instance_id', 'process_instance_form_id').values()
+                .compact()
+                .flattenDeep()
+                .value().filter(item => {
+                  if (_.isArray(item) || _.isObject(item)) {
+                    // returns true if the props from the item are falsy values
+                    return !_.isEmpty(_.compact(_.toArray(item)));
+                  } else {
+                    return !_.isNull(item);
+                  }
+                }
+        ).length;
       }
     },
 
@@ -228,6 +240,18 @@
       ...mapActions('authorizations/forms', [
         'loadCanSubmitForm'
       ]),
+
+      ...mapMutations('entities/forms', [
+        'setHasFormSectionGroupsRemoved'
+      ]),
+
+      loadData,
+
+      onLanguageUpdate() {
+        this.loadData.apply(this, {
+          hasToLoadEntity: false
+        });
+      },
 
       prevTabIndex() {
         let index = parseInt(this.activeIndex, 10);
@@ -263,12 +287,8 @@
         const formWasDirty = this.isFormDirty;
         // affect the newly fetched info locally
         this.formData = _.cloneDeep(this.viewingFormInfo.form_data);
-        EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+        this.setHasFormSectionGroupsRemoved(false);
         this.$nextTick(() => {
-          // make childrens react on discarding changes
-          EventBus.$emit('FormEntity:discardChanges');
-          // make form section groups react and repopulate themselves
-          EventBus.$emit('FormEntity:resetFormSectionGroup');
           // reset the fields states
           // so that we get a pristine form
           // but wait until dom is refreshed before resetting the fields state
@@ -324,7 +344,7 @@
         this.isSaving = true;
         try {
           await this.saveForm({ id: this.formId, form: this.formData });
-          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+          this.setHasFormSectionGroupsRemoved(false);
           // reset the fields states
           // so that we get a pristine form with the new values
           this.resetFieldsState();
@@ -355,7 +375,7 @@
       async handleSubmit() {
         try {
           await this.submitForm({ id: this.formId, form: this.formData });
-          EventBus.$emit('FormUtils:fieldsAddedOrRemoved', false);
+          this.setHasFormSectionGroupsRemoved(false);
           this.notifySuccess({
             message: this.trans('components.notice.message.form_submitted')
           });
@@ -423,9 +443,9 @@
         this.$nextTick(() => {
           // we need to wait until the dom is ready
           // so that we have access to the tabs panes
-          if (this.$refs.tabs.$children[0].panes) {
+          if (this.$el.querySelectorAll('.el-tab-pane')) {
             // tabsLength needs to be zero-based
-            this.tabsLength = this.$refs.tabs.$children[0].panes.length - 1;
+            this.tabsLength = this.$el.querySelectorAll('.el-tab-pane').length - 1;
           }
         });
       },
@@ -434,16 +454,16 @@
         this.setupTabPanes();
       },
 
-      async beforeLogout(next) {
+      async beforeLogout() {
         if (this.shouldConfirmBeforeLeaving) {
           this.confirmLoseChanges().then(async () => {
             // load only the form info so that we know if we have to unclaim the form or not
             await this.handleUnclaim(true);
-            next();
+            this.setWaitForLogout(false);
           }).catch(() => false);
         } else {
           await this.handleUnclaim(true);
-          next();
+          this.setWaitForLogout(false);
         }
       }
     },
@@ -454,16 +474,8 @@
       next();
     },
 
-    async beforeRouteUpdate(to, from, next) {
-      await loadData.apply(this, {
-        hasToLoadEntity: false
-      });
-      next();
-    },
-
     beforeRouteLeave(to, from, next) {
       const leave = async () => {
-        this.destroyEvents();
         await this.handleUnclaim(true);
         next();
       };
@@ -520,14 +532,19 @@
         }
         span {
           transition: $--all-transition;
-          display: flex;
-          align-items: center;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          display: inline-block;
+          vertical-align: middle;
+          width: 100%;
           &:before {
             @include size($svg-icons-size-x-small);
             content: '';
             // Fixes IE11 not showing the before element
             display: inline-block;
             margin: 0 10px;
+            margin-right: 5px;
             transition: $--all-transition;
             background-color: #ccc;
             border-radius: 50%;
@@ -602,7 +619,6 @@
           }
         }
         .el-tab-pane h3 {
-          border-bottom: 1px solid;
           margin-top: 0;
           text-transform: uppercase;
         }

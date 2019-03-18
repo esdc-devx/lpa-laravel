@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use App\Models\OrganizationalUnit;
 use App\Models\Process\ProcessInstanceForm;
 use App\Models\Project\Project;
+use App\Models\Traits\UsesUserAudit;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -19,14 +20,16 @@ class User extends BaseModel implements
     AuthenticatableContract,
     AuthorizableContract
 {
-    use Notifiable, HasLdapUser, HasApiTokens, SoftDeletes, Authenticatable, Authorizable;
+    use Notifiable, UsesUserAudit, HasLdapUser, HasApiTokens, SoftDeletes, Authenticatable, Authorizable;
 
     protected $fillable = [
-       'username',
-       'first_name',
-       'last_name',
-       'email',
-       'password',
+        'username',
+        'first_name',
+        'last_name',
+        'email',
+        'password',
+        'created_by',
+        'updated_by',
     ];
 
     protected $hidden = [

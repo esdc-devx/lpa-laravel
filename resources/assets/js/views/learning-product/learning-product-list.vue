@@ -126,6 +126,8 @@
     },
 
     methods: {
+      loadData,
+
       onLearningProductRowClick(learningProduct) {
         this.scrollToTop();
         this.$router.push(`/${this.language}/learning-products/${learningProduct.id}`);
@@ -137,12 +139,6 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await loadData();
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
       await loadData();
       next();
     }

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Project\BusinessCase\InternalResource;
+use App\Models\Lists\InternalResource;
 use Illuminate\Database\Seeder;
 
 class InternalResourceTableSeeder extends Seeder
@@ -73,12 +73,6 @@ class InternalResourceTableSeeder extends Seeder
         // Truncate previous tables.
         DB::table('internal_resources')->truncate();
 
-        foreach ($this->data() as $term) {
-            InternalResource::create([
-                'name_key' => str_slug($term['name_en'], '-'),
-                'name_en'  => $term['name_en'],
-                'name_fr'  => $term['name_fr'],
-            ]);
-        }
+        InternalResource::createFrom($this->data());
     }
 }

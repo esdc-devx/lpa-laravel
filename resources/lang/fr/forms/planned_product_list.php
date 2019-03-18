@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'Liste de produits prévus',
+    'form_title' => 'Liste de produits prévus',
     'tabs'  => [
         'planned_product' => 'Produits prévus',
         'comments'        => 'Commentaires',

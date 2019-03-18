@@ -44,10 +44,12 @@ class BaseCommand extends Command
      * @param  string $text
      * @return void
      */
-    public function newline($text)
+    public function newline($text = '')
     {
-        $this->line('');
-        $this->line($text);
+        $this->output->newline();
+        if (! $text == '') {
+            $this->line($text);
+        }
     }
 
     /**
@@ -60,8 +62,8 @@ class BaseCommand extends Command
     {
         $style = new OutputFormatterStyle('black', 'green');
         $this->output->getFormatter()->setStyle('success', $style);
-        $this->line('');
-        $this->line("<success>[SUCCESS]</success> $text");
+        $this->output->newline();
+        $this->line("<success>[SUCCESS]</> $text");
     }
 
     /**
@@ -75,8 +77,8 @@ class BaseCommand extends Command
     {
         $style = new OutputFormatterStyle('black', 'cyan');
         $this->output->getFormatter()->setStyle('prompt', $style);
-        $this->line('');
-        return parent::confirm("<prompt>[CONFIRM]</prompt> <fg=white>$question</>", $default);
+        $this->output->newline();
+        return parent::confirm("<prompt>[CONFIRM]</> <fg=white>$question</>", $default);
     }
 
     /**
@@ -88,7 +90,7 @@ class BaseCommand extends Command
      */
     public function error($string, $verbosity = null)
     {
-        $this->line('');
-        parent::error("<error>[ERROR]</error> $string");
+        $this->output->newline();
+        parent::error("<error>[ERROR]</> $string");
     }
 }

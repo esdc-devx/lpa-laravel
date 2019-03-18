@@ -5,7 +5,10 @@ import ProcessInstanceForm from '@/store/models/Process-Instance-Form';
 export default {
   namespaced: true,
 
-  state: {},
+  state: {
+    hasFormSectionGroupsRemoved: false,
+    meta: []
+  },
 
   getters: {},
 
@@ -13,6 +16,7 @@ export default {
     async loadInstanceForm({ commit }, id) {
       const response = await ProcessInstanceFormAPI.getInstanceForm(id);
       ProcessInstanceForm.insertOrUpdate({ data: response.data });
+      commit('setMeta', response.meta);
     },
 
     async claimForm({ commit }, id) {
@@ -52,5 +56,12 @@ export default {
     }
   },
 
-  mutations: {}
+  mutations: {
+    setMeta(state, meta) {
+      state.meta = meta;
+    },
+    setHasFormSectionGroupsRemoved(state, hasFormSectionGroupsRemoved) {
+      state.hasFormSectionGroupsRemoved = hasFormSectionGroupsRemoved;
+    }
+  }
 };

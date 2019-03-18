@@ -147,6 +147,8 @@
         '$$update'
       ]),
 
+      loadData,
+
       async onSubmit() {
         this.submit(this.handleUpdate);
       },
@@ -168,14 +170,6 @@
           message: this.trans('components.notice.message.learning_product_updated')
         });
         this.goToParentPage();
-      },
-
-      async onLanguageUpdate() {
-        // since on submit the backend returns already translated error messages,
-        // we need to reset the validator messages so that on next submit
-        // the messages are in the correct language
-        this.resetErrors();
-        await loadData.apply(this);
       }
     },
 
@@ -193,7 +187,6 @@
     async beforeRouteUpdate(to, from, next) {
       await this.$store.dispatch('authorizations/learningProducts/loadCanEdit', to.params.entityId);
       if (LearningProduct.find(to.params.entityId).permissions.canEdit) {
-        await this.onLanguageUpdate();
         next();
       } else {
         router.replace({ name: 'forbidden', params: { '0': to.path } });

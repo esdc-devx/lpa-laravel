@@ -3,6 +3,8 @@
 namespace App\Models\Project\BusinessCase;
 
 use App\Models\BaseModel;
+use App\Models\Lists\InternalResource;
+use App\Models\Lists\Recurrence;
 
 class Spending extends BaseModel
 {

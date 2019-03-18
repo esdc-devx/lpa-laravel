@@ -20,7 +20,7 @@ export default {
 
     async loadInstance({ commit }, id) {
       let response = await ProcessAPI.getInstance(id);
-      Process.insertOrUpdate({ data: response.data.process_instance });
+      Process.insertOrUpdate({ data: response.data });
     },
 
     async loadHistory({ commit }, { entityType, entityId }) {

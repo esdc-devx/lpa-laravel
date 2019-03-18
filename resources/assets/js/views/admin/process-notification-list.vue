@@ -98,6 +98,8 @@
     },
 
     methods: {
+      loadData,
+
       onRowClick(processNotification) {
         this.scrollToTop();
         this.$router.push(`/${this.language}/admin/process-notifications/${processNotification.id}/edit`);
@@ -110,12 +112,6 @@
     },
 
     async beforeRouteEnter(to, from, next) {
-      await loadData();
-      next();
-    },
-
-    // called when url params change, e.g: language
-    async beforeRouteUpdate(to, from, next) {
       await loadData();
       next();
     }

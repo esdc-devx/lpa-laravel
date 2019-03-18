@@ -14,7 +14,7 @@
         <el-select-other-wrap
           :modelSelect.sync="form.request_origins"
           nameSelect="request_origins"
-          :dataVVasSelect="trans('forms.business_case.request_origins.label')"
+          :dataVvAsSelect="trans('forms.business_case.request_origins.label')"
           :validateSelect="{ required: !this.isRequestOriginOther }"
           :options="requestOriginList"
           multiple
@@ -22,7 +22,7 @@
 
           :modelOther.sync="form.request_origins_other"
           nameOther="request_origins_other"
-          :dataVVasOther="trans('forms.business_case.request_origins_other.label')"
+          :dataVvAsOther="trans('forms.business_case.request_origins_other.label')"
           :validateOther="{ required: this.isRequestOriginOther }"
           :isChecked.sync="isRequestOriginOther"
           maxlength="100"
@@ -118,15 +118,12 @@
         contextPath="forms.business_case.is_required_training"
         required
       >
-        <el-radio-group
+        <yes-no
           v-model="form.is_required_training"
+          v-validate="'required'"
           :data-vv-as="trans('forms.business_case.is_required_training.label')"
           name="is_required_training"
-          v-validate="'required'">
-            <el-radio-button :label="1">{{ trans('base.actions.yes') }}</el-radio-button>
-            <el-radio-button :label="0">{{ trans('base.actions.no') }}</el-radio-button>
-        </el-radio-group>
-        <form-error name="is_required_training"/>
+        />
       </el-form-item-wrap>
     </el-tab-pane>
 
@@ -162,7 +159,6 @@
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.communities.label')"
           :data="communityList"
-          labelKey="name"
           sorted
         />
       </el-form-item-wrap>
@@ -184,7 +180,6 @@
           v-validate="'required'"
           :data-vv-as="trans('forms.business_case.departmental_results_framework_indicators.label')"
           :data="departmentalResultsFrameworkIndicatorList"
-          labelKey="name"
         />
       </el-form-item-wrap>
     </el-tab-pane>
@@ -212,7 +207,7 @@
         v-model="form.spendings"
         entityForm="business-case"
         entitySection="spending"
-        :min=1
+        :min="1"
         :data="{
           internalResourceList,
           recurrenceList
@@ -235,8 +230,9 @@
 
     <el-tab-pane data-name="risks">
       <span slot="label" :class="{'is-error': errorTabs.includes('risks') }">
-        {{ $tc('forms.business_case.tabs.risk', 2) }}
+        {{ trans('forms.business_case.tabs.risk') }}
       </span>
+      <h3>{{ trans('forms.business_case.tabs.risk') }}</h3>
       <form-section-group
         v-model="form.risks"
         entityForm="business-case"
@@ -270,17 +266,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex';
-
-  import EventBus from '@/event-bus.js';
-  import FormError from '../error.vue';
-
-  import ElFormItemWrap from '../el-form-item-wrap';
-  import ElSelectOtherWrap from '../el-select-other-wrap';
-  import ElSelectWrap from '../el-select-wrap';
-  import InputWrap from '../input-wrap';
-  import FormSectionGroup from '../form-section-group';
-  import ElTreeWrap from '../el-tree-wrap';
+  import Form from '../form.vue';
 
   const loadData = async () => {
     await store.dispatch('lists/loadLists', [
@@ -297,20 +283,7 @@
   export default {
     name: 'business-case',
 
-    components: { FormError, ElFormItemWrap, ElSelectOtherWrap, ElSelectWrap, InputWrap, FormSectionGroup, ElTreeWrap },
-
-    // Gives us the ability to inject validation in child components
-    // https://baianat.github.io/vee-validate/advanced/#disabling-automatic-injection
-    inject: ['$validator'],
-
-    props: {
-      formData: {
-        type: Object
-      },
-      errorTabs: {
-        type: Array
-      }
-    },
+    extends: Form,
 
     data() {
       return {
@@ -320,10 +293,6 @@
     },
 
     computed: {
-      ...mapGetters('lists', {
-        getList: 'list'
-      }),
-
       requestOriginList() {
         return this.getList('request-origin');
       },
@@ -350,47 +319,16 @@
 
       riskTypeList() {
         return this.getList('risk-type');
-      },
-
-      form: {
-        get() {
-          return this.formData;
-        },
-        set(data) {
-          this.$emit('update:formData', data);
-        }
       }
     },
 
     methods: {
-      // used in order to sync the tab index with the parent
-      onTabClick(tab, e) {
-        this.$emit('update:value', tab.index);
-      },
+      loadData,
 
       bindCheckboxes() {
         this.isRequestOriginOther = !!this.form.request_origins_other;
         this.isInternalResourceOther = !!this.form.internal_resource_other;
       }
-    },
-
-    beforeDestroy() {
-      EventBus.$off('Store:languageUpdate', loadData);
-      EventBus.$off('FormEntity:discardChanges', this.bindCheckboxes);
-    },
-
-    beforeCreate() {
-      loadData();
-    },
-
-    created() {
-      this.bindCheckboxes();
-    },
-
-    mounted() {
-      this.$emit('mounted');
-      EventBus.$on('Store:languageUpdate', loadData);
-      EventBus.$on('FormEntity:discardChanges', this.bindCheckboxes);
     }
   };
 </script>

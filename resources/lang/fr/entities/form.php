@@ -5,4 +5,6 @@ return [
     'current_editor'                => 'Éditeur actuel',
     'other'                         => 'Autre',
     'others'                        => 'Autres',
+    'en'                            => 'Anglais',
+    'fr'                            => 'Français',
 ];

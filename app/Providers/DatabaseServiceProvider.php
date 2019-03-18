@@ -41,7 +41,12 @@ class DatabaseServiceProvider extends ServiceProvider
         // i.e. "project" instead of "App\Models\Project".
         Relation::morphMap(config('app.entity_types'));
 
-        // Add user audit columns.
+        /*
+         * Register some macros for the schema blueprint class.
+         * This helps cleaning up migration files.
+         */
+
+         // Add user audit columns.
         Blueprint::macro('auditable', function () {
             $this->unsignedInteger('created_by')->nullable();
             $this->unsignedInteger('updated_by')->nullable();
@@ -81,6 +86,27 @@ class DatabaseServiceProvider extends ServiceProvider
             $this->referenceOn($tableColumn2, $table2)->onDelete('cascade');
 
             $this->primary([$tableColumn1, $tableColumn2], db_index_name("{$table}_primary"));
+        });
+
+        // Add default table structure for process form data models.
+        Blueprint::macro('processFormData', function () {
+            $this->increments('id');
+            $this->unsignedInteger('process_instance_id');
+            $this->unsignedInteger('process_instance_form_id');
+
+            $this->referenceOn('process_instance_id')->onDelete('cascade');
+            $this->referenceOn('process_instance_form_id')->onDelete('cascade');
+        });
+
+        // Add default table structure for process form assessment models.
+        Blueprint::macro('processFormAssessment', function () {
+            // Add default process form data fields.
+            $this->processFormData();
+
+            // Add process form assessment fields.
+            $this->dateTime('assessment_date')->nullable();
+            $this->boolean('is_entity_cancelled')->default(0);
+            $this->text('entity_cancellation_rationale')->nullable();
         });
     }
 }

@@ -7,6 +7,7 @@ export default class Project extends Model {
     return {
       id: this.number(0),
       name: this.string(''),
+      outline: this.string(''),
       business_case_id: this.number(0),
       created_at: this.string(''),
       created_by: this.attr({}),

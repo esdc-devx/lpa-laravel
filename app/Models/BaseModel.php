@@ -23,6 +23,17 @@ class BaseModel extends Model
     }
 
     /**
+     * Check if attribute is supported on model.
+     *
+     * @param  string $attr
+     * @return boolean
+     */
+    public function hasAttribute($attr)
+    {
+        return collect($this->getFillable())->contains($attr);
+    }
+
+    /**
      * Synchronize many to many relationships.
      *
      * @param  array $data
@@ -84,6 +95,7 @@ class BaseModel extends Model
      * Once called, model will render its multiple choice lists as an array of ids.
      * These lists must extend the ListableModel class and be defined as a many to many relationship.
      * The relationships must also be defined in the $with model property.
+     * @note: This whole mechanism could potentially be replaced with json resource classes instead.
      *
      * @return $this
      */
@@ -94,11 +106,12 @@ class BaseModel extends Model
 
         if (! empty($this->with)) {
             foreach ($this->with as $relationship) {
+                $relationshipClass = get_class($this->{$relationship}());
                 $relatedModelClass = $this->{$relationship}()->getRelated();
-
-                // If relationship is an instance of the BaseModel class and was also loaded,
-                // call formatListsOutput() method recursively.
-                if (get_parent_class($relatedModelClass) === BaseModel::class && $this->relationLoaded($relationship)) {
+                $isRelatedModel = get_parent_class($relatedModelClass) === BaseModel::class && $relationshipClass === HasMany::class;
+                $isRelationshipLoaded = $this->relationLoaded($relationship);
+                // If relationship is a related model and its being loaded, call its formatListsOutput() method recursively.
+                if ($isRelatedModel && $isRelationshipLoaded) {
                     $this->{$relationship}->each(function ($relatedModel) {
                         $relatedModel->formatListsOutput();
                     });

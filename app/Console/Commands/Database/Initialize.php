@@ -39,6 +39,8 @@ class Initialize extends BaseCommand
 
             // Call db:seed command to populate data.
             $this->newline('Seeding database...');
+            // Force composer to discover all missing seeder classes.
+            exec('composer dump-autoload');
             $this->call('db:seed');
             $this->info('Database seeded successfully.');
 
